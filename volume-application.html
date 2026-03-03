@@ -514,13 +514,21 @@ header::after{
 </div>
 
 <footer>© 2025 EBS Operations</footer>
-<!-- HELP MODAL -->
+
+<!-- HELP Modal -->
 <div id="helpModal" class="modal">
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header">
       Get Help <span class="modal-close" onclick="closeHelp()">×</span>
     </div>
-    <p>Use this tool to search queues, concerns, and actions. Click the clock for time/calendar and the comment icon to provide feedback.</p>
+    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
+    <ul>
+      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
+      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
+      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
+      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
+    </ul>
+    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
   </div>
 </div>
 
@@ -561,14 +569,12 @@ header::after{
 
 <!-- TIME & CALENDAR POPUP -->
 <div id="timeCalendarPopup">
-  <h3 id="calendarTitle"></h3>
-
+  <h3 id="fullTimeDisplay">--:--:-- — --/--/----</h3>
   <div class="calendar-header">
-    <span id="prevMonth">◀</span>
+    <span id="prevMonth">&lt;</span>
     <span class="calendar-title" id="monthYear"></span>
-    <span id="nextMonth">▶</span>
+    <span id="nextMonth">&gt;</span>
   </div>
-
   <div class="calendar-grid" id="calendarGrid"></div>
 </div>
 
@@ -701,7 +707,26 @@ function updateClock(){
     hour: "2-digit",
     minute: "2-digit"
   });
-  document.getElementById("clockText").textContent = timeStr;
+  document.getElementById("clockText").textContent = now.toLocaleTimeString('en-PH', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Asia/Manila'
+    });
+    
+    // Full display with seconds and date
+  document.getElementById('fullTimeDisplay').textContent =
+    now.toLocaleString('en-PH', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'Asia/Manila'
+    });
+    
 }
 
 setInterval(updateClock, 1000);
