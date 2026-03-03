@@ -8,9 +8,6 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
 <style>
 /* ===== SAME STYLE AS CLASS UPDATE ===== */
 :root{
@@ -24,7 +21,8 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:linear-gradient(180deg,var(--bg),#eef6ff);display:flex;flex-direction:column;min-height:100vh;}
-
+header, footer{background:var(--accent);color:white;padding:16px 28px;}
+header h1, footer p{margin:0;font-weight:600;}
 .container{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 420px;gap:20px;align-items:start;padding:28px 0;flex:1}
 .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 8px 28px rgba(2,6,23,0.06);overflow:hidden;opacity:0;transform:translateY(20px)}
 h1{margin:0;font-size:22px;color:var(--accent)}
@@ -54,6 +52,9 @@ button.secondary{background:#fff;color:var(--accent);border:1px solid #ccc}
 @keyframes cardFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 @keyframes logoFlyIn{from{opacity:0;transform:translateX(-50px) scale(.8)}to{opacity:1;transform:none}}
 
+header img{opacity:0;animation:logoFlyIn 1s ease-out forwards}
+header{position:relative;overflow:hidden}
+header::after{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(120deg,#4d148c,#ff6600,#4d148c);transform:skewX(-20deg);animation:sweep 1s ease-out forwards;opacity:.2}
 @keyframes sweep{to{left:100%}}
 @media(max-width:1200px){.container{grid-template-columns:1fr}}
 .edit-icon{cursor:pointer;font-size:14px;margin-left:6px;color:var(--accent)}
@@ -62,9 +63,12 @@ button.secondary{background:#fff;color:var(--accent);border:1px solid #ccc}
 textarea{resize:none;width:100%;min-height:120px;padding:10px;border-radius:8px;border:1px solid #d1d5db;margin-top:10px}
 </style>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
+
 <div id="headerContainer"></div>
 
 <div class="container">
@@ -555,10 +559,7 @@ async function saveEdit(){
     saveBtn.innerText = "Save";
   }
 }
-
 </script>
-
-  
 <div id="passwordModal" class="modal">
   <div class="modal-content">
     <h3>Enter Password</h3>
@@ -580,11 +581,8 @@ async function saveEdit(){
     </div>
   </div>
 </div>
-  
+
 <script src="script.js"></script>
 </body>
 </html>
-
-
-
 
