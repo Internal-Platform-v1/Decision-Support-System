@@ -125,7 +125,15 @@ footer{background:var(--accent);color:white;padding:16px;text-align:center;}
 .comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
 .comment-list-item:last-child{border:none;}
 input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
+textarea {
+  width:100%;
+  padding:12px 14px;
+  border-radius:8px;
+  border:1px solid #e2e8f0;
+  font-size:15px;
+  min-height:200px;
+  resize: vertical;   /* allows up/down resize */
+}
 
 /* TIME CALENDAR */
 #timeCalendarPopup {
@@ -404,6 +412,27 @@ line-height:1.5;
   100%{transform:scale(1);}
 }
 
+/*pop up time style*/
+/* POPUP TIME STYLE (Windows-like) */
+.popup-time{
+  font-size:34px;
+  font-weight:600;
+  text-align:left;
+  margin-bottom:4px;
+  color:#111;
+}
+
+#timeCalendarPopup {
+  background:white;}
+
+.popup-date{
+  font-size:14px;
+  color:#555;
+  margin-bottom:14px;
+  text-align:left;
+}
+
+
 </style>
 </head>
 <body>
@@ -541,13 +570,18 @@ line-height:1.5;
 
 <!-- TIME & CALENDAR POPUP -->
 <div id="timeCalendarPopup">
-  <h3 id="fullTimeDisplay">--:--:-- — --/--/----</h3>
+
+  <div class="popup-time" id="popupTime"></div>
+  <div class="popup-date" id="popupDate"></div>
+
   <div class="calendar-header">
-    <span id="prevMonth">&lt;</span>
-    <span class="calendar-title" id="monthYear"></span>
-    <span id="nextMonth">&gt;</span>
+    <span id="prevMonth">‹</span>
+    <div id="monthYear" class="calendar-title"></div>
+    <span id="nextMonth">›</span>
   </div>
+
   <div class="calendar-grid" id="calendarGrid"></div>
+
 </div>
 
 <script>
@@ -761,49 +795,53 @@ function updateEmailLinks() {
 /* =========================
    CALENDAR LOGIC
 ========================= */
-function getPHTime(){
-  const now = new Date();
-  return new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-}
 
 function updateClock(){
-  const now = getPHTime();
-  const timeStr = now.toLocaleTimeString("en-PH", {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-  document.getElementById("clockText").textContent = now.toLocaleTimeString('en-PH', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZone: 'Asia/Manila'
-    });
-    
-    // Full display with seconds and date
-  document.getElementById('fullTimeDisplay').textContent =
-    now.toLocaleString('en-PH', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      timeZone: 'Asia/Manila'
-    });
-    
+  const now = new Date();
+
+  // HEADER TIME (Hour + Minute only)
+  const headerTime = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).format(now);
+
+  // POPUP TIME (Hour + Minute + Second)
+  const popupTime = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  }).format(now);
+
+  const popupDate = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  }).format(now);
+
+  // Update header
+  document.getElementById("clockText").textContent = headerTime;
+
+  // Update popup
+  document.getElementById("popupTime").textContent = popupTime;
+  document.getElementById("popupDate").textContent = popupDate;
 }
-
-
-setInterval(updateClock, 1000);
+// START CLOCK
 updateClock();
+setInterval(updateClock, 1000);
+
 
 const clockBtn = document.getElementById("clockBtn");
 const calendarPopup = document.getElementById("timeCalendarPopup");
 const calendarGrid = document.getElementById("calendarGrid");
 const monthYear = document.getElementById("monthYear");
 
-let currentDate = getPHTime();
+let currentDate = new Date();
 
 clockBtn.onclick = function(e){
   e.stopPropagation();
@@ -853,7 +891,14 @@ function renderCalendar(date){
     calendarGrid.appendChild(empty);
   }
 
-  const today = getPHTime();
+ const today = new Date(
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).format(new Date())
+);
 
   for(let d=1; d<=daysInMonth; d++){
     const day=document.createElement("div");
@@ -968,6 +1013,5 @@ function showAllComments(){
 
 </body>
 </html>
-
 
 
