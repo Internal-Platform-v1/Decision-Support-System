@@ -460,20 +460,90 @@ header::after{
   margin-bottom:14px;
   text-align:left;
 }
+/* =================================
+   PROFESSIONAL STEP IMAGE DISPLAY
+================================= */
 
-/* STEP IMAGES */
 .step-images{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-  margin-bottom:20px;
-  align-items:center;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:22px;
+  margin:30px 0;
+  width:100%;
 }
 
+/* When step has 2 images show side-by-side */
+@media (min-width:900px){
+  .step-images:has(img:nth-child(2)){
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+/* IMAGE STYLE */
 .step-images img{
-  max-width:100%;
+  width:100%;
+  height:auto;
+  border-radius:12px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.15);
+  border:1px solid #e5e7eb;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    opacity 0.4s ease;
+  animation: imageFadeIn 0.5s ease;
+}
+
+/* Hover zoom animation */
+.step-images img:hover{
+  transform:scale(1.03);
+  box-shadow:0 20px 50px rgba(0,0,0,0.25);
+}
+
+/* Image appear animation */
+@keyframes imageFadeIn{
+  from{
+    opacity:0;
+    transform:translateY(15px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* =========================
+   IMAGE FULLSCREEN PREVIEW
+========================= */
+
+.image-preview-modal{
+  display:none;
+  position:fixed;
+  z-index:2000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  justify-content:center;
+  align-items:center;
+  animation:fadeIn 0.3s ease;
+}
+
+.image-preview-modal img{
+  max-width:90%;
+  max-height:90%;
   border-radius:10px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.image-preview-close{
+  position:absolute;
+  top:20px;
+  right:40px;
+  font-size:40px;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 </style>
@@ -804,6 +874,27 @@ prevBtn.onclick = () => {
 
 renderStep();
 
+/* =========================
+   SAFE IMAGE PREVIEW
+========================= */
+
+document.addEventListener("click", function(e){
+
+  const previewModal = document.getElementById("imagePreviewModal");
+  const previewImage = document.getElementById("imagePreview");
+
+  if(e.target.matches(".step-images img")){
+    previewModal.style.display = "flex";
+    previewImage.src = e.target.src;
+  }
+
+  if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
+    previewModal.style.display = "none";
+  }
+
+});
+
+
 
 /* =========================
    CALENDAR LOGIC
@@ -1022,6 +1113,10 @@ function showAllComments(){
 }
 
 </script>
-
+<!-- IMAGE PREVIEW MODAL -->
+<div id="imagePreviewModal" class="image-preview-modal">
+  <span class="image-preview-close">&times;</span>
+  <img id="imagePreview" src="">
+</div>
 </body>
 </html>
