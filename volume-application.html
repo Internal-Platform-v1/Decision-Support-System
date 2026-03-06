@@ -622,14 +622,30 @@ images:[
 ],
 content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.`
 },
+
 {
 title:"Remove Rate Keywords",
-content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)
-• Capacity load keywords do NOT need to be removed.
+images:[
+"Steps/Step2.png"
+],
+content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)`
+},
+
+{
+title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD",
+images:[
+"Steps/Step3.png"
+],
+content:`• Capacity load keywords do NOT need to be removed.
 • Add RMK line stating: "CAPL NOT APPLICABLE PER TRUCKLOAD."`
 },
+
 {
 title:"Zero Out Surcharges",
+images:[
+"Steps/Step4.png",
+"Steps/Step4v2.png"
+],
 content:`Zero out any of the following surcharges:
 • VICH
 • VWCH
@@ -641,40 +657,71 @@ content:`Zero out any of the following surcharges:
 },
 {
 title:"Validate Additional Surcharges",
+images:[
+"Steps/Step5.jpg"
+],
 content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.
 • If surcharges with checkmarks are the only ones included in the quote, remove surcharge on FBC.
 • No checkmark = not included in quote.`
 },
 {
 title:"Add CONT Keyword",
-content:`• Add keyword "CONT".
-• Add full quote number into "CONT Number" field.
+images:[
+"Steps/Step6.png"
+],
+content:`• Add keyword "CONT".`
+},
+
+
+{
+title:"Add full quote number into CONT Number field.",
+images:[
+"Steps/Step7.jpg"
+],
+content:`• Add full quote number into "CONT Number" field.
 • If error appears, click OK.
 • If "CM Option" dropdown appears, select service option noted on BOL (TLX, TLS, EXCL).
 • If none is noted, choose TLX. Click OK.`
 },
+
+
 {
 title:"System Auto Adds Keywords",
+images:[
+"Steps/Step8.png"
+],
 content:`System will automatically add:
 • CONT
 • TLX
-
 Below this point, add:
 • SLCU
 • NOAR`
 },
 {
 title:"Add PRAU & Agreement Details",
-content:`• Below NOAR, add keyword PRAU.
-• In Agreement Type dropdown, choose "CONT".
+images:[
+"Steps/Step9.png"
+],
+content:`• Below NOAR, add keyword PRAU.`
+},
+{
+title:"Add PRAU & Agreement Details",
+images:[
+"Steps/Step10.jpg"
+],
+content:`• In Agreement Type dropdown, choose "CONT".
 • In Tariff dropdown, choose service type from BOL (TLX, TLS, EXCL).
 • Enter 7 numbers between F and CM in quote number.
 • In Base Type dropdown, select "CUST".
 • In AP1 dropdown, select who the pro is billed to.
 • Click OK when finished.`
 },
+
 {
 title:"Clean Description Field",
+images:[
+"Steps/Step10.jpg"
+],
 content:`Delete all blank lines in the description field.`
 },
 {
@@ -725,13 +772,34 @@ function renderStep(){
   nextBtn.textContent = currentStep === steps.length - 1 ? "Finish" : "Next";
 }
 
+/* NEXT BUTTON */
 nextBtn.onclick = () => {
+
   if(currentStep < steps.length - 1){
+
     currentStep++;
     renderStep();
+
   } else {
+
     alert("Volume Application Completed.");
+
+    /* RETURN TO STEP 1 */
+    currentStep = 0;
+    renderStep();
+
   }
+
+};
+
+/* PREVIOUS BUTTON */
+prevBtn.onclick = () => {
+
+  if(currentStep > 0){
+    currentStep--;
+    renderStep();
+  }
+
 };
 
 renderStep();
