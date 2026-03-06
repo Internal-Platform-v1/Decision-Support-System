@@ -149,32 +149,6 @@ header img{height:40px;}
   justify-content:space-between;
 }
 
-button{
-  padding:12px 24px;
-  border:none;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.2s ease;
-}
-
-.btn-prev{
-  background:#e5e7eb;
-}
-
-.btn-next{
-  background:var(--accent);
-  color:white;
-}
-
-.btn-next:hover{
-  background:var(--accent-dark);
-}
-
-button:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-}
 
 /* Fade animation */
 .fade{
@@ -543,6 +517,97 @@ header::after{
   cursor:pointer;
   font-weight:bold;
 }
+/* STEP NAVIGATION */
+.step-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  margin-bottom:20px;
+}
+
+.step-dot{
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  background:#e5e7eb;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:600;
+  transition:all 0.2s ease;
+}
+
+.step-dot:hover{
+  background:#4d148c;
+  color:white;
+}
+
+.step-dot.active{
+  background:#ff6600;
+  color:white;
+}
+
+/* NAVIGATION BUTTONS */
+.nav-buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:30px;
+}
+
+.nav-buttons button{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 22px;
+  border:none;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s ease;
+}
+
+/* PREVIOUS BUTTON */
+#prevBtn{
+  background:#e5e7eb;
+  color:#374151;
+}
+
+#prevBtn:hover{
+  background:#d1d5db;
+}
+
+/* NEXT BUTTON */
+#nextBtn{
+  background:#4d148c;
+  color:white;
+}
+
+#nextBtn:hover{
+  background:#3a0f6b;
+  transform:translateY(-1px);
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+}
+
+/* FINISH BUTTON */
+#nextBtn.finish{
+  background:#10b981;
+}
+
+#nextBtn.finish:hover{
+  background:#059669;
+}
+
+/* DISABLED STATE */
+.nav-buttons button:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  box-shadow:none;
+  transform:none;
+}
 
 </style>
 </head>
@@ -586,6 +651,8 @@ header::after{
     <div class="volume-content-wrapper">
 
   <div class="step-counter" id="stepCounter"></div>
+
+  <div id="stepNav" class="step-nav"></div>
 
   <div class="progress-container">
     <div class="progress-bar" id="progressBar"></div>
@@ -807,6 +874,7 @@ content:`At last, click ACCEPT ALL.`
 ];
 
 let currentStep = 0;
+const stepNav = document.getElementById("stepNav");
 
 const stepTitle = document.getElementById("stepTitle");
 const stepContent = document.getElementById("stepContent");
@@ -837,7 +905,15 @@ function renderStep(){
   progressBar.style.width = ((currentStep+1)/steps.length*100)+"%";
 
   prevBtn.disabled = currentStep === 0;
-  nextBtn.textContent = currentStep === steps.length - 1 ? "Finish" : "Next";
+ if(currentStep === steps.length - 1){
+  nextBtn.textContent = "Finish";
+  nextBtn.classList.add("finish");
+}else{
+  nextBtn.textContent = "Next";
+  nextBtn.classList.remove("finish");
+}
+  
+  renderStepNav();
 }
 
 /* NEXT BUTTON */
@@ -869,6 +945,33 @@ prevBtn.onclick = () => {
   }
 
 };
+/* skip to other steps options */
+function renderStepNav(){
+
+  stepNav.innerHTML = "";
+
+  steps.forEach((step, index) => {
+
+    const dot = document.createElement("div");
+    dot.className = "step-dot";
+
+    if(index === currentStep){
+      dot.classList.add("active");
+    }
+
+    dot.textContent = index + 1;
+
+    dot.onclick = () => {
+      currentStep = index;
+      renderStep();
+    };
+
+    stepNav.appendChild(dot);
+
+  });
+
+}
+
 
 renderStep();
 
