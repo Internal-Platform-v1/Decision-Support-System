@@ -795,129 +795,143 @@ const NODES = {
     choices: []
   },
 
-  // =====================================================
-  // ===================== BOL FLOW ======================
-  // =====================================================
+// =====================================================
+// ===================== BOL FLOW ======================
+// =====================================================
 
-  bol_start: {
-    text: "Is FACERT available on image or inspection keywords on the body of the bill?",
-    choices: [
-      { label: "Yes", next: "bol_move_inspection" },
-      { label: "No", next: "bol_both_class_nmfc" }
-    ]
-  },
+bol_start: {
+  text: "What is the customer's dispute?",
+  choices: [
+    { label: "Class/NMFC update per BOL", next: "bol_facert_check" },
+    { label: "FAK Rates", next: "bol_move_pricing" }
+  ]
+},
 
-  bol_move_inspection: {
-    text: "Do not update the Pro. Move the case to Inspection Queue.",
-    choices: []
-  },
+bol_move_pricing: {
+  text: "Move the case to Pricing Queue.",
+  choices: []
+},
 
-  bol_both_class_nmfc: {
-    text: "Both Class/NMFC noted on BOL?",
-    choices: [
-      { label: "Yes", next: "bol_nmfc_valid_check" },
-      { label: "No", next: "bol_lookup_nmfc" }
-    ]
-  },
+bol_facert_check: {
+  text: "Is FACERT available on image and/or Inspection keyword on the body of the bill?",
+  choices: [
+    { label: "FACERT not imaged and no inspection keyword present", next: "bol_class_nmfc_check" },
+    { label: "FACERT not imaged but inspection keyword present", next: "bol_move_inspection" },
+    { label: "FACERT imaged but no inspection keyword", next: "bol_move_inspection" },
+    { label: "FACERT imaged and inspection keyword present", next: "bol_move_inspection" }
+  ]
+},
 
-  bol_nmfc_valid_check: {
-    text: "NMFC valid?",
-    choices: [
-      { label: "Yes", next: "bol_apply_nmfc_supersedes" },
-      { label: "No", next: "bol_apply_class_per_bol" }
-    ]
-  },
+bol_move_inspection: {
+  text: "Move the case to Freight Inspection Review.",
+  choices: []
+},
 
-  bol_apply_class_per_bol: {
-    text: "Apply class per BOL (NMFC supersedes Class).",
-    choices: []
-  },
+bol_class_nmfc_check: {
+  text: "Both Class/NMFC noted on BOL?",
+  choices: [
+    { label: "Yes", next: "bol_nmfc_valid_check" },
+    { label: "No", next: "bol_lookup_nmfc" }
+  ]
+},
 
-  bol_apply_nmfc_supersedes: {
-    text: "Apply the NMFC on the Pro (NMFC supersedes Class).",
-    choices: []
-  },
+bol_nmfc_valid_check: {
+  text: "Is the NMFC valid?",
+  choices: [
+    { label: "Yes", next: "bol_apply_nmfc" },
+    { label: "No", next: "bol_apply_class_per_bol" }
+  ]
+},
 
-  bol_lookup_nmfc: {
-    text: "Pull up NMFC lookup and try to search for the item description.",
-    choices: [
-      { label: "Located NMFC", next: "bol_density_check" },
-      { label: "Not Located", next: "bol_support_docs" }
-    ]
-  },
+bol_apply_class_per_bol: {
+  text: "Apply class per BOL. (NMFC supersedes Class)",
+  choices: []
+},
 
-  bol_support_docs: {
-    text: "Ask for supporting documents.",
-    choices: []
-  },
+bol_apply_nmfc: {
+  text: "Apply the NMFC on the Pro. (NMFC supersedes Class)",
+  choices: []
+},
 
-  bol_density_check: {
-    text: "Is the NMFC density based?",
-    choices: [
-      { label: "Yes", next: "bol_dimensions_check" },
-      { label: "No", next: "bol_apply_nmfc_per_bol" }
-    ]
-  },
+bol_lookup_nmfc: {
+  text: "Pull up NMFC lookup and try to search for the item description.",
+  choices: [
+    { label: "Located NMFC", next: "bol_density_check" },
+    { label: "Not Located", next: "bol_support_docs" }
+  ]
+},
 
-  bol_apply_nmfc_per_bol: {
-    text: "No need to calculate the PCF. Apply the NMFC per BOL.",
-    choices: []
-  },
+bol_support_docs: {
+  text: "Ask for supporting documents.",
+  choices: []
+},
 
-  bol_dimensions_check: {
-    text: "Dimensions noted on BOL?",
-    choices: [
-      { label: "Yes", next: "bol_calculate_pcf" },
-      { label: "No", next: "bol_cube_check" }
-    ]
-  },
+bol_density_check: {
+  text: "Is the NMFC density based?",
+  choices: [
+    { label: "Yes", next: "bol_dimensions_check" },
+    { label: "No", next: "bol_apply_nmfc_per_bol" }
+  ]
+},
 
-  bol_cube_check: {
-    text: "CUBE/CUBED noted on the body of the bill?",
-    choices: [
-      { label: "Yes", next: "bol_divide_weight" },
-      { label: "No", next: "bol_request_dimensions" }
-    ]
-  },
+bol_apply_nmfc_per_bol: {
+  text: "No need to calculate the PCF. Apply the NMFC per BOL.",
+  choices: []
+},
 
-  bol_request_dimensions: {
-    text: "Ask for supporting documents showing the dimensions of the shipment.",
-    choices: []
-  },
+bol_dimensions_check: {
+  text: "Dimensions noted on BOL?",
+  choices: [
+    { label: "Yes", next: "bol_calculate_pcf" },
+    { label: "No", next: "bol_cube_check" }
+  ]
+},
 
-  bol_divide_weight: {
-    text: "Divide the total weight to the CUBE/CUBED on the body of the bill to get the new PCF.",
-    choices: [
-      { label: "Continue", next: "bol_lookup_after_calc" }
-    ]
-  },
+bol_cube_check: {
+  text: "CUBE/CUBED noted on the body of the bill?",
+  choices: [
+    { label: "Yes", next: "bol_divide_weight" },
+    { label: "No", next: "bol_request_dimensions" }
+  ]
+},
 
-  bol_calculate_pcf: {
-    text: "Calculate the new PCF.",
-    choices: [
-      { label: "Continue", next: "bol_lookup_after_calc" }
-    ]
-  },
+bol_request_dimensions: {
+  text: "Ask for supporting documents showing the dimensions of the shipment.",
+  choices: []
+},
 
-  bol_lookup_after_calc: {
-    text: "Pull up the NMFC using NMFC lookup.",
-    choices: [
-      { label: "Continue", next: "bol_subclass_check" }
-    ]
-  },
+bol_divide_weight: {
+  text: "Divide the total weight to the CUBE/CUBED on the body of the bill to get the PCF.",
+  choices: [
+    { label: "Continue", next: "bol_lookup_after_calc" }
+  ]
+},
 
-  bol_subclass_check: {
-    text: "Check on what subclass the PCF will fall under.",
-    choices: [
-      { label: "Continue", next: "bol_apply_nmfc_invoice" }
-    ]
-  },
+bol_calculate_pcf: {
+  text: "Calculate the new PCF.",
+  choices: [
+    { label: "Continue", next: "bol_lookup_after_calc" }
+  ]
+},
 
-  bol_apply_nmfc_invoice: {
-    text: "Apply the appropriate NMFC on the invoice.",
-    choices: []
-  }
+bol_lookup_after_calc: {
+  text: "Pull up the NMFC using NMFC lookup.",
+  choices: [
+    { label: "Continue", next: "bol_subclass_check" }
+  ]
+},
 
+bol_subclass_check: {
+  text: "Check on what subclass the PCF will fall under.",
+  choices: [
+    { label: "Continue", next: "bol_apply_nmfc_invoice" }
+  ]
+},
+
+bol_apply_nmfc_invoice: {
+  text: "Apply the appropriate NMFC on the invoice.",
+  choices: []
+},
 };
 
 // --------- Functions ----------
