@@ -735,6 +735,7 @@ function docIdFromText(text){ return text.trim().toLowerCase().replace(/\s+/g,"_
 function getDocId(finalText,type){ return `${docIdFromText(finalText)}_${type}`; }
 
 /* ---------- NODES ---------- */
+
 const NODES = {
 
   /* ===== INTRO ===== */
@@ -821,7 +822,7 @@ const NODES = {
     ]
   },
 
-  /* ===== PART 2 : FPAY TRUE DEBTOR ===== */
+  /* ===== FPAY TRUE DEBTOR CHECK ===== */
 
   fpay_correct_check:{
     text:"Is the PRO billing correctly to an FPAY?",
@@ -844,7 +845,7 @@ const NODES = {
     ]
   },
 
-  /* ---- COMPANY % FPAY PATH ---- */
+  /* ===== COMPANY % FPAY PATH ===== */
 
   percent_fpay_check:{
     text:"If PRO is billing Company % FPAY, is it the correct company in % FPAY per BOL?",
@@ -854,13 +855,13 @@ const NODES = {
     ]
   },
 
-  /* ---- DIRECT FPAY PATH ---- */
+  /* ===== DIRECT FPAY PATH ===== */
 
   direct_fpay_bol_check:{
     text:"If PRO is billing FPAY company directly, is it the correct debtor per BOL?",
     choices:[
-      {label:"YES", next:"bol_states_percent"},
-      {label:"NO", next:"bol_states_only_fpay"}
+      {label:"YES", next:"bol_states_only_fpay"},
+      {label:"NO", next:"bol_states_percent"}
     ]
   },
 
@@ -878,7 +879,7 @@ const NODES = {
     ]
   },
 
-  /* ---- POST BILL ---- */
+  /* ===== POST BILL ===== */
 
   proceed_post_bill:{
     text:
@@ -908,7 +909,7 @@ const NODES = {
   },
 
   bill_shipper_prepaid:{
-    text:"Proceed and bill the Shipper. Make sure to change the terms to PREPAID to pull its ABT.",
+    text:"Proceed and bill the Shipper. Change terms to PREPAID to pull its ABT.",
     choices:[]
   },
 
@@ -926,11 +927,11 @@ const NODES = {
   },
 
   bill_company_fpay_as_3p:{
-    text:"Bill the PRO PREPAID since Company % FPAY is related to the shipper. Then bill the Company % FPAY account directly as 3P.",
+    text:"Bill the PRO PREPAID since Company % FPAY is related to the shipper. Then bill Company % FPAY as 3P.",
     choices:[]
   },
 
-  /* --- CONSIGNEE PATH --- */
+  /* ===== CONSIGNEE PATH ===== */
 
   fpay_consignee_check:{
     text:"Is the FPAY related to the Consignee? (Same name, CAC, Google confirmed)",
@@ -948,10 +949,10 @@ const NODES = {
     ]
   },
 
-  /* --- HISTORY CHECK --- */
+  /* ===== HISTORY CHECK ===== */
 
   shipment_history_check:{
-    text:"Check shipment history of the Shipper and Consignee to see if there is a Company % FPAY that usually pays the invoices.",
+    text:"Check shipment history of the Shipper and Consignee to see if a Company % FPAY usually pays invoices.",
     choices:[
       {label:"FOUND", next:"rebill_common_bt"},
       {label:"NOT FOUND", next:"check_direct_fpay_list"}
@@ -959,11 +960,11 @@ const NODES = {
   },
 
   rebill_common_bt:{
-    text:"A common BT account is available. Proceed with rebilling this account in an attempt of payment.",
+    text:"A common BT account exists. Proceed with rebilling this account in an attempt of payment.",
     choices:[]
   },
 
-  /* --- DIRECT FPAY LIST CHECK --- */
+  /* ===== DIRECT FPAY LIST ===== */
 
   check_direct_fpay_list:{
     text:"If no Company % FPAY was found, check if the PRO is listed under FPAY companies that can be billed directly.",
@@ -974,14 +975,14 @@ const NODES = {
   },
 
   rebill_fpay_direct:{
-    text:"FPAY is on the list. Proceed and rebill the FPAY company directly.",
+    text:"FPAY is on the approved list. Proceed and rebill the FPAY company directly.",
     choices:[]
   },
 
-  /* ===== RATE QUOTE + FINAL FALLBACK ===== */
+  /* ===== RATE QUOTE CHECK ===== */
 
   rate_quote_check:{
-    text:"Is there a Rate Quote available on the BOL that shows the correct debtor per BOL?",
+    text:"Is there a Rate Quote on the BOL that shows the correct debtor?",
     choices:[
       {label:"YES", next:"bill_per_rate_quote"},
       {label:"NO", next:"leave_bill_as_is_vrfy"}
@@ -989,7 +990,7 @@ const NODES = {
   },
 
   bill_per_rate_quote:{
-    text:"Bill the PRO to the debtor per Rate Quote. Do NOT process this as RVSL.",
+    text:"Bill the PRO to the debtor per Rate Quote. Do NOT process as RVSL.",
     choices:[]
   },
 
@@ -1002,7 +1003,6 @@ const NODES = {
   }
 
 };
-
 
 /* ---------- RENDER NODE ---------- */
 function renderNode(node, key="root") {
