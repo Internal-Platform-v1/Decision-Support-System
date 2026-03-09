@@ -441,7 +441,6 @@ header::after{
 ================================= */
 
 .step-images{
-  display:grid;
   grid-template-columns:1fr;
   gap:22px;
   margin:30px 0;
@@ -609,6 +608,223 @@ header::after{
   transform:none;
 }
 
+
+/* =========================
+   PRESENTATION STYLE
+========================= */
+
+.slide-wrapper{
+  max-width:850px;
+  margin:auto;
+}
+
+/* TOP AREA */
+
+.slide-top{
+  margin-bottom:25px;
+}
+
+/* TITLE */
+
+.step-title{
+  font-size:30px;
+  font-weight:800;
+  color:#4d148c;
+  margin-bottom:18px;
+}
+
+/* BODY */
+
+.slide-body{
+  padding:10px 0;
+}
+
+/* TEXT */
+
+.step-content{
+  font-size:17px;
+  line-height:1.7;
+  margin-bottom:30px;
+}
+
+/* IMAGE STACK */
+
+.step-images{
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+
+/* =========================
+   SLIDE TRANSITION SYSTEM
+========================= */
+
+.slide-body{
+  position:relative;
+  overflow:hidden;
+  min-height:260px;
+}
+
+/* default state */
+
+.slide-body.animate-left{
+  animation:slideLeft .45s ease;
+}
+
+.slide-body.animate-right{
+  animation:slideRight .45s ease;
+}
+
+/* NEXT slide */
+
+@keyframes slideLeft{
+
+  from{
+    opacity:0;
+    transform:translateX(60px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+
+}
+
+/* PREVIOUS slide */
+
+@keyframes slideRight{
+
+  from{
+    opacity:0;
+    transform:translateX(-60px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+
+}
+
+/* NAVIGATION */
+
+.slide-navigation{
+  display:flex;
+  justify-content:space-between;
+  margin-top:40px;
+}
+
+.slide-navigation button{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 26px;
+  border-radius:10px;
+  border:none;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .25s ease;
+}
+
+/* PREVIOUS */
+
+#prevBtn{
+  background:#e5e7eb;
+  color:#374151;
+}
+
+#prevBtn:hover{
+  background:#d1d5db;
+}
+
+/* NEXT */
+
+#nextBtn{
+  background:#4d148c;
+  color:white;
+}
+
+#nextBtn:hover{
+  background:#3a0f6b;
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* FINISH BUTTON */
+
+#nextBtn.finish{
+  background:#10b981;
+}
+
+#nextBtn.finish:hover{
+  background:#059669;
+}
+
+/* =========================
+   STEP PROGRESS DOTS
+========================= */
+
+.step-dots{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+  margin-top:14px;
+}
+
+.step-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#d1d5db;
+  transition:all .25s ease;
+}
+
+.step-dot.active{
+  background:#ff6600;
+  transform:scale(1.3);
+}
+
+/* =========================
+   PRESENTATION MODE
+========================= */
+
+.presentation-mode .header-icons,
+.presentation-mode nav,
+.presentation-mode footer{
+  display:none;
+}
+
+.presentation-mode .main{
+  padding:10px;
+}
+
+.presentation-mode .message-box{
+  max-width:1100px;
+  box-shadow:none;
+}
+
+.presentation-mode .step-title{
+  font-size:36px;
+}
+
+.presentation-mode .step-content{
+  font-size:20px;
+}
+
+footer{
+  background:var(--accent);
+  color:white;
+  padding:4px 28px;   /* reduce height */
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  font-size:15px;
+}
 </style>
 </head>
 <body>
@@ -648,35 +864,60 @@ header::after{
       </div>
     </div>
 
-    <div class="volume-content-wrapper">
+   <div class="volume-content-wrapper">
 
-  <div class="step-counter" id="stepCounter"></div>
+<div class="slide-wrapper">
 
- <!-- <div id="stepNav" class="step-nav"></div> -->
+<div class="slide-top">
 
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
+<div class="step-counter" id="stepCounter"></div>
 
-<div class="step-title" id="stepTitle"></div>
+<div class="progress-container">
+<div class="progress-bar" id="progressBar"></div>
+
+</div>
+
+
+</div>
+
+<div class="slide-body fade">
+
+<h2 class="step-title" id="stepTitle"></h2>
 
 <div class="step-content" id="stepContent"></div>
 
 <div class="step-images" id="stepImages"></div>
 
-
-
-  <div class="nav-buttons">
-    <button class="btn-prev" id="prevBtn">Previous</button>
-    <button class="btn-next" id="nextBtn">Next</button>
-  </div>
-
 </div>
 
-  </div>
+<div class="slide-navigation">
+
+<button id="prevBtn">
+<i class="fa-solid fa-arrow-left"></i>
+Previous
+</button>
+
+<button id="nextBtn">
+Next
+<i class="fa-solid fa-arrow-right"></i>
+</button>
+
+</div>
+<div id="stepDots" class="step-dots"></div>
 </div>
 
-<footer>© 2025 EBS Operations</footer>
+</div>
+</div>
+</div>
+
+<footer>
+  <p><span style="font-weight:600;">© 2025 EBS Operations</span></p>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:12px;color:white;">
+      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
+    </span>
+  </div>
+</footer>
 
 <!-- HELP Modal -->
 <div id="helpModal" class="modal">
@@ -874,8 +1115,6 @@ content:`At last, click ACCEPT ALL.`
 ];
 
 let currentStep = 0;
-const stepNav = document.getElementById("stepNav");
-
 const stepTitle = document.getElementById("stepTitle");
 const stepContent = document.getElementById("stepContent");
 const stepImages = document.getElementById("stepImages");
@@ -883,6 +1122,7 @@ const stepCounter = document.getElementById("stepCounter");
 const progressBar = document.getElementById("progressBar");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
+const stepDots = document.getElementById("stepDots");
 
 function renderStep(){
   const step = steps[currentStep];
@@ -905,21 +1145,47 @@ function renderStep(){
   progressBar.style.width = ((currentStep+1)/steps.length*100)+"%";
 
   prevBtn.disabled = currentStep === 0;
- if(currentStep === steps.length - 1){
-  nextBtn.textContent = "Finish";
-  nextBtn.classList.add("finish");
-}else{
-  nextBtn.textContent = "Next";
-  nextBtn.classList.remove("finish");
+
+  if(currentStep === steps.length - 1){
+    nextBtn.textContent = "Finish";
+    nextBtn.classList.add("finish");
+  }else{
+    nextBtn.textContent = "Next";
+    nextBtn.classList.remove("finish");
+  }
+
+  renderDots();
 }
-  
-  renderStepNav();
-}
+
+
+/* KEYBOARD CONTROLS */
+document.addEventListener("keydown", function(e){
+
+  if(e.key === "ArrowRight"){
+    nextBtn.click();
+  }
+
+  if(e.key === "ArrowLeft"){
+    prevBtn.click();
+  }
+
+  if(e.key === "p" || e.key === "P"){
+    togglePresentation();
+  }
+
+});
 
 /* NEXT BUTTON */
 nextBtn.onclick = () => {
 
   if(currentStep < steps.length - 1){
+
+    const slide = document.querySelector(".slide-body");
+
+    slide.classList.remove("animate-left","animate-right");
+    void slide.offsetWidth;
+
+    slide.classList.add("animate-left");
 
     currentStep++;
     renderStep();
@@ -928,7 +1194,6 @@ nextBtn.onclick = () => {
 
     alert("Volume Application Completed.");
 
-    /* RETURN TO STEP 1 */
     currentStep = 0;
     renderStep();
 
@@ -940,38 +1205,20 @@ nextBtn.onclick = () => {
 prevBtn.onclick = () => {
 
   if(currentStep > 0){
+
+    const slide = document.querySelector(".slide-body");
+
+    slide.classList.remove("animate-left","animate-right");
+    void slide.offsetWidth;
+
+    slide.classList.add("animate-right");
+
     currentStep--;
     renderStep();
+
   }
 
 };
-/* skip to other steps options */
-function renderStepNav(){
-
-  stepNav.innerHTML = "";
-
-  steps.forEach((step, index) => {
-
-    const dot = document.createElement("div");
-    dot.className = "step-dot";
-
-    if(index === currentStep){
-      dot.classList.add("active");
-    }
-
-    dot.textContent = index + 1;
-
-    dot.onclick = () => {
-      currentStep = index;
-      renderStep();
-    };
-
-    stepNav.appendChild(dot);
-
-  });
-
-}
-
 
 renderStep();
 
@@ -995,6 +1242,49 @@ document.addEventListener("click", function(e){
 
 });
 
+function renderDots(){
+
+  stepDots.innerHTML="";
+
+  steps.forEach((s,i)=>{
+
+    const dot=document.createElement("div");
+    dot.className="step-dot";
+
+    if(i===currentStep){
+      dot.classList.add("active");
+    }
+
+    dot.onclick = () => {
+      currentStep = i;
+      renderStep();
+    };
+
+    stepDots.appendChild(dot);
+
+  });
+
+}
+
+let presentationMode = false;
+
+function togglePresentation(){
+
+  if(!presentationMode){
+
+    document.body.classList.add("presentation-mode");
+    document.documentElement.requestFullscreen();
+    presentationMode = true;
+
+  }else{
+
+    document.body.classList.remove("presentation-mode");
+    document.exitFullscreen();
+    presentationMode = false;
+
+  }
+
+}
 
 
 /* =========================
@@ -1212,6 +1502,7 @@ function showAllComments(){
       document.getElementById('allCommentsModal').style.display='flex';
     });
 }
+
 
 </script>
 <!-- IMAGE PREVIEW MODAL -->
