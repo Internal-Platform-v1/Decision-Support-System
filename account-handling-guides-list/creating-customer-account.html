@@ -910,55 +910,53 @@ choices:[
 volume_check:{
 text:"Does the customer's location have at least 5 shipments to this location over a 3-month period?",
 choices:[
-{label:"Yes",next:"create_account_yes"},
+{label:"Yes",next:"supervisor_approval_yes"},
 {label:"No",next:"charge_check"}
 ]
 },
 
-
 /* ===== YES PATH ===== */
 
-create_account_yes:{
-text:"Proceed with creating an account.",
+supervisor_approval_yes:{
+text:
+"Ask approval first from your Supervisor if account can be created.\n\n" +
+"Provide and state all the steps you completed on your end to verify that it is possible to create an account.\n\n" +
+"***Any escalation about incorrect account creation will be considered valid.\n\n" +
+"NOTE: If the supervisor allows the agent to create the account and take note of it, the supervisor should still validate if the account is correctly created. If incorrect, the supervisor should coach the agent and delete/flag the account right away.",
 choices:[
-{label:"Next",next:"rebill_check_yes"}
+{label:"Next",next:"rebill_check"}
 ]
 },
-
-rebill_check_yes:{
-text:"Does the balance increase after the rebill and auto-rating?",
-choices:[
-{label:"Yes",next:"update_invoice_allowed"},
-{label:"No",next:"update_invoice_proceed"}
-]
-},
-
 
 /* ===== NO PATH ===== */
 
 charge_check:{
 text:"Is there a charge that needs to be billed to the customer?",
 choices:[
-{label:"Yes",next:"create_account_no"},
-{label:"No",next:"create_account_no"}
+{label:"Yes",next:"supervisor_approval_no"},
+{label:"No",next:"supervisor_approval_no"}
 ]
 },
 
-create_account_no:{
-text:"Proceed with creating an account.",
+supervisor_approval_no:{
+text:
+"Ask approval first from your Supervisor if account can be created.\n\n" +
+"Provide and state all the steps you completed on your end to verify that it is possible to create an account.\n\n" +
+"***Any escalation about incorrect account creation will be considered valid.",
 choices:[
-{label:"Next",next:"rebill_check_no"}
+{label:"Next",next:"rebill_check"}
 ]
 },
 
-rebill_check_no:{
+/* ===== REBILL CHECK ===== */
+
+rebill_check:{
 text:"Does the balance increase after the rebill and auto-rating?",
 choices:[
 {label:"Yes",next:"update_invoice_allowed"},
 {label:"No",next:"update_invoice_proceed"}
 ]
 },
-
 
 /* ===== FINAL ACTIONS ===== */
 
@@ -971,7 +969,6 @@ update_invoice_proceed:{
 text:"Proceed with updating the invoice.",
 choices:[]
 },
-
 };
 
 function renderNode(node,key="acc_intro"){
@@ -1132,4 +1129,3 @@ document.addEventListener("click",function(e){
 </body>
 
 </html>
-
