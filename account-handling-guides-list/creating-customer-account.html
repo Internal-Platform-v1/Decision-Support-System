@@ -689,6 +689,41 @@ header::after{
   transform:scale(1.02);
   transition:0.2s;
 }
+
+/* FedEx Orange Button */
+.guide-link{
+  display:inline-block;
+  padding:10px 16px;
+  background:#ff6600; /* FedEx orange */
+  color:white;
+  border-radius:6px;
+  text-decoration:none;
+  font-weight:600;
+  margin-top:5px;
+}
+
+.guide-link:hover{
+  background:#e65c00;
+}
+
+/* Reminder Box */
+.reminder-box{
+  background:#fff3e6;
+  border-left:5px solid #ff6600;
+  padding:12px;
+  border-radius:6px;
+  font-size:14px;
+}
+
+/* Note Box */
+.note-box{
+  background:#f4f7fb;
+  border-left:5px solid #6c7a89;
+  padding:12px;
+  border-radius:6px;
+  font-size:14px;
+}
+
 </style>
 
 <script>
@@ -919,10 +954,23 @@ choices:[
 
 supervisor_approval_yes:{
 text:
-"Ask approval first from your Supervisor if account can be created.\n\n" +
-"Provide and state all the steps you completed on your end to verify that it is possible to create an account.\n\n" +
-"***Any escalation about incorrect account creation will be considered valid.\n\n" +
-"NOTE: If the supervisor allows the agent to create the account and take note of it, the supervisor should still validate if the account is correctly created. If incorrect, the supervisor should coach the agent and delete/flag the account right away.",
+"Ask approval first from your Supervisor if account can be created.<br><br>" +
+
+"<b>Upon requesting approval, you can review the account creation guide:</b><br>" +
+"<a href='account-creation-steps.html' target='_blank' class='guide-link'>Open Account Creation Steps</a><br><br>" +
+
+"Provide and state all the steps you completed on your end to verify that it is possible to create an account.<br><br>" +
+
+"<div class='reminder-box'>" +
+"<b>REMINDER:</b><br>" +
+"Any escalation about incorrect account creation will be considered valid." +
+"</div><br>" +
+
+"<div class='note-box'>" +
+"<b>NOTE:</b><br>" +
+"If the supervisor allows the agent to create the account and take note of it, the supervisor should still validate if the account is correctly created. If incorrect, the supervisor should coach the agent and delete/flag the account right away." +
+"</div>",
+
 choices:[
 {label:"Next",next:"rebill_check"}
 ]
@@ -941,8 +989,17 @@ choices:[
 supervisor_approval_no:{
 text:
 "Ask approval first from your Supervisor if account can be created.\n\n" +
+
+"<b>Upon requesting approval, you can review the account creation guide:</b><br>" +
+"<a href='account-creation-steps.html' target='_blank' class='guide-link'>Open Account Creation Steps</a><br><br>" +
+
 "Provide and state all the steps you completed on your end to verify that it is possible to create an account.\n\n" +
-"***Any escalation about incorrect account creation will be considered valid.",
+"<div class='reminder-box'>" +
+
+"<b>REMINDER:</b><br>" +
+"Any escalation about incorrect account creation will be considered valid." +
+"</div><br>" ,
+
 choices:[
 {label:"Next",next:"rebill_check"}
 ]
@@ -993,7 +1050,7 @@ function renderNode(node,key="acc_intro"){
  const q=document.createElement("div");
 
 /* TEXT */
-q.innerHTML = "<strong>" + escapeHtml(node.text).replace(/\n/g,"<br>") + "</strong>";
+q.innerHTML = "<strong>" + node.text.replace(/\n/g,"<br>") + "</strong>";
 flowArea.appendChild(q);
 
 /* IMAGE (below text) */
