@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Searching for Account Guide</title>
+<style>
+/* ===== SAME STYLE AS REFERENCE ===== */
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --muted:#64748b;
+  --accent:#4d148c;
+  --accent-2:#ff6600;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:#0f172a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#eef6ff);display:flex;flex-direction:column;min-height:100vh;}
+header, footer{background:var(--accent);color:white;padding:16px 28px;}
+header h1, footer p{margin:0;font-weight:600;}
+.container{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 420px;gap:20px;align-items:start;padding:28px 0;flex:1}
+.card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 8px 28px rgba(2,6,23,0.06);overflow:hidden;opacity:0;transform:translateY(20px)}
+h1{margin:0;font-size:22px;color:var(--accent)}
+p.lead{margin:6px 0 14px;color:var(--muted);font-size:13px}
+.progress-container{display:flex;align-items:center;gap:10px;margin:14px 0}
+.progress-bar{flex:1;height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0%;background:var(--accent);transition:width .3s}
+.progress-text{font-size:13px;color:var(--muted)}
+.node{padding:12px;border-radius:10px;border:1px solid rgba(3,7,18,0.05);background:linear-gradient(180deg,#ffffff,#fbfeff);margin:10px 0;min-height:64px}
+.choice-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.choice{padding:8px 12px;border-radius:999px;background:#eef8f7;border:1px solid rgba(4,20,20,0.03);cursor:pointer;font-weight:600}
+.choice:hover{background:#e0f2fe}
+.path{margin-top:12px;padding:10px;border-radius:10px;background:#f8fafc;border:1px dashed rgba(3,7,18,0.04);font-size:13px}
+.path strong{color:var(--accent)}
+.result{margin-top:12px;padding:12px;border-radius:10px;background:#e6fbfb;border-left:4px solid var(--accent-2);animation:fadeIn .4s ease-in;min-height:56px}
+.note{margin-top:6px;font-size:13px;color:var(--muted);font-style:italic}
+.controls{display:flex;gap:8px;margin-top:12px}
+button{background:var(--accent);color:white;border:none;padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:600}
+button.secondary{background:#fff;color:var(--accent);border:1px solid #ccc}
+.output-card{margin-top:16px;padding:14px;border-radius:10px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.05);animation:fadeIn .45s ease-in;position:relative}
+.output-header{font-weight:700;color:#000;display:flex;justify-content:space-between;align-items:center}
+.output-box{padding:10px;border-left:4px solid var(--accent-2);background:#f8fafc;border-radius:8px;white-space:pre-wrap;font-size:11px}
+.copy-btn{background:var(--accent);color:white;border:none;padding:6px 10px;margin-top:10px;border-radius:6px;cursor:pointer;font-size:13px}
+.copy-btn:hover{opacity:.85}
+.edit-icon{cursor:pointer;font-size:16px;color:var(--accent);margin-left:8px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);align-items:center;justify-content:center;z-index:1000}
+.modal-content{background:#fff;padding:25px;border-radius:12px;min-width:500px;max-width:600px;text-align:center}
+textarea{resize:none;width:100%;min-height:120px;padding:10px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:14px;margin-top:10px}
+button.save-btn{background:var(--accent);color:#fff}
+button.cancel-btn{background:#e5e7eb;color:#111827}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes cardFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes logoFlyIn{from{opacity:0;transform:translateX(-50px) scale(.8)}to{opacity:1;transform:none}}
+
+header img{opacity:0;animation:logoFlyIn 1s ease-out forwards}
+header{position:relative;overflow:hidden}
+header::after{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(120deg,#4d148c,#ff6600,#4d148c);transform:skewX(-20deg);animation:sweep 1s ease-out forwards;opacity:.2}
+@keyframes sweep{to{left:100%}}
+@media(max-width:1200px){.container{grid-template-columns:1fr}}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<!-- this is the header codes that can be used to other guides -->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<header>
+  <div style="display:flex;align-items:center;gap:40px;">
+    <a href="index.html">
+      <img src="fedex.png" alt="FedEx Logo">
+    </a>
+    <nav class="nav-tabs">
+      <a href="index.html" class="tab active">Home</a>
+      <a href="case-directory.html" class="tab">Case Directory</a>
+      <a href="ebs-response-template.html" class="tab">EBS Response</a>
+      <a href="volume-application.html" class="tab">Volume Application</a>  
+    </nav>
+  </div>
+  
+    <div class="header-icons">
+    <div id="clockBtn">
+      <i class="fa-regular fa-clock"></i>
+      <span id="clockText">--:-- PM</span>
+    </div>
+    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
+    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
+  </div>
+  
+</header>
+
+<!-- HELP Modal -->
+<div id="helpModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
+    </div>
+    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
+    <ul>
+      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
+      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
+      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
+      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
+    </ul>
+    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
+  </div>
+</div>
+
+<!-- COMMENT MODALS -->
+<div id="commentModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
+    </div>
+    <div class="rating-container">
+      <i class="fa-solid fa-star rating-star" data-value="1"></i>
+      <i class="fa-solid fa-star rating-star" data-value="2"></i>
+      <i class="fa-solid fa-star rating-star" data-value="3"></i>
+      <i class="fa-solid fa-star rating-star" data-value="4"></i>
+      <i class="fa-solid fa-star rating-star" data-value="5"></i>
+    </div>
+    <input type="text" id="commentName" placeholder="Your Name (optional)">
+    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
+    <div class="comment-modal-footer">
+      <button class="btn" onclick="sendComment()">Send</button>
+      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
+    </div>
+  </div>
+</div>
+
+<div id="allCommentsModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
+    </div>
+    <div id="commentsList"></div>
+  </div>
+</div>
+
+<!-- TIME & CALENDAR POPUP -->
+<div id="timeCalendarPopup">
+
+  <div class="popup-time" id="popupTime"></div>
+  <div class="popup-date" id="popupDate"></div>
+
+  <div class="calendar-header">
+    <span id="prevMonth">‹</span>
+    <div id="monthYear" class="calendar-title"></div>
+    <span id="nextMonth">›</span>
+  </div>
+
+  <div class="calendar-grid" id="calendarGrid"></div>
+
+</div>
+
+<script>
+/* =========================
+   CALENDAR LOGIC
+========================= */
+
+function updateClock(){
+  const now = new Date();
+
+  // HEADER TIME (Hour + Minute only)
+  const headerTime = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  }).format(now);
+
+  // POPUP TIME (Hour + Minute + Second)
+  const popupTime = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  }).format(now);
+
+  const popupDate = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  }).format(now);
+
+  // Update header
+  document.getElementById("clockText").textContent = headerTime;
+
+  // Update popup
+  document.getElementById("popupTime").textContent = popupTime;
+  document.getElementById("popupDate").textContent = popupDate;
+}
+// START CLOCK
+updateClock();
+setInterval(updateClock, 1000);
+
+
+const clockBtn = document.getElementById("clockBtn");
+const calendarPopup = document.getElementById("timeCalendarPopup");
+const calendarGrid = document.getElementById("calendarGrid");
+const monthYear = document.getElementById("monthYear");
+
+let currentDate = new Date();
+
+clockBtn.onclick = function(e){
+  e.stopPropagation();
+  calendarPopup.style.display =
+    calendarPopup.style.display === "block" ? "none" : "block";
+  renderCalendar(currentDate);
+};
+
+document.addEventListener("click", function(){
+  calendarPopup.style.display = "none";
+});
+
+document.getElementById("prevMonth").onclick = function(e){
+  e.stopPropagation();
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar(currentDate);
+};
+
+document.getElementById("nextMonth").onclick = function(e){
+  e.stopPropagation();
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar(currentDate);
+};
+
+function renderCalendar(date){
+  calendarGrid.innerHTML = "";
+
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  monthYear.textContent =
+    date.toLocaleString("en-PH", { month: "long", year: "numeric" });
+
+  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  dayNames.forEach(d=>{
+    const el = document.createElement("div");
+    el.className="day-name";
+    el.textContent=d;
+    calendarGrid.appendChild(el);
+  });
+
+  for(let i=0;i<firstDay;i++){
+    const empty=document.createElement("div");
+    calendarGrid.appendChild(empty);
+  }
+
+ const today = new Date(
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Manila",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).format(new Date())
+);
+
+  for(let d=1; d<=daysInMonth; d++){
+    const day=document.createElement("div");
+    day.className="day";
+    day.textContent=d;
+
+    if(
+      d===today.getDate() &&
+      month===today.getMonth() &&
+      year===today.getFullYear()
+    ){
+      day.classList.add("today");
+    }
+
+    calendarGrid.appendChild(day);
+  }
+}
+/* =========================
+   MODALS
+========================= */
+
+document.getElementById("helpIcon").onclick = () =>
+  document.getElementById("helpModal").style.display = "flex";
+
+document.getElementById("commentIcon").onclick = () => {
+  clearCommentForm();
+  document.getElementById("commentModal").style.display = "flex";
+};
+
+function closeHelp(){document.getElementById("helpModal").style.display="none";}
+function closeComment(){document.getElementById("commentModal").style.display="none";}
+function closeAllComments(){document.getElementById("allCommentsModal").style.display="none";}
+
+
+/* =========================
+   FEEDBACK SYSTEM
+========================= */
+
+let selectedRating = 0;
+
+document.querySelectorAll('.rating-star').forEach(star=>{
+  star.onclick=function(){
+    selectedRating=parseInt(this.dataset.value);
+    document.querySelectorAll('.rating-star').forEach(s=>
+      s.classList.toggle('selected', parseInt(s.dataset.value)<=selectedRating)
+    );
+  };
+});
+
+
+function sendComment(){
+  const name = document.getElementById('commentName').value.trim();
+  const comment = document.getElementById('commentText').value.trim();
+
+  if(selectedRating===0){
+    alert("Select a rating.");
+    return;
+  }
+
+  db.collection("feedback").add({
+    rating:selectedRating,
+    name:name||"Anonymous",
+    comment:comment,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(()=>{
+    alert("Saved!");
+    clearCommentForm();
+  }).catch(()=>alert("Save failed."));
+}
+
+
+function clearCommentForm(){
+  selectedRating=0;
+  document.getElementById('commentName').value="";
+  document.getElementById('commentText').value="";
+  document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));
+}
+
+
+let unsubscribeListener=null;
+
+function showAllComments(){
+  const listEl=document.getElementById('commentsList');
+  listEl.innerHTML="Loading…";
+
+  if(unsubscribeListener) unsubscribeListener();
+
+  unsubscribeListener=db.collection("feedback")
+    .orderBy("createdAt","desc")
+    .onSnapshot(snap=>{
+      listEl.innerHTML="";
+      if(snap.empty){
+        listEl.innerHTML="<p>No feedback yet.</p>";
+      }
+      snap.forEach(doc=>{
+        const d=doc.data();
+        const div=document.createElement('div');
+        div.className="comment-list-item";
+        div.innerHTML=`
+          <div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div>
+          <strong>${d.name}</strong>
+          <p>${d.comment}</p>
+        `;
+        listEl.appendChild(div);
+      });
+      document.getElementById('allCommentsModal').style.display='flex';
+    });
+}
+</script>
+
+<style>
+/* =========================
+   PROFESSIONAL MODALS
+========================= */
+/* MODALS */
+.modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:1000;
+}
+.modal-content {
+  background:white;
+  border-radius:10px;
+  padding:24px;
+  width:100%;
+  max-width:500px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+.modal-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+.modal-close {
+  font-size:22px;
+  cursor:pointer;
+  color:var(--muted);
+}
+.modal-close:hover {color:var(--accent);}
+
+/* STAR RATING */
+.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
+.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
+.rating-star:hover{transform:scale(1.3);}
+.rating-star.selected{color:var(--accent-dark);}
+
+/* COMMENTS */
+.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
+.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
+.comment-list-item:last-child{border:none;}
+input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
+textarea{resize:none;min-height:80px;}
+
+/* TIME CALENDAR */
+#timeCalendarPopup {
+  display:none;
+  position:absolute;
+  top:60px; right:20px;
+  background:white;
+  border-radius:8px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.25);
+  padding:16px;
+  width:310px;
+  z-index:900;
+}
+#timeCalendarPopup h3 {
+  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
+  margin-bottom:8px;
+}
+.calendar-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#f0f0f0;
+  padding:8px;
+  border-radius:6px;
+}
+.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
+.calendar-title{font-weight:700;}
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+  margin-top:8px;
+}
+.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
+.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
+.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
+.calendar-grid .day:hover{background:#f0f0f0;}
+
+/* COMMENT LINK */
+.link-text{
+  color:var(--accent-dark);
+  cursor:pointer;
+  text-decoration:underline;
+  font-size:14px;
+  margin-top:10px;
+  display:block;
+}
+
+/* STAR RATING COLORS */
+.rating-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.rating-star {
+  cursor: pointer;
+  font-size: 28px;
+  color: #ccc; /* default grey */
+  transition: color .2s, transform .2s;
+}
+
+.rating-star:hover {
+  transform: scale(1.3);
+}
+
+.rating-star.selected {
+  color: #FF6600; /* FedEx orange */
+}
+
+/* footer alignment */
+.comment-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.link-text {
+  color: var(--accent-dark);
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+/* COMMENT LIST STAR COLORS */
+#commentsList .stars {
+  color: #FF6600; /* FedEx orange */
+  font-size: 18px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ---------- HEADER ---------- */
+header{
+  background:var(--accent);
+  color:white;
+  padding:16px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  overflow:hidden;
+  z-index:1;
+}
+header img{height:40px; animation:logoFlyIn 1s ease-out forwards; opacity:0;}
+.nav-tabs{display:flex; gap:30px;}
+.tab{color:white; text-decoration:none; font-weight:600; font-size:16px; position:relative; padding:6px 0; transition: opacity 0.2s;}
+.tab:hover{opacity:0.8;}
+.tab.active::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:3px;background:#ff6600;border-radius:3px;}
+
+.header-icons{display:flex;align-items:center;gap:20px;}
+#clockBtn{cursor:pointer; display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; color:white; position:relative;}
+#clockBtn:hover{transform:scale(1.1);}
+.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
+.header-icon:hover{transform:scale(1.3);}
+.header-icon.active{color:var(--accent-dark);}
+
+/* ---------- HEADER ANIMATIONS ---------- */
+@keyframes logoFlyIn {0%{opacity:0;transform:translateX(-50px) scale(0.8);}100%{opacity:1;transform:translateX(0) scale(1);}}
+header::after{
+  content:"";
+  position:absolute; top:0; left:-100%;
+  width:100%; height:100%;
+  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
+  transform:skewX(-20deg);
+  animation:sweep 1s ease-out forwards;
+  z-index:0;
+  opacity:0.2;
+}
+@keyframes sweep{0%{left:-100%;}100%{left:100%;}}
+
+/*pop up time style*/
+/* POPUP TIME STYLE (Windows-like) */
+.popup-time{
+  font-size:34px;
+  font-weight:600;
+  text-align:left;
+  margin-bottom:4px;
+  color:#111;
+}
+
+#timeCalendarPopup {
+  background:white;}
+
+.popup-date{
+  font-size:14px;
+  color:#555;
+  margin-bottom:14px;
+  text-align:left;
+}
+</style>
+
+<!-- this is the end header codes that can be used to other guides -->
+
+
+<div class="container">
+  <div class="card">
+    <h1>Searching for Account Guide</h1>
+    <p class="lead">Follow the flow below for Searching an Account.</p>
+
+    <div class="progress-container">
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+      <div id="progressText" class="progress-text">Not started</div>
+    </div>
+
+    <div id="flowArea" class="node"></div>
+
+    <div class="controls">
+      <button id="goBackBtn" class="secondary" style="display:none;">← Go Back</button>
+      <button id="startOverBtn" class="secondary" style="display:none;">Start Over</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="node"><strong>Selected Path</strong><div id="selectedPath" class="path">No steps selected yet.</div></div>
+    <div class="node"><strong>Recommended Action</strong><div id="recommendation" class="result">No recommendation yet.</div></div>
+  </div>
+
+  <div class="card" id="suggestedPanel" style="display:none;">
+    <div class="output-card">
+      <div class="output-header">Suggested Comment <span class="edit-icon" onclick="attemptEdit('comment')">✏️</span></div>
+      <div id="suggestedComment" class="output-box"></div>
+    </div>
+    <div class="output-card">
+      <div class="output-header">Possible CORR CODE <span class="edit-icon" onclick="attemptEdit('corr')">✏️</span></div>
+      <div id="suggestedCorrCode" class="output-box"></div>
+    </div>
+    <div class="output-card">
+      <div class="output-header">Suggested Email <span class="edit-icon" onclick="attemptEdit('email')">✏️</span></div>
+      <div id="suggestedEmail" class="output-box"></div>
+      <button class="copy-btn" id="copyEmailBtn">📋 Copy</button>
+    </div>
+  </div>
+</div>
+
+<footer style="display:flex;align-items:center;justify-content:space-between;">
+  <p>© 2025 EBS Operations</p>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:12px;color:white;">
+      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
+    </span>
+  </div>
+</footer>
+
+<!-- Password + Edit Modals -->
+<div id="passwordModal" class="modal">
+  <div class="modal-content">
+    <h3>Enter Password to Edit</h3>
+    <input type="password" id="adminPassword" placeholder="Password">
+    <div style="margin-top:18px;">
+      <button class="save-btn" onclick="checkPassword()">Submit</button>
+      <button class="cancel-btn" onclick="closePasswordModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h3 id="modalTitle">Edit</h3>
+    <div class="note">Edits will be saved to Firestore.</div>
+    <textarea id="editTextarea"></textarea>
+    <div style="margin-top:18px;text-align:right;">
+      <button class="save-btn" onclick="saveEdit()">Save</button>
+      <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+  authDomain:"bdgg-database.firebaseapp.com",
+  projectId:"bdgg-database"
+});
+const db=firebase.firestore();
+const COLLECTION="weight_bol_templates";
+
+let path=[],historyStack=[],currentFinalRecommendation="",currentEditType="";
+
+function escapeHtml(t){return t?t.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])):"";}
+function docIdFromText(t){return t.trim().toLowerCase().replace(/\s+/g,"_");}
+function getDocId(t,type){return `${docIdFromText(t)}_${type}`;}
+
+const NODES={
+
+/* INTRO */
+
+dual_intro:{
+text:"Is the account a dual account (parcel and freight account)?",
+choices:[
+{label:"Yes",next:"dual_yes_flow"},
+{label:"No",next:"dual_search_start"}
+]},
+
+dual_yes_end:{
+text:"Follow the Dual Account Parcel/Freight process.",
+choices:[]
+},
+
+/* SEARCHING FOR ACCOUNT */
+
+dual_search_start:{
+text:"Open Citrix: https://fdxworkspace.fedex.com/Citrix/StoreWeb/",
+choices:[
+{label:"Continue",next:"dual_open_aem"}
+]},
+
+dual_open_aem:{
+text:"Open 'Account Establishment and Maintenance'.",
+choices:[
+{label:"Continue",next:"dual_customer_search"}
+]},
+
+dual_customer_search:{
+text:"Click 'Customer Account Search'.",
+choices:[
+{label:"Continue",next:"dual_search_minimal"}
+]},
+
+dual_search_minimal:{
+text:"Search using minimal info (first 3–4 characters of address, state, zip, or city).",
+choices:[
+{label:"Continue",next:"dual_results_found"}
+]},
+
+dual_results_found:{
+text:"Did search results appear?",
+choices:[
+{label:"Yes",next:"dual_third_party_check"},
+{label:"No",next:"dual_adjust_date"}
+]},
+
+dual_adjust_date:{
+text:"Adjust search date range (AEM only shows last 6 months by default) then search again.",
+choices:[]
+},
+
+/* THIRD PARTY CHECK */
+
+dual_third_party_check:{
+text:"Is there a 3rd Party / Bill-To involved?",
+choices:[
+{label:"Yes",next:"dual_review_codes"},
+{label:"No",next:"dual_select_best"}
+]},
+
+dual_select_best:{
+text:"Select best account based on attributes (pricing, invoice group, payment history).",
+choices:[
+{label:"Continue",next:"dual_review_results"}
+]},
+
+/* ABT CHECK */
+
+dual_review_codes:{
+text:"Review existing Shipper/Consignee codes for ABT relationship.",
+choices:[
+{label:"Continue",next:"dual_abt_match"}
+]},
+
+dual_abt_match:{
+text:"Does Shipper or Consignee have ABT matching the 3rd Party?",
+choices:[
+{label:"Yes",next:"dual_refresh_terms"},
+{label:"No",next:"dual_search_shipper"}
+]},
+
+dual_refresh_terms:{
+text:"Update/refresh terms to pull up ABT.",
+choices:[]
+},
+
+/* SEARCH SHIPPER */
+
+dual_search_shipper:{
+text:"Search using: 3rd Party Name + Shipper Address.",
+choices:[
+{label:"Continue",next:"dual_better_shipper"}
+]},
+
+dual_better_shipper:{
+text:"Better Shipper Code found with correct ABT?",
+choices:[
+{label:"Yes",next:"dual_update_sc"},
+{label:"No",next:"dual_search_consignee"}
+]},
+
+dual_update_sc:{
+text:"Update SC to pull ABT.",
+choices:[]
+},
+
+/* SEARCH CONSIGNEE */
+
+dual_search_consignee:{
+text:"Search using: 3rd Party Name + Consignee Address.",
+choices:[
+{label:"Continue",next:"dual_better_consignee"}
+]},
+
+dual_better_consignee:{
+text:"Better Consignee Code found with correct ABT?",
+choices:[
+{label:"Yes",next:"dual_update_cc"},
+{label:"No",next:"dual_check_3pl"}
+]},
+
+dual_update_cc:{
+text:"Update CC to pull ABT.",
+choices:[]
+},
+
+/* 3PL CHECK */
+
+dual_check_3pl:{
+text:"Does the 3rd Party look like 3PL / FPA?",
+choices:[
+{label:"Yes",next:"dual_search_3pl"},
+{label:"No",next:"dual_true_third"}
+]},
+
+dual_search_3pl:{
+text:"Search using only the 3PL address.",
+choices:[
+{label:"Continue",next:"dual_multiple_companies"}
+]},
+
+dual_multiple_companies:{
+text:"Multiple companies in care of them?",
+choices:[
+{label:"Yes",next:"dual_confirm_3pl"},
+{label:"No",next:"dual_true_third"}
+]},
+
+dual_confirm_3pl:{
+text:"Confirm 3PL relationship.",
+choices:[
+{label:"Continue",next:"dual_determine_terms"}
+]},
+
+dual_true_third:{
+text:"Treat as True 3rd Party.",
+choices:[
+{label:"Continue",next:"dual_determine_terms"}
+]},
+
+/* TERMS */
+
+dual_determine_terms:{
+text:"Determine Terms:\n• If related to Shipper → PREPAID\n• If related to Consignee → COLLECT\n• If unrelated to both → PREPAID",
+choices:[
+{label:"Continue",next:"dual_review_results"}
+]},
+
+/* ACCOUNT REVIEW */
+
+dual_review_results:{
+text:"Review account results.",
+choices:[
+{label:"Continue",next:"dual_check_type"}
+]},
+
+dual_check_type:{
+text:"Check Account Type (S = Shipping / B = Billing).",
+choices:[
+{label:"Continue",next:"dual_check_color"}
+]},
+
+dual_check_color:{
+text:"Check Account Color.",
+choices:[
+{label:"TEAL (Preferred – has pricing)",next:"dual_open_profile"},
+{label:"WHITE (No pricing – use if needed)",next:"dual_open_profile"}
+]},
+
+/* PROFILE VALIDATION */
+
+dual_open_profile:{
+text:"Open Account Profile.",
+choices:[
+{label:"Continue",next:"dual_abt_cac"}
+]},
+
+dual_abt_cac:{
+text:"Does the account have ABT + CAC?",
+choices:[
+{label:"Yes",next:"dual_good_account"},
+{label:"No",next:"dual_check_invoice"}
+]},
+
+dual_good_account:{
+text:"Good Account.",
+choices:[]
+},
+
+dual_check_invoice:{
+text:"Check Invoice Profile.",
+choices:[
+{label:"Continue",next:"dual_invoice_group"}
+]},
+
+dual_invoice_group:{
+text:"Is the Invoice Group valid?",
+choices:[
+{label:"Yes (REGI / Good account)",next:"dual_good_account"},
+{label:"No (UEST / PSTL)",next:"dual_avoid_account"}
+]},
+
+dual_avoid_account:{
+text:"UEST / PSTL – Avoid this account if possible.",
+choices:[]
+},
+
+
+
+dual_yes_flow:{
+text:"Customer provided account that is CACS / CACFUS.",
+choices:[
+{label:"Continue",next:"dual_need_verification"}
+]},
+
+dual_need_verification:{
+text:"Need alternate mailing address or account verification?",
+choices:[
+{label:"Yes",next:"dual_open_ecis"},
+{label:"No",next:"dual_continue_normal"}
+]},
+
+dual_continue_normal:{
+text:"Continue normal process on handling the account provided by the customer.",
+choices:[]
+},
+
+/* ECIS SEARCH */
+
+dual_open_ecis:{
+text:"Open ECIS: https://ecis.prod.cloud.fedex.com/ecis/",
+choices:[
+{label:"Continue",next:"dual_ecis_login"}
+]},
+
+dual_ecis_login:{
+text:"Log in using Employee ID + LDAP Password.",
+choices:[
+{label:"Continue",next:"dual_ecis_home"}
+]},
+
+dual_ecis_home:{
+text:"ECIS Home Page.",
+choices:[
+{label:"Continue",next:"dual_enter_account"}
+]},
+
+dual_enter_account:{
+text:"Enter Account Number in Quick Search.",
+choices:[
+{label:"Continue",next:"dual_account_info"}
+]},
+
+dual_account_info:{
+text:"Account Information Displays.",
+choices:[
+{label:"Continue",next:"dual_compare_express"}
+]},
+
+dual_compare_express:{
+text:"Compare Express Information (Name + Billing Address).",
+choices:[
+{label:"Continue",next:"dual_express_diff"}
+]},
+
+dual_express_diff:{
+text:"Does Express info differ from Freight account in ACCOPS?",
+choices:[
+{label:"Yes",next:"dual_search_freight"},
+{label:"No",next:"dual_use_existing"}
+]},
+
+dual_use_existing:{
+text:"Use existing Freight account information.",
+choices:[]
+},
+
+/* FREIGHT SEARCH */
+
+dual_search_freight:{
+text:"Use Name / Address from ECIS to search for Freight Account in AEM.",
+choices:[
+{label:"Continue",next:"dual_identify_relationship"}
+]},
+
+dual_identify_relationship:{
+text:"Identify Billing Relationship.",
+choices:[
+{label:"Continue",next:"dual_billing_type"}
+]},
+
+dual_billing_type:{
+text:"What type of billing?",
+choices:[
+{label:"Shipper Account",next:"dual_shipper_account"},
+{label:"Consignee Account",next:"dual_consignee_account"},
+{label:"3rd Party Account",next:"dual_third_party_account"}
+]},
+
+/* SHIPPER */
+
+dual_shipper_account:{
+text:"Check Terms.",
+choices:[
+{label:"Continue",next:"dual_prepaid"}
+]},
+
+dual_prepaid:{
+text:"Prepaid. Invoice billed to ABT if shipper account has ABT (Account Bill To) or billed directly to shipper if it has no ABT.",
+choices:[]
+},
+
+/* CONSIGNEE */
+
+dual_consignee_account:{
+text:"Check Terms.",
+choices:[
+{label:"Continue",next:"dual_collect"}
+]},
+
+dual_collect:{
+text:"Collect. Invoice billed to ABT if consignee account has ABT (Account Bill To) or billed directly to consignee if it has no ABT.",
+choices:[]
+},
+
+/* THIRD PARTY */
+
+dual_third_party_account:{
+text:"Use 'Bill To' information for correct invoice destination.",
+choices:[]
+}
+
+};
+
+
+function renderNode(node,key="dual_intro"){
+  const flowArea=document.getElementById("flowArea");
+  const panel=document.getElementById("suggestedPanel");
+  const progressFill=document.getElementById("progressFill");
+  const progressText=document.getElementById("progressText");
+
+  flowArea.innerHTML="";
+  if(!node) return;
+
+  if(!node.choices.length){
+    currentFinalRecommendation=node.text;
+    recommendation.innerHTML=`<strong>${escapeHtml(node.text)}</strong>`;
+    generateSuggested(finalText=node.text);
+  } else {
+    currentFinalRecommendation="";
+    recommendation.innerText="No recommendation yet.";
+    panel.style.display="none";
+  }
+
+  const q=document.createElement("div");
+  q.innerHTML=`<strong>${escapeHtml(node.text)}</strong>`;
+  flowArea.appendChild(q);
+
+  if(node.choices.length){
+    const list=document.createElement("div");
+    list.className="choice-list";
+    node.choices.forEach(c=>{
+      const btn=document.createElement("div");
+      btn.className="choice";
+      btn.textContent=c.label;
+      btn.onclick=()=>{
+        historyStack.push({key,path:[...path]});
+        path.push({question:node.text,answer:c.label});
+        renderNode(NODES[c.next],c.next);
+        updateSelectedPath();
+      };
+      list.appendChild(btn);
+    });
+    flowArea.appendChild(list);
+  }
+
+if(key==="dual_intro"){
+  progressFill.style.width="0%";
+  progressText.textContent="Not started";
+}
+else if(!node.choices.length){
+  // FINAL NODE
+  progressFill.style.width="100%";
+  progressText.textContent="Complete";
+}
+else{
+  const steps = Math.max(1, path.length);
+  const percent = Math.min((steps / 10) * 100, 95); 
+  progressFill.style.width = percent + "%";
+  progressText.textContent = `Step ${steps}`;
+}
+
+  goBackBtn.style.display=historyStack.length && key!=="dual_intro"?"inline-block":"none";
+  startOverBtn.style.display=key!=="dual_intro"?"inline-block":"none";
+}
+
+function updateSelectedPath(){
+  selectedPath.innerHTML=path.length?path.map((p,i)=>`<strong>Step ${i+1}:</strong> ${escapeHtml(p.question)} → <strong><em>${escapeHtml(p.answer)}</em></strong>`).join("<br>"):"No steps selected yet.";
+}
+
+async function generateSuggested(finalText){
+  const panel=document.getElementById("suggestedPanel");
+  for(const type of ["comment","email","corr"]){
+    const ref=db.collection(COLLECTION).doc(getDocId(finalText,type));
+    const snap=await ref.get();
+    if(!snap.exists) await ref.set({text:"",type});
+    const val=snap.exists?(snap.data().text||""):"";
+    if(type==="comment") suggestedComment.innerText=val;
+    if(type==="email") suggestedEmail.innerText=val;
+    if(type==="corr") suggestedCorrCode.innerText=val;
+  }
+  panel.style.display="block";
+}
+
+function attemptEdit(type){currentEditType=type;passwordModal.style.display="flex";}
+function closePasswordModal(){passwordModal.style.display="none";}
+function checkPassword(){if(adminPassword.value==="admin"){closePasswordModal();openEditModal();} else alert("Incorrect password");}
+function openEditModal(){
+  const map={comment:"suggestedComment",email:"suggestedEmail",corr:"suggestedCorrCode"};
+  editTextarea.value=document.getElementById(map[currentEditType]).innerText;
+  modalTitle.textContent=`Edit ${currentEditType.toUpperCase()}`;
+  editModal.style.display="flex";
+}
+function closeEditModal(){editModal.style.display="none";}
+async function saveEdit(){
+  const val=editTextarea.value.trim();
+  if(!val) return alert("Cannot save empty text!");
+  const ref=db.collection(COLLECTION).doc(getDocId(currentFinalRecommendation,currentEditType));
+  await ref.set({text:val,type:currentEditType});
+  document.getElementById(currentEditType==="comment"?"suggestedComment":currentEditType==="email"?"suggestedEmail":"suggestedCorrCode").innerText=val;
+  closeEditModal(); alert("Saved!");
+}
+
+goBackBtn.onclick=()=>{if(historyStack.length){const last=historyStack.pop();path=last.path||[];renderNode(NODES[last.key],last.key);updateSelectedPath();}};
+startOverBtn.onclick=()=>{path=[];historyStack=[];currentFinalRecommendation="";selectedPath.textContent="No steps selected yet";suggestedPanel.style.display="none";renderNode(NODES.dual_intro,"dual_intro");};
+copyEmailBtn.onclick=()=>navigator.clipboard.writeText(suggestedEmail.innerText||"").then(()=>alert("Email copied!"));
+
+renderNode(NODES.dual_intro,"dual_intro");
+
+window.addEventListener('load',()=>{
+  document.querySelectorAll('.card').forEach((c,i)=>{
+    c.style.animation=`cardFadeIn .6s ease-out forwards`;
+    c.style.animationDelay=`${1+i*.15}s`;
+  });
+});
+</script>
+</body>
+
+</html>
