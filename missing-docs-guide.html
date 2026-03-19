@@ -776,7 +776,7 @@ choices:[
 ]
 },
 
-/* ================= DELIVERY RECEIPT ================= */
+/* ================= DELIVERY RECEIPT (UPDATED) ================= */
 
 dr_delivered:{
 text:"Was the shipment delivered?",
@@ -792,7 +792,7 @@ choices:[]
 },
 
 dr_review:{
-text:"Does the dispute require a Review?",
+text:"Does the dispute require a DR Review?",
 choices:[
 {label:"Yes",next:"dr_spotted"},
 {label:"No",next:"dr_address"}
@@ -808,26 +808,31 @@ dr_spotted:{
 text:"Was shipment tagged as SPOTTED or DRIVER SPOTTED?",
 choices:[
 {label:"Yes",next:"dr_email_sc"},
+{label:"No",next:"dr_delivery_fee"}
+]
+},
+
+/* NEW FLOW */
+dr_delivery_fee:{
+text:"Is this a Delivery Fee Dispute Case?\n(Examples: Liftgate, Inside Delivery, Sort & Segregate)",
+choices:[
+{label:"Yes",next:"dr_email_sc"},
 {label:"No",next:"dr_follow_sop"}
 ]
 },
 
 dr_email_sc:{
-text:"Email destination service center missing POD.\n\nExample:\n\nPOD for PRO xxxx is missing / not available on image.",
+text:"Email destination service center (missing POD).\n\nExample:\nPOD for PRO XXXX is missing / not available on image.",
 choices:[
-{label:"Over 30 days?",next:"dr_over_30"}
+{label:"Over 60 days?",next:"dr_over_60"}
 ]
 },
 
-dr_follow_sop:{
-text:"Address the customer dispute accordingly if DR is needed.\n\nFollow sending email SOP.",
-choices:[]
-},
-
-dr_over_30:{
-text:"Over 30 days?",
+/* UPDATED FROM 30 → 60 DAYS */
+dr_over_60:{
+text:"Is the shipment over 60 days?",
 choices:[
-{label:"Yes",next:"dr_invoice_check"},
+{label:"Yes",next:"dr_remove_dispute"},
 {label:"No",next:"dr_invoice_check"}
 ]
 },
@@ -836,17 +841,22 @@ dr_invoice_check:{
 text:"Is the invoice over 45 days?",
 choices:[
 {label:"Yes",next:"dr_remove_dispute"},
-{label:"No",next:"dr_continue"}
+{label:"No",next:"dr_continue_followup"}
 ]
 },
 
 dr_remove_dispute:{
-text:"Remove dispute according to customer request and clear proof of delivery after 45 days of shipment.",
+text:"Remove disputed charges due to no POD received within allowed timeframe.",
 choices:[]
 },
 
-dr_continue:{
-text:"Continue to monitor case.",
+dr_continue_followup:{
+text:"Continue to follow-up.\n\nTrack case and follow up weekly.\nIf no response, include District Operations Manager.",
+choices:[]
+},
+
+dr_follow_sop:{
+text:"If DR is not required for review, address dispute accordingly.\n\nFollow standard email SOP if needed.",
 choices:[]
 },
 
@@ -918,7 +928,7 @@ text:"If it is less than 90 days, continue attempting to retrieve the document.\
 choices:[]
 },
 
-/* ================= INSPECTION ================= */
+/* ================= INSPECTION (UPDATED) ================= */
 
 inspection_start:{
 text:"What is the dispute of the customer?",
@@ -931,16 +941,11 @@ choices:[
 },
 
 inspect_class_keyword:{
-text:"Is there any Inspection Keywords (CLAS, ADIM) on the body of the Bill?",
+text:"Is there any Inspection Keywords (CLAS, ADIM, etc.) in the body of the bill?",
 choices:[
 {label:"Yes",next:"inspect_freight_research"},
 {label:"No",next:"inspect_review_class"}
 ]
-},
-
-inspect_freight_research:{
-text:"Move to Freight Research – Inspection Review.",
-choices:[]
 },
 
 inspect_review_class:{
@@ -949,11 +954,38 @@ choices:[]
 },
 
 inspect_weight_keyword:{
-text:"Is there any Inspection Keywords (ADIM, REWE) on the body of the Bill?",
+text:"Is there any Inspection Keywords (ADIM, REWE, etc.) in the body of the bill?",
 choices:[
-{label:"Yes",next:"inspect_freight_research"},
+{label:"Yes",next:"inspect_weight_type"},
 {label:"No",next:"inspect_review_weight"}
 ]
+},
+
+/* NEW SPLIT (ADIM vs REWE) */
+inspect_weight_type:{
+text:"What keyword is present?",
+choices:[
+{label:"ADIM",next:"inspect_freight_research"},
+{label:"REWE",next:"inspect_rewe_check"}
+]
+},
+
+inspect_rewe_check:{
+text:"Is this a weight dispute with REWE keyword?",
+choices:[
+{label:"Yes",next:"inspect_follow_reweigh"},
+{label:"No",next:"inspect_update_weight"}
+]
+},
+
+inspect_follow_reweigh:{
+text:"Follow Missing Reweigh Certificate Process.",
+choices:[]
+},
+
+inspect_update_weight:{
+text:"Update weight per BOL.",
+choices:[]
 },
 
 inspect_review_weight:{
@@ -967,7 +999,7 @@ choices:[]
 },
 
 inspect_photo:{
-text:"Is Inspection Photo Available in Shipment History?",
+text:"Is Inspection Photo available in Shipment History?",
 choices:[
 {label:"Yes",next:"inspect_freight_research"},
 {label:"No",next:"inspect_email_terminal"}
@@ -975,11 +1007,16 @@ choices:[
 },
 
 inspect_email_terminal:{
-text:"Email Inspecting Terminal listed on Bill requesting Inspection Photo.",
+text:"Email inspecting terminal (TERM listed on the bill) and request Inspection Photo.",
 choices:[]
 },
 
-/* ================= REWEIGH ================= */
+inspect_freight_research:{
+text:"Move to Freight Research – Inspection Review.",
+choices:[]
+},
+
+/* ================= REWEIGH (UPDATED) ================= */
 
 reweigh_start:{
 text:"Does PRO contain REWE keyword?",
@@ -990,7 +1027,7 @@ choices:[
 },
 
 reweigh_move_review:{
-text:"Move the case to Reweigh Review for Non Reweigh Agent.\n\nIf the case is already on Reweigh Review follow Reweigh Review Process for Missing Reweigh Certificate.",
+text:"Move the case to Reweigh Review (for Non-Reweigh Agent).\n\nIf already in Reweigh Review, follow Missing Reweigh Certificate process.",
 choices:[]
 },
 
@@ -1003,25 +1040,39 @@ choices:[
 },
 
 reweigh_regular:{
-text:"Follow regular SOP for non Reweigh Dispute.",
+text:"Follow regular SOP for non-Reweigh dispute.",
 choices:[]
 },
 
 reweigh_keywords:{
 text:"Does PRO contain any Inspection or Reweigh keyword?",
 choices:[
-{label:"Yes",next:"reweigh_inspection_keywords"},
+{label:"Yes",next:"reweigh_keyword_type"},
 {label:"No",next:"reweigh_review_weight"}
 ]
 },
 
-reweigh_review_weight:{
-text:"Review weight per BOL and update accordingly.",
+/* CLEAN SPLIT */
+reweigh_keyword_type:{
+text:"What Inspection/Reweigh keywords are present?",
+choices:[
+{label:"ADIM / SDIM / CAPL / CCD / INSP / VICH",next:"reweigh_to_inspection"},
+{label:"REWE / WCHC / OREV / OWGT",next:"reweigh_to_reweigh_review"}
+]
+},
+
+reweigh_to_inspection:{
+text:"Move to Inspection Review.",
 choices:[]
 },
 
-reweigh_inspection_keywords:{
-text:"What Inspection Keywords are on the body of the Bill?\n\nADIM, SDIM, CAPL, CCD, INSP, VICH → Move to Inspection Review\n\nREWE, WCHC, OREV, OWGT → Move the case to Reweigh Review for Non Reweigh Agent.",
+reweigh_to_reweigh_review:{
+text:"Move the case to Reweigh Review (for Non-Reweigh Agent).\n\nIf already in Reweigh Review, follow Missing Reweigh Certificate process.",
+choices:[]
+},
+
+reweigh_review_weight:{
+text:"Review weight per BOL and update accordingly.",
 choices:[]
 },
 
