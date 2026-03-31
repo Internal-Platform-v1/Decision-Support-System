@@ -1,1120 +1,2002 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf‑8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>BD Tools — Main Menu</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-:root{
-  --bg:#f4f7fb;
-  --card:#ffffff;
-  --muted:#64748b;
-  --accent:#4d148c;
-  --accent-dark:#3a0f6b;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color:#0f172a;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:linear-gradient(180deg,var(--bg),#eef6ff);
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
-
-/* HEADER */
-header, footer{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-}
-header{display:flex;align-items:center;justify-content:space-between;}
-header h1, footer p{margin:0;font-weight:600;}
-.header-icons{display:flex;align-items:center;gap:20px;}
-#clockBtn{
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:18px;
-  font-weight:600;
-  color:white;
-  position:relative;
-}
-#clockBtn:hover{transform:scale(1.1);}
-.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
-.header-icon:hover{transform:scale(1.3);}
-.header-icon.active{color:var(--accent-dark);}
-
-/* CARDS */
-.shell{
-  max-width:1400px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr 1fr;
-  gap:20px;
-  padding:10px 0;
-  flex:1;
-}
-.card{
-  background:var(--card);
-  border-radius:12px;
-  padding:10px;
-  box-shadow:0 8px 28px rgba(2,6,23,0.06);
-  text-align:center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 14px 32px rgba(2,6,23,0.15);
-  border: 1px solid var(--accent);
-}
-.card h1{margin:0;font-size:20px;color:var(--accent);}
-.lead{margin:8px 0 18px;color:var(--muted);font-size:13px;}
-.btn{
-  display:inline-block;
-  margin-top:12px;
-  margin-bottom:13px;
-  padding:12px 18px;
-  border-radius:10px;
-  background:var(--accent);
-  color:#fff;
-  text-decoration:none;
-  font-weight:700;
-  transition: transform .2s, box-shadow .2s;
-}
-.btn:hover {
-  transform: translateY(-3px) scale(1.04);
-  background:var(--accent-dark);
-}
-
-/* MODALS */
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  z-index:1000;
-}
-.modal-content {
-  background:white;
-  border-radius:10px;
-  padding:24px;
-  width:100%;
-  max-width:500px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-.modal-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-.modal-close {
-  font-size:22px;
-  cursor:pointer;
-  color:var(--muted);
-}
-.modal-close:hover {color:var(--accent);}
-
-/* STAR RATING */
-.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
-.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
-.rating-star:hover{transform:scale(1.3);}
-.rating-star.selected{color:var(--accent-dark);}
-
-/* COMMENTS */
-.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
-.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
-.comment-list-item:last-child{border:none;}
-input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
-
-/* TIME CALENDAR */
-#timeCalendarPopup {
-  display:none;
-  position:absolute;
-  top:60px; right:20px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  padding:16px;
-  width:310px;
-  z-index:900;
-}
-#timeCalendarPopup h3 {
-  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
-  margin-bottom:8px;
-}
-.calendar-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#f0f0f0;
-  padding:8px;
-  border-radius:6px;
-}
-.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
-.calendar-title{font-weight:700;}
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
-}
-.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
-.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
-.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
-.calendar-grid .day:hover{background:#f0f0f0;}
-
-/* COMMENT LINK */
-.link-text{
-  color:var(--accent-dark);
-  cursor:pointer;
-  text-decoration:underline;
-  font-size:14px;
-  margin-top:10px;
-  display:block;
-}
-
-/* STAR RATING COLORS */
-.rating-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.rating-star {
-  cursor: pointer;
-  font-size: 28px;
-  color: #ccc; /* default grey */
-  transition: color .2s, transform .2s;
-}
-
-.rating-star:hover {
-  transform: scale(1.3);
-}
-
-.rating-star.selected {
-  color: #FF6600; /* FedEx orange */
-}
-
-/* footer alignment */
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-/* COMMENT LIST STAR COLORS */
-#commentsList .stars {
-  color: #FF6600; /* FedEx orange */
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-
-@media(max-width:1200px){ .shell{grid-template-columns:1fr 1fr;} }
-@media(max-width:800px){ .shell{grid-template-columns:1fr;} }
-
-/* ---------- LOGO ANIMATION ---------- */
-@keyframes logoFlyIn {
-  0% { opacity: 0; transform: translateX(-50px) scale(0.8); }
-  100% { opacity: 1; transform: translateX(0) scale(1); }
-}
-
-header img {
-  opacity: 0; /* start hidden */
-  animation: logoFlyIn 1s ease-out forwards;
-}
-
-/* ---------- CARD FADE & SLIDE UP ---------- */
-@keyframes cardFadeIn {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* ---------- OPTIONAL SWOOSH BEHIND HEADER ---------- */
-header {
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-header::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform: skewX(-20deg);
-  animation: sweep 1s ease-out forwards;
-  z-index: 0;
-  opacity: 0.2;
-}
-
-@keyframes sweep {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-/* ===== NAVIGATION TABS ===== */
-
-.nav-tabs {
-  display: flex;
-  gap: 30px;
-}
-
-.tab {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 16px;
-  position: relative;
-  padding: 6px 0;
-  transition: opacity 0.2s ease;
-}
-
-.tab:hover {
-  opacity: 0.8;
-}
-
-.tab.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 100%;
-  height: 3px;
-  background: #ff6600; /* FedEx orange */
-  border-radius: 3px;
-}
-
-/* Welcome Section Styles */
-.welcome-section {
-  /* 1. We use more purple stops and only one orange stop in the middle */
-  background: linear-gradient(-45deg, 
-    #4D148C, /* FedEx Purple */
-    #330d5e, /* Darker Purple */
-    #FF6600, /* FedEx Orange (The Accent) */
-    #4D148C, /* FedEx Purple */
-    #330d5e  /* Darker Purple */
-  );
-  
-  /* 2. Increase size to 400% to make the orange "stripe" very thin and rare */
-  background-size: 400% 400%;
-  
-  /* 3. Slow down the animation to 18 seconds for a "calmer" feel */
-  animation: fedexShimmer 20s ease infinite;
-
-  color: white;
-  padding: 20px 20px;
-  text-align: center;
-  border-radius: 0 0 40px 40px;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 30px rgba(77, 20, 140, 0.2);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-/* 4. The movement logic remains the same, but it will feel much more subtle */
-@keyframes fedexShimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-.welcome-content h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.welcome-content p {
-  font-size: 1.1rem;
-  max-width: 700px;
-  margin: 0 auto 25px;
-  opacity: 0.9;
-  line-height: 1.6;
-}
-
-.welcome-badge {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  border-radius: 50px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Quick fix for your button colors to match the brand */
-.btn {
-  background-color: #FF6600; /* FedEx Orange */
-  color: white;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #e55c00;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  background: #efefef;
-  border-radius: 4px;
-  overflow: hidden;
-  width: 70%;
-  max-width: 600px;
-  margin: 0 auto 28px auto;
-  height: 56px;
-}
-
-.search-left-accent {
-  width: 4px;
-  height: 100%;
-  background: #6b21a8; /* purple accent */
-}
-
-.search-content {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  padding: 0 20px; /* slightly more padding now */
-}
-
-.search-icon {
-  width: 20px;
-  height: 20px;
-  color: #1d4ed8; /* blue icon */
-  margin-right: 12px;
-}
-
-#guideSearch {
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  font-weight: 600;
-  outline: none;
-  width: 100%;
-  color: #444;
-}
-
-.search-btn {
-  background: #ff6a00;
-  border: none;
-  width: 64px;
-  height: 100%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.search-btn svg {
-  width: 22px;
-  height: 22px;
-}
-#guideSearch::placeholder {
-  color: #9ca3af;   /* soft gray */
-  font-weight: 500;
-}
-
-/*pop up time style*/
-/* POPUP TIME STYLE (Windows-like) */
-.popup-time{
-  font-size:34px;
-  font-weight:600;
-  text-align:left;
-  margin-bottom:4px;
-  color:#111;
-}
-
-#timeCalendarPopup {
-  background:white;}
-
-.popup-date{
-  font-size:14px;
-  color:#555;
-  margin-bottom:14px;
-  text-align:left;
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  padding:19px 28px;   /* reduce height */
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  font-size:15px;
-}
-
-</style>
-</head>
-
-<body>
-
-<header>
-  <div style="display:flex;align-items:center;gap:40px;">
-    
-    <!-- FedEx Logo (UNCHANGED) -->
-    <a href="index.html">
-  <img src="fedex.png" alt="FedEx Logo" style="height:40px;">
-</a>
-
-    <!-- Navigation Tabs -->
-    <nav class="nav-tabs">
-      <a href="index.html" class="tab active">Home</a>
-      <a href="case-directory.html" class="tab">Case Directory</a>
-      <a href="ebs-response-template.html" class="tab">EBS Response</a>
-      <a href="volume-application.html" class="tab">Volume Application</a> 
-    </nav>
-
-  </div>
-
-  <div class="header-icons">
-    <div id="clockBtn">
-      <i class="fa-regular fa-clock"></i>
-      <span id="clockText">--:-- PM</span>
-    </div>
-
-    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
-    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
-  </div>
-</header>
-
-
-<div id="timeCalendarPopup">
-
-  <div class="popup-time" id="popupTime"></div>
-  <div class="popup-date" id="popupDate"></div>
-
-  <div class="calendar-header">
-    <span id="prevMonth">‹</span>
-    <div id="monthYear" class="calendar-title"></div>
-    <span id="nextMonth">›</span>
-  </div>
-
-  <div class="calendar-grid" id="calendarGrid"></div>
-
-</div>
-
-
-<div class="welcome-section">
-  <div class="welcome-content">
-    <h1>Welcome to the Decision Support System</h1>
-    <p>Select a guideline below to begin the step-by-step resolution process. Follow the prompts carefully to ensure billing accuracy and policy compliance.</p>
-  </div>
-</div>
-
-
-<div class="search-bar">
-  <div class="search-left-accent"></div>
-
-  <div class="search-content">
-    <input 
-      type="text" 
-      id="guideSearch" 
-      placeholder="Find Guide..."
-      onkeyup="filterGuides()"
-    />
-  </div>
-
-  <button class="search-btn" onclick="filterGuides()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white">
-      <circle cx="11" cy="11" r="7"></circle>
-      <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
-    </svg>
-  </button>
-</div>
-
-<p id="noResults" style="text-align:center; display:none; font-weight:600; color:#6b7280;">
-  No guides found.
-</p>
-
-<div class="shell" id="guideContainer">
-
-  <div class="card">
-    <h1>BD— General Guide</h1>
-    <p class="lead">Standard Billing Dispute decision tree used for billing dispute cases.</p>
-    <a class="btn" href="BD GENERAL GUIDE.html">Open BD General Guide →</a>
-    <div class="small">Helps you with the Billing Dispute decision assistant.</div>
-  </div>
-
- <div class="card">
-  <h1>Pricing General Guides</h1>
-  <p class="lead">Directory of pricing dispute guides including Fuel, Surcharge, ePRT, Base Rater, and other pricing tools.</p>
-  <a class="btn" href="pricing-guides.html">Open Pricing Guides →</a>
-  <div class="small">Use this when investigating pricing disputes, surcharge issues, or rating discrepancies.</div>
-</div>
-
-  <div class="card">
-    <h1>OVC — General Guideline</h1>
-    <p class="lead">Official OVC guideline for handling customer claims and disputes.</p>
-    <a class="btn" href="OVC GENERAL GUIDE.html">Open OVC Guide →</a>
-    <div class="small">Reference this for OVC processes and requirements.</div>
-  </div>
-
-  <div class="card">
-    <h1>LOA — Rebill Guide</h1>
-    <p class="lead">
-      Decision tree for correcting BOL debtor, 3PL, FPAY, or Collector via LOA.</p>
-    <a class="btn" href="Rebill per LOA General Guide.html">Open LOA Guide →</a>
-    <div class="small">Used when handling rebill / LOA-related corrections.</div>
-  </div>
-
-  <div class="card">
-    <h1>Reweigh — General Guide</h1>
-    <p class="lead">Decision guide for reweigh disputes, reversals, invalid reweigh codes, and FPAD eligibility.</p>
-    <a class="btn" href="Reweigh General Guide.html">Open Reweigh Guide →</a>
-    <div class="small">Use this for weight disputes and reweigh corrections.</div>
-  </div>
-
-<div class="card">
-  <h1>FPAY — PAUD Audit Guide</h1>
-  <p class="lead">
-    Decision tree for FPAY / PAUD review using BOL-based true debtor validation.
-  </p>
-  <a class="btn" href="PAUD FPAY Guide.html">Open FPAY PAUD Guide →</a>
-  <div class="small">
-    This is the best guide to help you decide in FPAY.
-  </div>
-</div>
-
-<div class="card">
-  <h1>Correction Code Guide</h1>
-  <p class="lead">
-    Decision tree to determine the correct CORR CODE for billing corrections.
-  </p>
-  <a class="btn" href="Correction Code Guide.html">Open Correction Code Guide →</a>
-  <div class="small">
-    Use this when identifying the correct CORR code for terms, account, pricing, accessorial, or service updates.
-  </div>
-</div>
-
-<div class="card">
-  <h1>FedEx Direct Guide</h1>
-  <p class="lead">
-    Decision tree for FedEx Direct disputes, service type validation, and surcharge removal.
-  </p>
-  <a class="btn" href="FedEx Direct Guide.html">Open FedEx Direct Guide →</a>
-  <div class="small">
-    Use this when handling FedEx Direct (Basic / Standard / Premium) disputes and surcharge conflicts.
-  </div>
-</div>
-
-  <div class="card">
-  <h1>Class Update Guide</h1>
-  <p class="lead">
-    Decision tree for handling Class Update requests (Per Reweigh Weight and Per BOL).
-  </p>
-  <a class="btn" href="class-update-guide.html">Open Class Update Guide →</a>
-  <div class="small">
-    Use this when processing class corrections based on reweigh or BOL documentation.
-  </div>
-</div>
-
-
-  <div class="card">
-  <h1>Rate & Volume Quote Guide</h1>
-  <p class="lead">
-    Decision tree for validating LTL and Volume Quotes noted per BOL.
-  </p>
-  <a class="btn" href="rate-volume-guide.html">
-    Open Rate/Volume Quote Guide →
-  </a>
-  <div class="small">
-    Use this when handling quote validation and BOL-based rate disputes.
-  </div>
-</div>
-
-
-<div class="card">
-  <h1>CRAU — Request Decision Guide</h1>
-  <p class="lead">
-    Decision tree for CRAU requests including Redelivery, Debtor Change,
-    Account Update, Terms Change, and Reconsignment.
-  </p>
-  <a class="btn" href="crau-guide.html">
-    Open CRAU Guide →
-  </a>
-  <div class="small">
-    Use this when validating FBC requests under CRAU category.
-  </div>
-</div>
-
-  <div class="card">
-  <h1>Weight Update per BOL Guide</h1>
-  <p class="lead">
-    Decision tree for handling weight disputes and pallet weight validation based on BOL documentation.
-  </p>
-  <a class="btn" href="weight-update-per-bol-guide.html">
-    Open Weight Update Guide →
-  </a>
-  <div class="small">
-    Use this when validating BOL weight corrections, pallet deductions, and document requests.
-  </div>
-</div>
-
-<div class="card">
-  <h1>Account Handling Guide</h1>
-  <p class="lead">
-    Decision tree for handling Archived, Deleted, and DNU account disputes.
-  </p>
-
-  <a class="btn" href="account-handling-guides.html">
-    Open Account Handling Guide →
-  </a>
-
-  <div class="small">
-    Use this when validating account status and billing instructions.
-  </div>
-</div>
-
-<div class="card">
-  <h1>RVSL — Debtor Update Guide</h1>
-  <p class="lead">
-    Decision tree for processing RVSL requests and determining the correct debtor based on BOL terms, refusing party, and shipment conditions.
-  </p>
-
-  <a class="btn" href="rvsl-guide.html">
-    Open RVSL Guide →
-  </a>
-
-  <div class="small">
-    Use this when validating RVSL requests, debtor responsibility, and refusal scenarios.
-  </div>
-</div>
-
-<div class="card">
-  <h1>Verifying Tracking Number Guide</h1>
-  <p class="lead">
-    Step-by-step guide for validating freight information. Helps determine if the freight was delivered correctly or needs correction.
-  </p>
-  <a class="btn" href="information-validation-guide.html">
-    Open Pro Validation Guide →
-  </a>
-  <div class="small">
-    Use this guide when a customer questions delivery details, PRO movement, or address discrepancies.
-  </div>
-</div>
-
-<div class="card">
-  <h1>Missing Documents Guide</h1>
-  <p class="lead">
-    Step-by-step guide for requesting missing documents from Imaging Team and Origin Centers.
-  </p>
-
-  <a class="btn" href="missing-docs-guide.html">
-    Open Missing Documents Guide →
-  </a>
-
-  <div class="small">
-    Use this when BOL is missing or not available on image.
-  </div>
-</div>
-
-
- <div class="card">
-  <h1>Other Surcharges Guide</h1>
-  <p class="lead">
-    Decision tree for handling additional surcharges not covered in standard pricing guides.
-  </p>
-  <a class="btn" href="other-surcharges-guide.html">
-    Open Other Surcharges Guide →
-  </a>
-  <div class="small">
-    Use this when validating uncommon or special surcharge disputes.
-  </div>
-</div> 
-
-<div class="card">
-  <h1>Sort & Segregate Guide</h1>
-  <p class="lead">
-    Decision tree for validating Sort & Segregate disputes based on BOL, DR, keywords, and billing masks.
-  </p>
-
-  <a class="btn" href="sort-and-segregate-guide.html">
-    Open Sort & Seg Guide →
-  </a>
-
-  <div class="small">
-    Use this when handling Sort & Seg (SSG) fee disputes and billing corrections.
-  </div>
-</div>
-
-<div class="card">
-  <h1>Notify Fee Guide</h1>
-  <p class="lead">
-    Decision tree for handling Notify Fee (NTFY) disputes including DR validation, appointment requirements, and courtesy review.
-  </p>
-
-  <a class="btn" href="notify-fee-guide.html">
-    Open Notify Fee Guide →
-  </a>
-
-  <div class="small">
-    Use this when validating notify charges, appointment instructions, and one-time courtesy eligibility.
-  </div>
-</div>  
-  
-<div class="card">
-  <h1>Service Level/Type Guide</h1>
-  <p class="lead">
-    Decision tree for validating service level disputes, reviewing BOL service type, and updating service level on FBC.
-  </p>
-  <a class="btn" href="service-level-type-guide.html">
-    Open Service Level/Type Guide →
-  </a>
-  <div class="small">
-    Use this when checking Priority vs Economy disputes, volume quote overrides, and FBC service level updates.
-  </div>
-</div>
-  
-</div>
-
-<!-- HELP Modal -->
-<div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
-    <ul>
-      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
-      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
-      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
-      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
-    </ul>
-    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
-  </div>
-</div>
-
-
-<!-- COMMENT Modal -->
-<style>
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between; /* puts send left, view all right */
-  align-items: center;
-  margin-top: 12px;
-}
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-</style>
-
-<!-- COMMENT Modal -->
-<div id="commentModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
-    </div>
-
-    <div class="rating-container">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-
-    <!-- Footer: Send button (left) and view link (right) -->
-    <div class="comment-modal-footer">
-      <button class="btn" onclick="sendComment()">Send</button>
-      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-    </div>
-  </div>
-</div>
-
-<!-- ALL COMMENTS Modal -->
-<div id="allCommentsModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
-    </div>
-    <div id="commentsList"></div>
-  </div>
-</div>
-
-
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-<script>
-// FIREBASE INIT
-const firebaseConfig = {
-  apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-  authDomain: "bdgg-database.firebaseapp.com",
-  projectId: "bdgg-database",
-  storageBucket: "bdgg-database.appspot.com",
-  messagingSenderId: "43574975434",
-  appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-
-
-// ---------- HEADER CLOCK ----------
-function updateClock(){
-  const now = new Date();
-
-  // HEADER TIME (Hour + Minute only)
-  const headerTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).format(now);
-
-  // POPUP TIME (Hour + Minute + Second)
-  const popupTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupDate = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(now);
-
-  // Update header
-  document.getElementById("clockText").textContent = headerTime;
-
-  // Update popup
-  document.getElementById("popupTime").textContent = popupTime;
-  document.getElementById("popupDate").textContent = popupDate;
-}
-// START CLOCK
-updateClock();
-setInterval(updateClock, 1000);
-
-
-const clockBtn = document.getElementById("clockBtn");
-const calendarPopup = document.getElementById("timeCalendarPopup");
-const calendarGrid = document.getElementById("calendarGrid");
-const monthYear = document.getElementById("monthYear");
-
-let currentDate = new Date();
-
-clockBtn.onclick = function(e){
-  e.stopPropagation();
-  calendarPopup.style.display =
-    calendarPopup.style.display === "block" ? "none" : "block";
-  renderCalendar(currentDate);
-};
-
-document.addEventListener("click", function(){
-  calendarPopup.style.display = "none";
-});
-
-document.getElementById("prevMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-};
-
-document.getElementById("nextMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-};
-
-function renderCalendar(date){
-  calendarGrid.innerHTML = "";
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  monthYear.textContent =
-    date.toLocaleString("en-PH", { month: "long", year: "numeric" });
-
-  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  dayNames.forEach(d=>{
-    const el = document.createElement("div");
-    el.className="day-name";
-    el.textContent=d;
-    calendarGrid.appendChild(el);
-  });
-
-  for(let i=0;i<firstDay;i++){
-    const empty=document.createElement("div");
-    calendarGrid.appendChild(empty);
-  }
-
- const today = new Date(
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date())
-);
-
-  for(let d=1; d<=daysInMonth; d++){
-    const day=document.createElement("div");
-    day.className="day";
-    day.textContent=d;
-
-    if(
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ){
-      day.classList.add("today");
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BD Tools — Premium Main Menu</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#07111f;
+      --bg-soft:#0c1728;
+      --panel:#0f1c31;
+      --panel-2:#12233d;
+      --card:#ffffff;
+      --card-soft:#f8fafc;
+      --text:#0f172a;
+      --text-soft:#475569;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.18);
+      --white-line:rgba(255,255,255,.08);
+      --accent:#6d28d9;
+      --accent-2:#4d148c;
+      --accent-3:#ff6600;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10);
+      --radius-xl:28px;
+      --radius-lg:20px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --max:1440px;
+      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    calendarGrid.appendChild(day);
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+      z-index:0;
+    }
+
+    a{color:inherit}
+    button,input,textarea{font:inherit}
+
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    .container{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+    }
+
+    /* HEADER */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(7,17,31,.72);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .topbar-inner{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+      min-height:82px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:28px;
+      min-width:0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      text-decoration:none;
+      flex-shrink:0;
+    }
+
+    .brand-logo{
+      height:40px;
+      display:block;
+      filter:drop-shadow(0 10px 20px rgba(0,0,0,.25));
+    }
+
+    .brand-meta{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+    }
+
+    .brand-kicker{
+      color:rgba(255,255,255,.64);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      margin-bottom:4px;
+    }
+
+    .brand-title{
+      color:#fff;
+      font-size:15px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .nav-tabs{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .tab{
+      text-decoration:none;
+      color:rgba(255,255,255,.78);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:600;
+      transition:.22s ease;
+      position:relative;
+    }
+
+    .tab:hover{
+      color:#fff;
+      background:rgba(255,255,255,.07);
+    }
+
+    .tab.active{
+      color:#fff;
+      background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-shrink:0;
+    }
+
+    .clock-pill,
+    .icon-btn{
+      border:none;
+      cursor:pointer;
+      transition:.22s ease;
+    }
+
+    .clock-pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      font-weight:700;
+    }
+
+    .clock-pill:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.12);
+    }
+
+    .clock-label{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      line-height:1.05;
+    }
+
+    .clock-small{
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.54);
+      margin-bottom:3px;
+    }
+
+    .icon-btn{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      font-size:18px;
+    }
+
+    .icon-btn:hover{
+      transform:translateY(-2px);
+      background:linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    }
+
+    /* HERO */
+    .hero-wrap{
+      padding:28px 0 26px;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius:36px;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(255,102,0,.22), transparent 18%),
+        radial-gradient(circle at 15% 18%, rgba(255,255,255,.18), transparent 20%),
+        linear-gradient(135deg, #4d148c 0%, #5b1aae 48%, #1e293b 100%);
+      padding:34px;
+      box-shadow:var(--shadow-xl);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:999px;
+      pointer-events:none;
+    }
+
+    .hero::before{
+      width:420px;
+      height:420px;
+      top:-220px;
+      right:-120px;
+      background:radial-gradient(circle, rgba(255,255,255,.18), transparent 62%);
+    }
+
+    .hero::after{
+      width:280px;
+      height:280px;
+      bottom:-160px;
+      left:-80px;
+      background:radial-gradient(circle, rgba(255,102,0,.18), transparent 65%);
+    }
+
+    .hero-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:minmax(0, 1.35fr) minmax(320px, .95fr);
+      gap:24px;
+      align-items:stretch;
+    }
+
+    .hero-copy{
+      min-width:0;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0;
+      color:#fff;
+      font-size:clamp(2rem, 4vw, 3.6rem);
+      line-height:.98;
+      letter-spacing:-.05em;
+      max-width:820px;
+    }
+
+    .hero p{
+      margin:16px 0 22px;
+      color:rgba(255,255,255,.82);
+      font-size:16px;
+      line-height:1.7;
+      max-width:760px;
+    }
+
+    .hero-stats{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:14px;
+      margin-top:22px;
+    }
+
+    .stat-card{
+      border-radius:20px;
+      padding:18px 18px 16px;
+      background:rgba(255,255,255,.10);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      backdrop-filter:blur(10px);
+    }
+
+    .stat-value{
+      color:#fff;
+      font-size:26px;
+      font-weight:800;
+      letter-spacing:-.04em;
+      margin-bottom:6px;
+    }
+
+    .stat-label{
+      color:rgba(255,255,255,.7);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .hero-side{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-width:0;
+    }
+
+    .quick-panel{
+      background:rgba(255,255,255,.10);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      border-radius:28px;
+      padding:22px;
+      backdrop-filter:blur(12px);
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .panel-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      color:#fff;
+      font-weight:700;
+      font-size:18px;
+      margin-bottom:14px;
+    }
+
+    .panel-title span:last-child{
+      color:rgba(255,255,255,.6);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .quick-list{
+      display:grid;
+      gap:12px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+
+    .quick-item{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+
+    .quick-icon{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+      color:#fff;
+      flex-shrink:0;
+    }
+
+    .quick-item strong{
+      display:block;
+      color:#fff;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .quick-item span{
+      display:block;
+      color:rgba(255,255,255,.7);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .live-strip{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(7,17,31,.24);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      color:#fff;
+    }
+
+    .live-strip strong{
+      display:block;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .live-strip span{
+      color:rgba(255,255,255,.68);
+      font-size:13px;
+    }
+
+    .pulse{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:#22c55e;
+      box-shadow:0 0 0 0 rgba(34,197,94,.55);
+      animation:pulse 1.9s infinite;
+      flex-shrink:0;
+    }
+
+    @keyframes pulse{
+      0%{ box-shadow:0 0 0 0 rgba(34,197,94,.55); }
+      70%{ box-shadow:0 0 0 16px rgba(34,197,94,0); }
+      100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); }
+    }
+
+    /* SEARCH SECTION */
+    .search-wrap{
+      margin-top:-18px;
+      margin-bottom:18px;
+    }
+
+    .search-card{
+      background:rgba(255,255,255,.82);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.8);
+      box-shadow:var(--shadow-lg);
+      border-radius:28px;
+      padding:18px;
+    }
+
+    .search-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+
+    .search-copy h2{
+      margin:0 0 6px;
+      font-size:24px;
+      letter-spacing:-.03em;
+    }
+
+    .search-copy p{
+      margin:0;
+      color:var(--text-soft);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .chip-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:#eef2ff;
+      color:#4338ca;
+      font-size:13px;
+      font-weight:700;
+      border:1px solid #e0e7ff;
+      white-space:nowrap;
+    }
+
+    .search-bar{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:center;
+    }
+
+    .search-input-wrap{
+      position:relative;
+    }
+    
+    #clearSearchBtn{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:999px;
+  background:#e2e8f0;
+  color:#475569;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  display:none;
+  transition:.2s ease;
+}
+
+#clearSearchBtn:hover{
+  background:#cbd5e1;
+  color:#0f172a;
+}
+
+mark.search-highlight{
+  background:#fef08a;
+  color:#0f172a;
+  padding:0 2px;
+  border-radius:4px;
+}
+
+    .search-input-wrap i{
+      position:absolute;
+      left:18px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#64748b;
+      font-size:16px;
+      pointer-events:none;
+    }
+
+    #guideSearch{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:18px;
+      background:#f8fafc;
+      min-height:60px;
+      padding:0 54px 0 50px;
+      font-size:16px;
+      font-weight:600;
+      color:#0f172a;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.22);
+      transition:.2s ease;
+    }
+
+    #guideSearch:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08);
+    }
+
+    #guideSearch::placeholder{ color:#94a3b8; font-weight:500; }
+
+    .search-btn{
+      border:none;
+      min-height:60px;
+      padding:0 22px;
+      border-radius:18px;
+      background:linear-gradient(135deg, #ff6600, #ff7b22);
+      color:#fff;
+      font-weight:800;
+      letter-spacing:.01em;
+      cursor:pointer;
+      box-shadow:0 16px 28px rgba(255,102,0,.22);
+      transition:.22s ease;
+    }
+
+    .search-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 20px 34px rgba(255,102,0,.28);
+    }
+
+    #noResults{
+      text-align:center;
+      display:none;
+      font-weight:700;
+      color:#64748b;
+      padding:24px 10px 2px;
+    }
+    
+    .guide-filters{
+  width:min(calc(100% - 32px), var(--max));
+  margin:14px auto 0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+}
+
+.filter-chip{
+  border:none;
+  padding:10px 16px;
+  border-radius:999px;
+  background:#ffffff;
+  color:#475569;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  transition:.2s ease;
+}
+
+.filter-chip:hover{
+  transform:translateY(-1px);
+  background:#f8fafc;
+  color:#0f172a;
+}
+
+.filter-chip.active{
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+  color:#fff;
+  box-shadow:0 12px 22px rgba(77,20,140,.18);
+}
+
+    /* GUIDE GRID */
+.search-wrap{
+  margin-top:0;
+  margin-bottom:70px;
+}
+
+.grid-wrap{
+  padding:20px 0 58px;
+  position:relative;
+  z-index:1;
+  scroll-margin-top:120px;
+}
+
+.grid-wrap .container{
+  background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.94));
+  border:1px solid rgba(226,232,240,.95);
+  border-radius:34px;
+  padding:28px;
+  box-shadow:0 24px 60px rgba(15,23,42,.08);
+}
+
+.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:22px;
+  flex-wrap:wrap;
+}
+
+.section-head-left{
+  flex:1 1 680px;
+  min-width:280px;
+}
+
+.section-head-left h3{
+  margin:0 0 8px;
+  font-size:34px;
+  letter-spacing:-.05em;
+  color:#0f172a !important;
+  font-weight:900;
+}
+
+.section-head-left p{
+  margin:0;
+  color:#64748b !important;
+  font-size:15px;
+  line-height:1.72;
+  max-width:760px;
+}
+
+.section-note{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 18px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #ffffff, #f8fafc);
+  border:1px solid rgba(203,213,225,.92);
+  box-shadow:0 12px 24px rgba(15,23,42,.06);
+  color:#334155;
+  font-weight:800;
+  font-size:13px;
+  white-space:nowrap;
+  flex:0 0 auto;
+}
+
+.shell{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:22px;
+  align-items:stretch;
+}
+
+.card{
+  position:relative;
+  background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border:1px solid rgba(226,232,240,.96);
+  border-radius:28px;
+  padding:18px 18px 20px;
+  box-shadow:0 18px 40px rgba(15,23,42,.08);
+  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height:292px;
+  height:100%;
+  opacity:0;
+  transform:translateY(20px);
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:0;
+  height:4px;
+  border-radius:0 0 999px 999px;
+  background:linear-gradient(90deg, #4d148c, #7c3aed, #ff6600);
+  opacity:.98;
+}
+
+.card::after{
+  content:"";
+  position:absolute;
+  top:-56px;
+  right:-46px;
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(124,58,237,.08), transparent 68%);
+  pointer-events:none;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 26px 52px rgba(15,23,42,.12);
+  border-color:rgba(167,139,250,.55);
+}
+
+.card-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #f5f3ff, #ede9fe);
+  color:#5b21b6;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.02em;
+  border:1px solid #e9ddff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+.guide-icon{
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  color:#4d148c;
+  background:linear-gradient(180deg, rgba(77,20,140,.08), rgba(255,102,0,.08));
+  box-shadow:inset 0 0 0 1px rgba(77,20,140,.08);
+  font-size:17px;
+  flex-shrink:0;
+}
+
+.card h1{
+  margin:0 0 10px;
+  font-size:18px;
+  letter-spacing:-.03em;
+  line-height:1.22;
+  color:#111827;
+}
+
+.lead{
+  margin:0 0 18px;
+  color:#516173;
+  font-size:14px;
+  line-height:1.72;
+  min-height:84px;
+}
+
+.small{
+  margin-top:auto;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.65;
+  padding-top:14px;
+  border-top:1px dashed rgba(203,213,225,.9);
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin:6px 0 14px;
+  min-height:50px;
+  padding:0 18px;
+  border-radius:17px;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+  color:#fff;
+  text-decoration:none;
+  font-weight:800;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+  transition:.22s ease;
+  width:100%;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+
+@media (max-width:720px){
+  .grid-wrap .container{
+    padding:22px 16px;
+    border-radius:24px;
+  }
+
+  .section-head{
+    align-items:flex-start;
+  }
+
+  .section-head-left h3{
+    font-size:28px;
+  }
+
+  .section-note{
+    width:100%;
+    justify-content:center;
+    white-space:normal;
+    border-radius:18px;
   }
 }
 
-// Help modal
-document.getElementById('helpIcon').onclick=(e)=>{
-  document.getElementById('helpModal').style.display='flex';
-  e.stopPropagation();
-};
-function closeHelp(){document.getElementById('helpModal').style.display='none';}
+    /* FOOTER */
+    footer{
+      background:#0b1525;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:#fff;
+      margin-top:10px;
+    }
 
-// Feedback rating
-let selectedRating=0;
-document.querySelectorAll('.rating-star').forEach(star=>{
-  star.onclick=function(ev){
-    selectedRating=parseInt(this.getAttribute('data-value'));
-    document.querySelectorAll('.rating-star').forEach(s=>
-      s.classList.toggle('selected', parseInt(s.getAttribute('data-value'))<=selectedRating)
-    );
-    ev.stopPropagation();
-  };
-});
+    .footer-inner{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+      padding:18px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
 
-function sendComment(){
-  const name = document.getElementById('commentName').value.trim();
-  const comment = document.getElementById('commentText').value.trim();
-  if(selectedRating===0){ alert("Select a rating."); return; }
-  db.collection("feedback").add({
-    rating:selectedRating,
-    name:name||"Anonymous",
-    comment:comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>{ alert("Saved!"); clearCommentForm(); })
-    .catch(()=>alert("Save failed."));
-}
+    .footer-left strong{
+      display:block;
+      font-size:14px;
+      margin-bottom:4px;
+    }
 
-function clearCommentForm(){
-  selectedRating=0;
-  document.getElementById('commentName').value="";
-  document.getElementById('commentText').value="";
-  document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));
-}
+    .footer-left span,
+    .footer-right{
+      color:rgba(255,255,255,.68);
+      font-size:12px;
+      line-height:1.6;
+    }
 
-// Realtime comments list
-let unsubscribeListener=null;
-function showAllComments(){
-  const listEl=document.getElementById('commentsList');
-  listEl.innerHTML="Loading…";
-  if(unsubscribeListener) unsubscribeListener();
-  unsubscribeListener=db.collection("feedback").orderBy("createdAt","desc")
-    .onSnapshot(snap=>{
-      listEl.innerHTML="";
-      if(snap.empty){ listEl.innerHTML="<p>No feedback yet.</p>"; }
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const div=document.createElement('div');
-        div.className="comment-list-item";
-        div.innerHTML=`<div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div>
-        <strong>${d.name}</strong><p>${d.comment}</p>`;
-        listEl.appendChild(div);
-      });
-      document.getElementById('allCommentsModal').style.display='flex';
+    /* MODALS */
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.52);
+      justify-content:center;
+      align-items:center;
+      padding:24px;
+      z-index:1000;
+      backdrop-filter:blur(8px);
+    }
+
+    .modal-content{
+      width:100%;
+      max-width:580px;
+      background:#fff;
+      border-radius:28px;
+      padding:26px;
+      box-shadow:var(--shadow-xl);
+      max-height:min(84vh, 900px);
+      overflow:auto;
+      border:1px solid rgba(148,163,184,.16);
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      margin-bottom:14px;
+      color:#0f172a;
+    }
+
+    .modal-close{
+      cursor:pointer;
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#64748b;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+      transition:.2s ease;
+      flex-shrink:0;
+    }
+
+    .modal-close:hover{
+      color:#0f172a;
+      background:#eef2ff;
+    }
+
+    .modal-content p,
+    .modal-content li{
+      color:#475569;
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .modal-content ul{ padding-left:18px; }
+
+    .rating-container{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin:14px 0 10px;
+    }
+
+    .rating-star{
+      cursor:pointer;
+      font-size:32px;
+      color:#d1d5db;
+      transition:transform .2s ease, color .2s ease;
+    }
+
+    .rating-star:hover{ transform:translateY(-2px) scale(1.08); }
+    .rating-star.selected{ color:#ff6600; }
+
+    input, textarea{
+      width:100%;
+      border:none;
+      outline:none;
+      margin-top:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+      padding:14px 16px;
+      color:#0f172a;
+      font-size:14px;
+      transition:.18s ease;
+    }
+
+    input:focus, textarea:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+    }
+
+    textarea{ min-height:120px; resize:vertical; }
+
+    .comment-modal-footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-top:16px;
+      flex-wrap:wrap;
+    }
+
+    .link-text{
+      color:#4d148c;
+      cursor:pointer;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .link-text:hover{ text-decoration:underline; }
+
+    .comment-list-item{
+      padding:14px 0;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+
+    .comment-list-item:last-child{ border-bottom:none; }
+    #commentsList .stars{ color:#ff6600; font-size:18px; margin-bottom:6px; display:block; }
+
+    /* CALENDAR POPUP */
+    #timeCalendarPopup{
+      display:none;
+      position:fixed;
+      top:92px;
+      right:24px;
+      width:min(360px, calc(100vw - 32px));
+      background:rgba(255,255,255,.94);
+      border-radius:28px;
+      box-shadow:var(--shadow-xl);
+      border:1px solid rgba(148,163,184,.16);
+      padding:20px;
+      z-index:999;
+      backdrop-filter:blur(16px);
+    }
+
+    .popup-time{
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:-.05em;
+      color:#0f172a;
+      margin-bottom:4px;
+    }
+
+    .popup-date{
+      font-size:14px;
+      color:#64748b;
+      margin-bottom:16px;
+    }
+
+    .calendar-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+    }
+
+    .calendar-header span{
+      cursor:pointer;
+      color:#4d148c;
+      font-weight:800;
+      font-size:18px;
+      user-select:none;
+      width:28px;
+      text-align:center;
+    }
+
+    .calendar-title{
+      color:#0f172a;
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .calendar-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:8px;
+    }
+
+    .calendar-grid .day-name{
+      text-align:center;
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+      padding:6px 0;
+    }
+
+    .calendar-grid .day{
+      display:grid;
+      place-items:center;
+      aspect-ratio:1;
+      border-radius:16px;
+      background:#fff;
+      font-size:14px;
+      font-weight:700;
+      color:#334155;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);
+    }
+
+    .calendar-grid .day:hover{ background:#f8fafc; }
+    .calendar-grid .today{
+      background:linear-gradient(135deg, #4d148c, #6d28d9);
+      color:#fff;
+      box-shadow:none;
+    }
+
+    @keyframes cardFadeIn{
+      from{ opacity:0; transform:translateY(22px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    @media (max-width:1280px){
+      .shell{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+    }
+
+    @media (max-width:1100px){
+      .topbar-inner{ min-height:auto; padding:14px 0; align-items:flex-start; }
+      .brand-wrap{ flex-direction:column; align-items:flex-start; gap:14px; }
+      .hero-grid{ grid-template-columns:1fr; }
+      .hero-stats{ grid-template-columns:repeat(3, minmax(0,1fr)); }
+      .shell{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width:720px){
+      .container, .topbar-inner, .footer-inner{ width:min(calc(100% - 20px), var(--max)); }
+      .hero{ padding:24px; border-radius:28px; }
+      .hero h1{ font-size:2.2rem; }
+      .hero-stats{ grid-template-columns:1fr; }
+      .search-bar{ grid-template-columns:1fr; }
+      .search-btn{ width:100%; }
+      .shell{ grid-template-columns:1fr; }
+      .actions{ width:100%; justify-content:flex-start; flex-wrap:wrap; }
+      .clock-pill{ flex:1 1 220px; }
+      .icon-btn{ width:46px; height:46px; border-radius:14px; }
+      .modal{ padding:14px; }
+      .modal-content{ padding:20px; border-radius:22px; }
+      #timeCalendarPopup{ right:10px; top:86px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-wrap">
+          <a href="index.html" class="brand">
+            <div class="brand-meta">
+              <span class="brand-kicker">Internal Platform</span>
+              <span class="brand-title">Decision Support System</span>
+            </div>
+          </a>
+
+          <nav class="nav-tabs">
+            <a href="index.html" class="tab active">Home</a>
+            <a href="case-directory.html" class="tab">Case Directory</a>
+            <a href="ebs-response-template.html" class="tab">EBS Response</a>
+            <a href="volume-application.html" class="tab">Volume Application</a>
+          </nav>
+        </div>
+
+        <div class="actions">
+          <button id="clockBtn" class="clock-pill" type="button">
+            <i class="fa-regular fa-clock"></i>
+            <div class="clock-label">
+              <span class="clock-small">Manila time</span>
+              <span id="clockText">--:-- PM</span>
+            </div>
+          </button>
+
+          <button class="icon-btn" id="commentIcon" type="button" title="Feedback">
+            <i class="fa-solid fa-comment-dots"></i>
+          </button>
+
+          <button class="icon-btn" id="helpIcon" type="button" title="Get Help">
+            <i class="fa-solid fa-circle-question"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="timeCalendarPopup">
+      <div class="popup-time" id="popupTime"></div>
+      <div class="popup-date" id="popupDate"></div>
+
+      <div class="calendar-header">
+        <span id="prevMonth">‹</span>
+        <div id="monthYear" class="calendar-title"></div>
+        <span id="nextMonth">›</span>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <main>
+      <section class="hero-wrap">
+        <div class="container">
+          <div class="hero">
+            <div class="hero-grid">
+              <div class="hero-copy">
+                <div class="eyebrow">
+                  <i class="fa-solid fa-bolt"></i>
+                  Premium workflow hub
+                </div>
+
+                <h1>Find the right guide faster and make the right next move.</h1>
+                <p>
+                  Use this page to quickly search, open, and follow the correct guide for your case. Everything is organized to help you move faster, stay accurate, and get to the right decision without extra steps.
+                </p>
+
+                <div class="hero-stats">
+                  <div class="stat-card">
+  <div class="stat-value">20+</div>
+  <div class="stat-label">Guides ready to help you handle different case types.</div>
+</div>
+<div class="stat-card">
+  <div class="stat-value">1</div>
+  <div class="stat-label">Use search to quickly find the guide that fits your case.</div>
+</div>
+<div class="stat-card">
+  <div class="stat-value">Live</div>
+  <div class="stat-label">Check time, get help, and send feedback while you work.</div>
+</div>
+                </div>
+              </div>
+
+              <div class="hero-side">
+                <div class="quick-panel">
+                  <div>
+                    <div class="panel-title">
+  <span>Quick guide</span>
+  <span>Start here</span>
+</div>
+
+<ul class="quick-list">
+  <li class="quick-item">
+    <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+    <div>
+      <strong>Search for your case</strong>
+      <span>Type a keyword such as dispute type, surcharge, correction code, account update, or service level.</span>
+    </div>
+  </li>
+  <li class="quick-item">
+    <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
+    <div>
+      <strong>Open the matching guide</strong>
+      <span>Review the card title and description, then select the guide that best matches the request.</span>
+    </div>
+  </li>
+  <li class="quick-item">
+    <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+    <div>
+      <strong>Follow the steps</strong>
+      <span>Use the guide result to complete the correct action, update, validation, or communication.</span>
+    </div>
+  </li>
+</ul>
+                  </div>
+
+                 <div class="live-strip">
+  <div>
+    <strong>Ready when you are</strong>
+    <span>Search the guides below and open the one that matches your case.</span>
+  </div>
+  <div class="pulse"></div>
+</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="search-wrap">
+        <div class="container">
+          <div class="search-card">
+            <div class="search-top">
+              <div class="search-copy">
+                <h2>Find your guide instantly</h2>
+                <p>Search by queue, process, surcharge, correction, account type, or any keyword inside the cards below.</p>
+              </div>
+
+              <div class="chip-row">
+                <div class="chip"><i class="fa-solid fa-file-circle-check"></i> Process-ready</div>
+                <div class="chip"><i class="fa-solid fa-shield-heart"></i> Policy-aligned</div>
+                <div class="chip"><i class="fa-solid fa-magnifying-glass"></i> Search-first</div>
+              </div>
+            </div>
+
+            <div class="search-bar">
+<div class="search-input-wrap">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="text" id="guideSearch" placeholder="Search guides, disputes, correction codes, account handling." onkeyup="filterGuides()">
+  <button type="button" id="clearSearchBtn" onclick="clearSearch()" aria-label="Clear search">×</button>
+</div>
+              <button class="search-btn" onclick="filterGuides()">Search guides</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+<p id="noResults">No guides found. Try keywords like billing, surcharge, RVSL, notify, or service level.</p>
+<p id="resultsCount" style="text-align:center; display:none; font-weight:700; color:#64748b; padding:10px 10px 0;"></p>
+
+<div class="guide-filters">
+  <button class="filter-chip active" type="button" data-filter="all" onclick="filterByCategory('all', this)">All</button>
+  <button class="filter-chip" type="button" data-filter="billing" onclick="filterByCategory('billing', this)">Billing</button>
+  <button class="filter-chip" type="button" data-filter="pricing" onclick="filterByCategory('pricing', this)">Pricing</button>
+  <button class="filter-chip" type="button" data-filter="claims" onclick="filterByCategory('claims', this)">Claims</button>
+  <button class="filter-chip" type="button" data-filter="rebill" onclick="filterByCategory('rebill', this)">Rebill</button>
+  <button class="filter-chip" type="button" data-filter="reweigh" onclick="filterByCategory('reweigh', this)">Reweigh</button>
+  <button class="filter-chip" type="button" data-filter="correction" onclick="filterByCategory('correction', this)">Correction</button>
+  <button class="filter-chip" type="button" data-filter="service" onclick="filterByCategory('service', this)">Service</button>
+</div>
+
+
+<section class="grid-wrap" id="guideLibrarySection">
+  <div class="container">
+    <div class="section-head">
+  <div class="section-head-left">
+    <h3>Guide library</h3>
+    <p>
+      Browse all guides below. Each card shows what it’s for—open the one that matches your case and follow the steps.
+    </p>
+  </div>
+
+  <div class="section-note">
+    <i class="fa-solid fa-sparkles"></i>
+    Guides ready — select one to start
+  </div>
+</div>
+
+    <div class="shell" id="guideContainer">
+
+  <div class="card" data-category="billing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-scale-balanced"></i> Billing</div>
+      <div class="guide-icon"><i class="fa-solid fa-diagram-project"></i></div>
+    </div>
+    <h1>BD — General Guide</h1>
+    <p class="lead">Standard Billing Dispute decision tree used for billing dispute cases.</p>
+    <a class="btn" href="BD GENERAL GUIDE.html">Open BD General Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for billing dispute handling and decision support.</div>
+  </div>
+
+  <div class="card" data-category="pricing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-tags"></i> Pricing</div>
+      <div class="guide-icon"><i class="fa-solid fa-chart-line"></i></div>
+    </div>
+    <h1>Pricing General Guides</h1>
+    <p class="lead">Directory of pricing dispute guides including Fuel, Surcharge, ePRT, Base Rater, and other pricing tools.</p>
+    <a class="btn" href="pricing-guides.html">Open Pricing Guides <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for pricing disputes, surcharge issues, and rating validation.</div>
+  </div>
+
+  <div class="card" data-category="claims">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-file-signature"></i> Claims</div>
+      <div class="guide-icon"><i class="fa-solid fa-shield"></i></div>
+    </div>
+    
+    <h1>OVC — General Guideline</h1>
+    <p class="lead">Official OVC guideline for handling customer claims and disputes.</p>
+    <a class="btn" href="OVC GENERAL GUIDE.html">Open OVC Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for OVC claim handling and requirement checks.</div>
+  </div>
+
+  <div class="card" data-category="rebill">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-receipt"></i> Rebill</div>
+      <div class="guide-icon"><i class="fa-solid fa-rotate"></i></div>
+    </div>
+    <h1>LOA — Rebill Guide</h1>
+    <p class="lead">Decision tree for correcting BOL debtor, 3PL, FPAY, or Collector via LOA.</p>
+    <a class="btn" href="Rebill per LOA General Guide.html">Open LOA Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for rebill and LOA-related corrections.</div>
+  </div>
+
+  <div class="card" data-category="reweigh">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-weight-scale"></i> Reweigh</div>
+      <div class="guide-icon"><i class="fa-solid fa-arrows-up-down-left-right"></i></div>
+    </div>
+    <h1>Reweigh — General Guide</h1>
+    <p class="lead">Decision guide for reweigh disputes and corrections.</p>
+    <a class="btn" href="Reweigh General Guide.html">Open Reweigh Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for weight disputes and reweigh validation.</div>
+  </div>
+
+  <div class="card" data-category="billing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-circle-check"></i> Audit</div>
+      <div class="guide-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+    </div>
+    <h1>FPAY — PAUD Audit Guide</h1>
+    <p class="lead">Decision tree for FPAY or PAUD review using BOL-based validation.</p>
+    <a class="btn" href="PAUD FPAY Guide.html">Open FPAY PAUD Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for FPAY and PAUD debtor validation review.</div>
+  </div>
+
+  <div class="card" data-category="correction">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-code"></i> Correction</div>
+      <div class="guide-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+    </div>
+    <h1>Correction Code Guide</h1>
+    <p class="lead">Decision tree to determine the correct CORR CODE.</p>
+    <a class="btn" href="Correction Code Guide.html">Open Correction Code Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for selecting the correct correction code.</div>
+  </div>
+
+  <div class="card" data-category="service">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-truck-fast"></i> Direct</div>
+      <div class="guide-icon"><i class="fa-solid fa-road"></i></div>
+    </div>
+    <h1>FedEx Direct Guide</h1>
+    <p class="lead">Decision tree for FedEx Direct disputes and validation.</p>
+    <a class="btn" href="FedEx Direct Guide.html">Open FedEx Direct Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for FedEx Direct dispute handling.</div>
+  </div>
+
+  <div class="card" data-category="service">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-boxes-stacked"></i> Class</div>
+      <div class="guide-icon"><i class="fa-solid fa-layer-group"></i></div>
+    </div>
+    <h1>Class Update Guide</h1>
+    <p class="lead">Decision tree for handling Class Update requests.</p>
+    <a class="btn" href="class-update-guide.html">Open Class Update Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for class correction requests.</div>
+  </div>
+
+  <div class="card" data-category="pricing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-file-invoice-dollar"></i> Quote</div>
+      <div class="guide-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+    </div>
+    <h1>Rate & Volume Quote Guide</h1>
+    <p class="lead">Decision tree for validating LTL and Volume Quotes.</p>
+    <a class="btn" href="rate-volume-guide.html">Open Rate/Volume Quote Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for quote validation and rate disputes.</div>
+  </div>
+
+  <div class="card" data-category="service">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-clipboard-list"></i> CRAU</div>
+      <div class="guide-icon"><i class="fa-solid fa-network-wired"></i></div>
+    </div>
+    <h1>CRAU — Request Decision Guide</h1>
+    <p class="lead">Decision tree for CRAU requests and validations.</p>
+    <a class="btn" href="crau-guide.html">Open CRAU Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for CRAU request handling.</div>
+  </div>
+
+  <div class="card" data-category="reweigh">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-weight-hanging"></i> Weight</div>
+      <div class="guide-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
+    </div>
+    <h1>Weight Update per BOL Guide</h1>
+    <p class="lead">Decision tree for handling weight disputes.</p>
+    <a class="btn" href="weight-update-per-bol-guide.html">Open Weight Update Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for BOL weight validation and updates.</div>
+  </div>
+
+  <div class="card" data-category="service">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-user-gear"></i> Accounts</div>
+      <div class="guide-icon"><i class="fa-solid fa-building-shield"></i></div>
+    </div>
+    <h1>Account Handling Guide</h1>
+    <p class="lead">Decision tree for handling account disputes.</p>
+    <a class="btn" href="account-handling-guides.html">Open Account Handling Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for account validation and status handling.</div>
+  </div>
+
+  <div class="card" data-category="billing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-arrow-right-arrow-left"></i> RVSL</div>
+      <div class="guide-icon"><i class="fa-solid fa-people-arrows"></i></div>
+    </div>
+    <h1>RVSL — Debtor Update Guide</h1>
+    <p class="lead">Decision tree for RVSL requests.</p>
+    <a class="btn" href="rvsl-guide.html">Open RVSL Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for debtor update and validation.</div>
+  </div>
+
+  <div class="card" data-category="service">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-barcode"></i> Validation</div>
+      <div class="guide-icon"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+    </div>
+    <h1>Verifying Tracking Number Guide</h1>
+    <p class="lead">Guide for validating freight information.</p>
+    <a class="btn" href="information-validation-guide.html">Open Pro Validation Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for delivery and tracking validation.</div>
+  </div>
+
+  <div class="card" data-category="service">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-folder-open"></i> Documents</div>
+      <div class="guide-icon"><i class="fa-solid fa-file-lines"></i></div>
+    </div>
+    <h1>Missing Documents Guide</h1>
+    <p class="lead">Guide for requesting missing documents.</p>
+    <a class="btn" href="missing-docs-guide.html">Open Missing Documents Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for missing BOL and document requests.</div>
+  </div>
+
+  <div class="card" data-category="pricing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-bolt"></i> Surcharge</div>
+      <div class="guide-icon"><i class="fa-solid fa-receipt"></i></div>
+    </div>
+    <h1>Other Surcharges Guide</h1>
+    <p class="lead">Decision tree for handling additional surcharges.</p>
+    <a class="btn" href="other-surcharges-guide.html">Open Other Surcharges Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for special surcharge validation.</div>
+  </div>
+
+  <div class="card" data-category="pricing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-filter-circle-dollar"></i> Fees</div>
+      <div class="guide-icon"><i class="fa-solid fa-shuffle"></i></div>
+    </div>
+    <h1>Sort & Segregate Guide</h1>
+    <p class="lead">Decision tree for validating Sort & Segregate disputes.</p>
+    <a class="btn" href="sort-and-segregate-guide.html">Open Sort & Seg Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for sort and segregate fee handling.</div>
+  </div>
+
+  <div class="card" data-category="pricing">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-bell"></i> Notify</div>
+      <div class="guide-icon"><i class="fa-solid fa-phone-volume"></i></div>
+    </div>
+    <h1>Notify Fee Guide</h1>
+    <p class="lead">Decision tree for handling Notify Fee disputes.</p>
+    <a class="btn" href="notify-fee-guide.html">Open Notify Fee Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for notify charge validation.</div>
+  </div>
+
+  <div class="card" data-category="service">
+    <div class="card-top">
+      <div class="badge"><i class="fa-solid fa-gauge-high"></i> Service</div>
+      <div class="guide-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
+    </div>
+    <h1>Service Level/Type Guide</h1>
+    <p class="lead">Decision tree for validating service level disputes.</p>
+    <a class="btn" href="service-level-type-guide.html">Open Service Level/Type Guide <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="small">Use this for service level validation.</div>
+  </div>
+
+</div>
+        </div>
+      </section>
+    </main>
+
+    <div id="helpModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      Get Help
+      <span class="modal-close" onclick="closeHelp()">×</span>
+    </div>
+
+    <p style="margin-top:0; color:#475569; line-height:1.75;">
+      Welcome. This page helps you quickly find the correct guide for the case you are handling. Use the sections below to know where to start and what to do next.
+    </p>
+
+    <div style="display:grid; gap:14px; margin:18px 0 20px;">
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">1. Search for the issue or request</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Use the search bar on the main page to type keywords such as dispute type, surcharge, account update, correction code, service level, or document request.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">2. Open the guide that matches your case</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Review the card title and short description, then open the guide that best matches the customer's concern or required action.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">3. Follow the guide step by step</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Answer each part carefully and follow the process flow until you reach the correct action, decision, or next handling step.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">4. Use the result to complete the case correctly</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Apply the correct disposition, update, correction, validation, or communication based on the guide result.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:18px; border-radius:20px; background:linear-gradient(135deg, #f5f3ff, #fff7ed); border:1px solid rgba(148,163,184,.14); margin-bottom:18px;">
+      <strong style="display:block; color:#0f172a; margin-bottom:10px; font-size:15px;">Quick tips</strong>
+      <ul style="margin:0; padding-left:18px; color:#475569; line-height:1.8; font-size:14px;">
+        <li>Use specific keywords when searching so you can find the right guide faster.</li>
+        <li>If more than one guide looks similar, open the one with the description that best matches the request.</li>
+        <li>Use the feedback button if you notice a missing step, unclear logic, or something that needs improvement.</li>
+        <li>Use the clock in the header if you need to check Manila time while working.</li>
+      </ul>
+    </div>
+
+    <div style="padding:16px 18px; border-radius:18px; background:#0f172a; color:#fff;">
+      <strong style="display:block; margin-bottom:6px; font-size:15px;">Need more support?</strong>
+      <span style="display:block; color:rgba(255,255,255,.76); line-height:1.7; font-size:14px;">If the case still does not match any guide or you are unsure which path to take, contact your team lead or EBS Operations support for clarification.</span>
+    </div>
+  </div>
+</div>
+
+    <div id="commentModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          How do you rate the tool?
+          <span class="modal-close" onclick="closeComment()">×</span>
+        </div>
+
+        <div class="rating-container">
+          <i class="fa-solid fa-star rating-star" data-value="1"></i>
+          <i class="fa-solid fa-star rating-star" data-value="2"></i>
+          <i class="fa-solid fa-star rating-star" data-value="3"></i>
+          <i class="fa-solid fa-star rating-star" data-value="4"></i>
+          <i class="fa-solid fa-star rating-star" data-value="5"></i>
+        </div>
+
+        <input type="text" id="commentName" placeholder="Your Name (optional)">
+        <textarea id="commentText" placeholder="Enter your comment..."></textarea>
+<p id="feedbackMessage" style="display:none; margin-top:12px; font-size:14px; font-weight:700;"></p>
+
+        <div class="comment-modal-footer">
+          <button class="btn" onclick="sendComment()">Send feedback <i class="fa-solid fa-paper-plane"></i></button>
+          <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="allCommentsModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          All Ratings & Comments
+          <span class="modal-close" onclick="closeAllComments()">×</span>
+        </div>
+        <div id="commentsList"></div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-left">
+          <strong>© 2025 EBS Operations</strong>
+          <span>Premium main page experience for faster guide access and cleaner navigation.</span>
+        </div>
+        <div class="footer-right">
+          “Your feedback is important to us. Please feel free to email us with any comments or questions.” — Jules
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function updateClock(){
+      const now = new Date();
+
+      const headerTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      }).format(now);
+
+      const popupTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      }).format(now);
+
+      const popupDate = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(now);
+
+      document.getElementById("clockText").textContent = headerTime;
+      document.getElementById("popupTime").textContent = popupTime;
+      document.getElementById("popupDate").textContent = popupDate;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const clockBtn = document.getElementById("clockBtn");
+    const calendarPopup = document.getElementById("timeCalendarPopup");
+    const calendarGrid = document.getElementById("calendarGrid");
+    const monthYear = document.getElementById("monthYear");
+    let currentDate = new Date();
+
+    clockBtn.onclick = function(e){
+      e.stopPropagation();
+      calendarPopup.style.display = calendarPopup.style.display === "block" ? "none" : "block";
+      renderCalendar(currentDate);
+    };
+
+    document.addEventListener("click", function(){
+      calendarPopup.style.display = "none";
     });
-}
 
-document.getElementById('commentIcon').onclick=function(e){
+    calendarPopup.addEventListener("click", function(e){
+      e.stopPropagation();
+    });
+
+    document.getElementById("prevMonth").onclick = function(e){
+      e.stopPropagation();
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar(currentDate);
+    };
+
+    document.getElementById("nextMonth").onclick = function(e){
+      e.stopPropagation();
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar(currentDate);
+    };
+
+    function renderCalendar(date){
+      calendarGrid.innerHTML = "";
+
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      monthYear.textContent = date.toLocaleString("en-PH", { month: "long", year: "numeric" });
+
+      const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+      dayNames.forEach(d => {
+        const el = document.createElement("div");
+        el.className = "day-name";
+        el.textContent = d;
+        calendarGrid.appendChild(el);
+      });
+
+      for(let i = 0; i < firstDay; i++){
+        const empty = document.createElement("div");
+        calendarGrid.appendChild(empty);
+      }
+
+      const today = new Date(
+        new Intl.DateTimeFormat("en-US", {
+          timeZone: "Asia/Manila",
+          year: "numeric",
+          month: "numeric",
+          day: "numeric"
+        }).format(new Date())
+      );
+
+      for(let d = 1; d <= daysInMonth; d++){
+        const day = document.createElement("div");
+        day.className = "day";
+        day.textContent = d;
+
+        if(
+          d === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ){
+          day.classList.add("today");
+        }
+
+        calendarGrid.appendChild(day);
+      }
+    }
+
+    document.getElementById("helpIcon").onclick = (e) => {
+      document.getElementById("helpModal").style.display = "flex";
+      e.stopPropagation();
+    };
+
+    function closeHelp(){
+      document.getElementById("helpModal").style.display = "none";
+    }
+
+    let selectedRating = 0;
+    document.querySelectorAll('.rating-star').forEach(star => {
+      star.onclick = function(ev){
+        selectedRating = parseInt(this.getAttribute('data-value'));
+        document.querySelectorAll('.rating-star').forEach(s =>
+          s.classList.toggle('selected', parseInt(s.getAttribute('data-value')) <= selectedRating)
+        );
+        ev.stopPropagation();
+      };
+    });
+
+    function sendComment(){
+      const name = document.getElementById('commentName').value.trim();
+      const comment = document.getElementById('commentText').value.trim();
+      if(selectedRating === 0){ alert("Select a rating."); return; }
+
+      db.collection("feedback").add({
+        rating: selectedRating,
+        name: name || "Anonymous",
+        comment: comment,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}).then(() => {
+  const msg = document.getElementById("feedbackMessage");
+  msg.style.display = "block";
+  msg.style.color = "#16a34a";
+  msg.textContent = "Feedback sent successfully.";
   clearCommentForm();
-  document.getElementById('commentModal').style.display='flex';
-  e.stopPropagation();
-};
-function closeComment(){clearCommentForm();document.getElementById('commentModal').style.display='none';}
-function closeAllComments(){document.getElementById('allCommentsModal').style.display='none';}
-
-
-// ---------- STAGGERED CARD FADE-IN ----------
-window.addEventListener('load', () => {
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((card, i) => {
-    card.style.animation = `cardFadeIn 0.6s ease-out forwards`;
-    card.style.animationDelay = `${1 + i * 0.15}s`; // starts after logo (1s)
-  });
-
-  // Make sure logo is visible after its animation
-  const logo = document.querySelector('header img');
-  logo.style.opacity = 1;
+  setTimeout(() => {
+    msg.style.display = "none";
+    msg.textContent = "";
+  }, 2500);
+}).catch(() => {
+  const msg = document.getElementById("feedbackMessage");
+  msg.style.display = "block";
+  msg.style.color = "#ef4444";
+  msg.textContent = "Unable to send feedback. Please try again.";
 });
+    }
 
-document.getElementById("guideSearch").focus();
+    function clearCommentForm(){
+      selectedRating = 0;
+      document.getElementById('commentName').value = "";
+      document.getElementById('commentText').value = "";
+document.querySelectorAll('.rating-star').forEach(s => s.classList.remove('selected'));
+const msg = document.getElementById("feedbackMessage");
+if (msg) {
+  msg.style.display = "none";
+  msg.textContent = "";
+}
+    }
 
-//search
+    let unsubscribeListener = null;
+    function showAllComments(){
+      const listEl = document.getElementById('commentsList');
+      listEl.innerHTML = "Loading…";
+
+      if(unsubscribeListener) unsubscribeListener();
+
+      unsubscribeListener = db.collection("feedback").orderBy("createdAt", "desc")
+        .onSnapshot(snap => {
+          listEl.innerHTML = "";
+          if(snap.empty){ listEl.innerHTML = "<p>No feedback yet.</p>"; }
+          snap.forEach(doc => {
+            const d = doc.data();
+            const div = document.createElement('div');
+            div.className = "comment-list-item";
+            div.innerHTML = `<div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5 - d.rating)}</div><strong>${d.name}</strong><p>${d.comment || ""}</p>`;
+            listEl.appendChild(div);
+          });
+          document.getElementById('allCommentsModal').style.display = 'flex';
+        });
+    }
+
+    document.getElementById('commentIcon').onclick = function(e){
+      clearCommentForm();
+      document.getElementById('commentModal').style.display = 'flex';
+      e.stopPropagation();
+    };
+
+    function closeComment(){
+      clearCommentForm();
+      document.getElementById('commentModal').style.display = 'none';
+    }
+
+    function closeAllComments(){
+      document.getElementById('allCommentsModal').style.display = 'none';
+    }
+
+    ["helpModal", "commentModal", "allCommentsModal"].forEach(id => {
+      const modal = document.getElementById(id);
+      modal.addEventListener("click", () => modal.style.display = "none");
+    });
+
+    window.addEventListener('load', () => {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach((card, i) => {
+        card.style.animation = `cardFadeIn 0.55s ease-out forwards`;
+        card.style.animationDelay = `${0.08 + i * 0.04}s`;
+      });
+    });
+
+    document.getElementById("guideSearch").focus();
+
 const container = document.getElementById("guideContainer");
 const cards = Array.from(container.querySelectorAll(".card"));
 const originalOrder = [...cards];
+let activeCategory = "all";
 
+originalOrder.forEach(card => {
+  card.dataset.originalHtml = card.innerHTML;
+});
 
-function filterGuides() {
+function scrollToGuideResults() {
+  const target = document.getElementById("guideLibrarySection");
+  if (!target) return;
+
+  requestAnimationFrame(() => {
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+}
+
+function filterGuides(shouldScroll = true) {
   const input = document.getElementById("guideSearch");
-  const filter = input.value.toLowerCase().trim();
+  const clearBtn = document.getElementById("clearSearchBtn");
+  const filter = input.value.trim().toLowerCase();
+  const keywords = filter.split(/\s+/).filter(Boolean);
 
-  if (filter === "") {
-    resetCards();
+  clearBtn.style.display = filter ? "grid" : "none";
+
+  if (filter === "" && activeCategory === "all") {
+    resetCards(false);
+    if (shouldScroll) scrollToGuideResults();
     return;
   }
 
@@ -1122,55 +2004,126 @@ function filterGuides() {
   let nonMatches = [];
 
   cards.forEach(card => {
-    const text = card.innerText.toLowerCase();
-    if (text.includes(filter)) {
+    card.innerHTML = card.dataset.originalHtml;
+
+    const cardText = card.innerText.toLowerCase();
+    const keywordMatch = keywords.every(keyword => cardText.includes(keyword));
+    const categoryMatch = activeCategory === "all" || card.dataset.category === activeCategory;
+    const isMatch = keywordMatch && categoryMatch;
+
+    if (isMatch) {
+      if (keywords.length > 0) {
+        highlightCard(card, keywords);
+      }
       matches.push(card);
     } else {
       nonMatches.push(card);
     }
   });
-  
-  document.getElementById("noResults").style.display =
-  matches.length === 0 ? "block" : "none";
+
+  const noResults = document.getElementById("noResults");
+  const resultsCount = document.getElementById("resultsCount");
+
+  noResults.style.display = matches.length === 0 ? "block" : "none";
+
+  if (matches.length > 0) {
+    resultsCount.style.display = "block";
+    resultsCount.textContent = `Showing ${matches.length} matching guide${matches.length > 1 ? "s" : ""}`;
+  } else {
+    resultsCount.style.display = "none";
+    resultsCount.textContent = "";
+  }
 
   container.innerHTML = "";
 
-  // Add matching cards FIRST (left side)
   matches.forEach(card => {
-    card.style.display = "";
+    card.style.display = "flex";
     container.appendChild(card);
   });
 
-  // Hide non-matching
   nonMatches.forEach(card => {
     card.style.display = "none";
     container.appendChild(card);
   });
+
+  if (shouldScroll) {
+    scrollToGuideResults();
+  }
 }
 
-function resetCards() {
-  container.innerHTML = "";
-
-  originalOrder.forEach(card => {
-    card.style.display = "";
-    container.appendChild(card);
+function highlightCard(card, keywords) {
+  const selectors = ["h1", ".lead", ".small"];
+  selectors.forEach(selector => {
+    card.querySelectorAll(selector).forEach(el => {
+      let html = el.innerHTML;
+      keywords.forEach(keyword => {
+        const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const regex = new RegExp(`(${escaped})`, "gi");
+        html = html.replace(regex, '<mark class="search-highlight">$1</mark>');
+      });
+      el.innerHTML = html;
+    });
   });
 }
 
-</script>
+function clearSearch() {
+  const input = document.getElementById("guideSearch");
+  input.value = "";
+  filterGuides(true);
+  input.focus();
+}
 
-<footer>
-  <p><span style="font-weight:600;">© 2025 EBS Operations</span></p>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:12px;color:white;">
-      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
-    </span>
-  </div>
-</footer>
+function filterByCategory(category, button) {
+  activeCategory = category;
 
+  document.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.classList.remove("active");
+  });
+
+  if (button) {
+    button.classList.add("active");
+  }
+
+  filterGuides(true);
+}
+
+function resetCards(shouldScroll = false) {
+  container.innerHTML = "";
+  document.getElementById("noResults").style.display = "none";
+
+  const resultsCount = document.getElementById("resultsCount");
+  if (resultsCount) {
+    resultsCount.style.display = "none";
+    resultsCount.textContent = "";
+  }
+
+  const clearBtn = document.getElementById("clearSearchBtn");
+  if (clearBtn) {
+    clearBtn.style.display = "none";
+  }
+
+  activeCategory = "all";
+
+  document.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.classList.remove("active");
+  });
+
+  const allChip = document.querySelector('.filter-chip[data-filter="all"]');
+  if (allChip) {
+    allChip.classList.add("active");
+  }
+
+  originalOrder.forEach(card => {
+    card.innerHTML = card.dataset.originalHtml;
+    card.style.display = "flex";
+    container.appendChild(card);
+  });
+
+  if (shouldScroll) {
+    scrollToGuideResults();
+  }
+}
+
+  </script>
 </body>
 </html>
-
-
-
-
