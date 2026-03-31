@@ -1,0 +1,2355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Keep or Remove Payment Guide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root{
+      --bg:#07111f;
+      --bg-soft:#0c1728;
+      --panel:#0f1c31;
+      --panel-2:#12233d;
+      --card:#ffffff;
+      --card-soft:#f8fafc;
+      --text:#0f172a;
+      --text-soft:#475569;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.18);
+      --white-line:rgba(255,255,255,.08);
+      --accent:#6d28d9;
+      --accent-2:#4d148c;
+      --accent-3:#ff6600;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10);
+      --shadow-card:0 16px 40px rgba(15,23,42,.06);
+      --radius-xl:28px;
+      --radius-lg:20px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --max:1720px;
+      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+      z-index:0;
+    }
+
+    a{color:inherit}
+    button,input,textarea{font:inherit}
+
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(7,17,31,.72);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .topbar-inner{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+      min-height:82px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:28px;
+      min-width:0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      text-decoration:none;
+      flex-shrink:0;
+    }
+
+    .brand-meta{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+    }
+
+    .brand-kicker{
+      color:rgba(255,255,255,.64);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      margin-bottom:4px;
+    }
+
+    .brand-title{
+      color:#fff;
+      font-size:15px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .nav-tabs{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .tab{
+      text-decoration:none;
+      color:rgba(255,255,255,.78);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:600;
+      transition:.22s ease;
+      position:relative;
+    }
+
+    .tab:hover{
+      color:#fff;
+      background:rgba(255,255,255,.07);
+    }
+
+    .tab.active{
+      color:#fff;
+      background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-shrink:0;
+    }
+
+    .clock-pill,
+    .icon-btn{
+      border:none;
+      cursor:pointer;
+      transition:.22s ease;
+    }
+
+    .clock-pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      font-weight:700;
+    }
+
+    .clock-pill:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.12);
+    }
+
+    .clock-label{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      line-height:1.05;
+    }
+
+    .clock-small{
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.54);
+      margin-bottom:3px;
+    }
+
+    .icon-btn{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      font-size:18px;
+    }
+
+    .icon-btn:hover{
+      transform:translateY(-2px);
+      background:linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    }
+
+    #timeCalendarPopup{
+      display:none;
+      position:fixed;
+      top:92px;
+      right:24px;
+      width:min(360px, calc(100vw - 32px));
+      background:rgba(255,255,255,.94);
+      border-radius:28px;
+      box-shadow:var(--shadow-xl);
+      border:1px solid rgba(148,163,184,.16);
+      padding:20px;
+      z-index:999;
+      backdrop-filter:blur(16px);
+    }
+
+    .popup-time{
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:-.05em;
+      color:#0f172a;
+      margin-bottom:4px;
+    }
+
+    .popup-date{
+      font-size:14px;
+      color:#64748b;
+      margin-bottom:16px;
+    }
+
+    .calendar-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+    }
+
+    .calendar-header span{
+      cursor:pointer;
+      color:#4d148c;
+      font-weight:800;
+      font-size:18px;
+      user-select:none;
+      width:28px;
+      text-align:center;
+    }
+
+    .calendar-title{
+      color:#0f172a;
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .calendar-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:8px;
+    }
+
+    .calendar-grid .day-name{
+      text-align:center;
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+      padding:6px 0;
+    }
+
+    .calendar-grid .day{
+      display:grid;
+      place-items:center;
+      aspect-ratio:1;
+      border-radius:16px;
+      background:#fff;
+      font-size:14px;
+      font-weight:700;
+      color:#334155;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);
+    }
+
+    .calendar-grid .day:hover{ background:#f8fafc; }
+
+    .calendar-grid .today{
+      background:linear-gradient(135deg, #4d148c, #6d28d9);
+      color:#fff;
+      box-shadow:none;
+    }
+
+    .app-shell{
+      width:min(calc(100% - 32px), var(--max));
+      margin:22px auto 24px;
+    }
+
+    .app-frame{
+      min-height:calc(100vh - 180px);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.68);
+      border-radius:34px;
+      box-shadow:var(--shadow-xl);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:minmax(0,1.45fr) 380px 420px;
+    }
+
+    .main{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-width:0;
+    }
+
+    .main-topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:16px 18px;
+      border-radius:24px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(219,228,240,.9);
+      box-shadow:var(--shadow-md);
+    }
+
+    .main-topbar h1{
+      margin:0;
+      font-size:24px;
+      letter-spacing:-.03em;
+    }
+
+    .main-status{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 14px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid #dbe4f0;
+      font-size:12px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .pill.primary{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border:none;
+    }
+
+    .workspace{
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:16px;
+      min-height:0;
+    }
+
+    .progress-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:16px 18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .progress-title{
+      font-size:14px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .progress-status{
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .progress-bar{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+      transition:width .28s ease;
+    }
+
+    .stage-area{
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr;
+    }
+
+    .stage-card{
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border:1px solid #dbe4f0;
+      border-radius:30px;
+      box-shadow:var(--shadow-card);
+      min-height:640px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    .stage-top{
+      padding:22px 22px 0;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .badge.alt{
+      background:#f8fafc;
+      color:#334155;
+    }
+
+    .question-wrap{
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      flex:1;
+    }
+
+    .question-card{
+      position:relative;
+      padding:30px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+        linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid #e6edf7;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+    }
+
+    .question-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+    }
+
+    .question-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#334155;
+    }
+
+    .question-text{
+      margin:18px 0 0;
+      font-size:36px;
+      line-height:1.08;
+      letter-spacing:-.045em;
+      font-weight:900;
+    }
+
+    .question-help{
+      margin:14px 0 0;
+      color:#64748b;
+      font-size:14px;
+      line-height:1.75;
+      max-width:760px;
+    }
+
+    .choices{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .choice{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      text-align:left;
+      border-radius:24px;
+      padding:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border:1px solid #e2e8f0;
+      box-shadow:0 12px 28px rgba(15,23,42,.05);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      min-height:112px;
+    }
+
+    .choice:hover{
+      transform:translateY(-3px);
+      box-shadow:0 18px 36px rgba(15,23,42,.08);
+      border-color:#c7d5e6;
+    }
+
+    .choice.selected{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border-color:transparent;
+    }
+
+    .choice-icon{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:#eef4ff;
+      color:#2563eb;
+      flex:0 0 auto;
+      font-size:17px;
+    }
+
+    .choice.selected .choice-icon{
+      background:rgba(255,255,255,.14);
+      color:#fff;
+    }
+
+    .choice-body{min-width:0}
+
+    .choice-title{
+      font-size:16px;
+      font-weight:800;
+      line-height:1.35;
+    }
+
+    .choice-desc{
+      font-size:12px;
+      line-height:1.6;
+      color:#64748b;
+      margin-top:6px;
+    }
+
+    .choice.selected .choice-desc{
+      color:rgba(255,255,255,.8);
+    }
+
+    .decision-footer{
+      margin-top:auto;
+      padding:18px 22px 22px;
+      border-top:1px solid #e8eef7;
+      background:linear-gradient(180deg,rgba(248,250,252,.2),#f8fbff);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .decision-footer-left{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .footer-label{
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#64748b;
+    }
+
+    .footer-value{
+      font-size:14px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .decision-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .app-btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:12px 16px;
+      border-radius:14px;
+      font-size:14px;
+      font-weight:800;
+      transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .app-btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin:0;
+      min-height:50px;
+      padding:0 18px;
+      border:none;
+      border-radius:16px;
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+      transition:.22s ease;
+      width:100%;
+      cursor:pointer;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 30px rgba(77,20,140,.24);
+    }
+
+    .app-btn.primary{
+      background:#111827;
+      color:#fff;
+      box-shadow:0 8px 20px rgba(17,24,39,.14);
+    }
+
+    .app-btn.secondary{
+      background:#fff;
+      color:#111827;
+      border:1px solid #dbe4f0;
+    }
+
+    .app-btn.ghost{
+      background:#f8fafc;
+      color:#0f172a;
+      border:1px solid #e2e8f0;
+    }
+
+    .final-card{
+      margin:20px;
+      padding:24px;
+      border-radius:24px;
+      background:linear-gradient(180deg,#f0fdf4,#ffffff);
+      border:1px solid #dcfce7;
+      box-shadow:0 16px 34px rgba(22,163,74,.08);
+    }
+
+    .final-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#dcfce7;
+      color:#166534;
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    .final-title{
+      margin:16px 0 0;
+      font-size:14px;
+      font-weight:800;
+      color:#166534;
+    }
+
+    .final-text{
+      margin:10px 0 0;
+      font-size:24px;
+      line-height:1.5;
+      letter-spacing:-.02em;
+      font-weight:800;
+      color:#111827;
+    }
+
+    .final-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .side-panel{
+      padding:18px 14px 18px 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .template-panel{
+      padding:18px 18px 18px 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .side-panel .summary-card,
+    .template-panel .summary-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .summary-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+      font-size:14px;
+      font-weight:900;
+    }
+
+    .summary-head i{color:#7c3aed}
+
+    .recommendation{
+      min-height:120px;
+      padding:16px;
+      border-radius:18px;
+      background:linear-gradient(180deg,#fff8eb,#fff);
+      border-left:4px solid #f59e0b;
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .recommendation.empty{
+      background:#f8fafc;
+      border-left-color:#cbd5e1;
+      color:#64748b;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .metric{
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+    }
+
+    .metric-k{
+      display:block;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#64748b;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .metric-v{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      word-break:break-word;
+    }
+
+    .path-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:600px;
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .path-empty{
+      padding:16px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px dashed #d7e1ef;
+      color:#64748b;
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .path-item{
+      padding:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+    }
+
+    .path-step{
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#2563eb;
+      margin-bottom:6px;
+    }
+
+    .path-question{
+      font-size:13px;
+      font-weight:700;
+      line-height:1.5;
+    }
+
+    .path-answer{
+      font-size:13px;
+      color:#64748b;
+      line-height:1.5;
+      margin-top:6px;
+    }
+
+    .section-note{
+      font-size:12px;
+      color:#64748b;
+      line-height:1.6;
+      margin-top:-2px;
+    }
+
+    .template-stack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .template-card{
+      border:1px solid #e5ebf4;
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      overflow:hidden;
+    }
+
+    .template-card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px 14px 10px;
+    }
+
+    .template-title-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .template-icon{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#f3e8ff;
+      color:#7c3aed;
+      flex:0 0 auto;
+    }
+
+    .template-title{
+      font-size:14px;
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .template-sub{
+      font-size:12px;
+      color:#64748b;
+      margin-top:2px;
+    }
+
+    .template-actions{
+      display:flex;
+      gap:8px;
+    }
+
+    .template-icon-btn{
+      width:34px;
+      height:34px;
+      border:none;
+      border-radius:10px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      color:#475569;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      transition:all .16s ease;
+    }
+
+    .template-icon-btn:hover{
+      background:#eef4ff;
+      color:#1d4ed8;
+      border-color:#cfe0ff;
+    }
+
+    .template-body{
+      padding:0 14px 14px;
+    }
+
+    .template-box{
+      min-height:108px;
+      padding:14px;
+      border-radius:14px;
+      background:#f8fbff;
+      border:1px solid #e4ebf5;
+      font-size:13px;
+      line-height:1.7;
+      color:#334155;
+      white-space:pre-wrap;
+    }
+
+    .template-box.empty{
+      color:#94a3b8;
+    }
+
+    .template-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:0 14px 14px;
+    }
+
+    .template-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .template-copy{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius:12px;
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      transition:all .18s ease;
+    }
+
+    .template-copy.copied,
+    .template-icon-btn.copied{
+      background:#dcfce7 !important;
+      color:#166534 !important;
+      border-color:#bbf7d0 !important;
+    }
+
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.52);
+      justify-content:center;
+      align-items:center;
+      padding:24px;
+      z-index:1200;
+      backdrop-filter:blur(8px);
+    }
+
+    .modal-content{
+      width:100%;
+      max-width:580px;
+      background:#fff;
+      border-radius:28px;
+      padding:26px;
+      box-shadow:var(--shadow-xl);
+      max-height:min(84vh, 900px);
+      overflow:auto;
+      border:1px solid rgba(148,163,184,.16);
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      margin-bottom:14px;
+      color:#0f172a;
+    }
+
+    .modal-close{
+      cursor:pointer;
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#64748b;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+      transition:.2s ease;
+      flex-shrink:0;
+    }
+
+    .modal-close:hover{
+      color:#0f172a;
+      background:#eef2ff;
+    }
+
+    .modal-content p,
+    .modal-content li{
+      color:#475569;
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .modal-content ul{ padding-left:18px; }
+
+    .rating-container{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin:14px 0 10px;
+    }
+
+    .rating-star{
+      cursor:pointer;
+      font-size:32px;
+      color:#d1d5db;
+      transition:transform .2s ease, color .2s ease;
+    }
+
+    .rating-star:hover{ transform:translateY(-2px) scale(1.08); }
+    .rating-star.selected{ color:#ff6600; }
+
+    input, textarea{
+      width:100%;
+      border:none;
+      outline:none;
+      margin-top:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+      padding:14px 16px;
+      color:#0f172a;
+      font-size:14px;
+      transition:.18s ease;
+      font-family:inherit;
+    }
+
+    input:focus, textarea:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .comment-modal-footer{
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      justify-content:flex-start;
+      gap:14px;
+      margin-top:16px;
+    }
+
+    .comment-modal-footer .link-text{
+      align-self:flex-start;
+    }
+
+    #feedbackMessage{
+      display:none;
+      margin-top:12px;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .link-text{
+      color:#4d148c;
+      cursor:pointer;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .link-text:hover{ text-decoration:underline; }
+
+    .comment-list-item{
+      padding:14px 0;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+
+    .comment-list-item:last-child{ border-bottom:none; }
+
+    #commentsList .stars{
+      color:#ff6600;
+      font-size:18px;
+      margin-bottom:6px;
+      display:block;
+    }
+
+    footer{
+      background:#0b1525;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:#fff;
+      margin-top:10px;
+    }
+
+    .footer-inner{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+      padding:18px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .footer-left strong{
+      display:block;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .footer-left span,
+    .footer-right{
+      color:rgba(255,255,255,.68);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    @media (max-width:1450px){
+      .app-frame{
+        grid-template-columns:minmax(0,1fr) 340px 360px;
+      }
+    }
+
+    @media (max-width:1220px){
+      .app-frame{
+        grid-template-columns:1fr;
+      }
+      .side-panel,
+      .template-panel{
+        padding:0 18px 18px;
+      }
+    }
+
+    @media (max-width:1100px){
+      .topbar-inner{
+        min-height:auto;
+        padding:14px 0;
+        align-items:flex-start;
+      }
+      .brand-wrap{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:14px;
+      }
+    }
+
+    @media (max-width:760px){
+      .topbar-inner,
+      .footer-inner,
+      .app-shell{
+        width:min(calc(100% - 20px), var(--max));
+      }
+      .app-shell{margin:16px auto}
+      .app-frame{min-height:100vh;border-radius:24px}
+      .main{padding:18px}
+      .topbar{position:static}
+      .main-topbar{flex-direction:column;align-items:flex-start}
+      .question-text{font-size:28px}
+      .choices{grid-template-columns:1fr}
+      .summary-grid{grid-template-columns:1fr}
+      .decision-footer{flex-direction:column;align-items:flex-start}
+      .actions{width:100%;justify-content:flex-start;flex-wrap:wrap}
+      .clock-pill{flex:1 1 220px}
+      .icon-btn{width:46px;height:46px;border-radius:14px}
+      #timeCalendarPopup{right:10px;top:86px}
+      .modal{padding:14px}
+      .modal-content{padding:20px;border-radius:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-wrap">
+          <a href="index.html" class="brand">
+            <div class="brand-meta">
+              <span class="brand-kicker">Internal Platform</span>
+              <span class="brand-title">Decision Support System</span>
+            </div>
+          </a>
+
+          <nav class="nav-tabs">
+            <a href="index.html" class="tab">Home</a>
+            <a href="case-directory.html" class="tab">Case Directory</a>
+            <a href="ebs-response-template.html" class="tab">EBS Response</a>
+            <a href="volume-application.html" class="tab">Volume Application</a>
+          </nav>
+        </div>
+
+        <div class="actions">
+          <button id="clockBtn" class="clock-pill" type="button">
+            <i class="fa-regular fa-clock"></i>
+            <div class="clock-label">
+              <span class="clock-small">Manila time</span>
+              <span id="clockText">--:-- --</span>
+            </div>
+          </button>
+
+          <button class="icon-btn" id="commentIcon" type="button" title="Feedback">
+            <i class="fa-solid fa-comment-dots"></i>
+          </button>
+
+          <button class="icon-btn" id="helpIcon" type="button" title="Get Help">
+            <i class="fa-solid fa-circle-question"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="timeCalendarPopup">
+      <div class="popup-time" id="popupTime">--:--:-- --</div>
+      <div class="popup-date" id="popupDate">Loading date…</div>
+
+      <div class="calendar-header">
+        <span id="prevMonth">‹</span>
+        <div class="calendar-title" id="monthYear"></div>
+        <span id="nextMonth">›</span>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+            <div>
+              <h1>Keep or Remove Payment Guide</h1>
+            </div>
+            <div class="main-status">
+              <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Progress</div>
+                <div class="progress-status" id="progressText">Not started</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            </section>
+
+            <section class="stage-area">
+              <div class="stage-card" id="stageCard"></div>
+            </section>
+          </div>
+        </main>
+
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
+            <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as the user moves through the app.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Recommended Action</div>
+            <div class="recommendation empty" id="recommendationBox">No recommendation yet. Follow the flow to reach the final instruction.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v" id="metricSteps">0</span>
+              </div>
+              <div class="metric">
+                <span class="metric-k">Last Answer</span>
+                <span class="metric-v" id="metricAnswer">—</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
+            <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Comment</div>
+                      <div class="template-sub">Internal case note</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Corr Code Note</div>
+                      <div class="template-sub">Correction code guidance</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr code</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Email</div>
+                      <div class="template-sub">Customer communication</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div id="helpModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      Get Help
+      <span class="modal-close" onclick="closeHelp()">×</span>
+    </div>
+
+    <p style="margin-top:0; color:#475569; line-height:1.75;">
+      Welcome. This page helps you quickly find the correct guide for the case you are handling. Use the sections below to know where to start and what to do next.
+    </p>
+
+    <div style="display:grid; gap:14px; margin:18px 0 20px;">
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">1. Search for the issue or request</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Use the search bar on the main page to type keywords such as dispute type, surcharge, account update, correction code, service level, or document request.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">2. Open the guide that matches your case</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Review the card title and short description, then open the guide that best matches the customer's concern or required action.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">3. Follow the guide step by step</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Answer each part carefully and follow the process flow until you reach the correct action, decision, or next handling step.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">4. Use the result to complete the case correctly</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Apply the correct disposition, update, correction, validation, or communication based on the guide result.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:18px; border-radius:20px; background:linear-gradient(135deg, #f5f3ff, #fff7ed); border:1px solid rgba(148,163,184,.14); margin-bottom:18px;">
+      <strong style="display:block; color:#0f172a; margin-bottom:10px; font-size:15px;">Quick tips</strong>
+      <ul style="margin:0; padding-left:18px; color:#475569; line-height:1.8; font-size:14px;">
+        <li>Use specific keywords when searching so you can find the right guide faster.</li>
+        <li>If more than one guide looks similar, open the one with the description that best matches the request.</li>
+        <li>Use the feedback button if you notice a missing step, unclear logic, or something that needs improvement.</li>
+        <li>Use the clock in the header if you need to check Manila time while working.</li>
+      </ul>
+    </div>
+
+    <div style="padding:16px 18px; border-radius:18px; background:#0f172a; color:#fff;">
+      <strong style="display:block; margin-bottom:6px; font-size:15px;">Need more support?</strong>
+      <span style="display:block; color:rgba(255,255,255,.76); line-height:1.7; font-size:14px;">If the case still does not match any guide or you are unsure which path to take, contact your team lead or EBS Operations support for clarification.</span>
+    </div>
+  </div>
+</div>
+
+    <div id="commentModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          How do you rate the tool?
+          <span class="modal-close" onclick="closeComment()">×</span>
+        </div>
+
+        <div class="rating-container">
+          <i class="fa-solid fa-star rating-star" data-value="1"></i>
+          <i class="fa-solid fa-star rating-star" data-value="2"></i>
+          <i class="fa-solid fa-star rating-star" data-value="3"></i>
+          <i class="fa-solid fa-star rating-star" data-value="4"></i>
+          <i class="fa-solid fa-star rating-star" data-value="5"></i>
+        </div>
+
+        <input type="text" id="commentName" placeholder="Your Name (optional)">
+        <textarea id="commentText" placeholder="Enter your comment..."></textarea>
+<p id="feedbackMessage" style="display:none; margin-top:12px; font-size:14px; font-weight:700;"></p>
+
+        <div class="comment-modal-footer">
+          <button class="btn" onclick="sendComment()">Send feedback <i class="fa-solid fa-paper-plane"></i></button>
+          <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="allCommentsModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          All Ratings & Comments
+          <span class="modal-close" onclick="closeAllComments()">×</span>
+        </div>
+        <div id="commentsList"></div>
+      </div>
+    </div>
+
+    <div id="passwordModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          Enter Password
+          <span class="modal-close" onclick="closePasswordModal()">×</span>
+        </div>
+        <input id="adminPassword" type="password" placeholder="Enter admin password">
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="checkPassword()">Continue</button>
+          <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <span id="modalTitle">Edit</span>
+          <span class="modal-close" onclick="closeEditModal()">×</span>
+        </div>
+        <textarea id="editTextarea"></textarea>
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="saveEdit()">Save</button>
+          <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-left">
+          <strong>© 2025 EBS Operations</strong>
+          <span>Premium main page experience for faster guide access and cleaner navigation.</span>
+        </div>
+        <div class="footer-right">
+          “Your feedback is important to us. Please feel free to email us with any comments or questions.” — Jules
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+        authDomain:"bdgg-database.firebaseapp.com",
+        projectId:"bdgg-database",
+        storageBucket:"bdgg-database.appspot.com",
+        messagingSenderId:"43574975434",
+        appId:"1:43574975434:web:4c79e581267fdfcc6ccd33"
+      });
+    }
+
+    const db = firebase.firestore();
+    const TEMPLATE_COLLECTION = "keep_or_remove_template";
+    const FEEDBACK_COLLECTION = "feedback";
+    const MAX_STEPS = 8;
+
+    const els = {
+      clockBtn: document.getElementById("clockBtn"),
+      clockText: document.getElementById("clockText"),
+      popupTime: document.getElementById("popupTime"),
+      popupDate: document.getElementById("popupDate"),
+      calendarPopup: document.getElementById("timeCalendarPopup"),
+      calendarGrid: document.getElementById("calendarGrid"),
+      monthYear: document.getElementById("monthYear"),
+
+      stageCard: document.getElementById("stageCard"),
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      recommendationBox: document.getElementById("recommendationBox"),
+      pathBox: document.getElementById("pathBox"),
+      metricSteps: document.getElementById("metricSteps"),
+      metricAnswer: document.getElementById("metricAnswer"),
+      statusPill: document.getElementById("statusPill"),
+
+      suggestedComment: document.getElementById("suggestedComment"),
+      suggestedCorrCode: document.getElementById("suggestedCorrCode"),
+      suggestedEmail: document.getElementById("suggestedEmail"),
+
+      passwordModal: document.getElementById("passwordModal"),
+      editModal: document.getElementById("editModal"),
+      adminPassword: document.getElementById("adminPassword"),
+      editTextarea: document.getElementById("editTextarea"),
+      modalTitle: document.getElementById("modalTitle"),
+
+      helpModal: document.getElementById("helpModal"),
+      commentModal: document.getElementById("commentModal"),
+      allCommentsModal: document.getElementById("allCommentsModal"),
+      commentsList: document.getElementById("commentsList"),
+      commentName: document.getElementById("commentName"),
+      commentText: document.getElementById("commentText"),
+      feedbackMessage: document.getElementById("feedbackMessage")
+    };
+
+    let currentDate = new Date();
+    let selectedRating = 0;
+    let path = [];
+    let historyStack = [];
+    let currentFinalRecommendation = "";
+    let currentEditType = "";
+    const templateCache = {};
+
+    const NODES = {
+      start: {
+        text: "Is the PRO paid and closed?",
+        help: "Start here to determine whether the request falls under keep or remove payment handling.",
+        choices: [
+          { label: "Yes", next: "request_type", icon: "fa-solid fa-check", desc: "The PRO is already paid and closed." },
+          { label: "No", next: "normal_case", icon: "fa-solid fa-xmark", desc: "Handle under the normal process." }
+        ]
+      },
+
+      normal_case: {
+        text: "Handle as normal case.",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      request_type: {
+        text: "What is the type of Request?",
+        help: "Select the request type to continue.",
+        choices: [
+          { label: "LOA Correction Request", next: "loa_old", icon: "fa-solid fa-file-signature", desc: "Request is related to LOA correction." },
+          { label: "FedEx Billing Error", next: "billing_correct", icon: "fa-solid fa-file-invoice-dollar", desc: "Request is due to a billing correction." },
+          { label: "Pricing / Reweigh", next: "pricing_within_180", icon: "fa-solid fa-scale-balanced", desc: "Request is due to pricing or reweigh." }
+        ]
+      },
+
+      loa_old: {
+        text: "Is PRO > 1 year old?",
+        help: "Check the PRO age first.",
+        choices: [
+          { label: "Yes", next: "loa_deny_old", icon: "fa-solid fa-ban", desc: "PRO is more than 1 year old." },
+          { label: "No", next: "loa_customer_insists", icon: "fa-solid fa-arrow-right", desc: "PRO is within 1 year." }
+        ]
+      },
+
+      loa_deny_old: {
+        text: "DENY (Advise already paid by debtor per BOL)",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      loa_customer_insists: {
+        text: "Customer insists to proceed?",
+        help: "Confirm if the customer still wants to continue.",
+        choices: [
+          { label: "Yes", next: "loa_who_paid", icon: "fa-solid fa-check", desc: "Customer wants to proceed." },
+          { label: "No", next: "loa_paid_closed", icon: "fa-solid fa-xmark", desc: "Customer will not proceed." }
+        ]
+      },
+
+      loa_paid_closed: {
+        text: "Advise already paid & closed",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      loa_who_paid: {
+        text: "Who made the payment?",
+        help: "Identify who made the payment.",
+        choices: [
+          { label: "Current Debtor (per BOL)", next: "loa_rebill_remove", icon: "fa-solid fa-user-check", desc: "Payment was made by the current debtor." },
+          { label: "Accepting Party (per LOA)", next: "loa_rebill_keep", icon: "fa-solid fa-handshake", desc: "Payment was made by the accepting party." }
+        ]
+      },
+
+      loa_rebill_remove: {
+        text: "Rebill to accepting party (LOA) then REMOVE payment",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      loa_rebill_keep: {
+        text: "Rebill to accepting party then KEEP payment",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      billing_correct: {
+        text: "Correct billing (terms, weight, class, etc.)",
+        help: "Complete the billing correction first.",
+        choices: [
+          { label: "Continue", next: "billing_result", icon: "fa-solid fa-arrow-right", desc: "Move to the result after correction." }
+        ]
+      },
+
+      billing_result: {
+        text: "Result after correction?",
+        help: "Select the result after billing correction.",
+        choices: [
+          { label: "Negative balance", next: "billing_refund", icon: "fa-solid fa-rotate-left", desc: "Negative balance after correction." },
+          { label: "High credit balance", next: "billing_escalate", icon: "fa-solid fa-triangle-exclamation", desc: "High credit balance after correction." },
+          { label: "Normal", next: "billing_close", icon: "fa-solid fa-circle-check", desc: "Normal balance after correction." },
+          { label: "(PAUD only) Correct PRO per BOL", next: "billing_paud", icon: "fa-solid fa-file-circle-check", desc: "PAUD-only path." }
+        ]
+      },
+
+      billing_refund: {
+        text: "Negative balance — Auto refund (No escalation)",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      billing_escalate: {
+        text: "High credit balance — Escalate for approval",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      billing_close: {
+        text: "Normal — Close case",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      billing_paud: {
+        text: "(PAUD only) — Correct PRO per BOL",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      pricing_within_180: {
+        text: "Within 180 days?",
+        help: "Check whether the request is within 180 days.",
+        choices: [
+          { label: "Yes", next: "pricing_process", icon: "fa-solid fa-check", desc: "Within 180 days." },
+          { label: "No", next: "pricing_deny", icon: "fa-solid fa-xmark", desc: "Beyond 180 days." }
+        ]
+      },
+
+      pricing_process: {
+        text: "Process normally",
+        help: "Final handling instruction reached.",
+        choices: []
+      },
+
+      pricing_deny: {
+        text: "Deny",
+        help: "Final handling instruction reached.",
+        choices: []
+      }
+    };
+
+    function escapeHtml(value){
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function normalizeId(str){
+      return String(str || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
+
+    function getDocId(recommendation, type){
+      return `${type}__${normalizeId(recommendation)}`;
+    }
+
+    function updateClock(){
+      const now = new Date();
+
+      const headerTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      }).format(now);
+
+      const popupTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      }).format(now);
+
+      const popupDate = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(now);
+
+      els.clockText.textContent = headerTime;
+      els.popupTime.textContent = popupTime;
+      els.popupDate.textContent = popupDate;
+    }
+
+    function renderCalendar(date){
+      els.calendarGrid.innerHTML = "";
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      els.monthYear.textContent = date.toLocaleString("en-US", { month: "long", year: "numeric" });
+
+      ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(day => {
+        const dayName = document.createElement("div");
+        dayName.className = "day-name";
+        dayName.textContent = day;
+        els.calendarGrid.appendChild(dayName);
+      });
+
+      for(let i = 0; i < firstDay; i++){
+        const empty = document.createElement("div");
+        els.calendarGrid.appendChild(empty);
+      }
+
+      const today = new Date();
+      for(let d = 1; d <= daysInMonth; d++){
+        const day = document.createElement("div");
+        day.className = "day";
+        day.textContent = d;
+
+        if (
+          d === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ){
+          day.classList.add("today");
+        }
+
+        els.calendarGrid.appendChild(day);
+      }
+    }
+
+    els.clockBtn.onclick = function(e){
+      e.stopPropagation();
+      els.calendarPopup.style.display = els.calendarPopup.style.display === "block" ? "none" : "block";
+      renderCalendar(currentDate);
+    };
+
+    document.addEventListener("click", function(){
+      els.calendarPopup.style.display = "none";
+    });
+
+    els.calendarPopup.addEventListener("click", function(e){
+      e.stopPropagation();
+    });
+
+    document.getElementById("prevMonth").onclick = function(e){
+      e.stopPropagation();
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar(currentDate);
+    };
+
+    document.getElementById("nextMonth").onclick = function(e){
+      e.stopPropagation();
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar(currentDate);
+    };
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    document.getElementById("helpIcon").onclick = () => {
+      els.helpModal.style.display = "flex";
+    };
+
+    document.getElementById("commentIcon").onclick = () => {
+      els.feedbackMessage.style.display = "none";
+      els.feedbackMessage.textContent = "";
+      els.commentModal.style.display = "flex";
+    };
+
+    function closeHelp(){ els.helpModal.style.display = "none"; }
+    function closeComment(){ els.feedbackMessage.style.display = "none"; els.feedbackMessage.textContent = ""; els.commentModal.style.display = "none"; }
+    function closeAllComments(){ els.allCommentsModal.style.display = "none"; }
+    function closePasswordModal(){ els.passwordModal.style.display = "none"; }
+    function closeEditModal(){ els.editModal.style.display = "none"; }
+
+    window.addEventListener("click", function(e){
+      if(e.target === els.helpModal) closeHelp();
+      if(e.target === els.commentModal) closeComment();
+      if(e.target === els.allCommentsModal) closeAllComments();
+      if(e.target === els.passwordModal) closePasswordModal();
+      if(e.target === els.editModal) closeEditModal();
+    });
+
+    document.querySelectorAll(".rating-star").forEach(star => {
+      star.onclick = function(){
+        selectedRating = Number(this.dataset.value);
+        document.querySelectorAll(".rating-star").forEach(s => {
+          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
+        });
+      };
+    });
+
+    async function sendComment(){
+      const name = els.commentName.value.trim();
+      const comment = els.commentText.value.trim();
+
+      if(!selectedRating){
+        alert("Please select a rating.");
+        return;
+      }
+
+      try {
+        await db.collection(FEEDBACK_COLLECTION).add({
+          name: name || "Anonymous",
+          comment,
+          rating: selectedRating,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        els.feedbackMessage.style.display = "block";
+        els.feedbackMessage.style.color = "#16a34a";
+        els.feedbackMessage.textContent = "Feedback sent successfully.";
+
+        els.commentName.value = "";
+        els.commentText.value = "";
+        selectedRating = 0;
+        document.querySelectorAll(".rating-star").forEach(s => s.classList.remove("selected"));
+
+        setTimeout(() => {
+          els.feedbackMessage.style.display = "none";
+          els.feedbackMessage.textContent = "";
+          closeComment();
+        }, 1200);
+      } catch (error) {
+        els.feedbackMessage.style.display = "block";
+        els.feedbackMessage.style.color = "#ef4444";
+        els.feedbackMessage.textContent = "Unable to send feedback. Please try again.";
+      }
+    }
+
+    async function showAllComments(){
+      try{
+        const snap = await db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").get();
+        els.commentsList.innerHTML = "";
+
+        if(snap.empty){
+          els.commentsList.innerHTML = `<p style="color:#64748b;">No comments yet.</p>`;
+        } else {
+          snap.forEach(doc => {
+            const d = doc.data();
+            const item = document.createElement("div");
+            item.className = "comment-list-item";
+            item.innerHTML = `
+              <span class="stars">${"★".repeat(d.rating || 0)}${"☆".repeat(5 - (d.rating || 0))}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(d.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(d.comment || "")}</div>
+            `;
+            els.commentsList.appendChild(item);
+          });
+        }
+
+        closeComment();
+        els.allCommentsModal.style.display = "flex";
+      } catch(err){
+        alert("Unable to load comments right now.");
+      }
+    }
+
+    function getDefaultTemplates(){
+      return {
+        comment: "",
+        corr: "",
+        email: ""
+      };
+    }
+
+    function setTemplateValue(el, text){
+      el.textContent = text;
+      el.classList.toggle("empty", !text);
+    }
+
+    async function loadTemplatesForRecommendation(recommendation){
+      if(!recommendation){
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+        return;
+      }
+
+      const defaults = getDefaultTemplates();
+
+      const ids = {
+        comment: getDocId(recommendation, "comment"),
+        corr: getDocId(recommendation, "corr"),
+        email: getDocId(recommendation, "email")
+      };
+
+      try{
+        const [commentDoc, corrDoc, emailDoc] = await Promise.all([
+          db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
+          db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
+          db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
+        ]);
+
+        const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
+        const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
+        const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
+
+        templateCache[ids.comment] = finalComment;
+        templateCache[ids.corr] = finalCorr;
+        templateCache[ids.email] = finalEmail;
+
+        setTemplateValue(els.suggestedComment, finalComment);
+        setTemplateValue(els.suggestedCorrCode, finalCorr);
+        setTemplateValue(els.suggestedEmail, finalEmail);
+      } catch(err){
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+      }
+    }
+
+    function setCopiedState(btn, originalText){
+      btn.classList.add("copied");
+      btn.textContent = "Copied";
+      clearTimeout(btn._copiedTimer);
+      btn._copiedTimer = setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.textContent = originalText;
+      }, 1400);
+    }
+
+    async function copyTemplateText(targetId, btn){
+      const target = document.getElementById(targetId);
+      const value = target.innerText.trim();
+      if(!value || target.classList.contains("empty")) return;
+
+      try{
+        await navigator.clipboard.writeText(value);
+        const original = btn.textContent;
+        setCopiedState(btn, original);
+      } catch {
+        alert("Unable to copy text.");
+      }
+    }
+
+    function attemptEdit(type){
+      if(!currentFinalRecommendation){
+        alert("Reach a final recommendation first before editing templates.");
+        return;
+      }
+      currentEditType = type;
+      els.adminPassword.value = "";
+      els.passwordModal.style.display = "flex";
+    }
+
+    function checkPassword(){
+      if(els.adminPassword.value === "admin"){
+        closePasswordModal();
+        openEditModal();
+      } else {
+        alert("Incorrect password");
+      }
+    }
+
+    function openEditModal(){
+      const map = {
+        comment: "suggestedComment",
+        email: "suggestedEmail",
+        corr: "suggestedCorrCode"
+      };
+
+      els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+      els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+      els.editModal.style.display = "flex";
+    }
+
+    async function saveEdit(){
+      const val = els.editTextarea.value.trim();
+
+      if(!val){
+        alert("Cannot save empty text.");
+        return;
+      }
+
+      const docId = getDocId(currentFinalRecommendation, currentEditType);
+
+      try{
+        await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
+          text: val,
+          type: currentEditType,
+          recommendation: currentFinalRecommendation,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        templateCache[docId] = val;
+
+        if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
+        if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
+        if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
+
+        closeEditModal();
+        alert("Saved!");
+      } catch(err){
+        alert("Unable to save right now.");
+      }
+    }
+
+    function getPercent(){
+      if(path.length === 0) return 0;
+      const node = NODES[currentKey];
+      if(!node.choices || node.choices.length === 0) return 100;
+      return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
+    }
+
+    let currentKey = "start";
+
+    function updateMeta(isFinal){
+      const pct = getPercent();
+      const lastAnswer = path.length ? path[path.length - 1].answer : "—";
+      const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
+
+      els.progressFill.style.width = pct + "%";
+      els.progressText.textContent = progressLabel;
+      els.metricSteps.textContent = String(path.length);
+      els.metricAnswer.textContent = lastAnswer;
+      els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
+    }
+
+    function updatePath(){
+      if(!path.length){
+        els.pathBox.className = "path-empty";
+        els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+        return;
+      }
+
+      const html = path.map((item,index)=>`
+        <div class="path-item">
+          <div class="path-step">Step ${index + 1}</div>
+          <div class="path-question">${escapeHtml(item.question)}</div>
+          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+        </div>
+      `).join("");
+
+      els.pathBox.className = "path-list";
+      els.pathBox.innerHTML = html;
+    }
+
+    function updateRecommendation(text, isFinal){
+      if(!isFinal){
+        els.recommendationBox.className = "recommendation empty";
+        els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
+        return;
+      }
+
+      els.recommendationBox.className = "recommendation";
+      els.recommendationBox.textContent = text;
+    }
+
+    async function renderNode(key){
+      currentKey = key;
+      const node = NODES[key];
+      const isFinal = !node.choices || node.choices.length === 0;
+
+      updateMeta(isFinal);
+      updatePath();
+      updateRecommendation(node.text, isFinal);
+
+      if(isFinal){
+        currentFinalRecommendation = node.text;
+        await loadTemplatesForRecommendation(currentFinalRecommendation);
+
+        els.stageCard.innerHTML = `
+          <div class="stage-top">
+            <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+            <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+          </div>
+          <div class="final-card">
+            <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+            <div class="final-title">Use this handling outcome</div>
+            <div class="final-text">${escapeHtml(node.text)}</div>
+            <div class="final-actions">
+              <button class="app-btn secondary" id="inlineBack">Go Back</button>
+              <button class="app-btn primary" id="inlineRestart">Start Over</button>
+            </div>
+          </div>
+        `;
+
+        document.getElementById("inlineBack").onclick = goBack;
+        document.getElementById("inlineRestart").onclick = restart;
+        return;
+      }
+
+      currentFinalRecommendation = "";
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+
+      const choices = node.choices.map(choice => `
+        <button class="choice" data-next="${choice.next}" data-label="${escapeHtml(choice.label)}">
+          <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+          <div class="choice-body">
+            <div class="choice-title">${escapeHtml(choice.label)}</div>
+            <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+          </div>
+        </button>
+      `).join("");
+
+      const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
+
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+          <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
+        </div>
+
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">${escapeHtml(node.text)}</div>
+            <div class="question-help">${escapeHtml(node.help || "Select the answer that best matches the case.")}</div>
+          </div>
+
+          <div class="choices">${choices}</div>
+        </div>
+
+        <div class="decision-footer">
+          <div class="decision-footer-left">
+            <div class="footer-label">Decision Guide</div>
+            <div class="footer-value">${footerStepText}</div>
+          </div>
+
+          <div class="decision-actions">
+            <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+            <button class="app-btn secondary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+          </div>
+        </div>
+      `;
+
+      const inlineBack = document.getElementById("inlineBack");
+      const inlineRestart = document.getElementById("inlineRestart");
+
+      if(inlineBack) inlineBack.onclick = goBack;
+      if(inlineRestart) inlineRestart.onclick = restart;
+
+      els.stageCard.querySelectorAll(".choice").forEach(btn => {
+        btn.addEventListener("click", () => {
+          els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+          btn.classList.add("selected");
+
+          const next = btn.dataset.next;
+          const label = btn.dataset.label;
+
+          historyStack.push({ key: currentKey, path: [...path] });
+          path.push({ question: node.text, answer: label });
+
+          updatePath();
+          updateMeta(false);
+
+          setTimeout(() => {
+            renderNode(next);
+          }, 120);
+        });
+      });
+    }
+
+    function goBack(){
+      if(!historyStack.length) return;
+      const prev = historyStack.pop();
+      path = prev.path || [];
+      renderNode(prev.key);
+    }
+
+    function restart(){
+      path = [];
+      historyStack = [];
+      currentFinalRecommendation = "";
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      updatePath();
+      updateRecommendation("", false);
+      renderNode("start");
+    }
+
+    renderNode("start");
+  </script>
+</body>
+</html>
