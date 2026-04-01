@@ -40,7 +40,7 @@
       --radius-lg:20px;
       --radius-md:16px;
       --radius-sm:12px;
-      --max:1720px;
+      --max:1920px;
       font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -330,7 +330,7 @@
       box-shadow:var(--shadow-xl);
       overflow:hidden;
       display:grid;
-      grid-template-columns:minmax(0,1.45fr) 380px 420px;
+      grid-template-columns:minmax(0,1.45fr) 420px 480px;
     }
 
     .main{
@@ -533,6 +533,7 @@
       font-size:14px;
       line-height:1.75;
       max-width:760px;
+      white-space:pre-wrap;
     }
 
     .choices{
@@ -659,31 +660,6 @@
       transform:translateY(-1px);
     }
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      margin:0;
-      min-height:50px;
-      padding:0 18px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-      transition:.22s ease;
-      width:100%;
-      cursor:pointer;
-    }
-
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 18px 30px rgba(77,20,140,.24);
-    }
-
     .app-btn.primary{
       background:#111827;
       color:#fff;
@@ -704,7 +680,7 @@
 
     .final-card{
       margin:20px;
-      padding:24px;
+      padding:20px 20px 18px;
       border-radius:24px;
       background:linear-gradient(180deg,#f0fdf4,#ffffff);
       border:1px solid #dcfce7;
@@ -726,26 +702,36 @@
     }
 
     .final-title{
-      margin:16px 0 0;
+      margin:14px 0 0;
       font-size:14px;
       font-weight:800;
       color:#166534;
     }
 
     .final-text{
-      margin:10px 0 0;
-      font-size:24px;
+      margin:12px 0 0;
+      font-size:16px;
       line-height:1.5;
       letter-spacing:-.02em;
       font-weight:800;
       color:#111827;
+      white-space:pre-wrap;
+      max-width:980px;
+    }
+
+    .final-note{
+      margin-top:12px;
+      color:#475569;
+      line-height:1.7;
+      white-space:pre-wrap;
     }
 
     .final-actions{
       display:flex;
+      align-items:center;
       gap:10px;
       flex-wrap:wrap;
-      margin-top:18px;
+      margin-top:22px;
     }
 
     .side-panel{
@@ -786,155 +772,193 @@
 
     .recommendation{
       min-height:120px;
-      padding:16px;
       border-radius:18px;
-      background:linear-gradient(180deg,#fff8eb,#fff);
-      border-left:4px solid #f59e0b;
-      font-size:14px;
-      line-height:1.7;
+      padding:16px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      line-height:1.75;
+      color:#0f172a;
+      white-space:pre-wrap;
     }
 
-    .recommendation.empty{
-      background:#f8fafc;
-      border-left-color:#cbd5e1;
-      color:#64748b;
+    .recommendation.empty,
+    .path-empty,
+    .template-box.empty{
+      color:#94a3b8;
     }
+
+    .path-box{
+      min-height:160px;
+      border-radius:18px;
+      padding:16px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+    }
+
+    .path-item{
+      padding:12px 14px;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid #e2e8f0;
+      margin-bottom:10px;
+    }
+    
+    .path-item{
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.path-item:hover{
+  transform:translateY(-2px);
+  background:#ffffff;
+  box-shadow:0 10px 24px rgba(15,23,42,.08);
+}
+
+    .path-item:last-child{margin-bottom:0}
+
+    .step-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 12px;
+  border-radius:999px;
+  background:#eef4ff;
+  color:#2563eb;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+  margin-left:2px; /* slight left align to match question */
+  animation:stepBadgePop .35s ease;
+}
+
+.path-q{
+  font-size:12px;
+  color:#64748b;
+  margin-bottom:6px;
+  font-weight:700;
+}
+
+.path-a{
+  font-size:14px;
+  font-weight:800;
+  color:#111827;
+  padding-left:2px;
+}
+
+.path-item-enter{
+  opacity:0;
+  transform:translateY(10px);
+  animation:pathItemFadeUp .35s ease forwards;
+}
+
+@keyframes pathItemFadeUp{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@keyframes stepBadgePop{
+  from{
+    opacity:0;
+    transform:translateY(4px) scale(.96);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
 
     .summary-grid{
       display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
     }
 
     .metric{
-      padding:14px;
       border-radius:18px;
+      padding:14px;
       background:#f8fafc;
-      border:1px solid #e7edf4;
+      border:1px solid #e2e8f0;
     }
 
-    .metric-k{
+    .metric-label{
       display:block;
-      font-size:10px;
+      font-size:11px;
       text-transform:uppercase;
       letter-spacing:.12em;
       color:#64748b;
       font-weight:800;
-      margin-bottom:6px;
+      margin-bottom:8px;
     }
 
-    .metric-v{
-      font-size:18px;
+    .metric-value{
+      display:block;
+      font-size:24px;
       font-weight:900;
-      letter-spacing:-.03em;
+      color:#111827;
+      line-height:1.1;
       word-break:break-word;
     }
 
-    .path-list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      max-height:600px;
-      overflow:auto;
-      padding-right:4px;
-    }
-
-    .path-empty{
-      padding:16px;
-      border-radius:16px;
-      background:#f8fafc;
-      border:1px dashed #d7e1ef;
-      color:#64748b;
-      font-size:13px;
-      line-height:1.7;
-    }
-
-    .path-item{
-      padding:12px;
-      border-radius:16px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-    }
-
-    .path-step{
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#2563eb;
-      margin-bottom:6px;
-    }
-
-    .path-question{
-      font-size:13px;
-      font-weight:700;
-      line-height:1.5;
-    }
-
-    .path-answer{
-      font-size:13px;
-      color:#64748b;
-      line-height:1.5;
-      margin-top:6px;
-    }
-
-    .section-note{
-      font-size:12px;
-      color:#64748b;
-      line-height:1.6;
-      margin-top:-2px;
-    }
-
     .template-stack{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-top:14px;
+      display:grid;
+      gap:14px;
     }
 
     .template-card{
-      border:1px solid #e5ebf4;
-      border-radius:18px;
-      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border:1px solid #dbe4f0;
+      border-radius:20px;
       overflow:hidden;
+      background:#fff;
+      box-shadow:var(--shadow-card);
     }
 
     .template-card-head{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-      padding:14px 14px 10px;
+      gap:12px;
+      padding:16px 16px 14px;
+      border-bottom:1px solid #edf2f7;
     }
 
     .template-title-wrap{
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:12px;
       min-width:0;
     }
 
     .template-icon{
-      width:36px;
-      height:36px;
-      border-radius:12px;
+      width:44px;
+      height:44px;
+      border-radius:14px;
       display:grid;
       place-items:center;
-      background:#f3e8ff;
-      color:#7c3aed;
+      background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10));
+      color:#4d148c;
       flex:0 0 auto;
+      font-size:17px;
     }
 
     .template-title{
-      font-size:14px;
+      font-size:15px;
       font-weight:900;
-      color:#0f172a;
+      color:#111827;
+      line-height:1.25;
     }
 
     .template-sub{
+      margin-top:4px;
       font-size:12px;
       color:#64748b;
-      margin-top:2px;
+      line-height:1.5;
     }
 
     .template-actions{
@@ -943,166 +967,125 @@
     }
 
     .template-icon-btn{
-      width:34px;
-      height:34px;
+      width:38px;
+      height:38px;
       border:none;
-      border-radius:10px;
+      border-radius:12px;
       background:#f8fafc;
       border:1px solid #e2e8f0;
-      color:#475569;
       cursor:pointer;
-      display:grid;
-      place-items:center;
-      transition:all .16s ease;
+      color:#0f172a;
+      transition:.18s ease;
     }
 
     .template-icon-btn:hover{
-      background:#eef4ff;
-      color:#1d4ed8;
-      border-color:#cfe0ff;
+      transform:translateY(-1px);
+      background:#fff;
     }
 
     .template-body{
-      padding:0 14px 14px;
+      padding:16px;
     }
 
     .template-box{
-      min-height:108px;
+      min-height:120px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
       padding:14px;
-      border-radius:14px;
-      background:#f8fbff;
-      border:1px solid #e4ebf5;
-      font-size:13px;
+      color:#111827;
       line-height:1.7;
-      color:#334155;
       white-space:pre-wrap;
-    }
-
-    .template-box.empty{
-      color:#94a3b8;
+      font-size:13px;
     }
 
     .template-foot{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-      padding:0 14px 14px;
+      gap:12px;
+      padding:0 16px 16px;
+      flex-wrap:wrap;
     }
 
     .template-tag{
       display:inline-flex;
       align-items:center;
-      gap:6px;
-      padding:7px 10px;
-      border-radius:999px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      font-size:11px;
+      gap:8px;
+      font-size:12px;
       font-weight:800;
       color:#64748b;
     }
 
     .template-copy{
-      appearance:none;
       border:none;
       cursor:pointer;
-      padding:10px 14px;
       border-radius:12px;
-      background:#111827;
+      padding:10px 14px;
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
       color:#fff;
-      font-size:12px;
       font-weight:800;
-      transition:all .18s ease;
+      transition:.22s ease;
     }
 
-    .template-copy.copied,
-    .template-icon-btn.copied{
-      background:#dcfce7 !important;
-      color:#166534 !important;
-      border-color:#bbf7d0 !important;
+    .template-copy:hover{
+      transform:translateY(-1px);
+    }
+
+    .template-copy.copied{
+      background:linear-gradient(135deg,#16a34a,#15803d);
+    }
+
+    .note-card{
+      border-radius:18px;
+      background:linear-gradient(135deg,#f8fafc,#ffffff);
+      border:1px solid #e2e8f0;
+      padding:14px 16px;
+      color:#64748b;
+      line-height:1.7;
+      font-size:13px;
     }
 
     .modal{
       display:none;
       position:fixed;
       inset:0;
-      background:rgba(2,6,23,.52);
-      justify-content:center;
+      background:rgba(2,6,23,.54);
       align-items:center;
-      padding:24px;
-      z-index:1200;
-      backdrop-filter:blur(8px);
+      justify-content:center;
+      padding:18px;
+      z-index:1001;
+      backdrop-filter:blur(10px);
     }
 
     .modal-content{
-      width:100%;
-      max-width:580px;
+      width:min(100%, 640px);
       background:#fff;
-      border-radius:28px;
-      padding:26px;
+      border-radius:26px;
+      border:1px solid rgba(219,228,240,.9);
       box-shadow:var(--shadow-xl);
-      max-height:min(84vh, 900px);
-      overflow:auto;
-      border:1px solid rgba(148,163,184,.16);
+      padding:22px;
     }
 
     .modal-header{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:14px;
-      font-size:22px;
-      font-weight:800;
-      letter-spacing:-.03em;
-      margin-bottom:14px;
-      color:#0f172a;
+      gap:12px;
+      font-size:20px;
+      font-weight:900;
+      color:#111827;
+      margin-bottom:16px;
     }
 
     .modal-close{
       cursor:pointer;
-      width:40px;
-      height:40px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      color:#64748b;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-      transition:.2s ease;
-      flex-shrink:0;
+      font-size:24px;
+      color:#94a3b8;
+      line-height:1;
     }
 
-    .modal-close:hover{
-      color:#0f172a;
-      background:#eef2ff;
-    }
-
-    .modal-content p,
-    .modal-content li{
-      color:#475569;
-      line-height:1.7;
-      font-size:14px;
-    }
-
-    .modal-content ul{ padding-left:18px; }
-
-    .rating-container{
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      margin:14px 0 10px;
-    }
-
-    .rating-star{
-      cursor:pointer;
-      font-size:32px;
-      color:#d1d5db;
-      transition:transform .2s ease, color .2s ease;
-    }
-
-    .rating-star:hover{ transform:translateY(-2px) scale(1.08); }
-    .rating-star.selected{ color:#ff6600; }
+    .modal-close:hover{ color:#111827; }
 
     input, textarea{
       width:100%;
@@ -1129,6 +1112,23 @@
       resize:vertical;
     }
 
+    .rating-container{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .rating-star{
+      cursor:pointer;
+      font-size:28px;
+      color:#cbd5e1;
+      transition:color .2s, transform .2s;
+    }
+
+    .rating-star:hover{ transform:scale(1.12); }
+    .rating-star.selected{ color:#ff6600; }
+
     .comment-modal-footer{
       display:flex;
       flex-direction:column;
@@ -1136,10 +1136,6 @@
       justify-content:flex-start;
       gap:14px;
       margin-top:16px;
-    }
-
-    .comment-modal-footer .link-text{
-      align-self:flex-start;
     }
 
     #feedbackMessage{
@@ -1340,7 +1336,7 @@
         <aside class="side-panel">
           <div class="summary-card">
             <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
-            <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as the user moves through the app.</div>
+            <div id="pathBox" class="path-box path-empty">No steps selected yet. The full path will appear here as the user moves through the guide.</div>
           </div>
 
           <div class="summary-card">
@@ -1352,12 +1348,12 @@
             <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
             <div class="summary-grid">
               <div class="metric">
-                <span class="metric-k">Steps</span>
-                <span class="metric-v" id="metricSteps">0</span>
+                <span class="metric-label">Steps</span>
+                <span class="metric-value" id="metricSteps">0</span>
               </div>
               <div class="metric">
-                <span class="metric-k">Last Answer</span>
-                <span class="metric-v" id="metricAnswer">—</span>
+                <span class="metric-label">Last Answer</span>
+                <span class="metric-value" id="metricAnswer">—</span>
               </div>
             </div>
           </div>
@@ -1365,8 +1361,7 @@
 
         <aside class="template-panel">
           <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
-            <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
+            <div class="summary-head"><i class="fa-solid fa-file-lines"></i> Suggested Templates</div>
 
             <div class="template-stack">
               <div class="template-card">
@@ -1429,7 +1424,7 @@
                     <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
                     <div>
                       <div class="template-title">Suggested Email</div>
-                      <div class="template-sub">Customer communication</div>
+                      <div class="template-sub">Customer response draft</div>
                     </div>
                   </div>
 
@@ -1449,6 +1444,10 @@
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
                 </div>
               </div>
+            </div>
+
+            <div class="note-card" style="margin-top:14px;">
+              Note: These are suggested templates. Personalized emails or comments are always more appreciated.
             </div>
           </div>
         </aside>
@@ -1533,29 +1532,181 @@
   </div>
 </div>
 
-    <div id="commentModal" class="modal">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          How do you rate the tool?
-          <span class="modal-close" onclick="closeComment()">×</span>
-        </div>
+<style>
+/*style for the feedback modal and disregard old styles*/
+.feedback-modal{
+  width:min(100%, 560px);
+  background:#ffffff;
+  border-radius:24px;
+  padding:26px 24px 22px;
+  box-shadow:0 30px 70px rgba(15,23,42,.24);
+  border:1px solid rgba(226,232,240,.9);
+  position:relative;
+}
 
-        <div class="rating-container">
-          <i class="fa-solid fa-star rating-star" data-value="1"></i>
-          <i class="fa-solid fa-star rating-star" data-value="2"></i>
-          <i class="fa-solid fa-star rating-star" data-value="3"></i>
-          <i class="fa-solid fa-star rating-star" data-value="4"></i>
-          <i class="fa-solid fa-star rating-star" data-value="5"></i>
-        </div>
+.feedback-title{
+  font-size:18px;
+  font-weight:800;
+  color:#0f172a;
+  margin-bottom:22px;
+}
 
-        <input type="text" id="commentName" placeholder="Your Name (optional)">
-        <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-<p id="feedbackMessage" style="display:none; margin-top:12px; font-size:14px; font-weight:700;"></p>
+.feedback-close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:14px;
+  background:#f1f5f9;
+  color:#64748b;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+}
 
-        <div class="comment-modal-footer">
-          <button class="btn" onclick="sendComment()">Send feedback <i class="fa-solid fa-paper-plane"></i></button>
-          <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-        </div>
+.feedback-close:hover{
+  background:#e2e8f0;
+  color:#334155;
+}
+
+.feedback-stars{
+  justify-content:center;
+  gap:14px;
+  margin:8px 0 22px;
+}
+
+.feedback-stars .rating-star{
+  font-size:30px; /* 👈 bigger */
+  color:#cbd5e1;  /* 👈 default gray (IMPORTANT) */
+  transition:transform .18s ease, color .18s ease;
+  cursor:pointer;
+}
+
+.rating-star.selected{
+  color:#f97316;
+}
+
+.feedback-stars .rating-star:hover{
+  transform:scale(1.12);
+}
+
+.feedback-modal input,
+.feedback-modal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(203,213,225,.9);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  font-family:inherit;
+}
+
+.feedback-modal input{
+  margin-top:0;
+  margin-bottom:12px;
+  height:46px;
+}
+
+.feedback-modal textarea{
+  margin-top:0;
+  min-height:128px;
+  resize:vertical;
+  margin-bottom:18px;
+}
+
+.feedback-modal input::placeholder,
+.feedback-modal textarea::placeholder{
+  color:#94a3b8;
+}
+
+.feedback-modal input:focus,
+.feedback-modal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(99,102,241,.14);
+}
+
+.feedback-send-btn{
+  width:100%;
+  min-height:48px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(90deg, #5b21b6 0%, #6d28d9 100%);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  box-shadow:0 12px 28px rgba(109,40,217,.28);
+  margin-bottom:14px;
+}
+
+.feedback-send-btn:hover{
+  transform:translateY(-1px);
+}
+
+.feedback-link{
+  display:inline-block;
+  color:#5b21b6;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.feedback-link:hover{
+  text-decoration:underline;
+}
+
+#feedbackMessage{
+  display:none;
+  margin-top:12px;
+  font-size:14px;
+  font-weight:700;
+}
+
+
+</style>
+
+<div id="commentModal" class="modal">
+  <div class="feedback-modal" onclick="event.stopPropagation()">
+    <button class="feedback-close" onclick="closeComment()" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="feedback-title">How do you rate the tool?</div>
+
+    <div class="rating-container feedback-stars">
+      <i class="fa-solid fa-star rating-star" data-value="1"></i>
+      <i class="fa-solid fa-star rating-star" data-value="2"></i>
+      <i class="fa-solid fa-star rating-star" data-value="3"></i>
+      <i class="fa-solid fa-star rating-star" data-value="4"></i>
+      <i class="fa-solid fa-star rating-star" data-value="5"></i>
+    </div>
+
+    <input type="text" id="commentName" placeholder="Your Name (optional)">
+    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
+
+    <button class="feedback-send-btn" onclick="sendComment()">
+      <span>Send feedback</span>
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+
+    <span class="feedback-link" onclick="showAllComments()">View all comments & ratings</span>
+
+    <div id="feedbackMessage"></div>
+  </div>
+</div>
+
+        <div id="feedbackMessage"></div>
       </div>
     </div>
 
@@ -1572,10 +1723,10 @@
     <div id="passwordModal" class="modal">
       <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-header">
-          Enter Password
+          Enter Password to Edit
           <span class="modal-close" onclick="closePasswordModal()">×</span>
         </div>
-        <input id="adminPassword" type="password" placeholder="Enter admin password">
+        <input type="password" id="adminPassword" placeholder="Password">
         <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
           <button class="app-btn primary" onclick="checkPassword()">Continue</button>
           <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
@@ -1623,6 +1774,7 @@
     }
 
     const db = firebase.firestore();
+
     const TEMPLATE_COLLECTION = "demand_invoice_template";
     const FEEDBACK_COLLECTION = "feedback";
     const MAX_STEPS = 8;
@@ -1670,9 +1822,10 @@
     let historyStack = [];
     let currentFinalRecommendation = "";
     let currentEditType = "";
+    let currentKey = "start";
     const templateCache = {};
 
-    const NODES = {
+const NODES = {
       start: {
         text: "Is PRO Posted?",
         help: "Start here to determine whether the PRO is already posted or still unposted.",
@@ -1812,24 +1965,25 @@
       }
     };
 
-    function escapeHtml(value){
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
+    function escapeHtml(str){
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
-    function normalizeId(str){
+    function slugify(str){
       return String(str || "")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "_")
-        .replace(/^_+|_+$/g, "");
+        .replace(/^_+|_+$/g, "")
+        .replace(/_+/g, "_");
     }
 
     function getDocId(recommendation, type){
-      return `${type}__${normalizeId(recommendation)}`;
+      return `${slugify(recommendation)}_${type}`;
     }
 
     function updateClock(){
@@ -1865,35 +2019,41 @@
 
     function renderCalendar(date){
       els.calendarGrid.innerHTML = "";
+
       const year = date.getFullYear();
       const month = date.getMonth();
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      els.monthYear.textContent = date.toLocaleString("en-US", { month: "long", year: "numeric" });
+      els.monthYear.textContent = date.toLocaleString("en-PH", {
+        month: "long",
+        year: "numeric"
+      });
 
-      ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(day => {
-        const dayName = document.createElement("div");
-        dayName.className = "day-name";
-        dayName.textContent = day;
-        els.calendarGrid.appendChild(dayName);
+      const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+      dayNames.forEach(d => {
+        const el = document.createElement("div");
+        el.className = "day-name";
+        el.textContent = d;
+        els.calendarGrid.appendChild(el);
       });
 
       for(let i = 0; i < firstDay; i++){
-        const empty = document.createElement("div");
-        els.calendarGrid.appendChild(empty);
+        const blank = document.createElement("div");
+        els.calendarGrid.appendChild(blank);
       }
 
-      const today = new Date();
+      const nowManila = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+
       for(let d = 1; d <= daysInMonth; d++){
         const day = document.createElement("div");
         day.className = "day";
         day.textContent = d;
 
-        if (
-          d === today.getDate() &&
-          month === today.getMonth() &&
-          year === today.getFullYear()
+        if(
+          d === nowManila.getDate() &&
+          month === nowManila.getMonth() &&
+          year === nowManila.getFullYear()
         ){
           day.classList.add("today");
         }
@@ -1904,16 +2064,15 @@
 
     els.clockBtn.onclick = function(e){
       e.stopPropagation();
-      els.calendarPopup.style.display = els.calendarPopup.style.display === "block" ? "none" : "block";
+      els.calendarPopup.style.display =
+        els.calendarPopup.style.display === "block" ? "none" : "block";
       renderCalendar(currentDate);
     };
 
-    document.addEventListener("click", function(){
-      els.calendarPopup.style.display = "none";
-    });
-
-    els.calendarPopup.addEventListener("click", function(e){
-      e.stopPropagation();
+    document.addEventListener("click", function(e){
+      if(!els.calendarPopup.contains(e.target) && e.target !== els.clockBtn && !els.clockBtn.contains(e.target)){
+        els.calendarPopup.style.display = "none";
+      }
     });
 
     document.getElementById("prevMonth").onclick = function(e){
@@ -1931,38 +2090,35 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    document.getElementById("helpIcon").onclick = () => {
-      els.helpModal.style.display = "flex";
-    };
-
+    document.getElementById("helpIcon").onclick = () => els.helpModal.style.display = "flex";
     document.getElementById("commentIcon").onclick = () => {
-      els.feedbackMessage.style.display = "none";
-      els.feedbackMessage.textContent = "";
+      clearCommentForm();
       els.commentModal.style.display = "flex";
     };
 
     function closeHelp(){ els.helpModal.style.display = "none"; }
-    function closeComment(){ els.feedbackMessage.style.display = "none"; els.feedbackMessage.textContent = ""; els.commentModal.style.display = "none"; }
+    function closeComment(){ els.commentModal.style.display = "none"; }
     function closeAllComments(){ els.allCommentsModal.style.display = "none"; }
     function closePasswordModal(){ els.passwordModal.style.display = "none"; }
     function closeEditModal(){ els.editModal.style.display = "none"; }
 
-    window.addEventListener("click", function(e){
-      if(e.target === els.helpModal) closeHelp();
-      if(e.target === els.commentModal) closeComment();
-      if(e.target === els.allCommentsModal) closeAllComments();
-      if(e.target === els.passwordModal) closePasswordModal();
-      if(e.target === els.editModal) closeEditModal();
+  document.querySelectorAll(".rating-star").forEach(star => {
+  star.addEventListener("click", function(){
+    selectedRating = Number(this.dataset.value);
+
+    // clear all
+    document.querySelectorAll(".rating-star").forEach(s => {
+      s.classList.remove("selected");
     });
 
-    document.querySelectorAll(".rating-star").forEach(star => {
-      star.onclick = function(){
-        selectedRating = Number(this.dataset.value);
-        document.querySelectorAll(".rating-star").forEach(s => {
-          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
-        });
-      };
+    // fill up to selected
+    document.querySelectorAll(".rating-star").forEach(s => {
+      if(Number(s.dataset.value) <= selectedRating){
+        s.classList.add("selected");
+      }
     });
+  });
+});
 
     async function sendComment(){
       const name = els.commentName.value.trim();
@@ -2030,16 +2186,21 @@
       }
     }
 
+    function clearCommentForm(){
+      selectedRating = 0;
+      els.commentName.value = "";
+      els.commentText.value = "";
+      document.querySelectorAll(".rating-star").forEach(s => s.classList.remove("selected"));
+      els.feedbackMessage.style.display = "none";
+      els.feedbackMessage.textContent = "";
+    }
+
     function getDefaultTemplates(){
-      return {
-        comment: "",
-        corr: "",
-        email: ""
-      };
+      return { comment:"", corr:"", email:"" };
     }
 
     function setTemplateValue(el, text){
-      el.textContent = text;
+      el.textContent = text || "";
       el.classList.toggle("empty", !text);
     }
 
@@ -2066,9 +2227,9 @@
           db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
         ]);
 
-        const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
-        const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
-        const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
+        const finalComment = commentDoc.exists ? (commentDoc.data().text || defaults.comment) : defaults.comment;
+        const finalCorr = corrDoc.exists ? (corrDoc.data().text || defaults.corr) : defaults.corr;
+        const finalEmail = emailDoc.exists ? (emailDoc.data().text || defaults.email) : defaults.email;
 
         templateCache[ids.comment] = finalComment;
         templateCache[ids.corr] = finalCorr;
@@ -2078,9 +2239,9 @@
         setTemplateValue(els.suggestedCorrCode, finalCorr);
         setTemplateValue(els.suggestedEmail, finalEmail);
       } catch(err){
-        setTemplateValue(els.suggestedComment, "");
-        setTemplateValue(els.suggestedCorrCode, "");
-        setTemplateValue(els.suggestedEmail, "");
+        setTemplateValue(els.suggestedComment, defaults.comment);
+        setTemplateValue(els.suggestedCorrCode, defaults.corr);
+        setTemplateValue(els.suggestedEmail, defaults.email);
       }
     }
 
@@ -2170,119 +2331,178 @@
       }
     }
 
-    function getPercent(){
+    function getPercent(isFinal){
+      if(isFinal) return 100;
       if(path.length === 0) return 0;
-      const node = NODES[currentKey];
-      if(!node.choices || node.choices.length === 0) return 100;
       return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
     }
 
-    let currentKey = "start";
-
     function updateMeta(isFinal){
-      const pct = getPercent();
+      const pct = getPercent(isFinal);
       const lastAnswer = path.length ? path[path.length - 1].answer : "—";
-      const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
+      const progressLabel = isFinal ? "Recommendation ready" : path.length ? `Step ${path.length}` : "Not started";
 
       els.progressFill.style.width = pct + "%";
       els.progressText.textContent = progressLabel;
       els.metricSteps.textContent = String(path.length);
       els.metricAnswer.textContent = lastAnswer;
-      els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
+      els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "In Progress" : "Ready"}`;
     }
 
-    function updatePath(){
-      if(!path.length){
-        els.pathBox.className = "path-empty";
-        els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
-        return;
-      }
+function updatePath(){
+  if(!path.length){
+    els.pathBox.className = "path-box path-empty";
+    els.pathBox.textContent = "No steps selected yet. The full path will appear here as the user moves through the guide.";
+    return;
+  }
 
-      const html = path.map((item,index)=>`
-        <div class="path-item">
-          <div class="path-step">Step ${index + 1}</div>
-          <div class="path-question">${escapeHtml(item.question)}</div>
-          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
-        </div>
-      `).join("");
+  els.pathBox.className = "path-box";
+  els.pathBox.innerHTML = path.map((step, index) => `
+    <div class="path-item path-item-enter" 
+         style="animation-delay:${index * 0.06}s;"
+         data-step-index="${index}">
 
-      els.pathBox.className = "path-list";
-      els.pathBox.innerHTML = html;
-    }
+      <div class="step-badge">STEP ${index + 1}</div>
+      <div class="path-q">${escapeHtml(step.question)}</div>
+      <div class="path-a">→ ${escapeHtml(step.answer)}</div>
+    </div>
+  `).join("");
+
+  // 🔥 CLICK HANDLER
+  document.querySelectorAll(".path-item").forEach(el => {
+    el.addEventListener("click", () => {
+      const index = Number(el.dataset.stepIndex);
+      goToStep(index);
+    });
+  });
+}
+
+function goToStep(index){
+  const target = historyStack[index];
+
+  if(!target) return;
+
+  // trim path + history
+  path = path.slice(0, index);
+  historyStack = historyStack.slice(0, index);
+
+  updatePath();
+  renderNode(target.key);
+}
 
     function updateRecommendation(text, isFinal){
-      if(!isFinal){
-        els.recommendationBox.className = "recommendation empty";
-        els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
-        return;
-      }
+      els.recommendationBox.textContent = text || "No recommendation yet. Follow the flow to reach the final instruction.";
+      els.recommendationBox.classList.toggle("empty", !text);
 
-      els.recommendationBox.className = "recommendation";
-      els.recommendationBox.textContent = text;
-    }
-
-    async function renderNode(key){
-      currentKey = key;
-      const node = NODES[key];
-      const isFinal = !node.choices || node.choices.length === 0;
-
-      updateMeta(isFinal);
-      updatePath();
-      updateRecommendation(node.text, isFinal);
+      currentFinalRecommendation = isFinal ? text : "";
 
       if(isFinal){
-        currentFinalRecommendation = node.text;
-        await loadTemplatesForRecommendation(currentFinalRecommendation);
+        loadTemplatesForRecommendation(text);
+      } else {
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+      }
+    }
 
+    function renderFinal(node){
+      currentKey = "__final__";
+      const finalText = node.action || node.text || "";
+      const finalNote = node.note || "";
+
+      updateRecommendation(finalText, true);
+      updateMeta(true);
+
+      const footerStepText = `Completed after ${path.length} step${path.length > 1 ? "s" : ""}`;
+
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-check-circle"></i> Final Recommendation</div>
+          <div class="badge alt"><i class="fa-solid fa-sparkles"></i> Demand Invoice</div>
+        </div>
+
+        <div class="final-card">
+          <div class="final-badge"><i class="fa-solid fa-circle-check"></i> Recommendation Ready</div>
+          <div class="final-title">Recommended Action</div>
+          <div class="final-text">${escapeHtml(finalText)}</div>
+          ${finalNote ? `<div class="final-note">${escapeHtml(finalNote)}</div>` : ""}
+
+          <div class="final-actions">
+            <button class="app-btn secondary" id="inlineBack">Go Back</button>
+            <button class="app-btn primary" id="inlineRestart">Start Over</button>
+          </div>
+        </div>
+
+        <div class="decision-footer">
+          <div class="decision-footer-left">
+            <div class="footer-label">Decision Guide</div>
+            <div class="footer-value">${footerStepText}</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("inlineBack").onclick = goBack;
+      document.getElementById("inlineRestart").onclick = restart;
+    }
+//render node
+    function renderNode(key){
+      currentKey = key;
+      const node = NODES[key];
+
+      if(!node){
+        updateRecommendation("", false);
+        updateMeta(false);
         els.stageCard.innerHTML = `
           <div class="stage-top">
-            <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
-            <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+            <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
           </div>
-          <div class="final-card">
-            <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
-            <div class="final-title">Use this handling outcome</div>
-            <div class="final-text">${escapeHtml(node.text)}</div>
-            <div class="final-actions">
-              <button class="app-btn secondary" id="inlineBack">Go Back</button>
-              <button class="app-btn primary" id="inlineRestart">Start Over</button>
+          <div class="question-wrap">
+            <div class="question-card">
+              <div class="question-text" style="font-size:28px;">Node not found: ${escapeHtml(key)}</div>
+              <p class="question-help">Check the node key in your decision tree.</p>
             </div>
           </div>
         `;
-
-        document.getElementById("inlineBack").onclick = goBack;
-        document.getElementById("inlineRestart").onclick = restart;
         return;
       }
 
-      currentFinalRecommendation = "";
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
+      if(node.action || (!node.choices || node.choices.length === 0)){
+        renderFinal(node);
+        return;
+      }
 
-      const choices = node.choices.map(choice => `
-        <button class="choice" data-next="${choice.next}" data-label="${escapeHtml(choice.label)}">
-          <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+      updateRecommendation("", false);
+      updateMeta(false);
+
+      const choices = (node.choices || []).map(choice => `
+        <button class="choice" type="button"
+          data-type="${choice.action ? "final" : "next"}"
+          data-next="${escapeHtml(choice.next || "")}"
+          data-label="${escapeHtml(choice.label || "")}"
+          data-action="${escapeHtml(choice.action || "")}"
+          data-note="${escapeHtml(choice.note || "")}">
+          <div class="choice-icon"><i class="${escapeHtml(choice.icon || "fa-solid fa-circle-dot")}"></i></div>
           <div class="choice-body">
-            <div class="choice-title">${escapeHtml(choice.label)}</div>
-            <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+            <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+            <div class="choice-desc">${escapeHtml(choice.desc || "")}</div>
           </div>
         </button>
       `).join("");
 
-      const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
+      const nextStep = path.length + 1;
+const footerStepText = `Next → Step ${nextStep}`;
 
       els.stageCard.innerHTML = `
         <div class="stage-top">
-          <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-          <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
+          <div class="badge"><i class="fa-solid fa-route"></i> Demand Invoice Flow</div>
+          <div class="badge alt"><i class="fa-solid fa-layer-group"></i> Interactive Guide</div>
         </div>
 
         <div class="question-wrap">
           <div class="question-card">
-            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-            <div class="question-text">${escapeHtml(node.text)}</div>
-            <div class="question-help">${escapeHtml(node.help || "Select the answer that best matches the case.")}</div>
+            <div class="question-label"><i class="fa-solid fa-circle-question"></i> Current Decision</div>
+            <h2 class="question-text">${escapeHtml(node.text || "")}</h2>
+            ${node.help ? `<p class="question-help">${escapeHtml(node.help)}</p>` : ""}
           </div>
 
           <div class="choices">${choices}</div>
@@ -2295,8 +2515,8 @@
           </div>
 
           <div class="decision-actions">
-            <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-            <button class="app-btn secondary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+            <button class="app-btn secondary" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+            <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
           </div>
         </div>
       `;
@@ -2312,17 +2532,31 @@
           els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
           btn.classList.add("selected");
 
+          const type = btn.dataset.type;
           const next = btn.dataset.next;
           const label = btn.dataset.label;
+          const action = btn.dataset.action;
+          const note = btn.dataset.note;
 
-          historyStack.push({ key: currentKey, path: [...path] });
-          path.push({ question: node.text, answer: label });
+          historyStack.push({
+            key: currentKey,
+            path: JSON.parse(JSON.stringify(path))
+          });
+
+          path.push({
+            question: node.text,
+            answer: label
+          });
 
           updatePath();
           updateMeta(false);
 
           setTimeout(() => {
-            renderNode(next);
+            if(type === "final"){
+              renderFinal({ action, note });
+            } else {
+              renderNode(next);
+            }
           }, 120);
         });
       });
@@ -2332,13 +2566,20 @@
       if(!historyStack.length) return;
       const prev = historyStack.pop();
       path = prev.path || [];
-      renderNode(prev.key);
+      updatePath();
+
+      if(prev.key === "__final__"){
+        renderNode("start");
+      } else {
+        renderNode(prev.key);
+      }
     }
 
     function restart(){
       path = [];
       historyStack = [];
       currentFinalRecommendation = "";
+      currentEditType = "";
       setTemplateValue(els.suggestedComment, "");
       setTemplateValue(els.suggestedCorrCode, "");
       setTemplateValue(els.suggestedEmail, "");
@@ -2347,6 +2588,9 @@
       renderNode("start");
     }
 
+    updatePath();
+    updateRecommendation("", false);
+    updateMeta(false);
     renderNode("start");
   </script>
 </body>
