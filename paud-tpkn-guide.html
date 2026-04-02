@@ -1251,6 +1251,52 @@
       .modal{padding:14px}
       .modal-content{padding:20px;border-radius:22px}
     }
+/*this is for images to show */
+.question-image{
+  margin-top:18px;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  box-shadow:0 14px 30px rgba(15,23,42,.08);
+  cursor:zoom-in;
+  transition:.22s ease;
+}
+
+.question-image:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 36px rgba(15,23,42,.12);
+}
+
+.question-image img{
+  width:100%;
+  display:block;
+  max-height:420px;
+  object-fit:contain;
+  background:#fff;
+}
+
+.image-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:rgba(2,6,23,.86);
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  cursor:zoom-out;
+  backdrop-filter:blur(8px);
+}
+
+.image-modal img{
+  max-width:96vw;
+  max-height:92vh;
+  border-radius:18px;
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+  background:#fff;
+}
+    
   </style>
 </head>
 <body>
@@ -1848,7 +1894,7 @@ const NODES = {
   shipper_intro_example: {
     text: "Replace SHIPPER CODE",
     help: "This is an example of a request to update the Shipper Code.",
-    image: "images/replace-shipper-example.png",
+   image: "Paud TPKN images/replace-shipper-example.png",
     choices: [
       {
         label: "Continue",
@@ -2772,122 +2818,128 @@ function goToStep(index){
     }
 
     function renderNode(key){
-      currentKey = key;
-      const node = NODES[key];
+  currentKey = key;
+  const node = NODES[key];
 
-      if(!node){
-        updateRecommendation("", false);
-        updateMeta(false);
-        els.stageCard.innerHTML = `
-          <div class="stage-top">
-            <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+  if(!node){
+    updateRecommendation("", false);
+    updateMeta(false);
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+      </div>
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-text" style="font-size:28px;">Node not found: ${escapeHtml(key)}</div>
+          <p class="question-help">Check the node key in your decision tree.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if(node.action || (!node.choices || node.choices.length === 0)){
+    renderFinal(node);
+    return;
+  }
+
+  updateRecommendation("", false);
+  updateMeta(false);
+
+  const choices = (node.choices || []).map(choice => `
+    <button class="choice" type="button"
+      data-type="${choice.action ? "final" : "next"}"
+      data-next="${escapeHtml(choice.next || "")}"
+      data-label="${escapeHtml(choice.label || "")}"
+      data-action="${escapeHtml(choice.action || "")}"
+      data-note="${escapeHtml(choice.note || "")}">
+      <div class="choice-icon"><i class="${escapeHtml(choice.icon || "fa-solid fa-circle-dot")}"></i></div>
+      <div class="choice-body">
+        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+        <div class="choice-desc">${escapeHtml(choice.desc || "")}</div>
+      </div>
+    </button>
+  `).join("");
+
+  const nextStep = path.length + 1;
+  const footerStepText = `Next → Step ${nextStep}`;
+
+  els.stageCard.innerHTML = `
+    <div class="stage-top">
+      <div class="badge"><i class="fa-solid fa-route"></i> Paud TPKN Flow</div>
+      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> Interactive Guide</div>
+    </div>
+
+    <div class="question-wrap">
+      <div class="question-card">
+        <div class="question-label"><i class="fa-solid fa-circle-question"></i> Current Decision</div>
+        <h2 class="question-text">${escapeHtml(node.text || "")}</h2>
+        ${node.help ? `<p class="question-help">${escapeHtml(node.help)}</p>` : ""}
+
+        ${node.image ? `
+          <div class="question-image" onclick="openImageModal('${String(node.image).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(node.image)}" alt="Step Image">
           </div>
-          <div class="question-wrap">
-            <div class="question-card">
-              <div class="question-text" style="font-size:28px;">Node not found: ${escapeHtml(key)}</div>
-              <p class="question-help">Check the node key in your decision tree.</p>
-            </div>
-          </div>
-        `;
-        return;
-      }
+        ` : ""}
+        
+      </div>
 
-      if(node.action || (!node.choices || node.choices.length === 0)){
-        renderFinal(node);
-        return;
-      }
+      <div class="choices">${choices}</div>
+    </div>
 
-      updateRecommendation("", false);
+    <div class="decision-footer">
+      <div class="decision-footer-left">
+        <div class="footer-label">Decision Guide</div>
+        <div class="footer-value">${footerStepText}</div>
+      </div>
+
+      <div class="decision-actions">
+        <button class="app-btn secondary" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+      </div>
+    </div>
+  `;
+
+  const inlineBack = document.getElementById("inlineBack");
+  const inlineRestart = document.getElementById("inlineRestart");
+
+  if(inlineBack) inlineBack.onclick = goBack;
+  if(inlineRestart) inlineRestart.onclick = restart;
+
+  els.stageCard.querySelectorAll(".choice").forEach(btn => {
+    btn.addEventListener("click", () => {
+      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      const type = btn.dataset.type;
+      const next = btn.dataset.next;
+      const label = btn.dataset.label;
+      const action = btn.dataset.action;
+      const note = btn.dataset.note;
+
+      historyStack.push({
+        key: currentKey,
+        path: JSON.parse(JSON.stringify(path))
+      });
+
+      path.push({
+        question: node.text,
+        answer: label
+      });
+
+      updatePath();
       updateMeta(false);
 
-      const choices = (node.choices || []).map(choice => `
-        <button class="choice" type="button"
-          data-type="${choice.action ? "final" : "next"}"
-          data-next="${escapeHtml(choice.next || "")}"
-          data-label="${escapeHtml(choice.label || "")}"
-          data-action="${escapeHtml(choice.action || "")}"
-          data-note="${escapeHtml(choice.note || "")}">
-          <div class="choice-icon"><i class="${escapeHtml(choice.icon || "fa-solid fa-circle-dot")}"></i></div>
-          <div class="choice-body">
-            <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-            <div class="choice-desc">${escapeHtml(choice.desc || "")}</div>
-          </div>
-        </button>
-      `).join("");
-
-      const nextStep = path.length + 1;
-const footerStepText = `Next → Step ${nextStep}`;
-
-      els.stageCard.innerHTML = `
-        <div class="stage-top">
-          <div class="badge"><i class="fa-solid fa-route"></i> Paud TPKN Flow</div>
-          <div class="badge alt"><i class="fa-solid fa-layer-group"></i> Interactive Guide</div>
-        </div>
-
-        <div class="question-wrap">
-          <div class="question-card">
-            <div class="question-label"><i class="fa-solid fa-circle-question"></i> Current Decision</div>
-            <h2 class="question-text">${escapeHtml(node.text || "")}</h2>
-            ${node.help ? `<p class="question-help">${escapeHtml(node.help)}</p>` : ""}
-          </div>
-
-          <div class="choices">${choices}</div>
-        </div>
-
-        <div class="decision-footer">
-          <div class="decision-footer-left">
-            <div class="footer-label">Decision Guide</div>
-            <div class="footer-value">${footerStepText}</div>
-          </div>
-
-          <div class="decision-actions">
-            <button class="app-btn secondary" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-            <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-          </div>
-        </div>
-      `;
-
-      const inlineBack = document.getElementById("inlineBack");
-      const inlineRestart = document.getElementById("inlineRestart");
-
-      if(inlineBack) inlineBack.onclick = goBack;
-      if(inlineRestart) inlineRestart.onclick = restart;
-
-      els.stageCard.querySelectorAll(".choice").forEach(btn => {
-        btn.addEventListener("click", () => {
-          els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-          btn.classList.add("selected");
-
-          const type = btn.dataset.type;
-          const next = btn.dataset.next;
-          const label = btn.dataset.label;
-          const action = btn.dataset.action;
-          const note = btn.dataset.note;
-
-          historyStack.push({
-            key: currentKey,
-            path: JSON.parse(JSON.stringify(path))
-          });
-
-          path.push({
-            question: node.text,
-            answer: label
-          });
-
-          updatePath();
-          updateMeta(false);
-
-          setTimeout(() => {
-            if(type === "final"){
-              renderFinal({ action, note });
-            } else {
-              renderNode(next);
-            }
-          }, 120);
-        });
-      });
-    }
-
+      setTimeout(() => {
+        if(type === "final"){
+          renderFinal({ action, note });
+        } else {
+          renderNode(next);
+        }
+      }, 120);
+    });
+  });
+}
     function goBack(){
       if(!historyStack.length) return;
       const prev = historyStack.pop();
@@ -2918,6 +2970,27 @@ const footerStepText = `Next → Step ${nextStep}`;
     updateRecommendation("", false);
     updateMeta(false);
     renderNode("start");
+    
+function openImageModal(src){
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("imageModalImg");
+  if(!modal || !img) return;
+  img.src = src;
+  modal.style.display = "flex";
+}
+
+function closeImageModal(){
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("imageModalImg");
+  if(!modal || !img) return;
+  modal.style.display = "none";
+  img.src = "";
+}
+
+    
   </script>
+  <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+  <img id="imageModalImg" src="" alt="Expanded step image">
+</div>
 </body>
-</html>paud-tpkn-guide.htm
+</html>
