@@ -1296,7 +1296,34 @@
   box-shadow:0 30px 80px rgba(0,0,0,.45);
   background:#fff;
 }
-    
+ /*this is for notes to show */
+.question-highlight{
+  margin-top:16px;
+  padding:16px 18px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#f8fafc,#eef2ff);
+  border:1px solid #e2e8f0;
+  font-size:13.5px;
+  line-height:1.6;
+  color:#0f172a;
+  white-space:pre-wrap;
+  box-shadow:0 8px 20px rgba(15,23,42,.05);
+  position:relative;
+}
+
+.question-highlight::before{
+  content:"Account Mapping";
+  position:absolute;
+  top:-10px;
+  left:14px;
+  background:#4D148C;
+  color:#fff;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:600;
+  letter-spacing:.3px;
+} 
   </style>
 </head>
 <body>
@@ -1909,29 +1936,41 @@ const NODES = {
     ]
   },
 
-  shipper_q1: {
-    text: "Is the current and/or previous debtor included in the list of accounts below?",
-    help: "Check the current or previous debtor against the listed accounts.",
-    choices: [
-      {
-        label: "YES",
-        next: "shipper_account_mapping",
-        icon: "fa-solid fa-circle-check",
-        desc: "The debtor is in the listed accounts."
-      },
-      {
-        label: "NO",
-        next: "shipper_q2",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "The debtor is not in the listed accounts."
-      }
-    ]
-  },
+shipper_q1: {
+  text: "Is the current and/or previous debtor included in the list of accounts below?",
+  help: `-FedEx Account 91774785
+-LM, LOCKHEED MARTIN
+-PARKER HANNIFIN
+-BAKER HUGHES, BHGE
+-ALL VA, SCHOOLS, UNIVERSITIES, USPS, POST OFFICE, GOV DEPTS, CITY OF, COUNTY OF, MUSEUM, WWTP (WASTE/WATER), L3
+-HD SUPPLY, WHITE CAP
+
+-Grainger
+-CH Robinson/CHRLTL
+-Echo Global Logistics
+-ULINE
+-Uber Freight`,
+  choices: [
+    {
+      label: "YES",
+      next: "shipper_account_mapping",
+      icon: "fa-solid fa-circle-check",
+      desc: "The debtor is in the listed accounts."
+    },
+    {
+      label: "NO",
+      next: "shipper_q2",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "The debtor is not in the listed accounts."
+    }
+  ]
+},
 
   shipper_account_mapping: {
     text: "Move the PRO based on the matched listed account.",
     help: "Use the queue mapping based on the matched account.",
-    note: `-FedEx Account 91774785 -> move to PATS
+    note: `
+-FedEx Account 91774785 -> move to PATS
 -LM Lockheed Martin -> move to PATT
 -Parker Hannifin -> move to PARS
 -Baker Hughes, BHGE -> move to PCM
@@ -2340,28 +2379,41 @@ const NODES = {
   },
 
   consignee_q1: {
-    text: "Is the current and/or previous debtor included in the list of accounts below?",
-    help: "Check the current or previous debtor against the listed accounts.",
-    choices: [
-      {
-        label: "YES",
-        next: "consignee_account_mapping",
-        icon: "fa-solid fa-circle-check",
-        desc: "The debtor is in the listed accounts."
-      },
-      {
-        label: "NO",
-        next: "consignee_q2",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "The debtor is not in the listed accounts."
-      }
-    ]
-  },
+  text: "Is the current and/or previous debtor included in the list of accounts below?",
+  help: `-FedEx Account 91774785
+-LM, LOCKHEED MARTIN
+-PARKER HANNIFIN
+-BAKER HUGHES, BHGE
+-ALL VA, SCHOOLS, UNIVERSITIES, USPS, POST OFFICE, GOV DEPTS, CITY OF, COUNTY OF, MUSEUM, WWTP (WASTE/WATER), L3
+-HD SUPPLY, WHITE CAP
+
+-Grainger
+-CH Robinson/CHRLTL
+-Echo Global Logistics
+-ULINE
+-Uber Freight
+-Sealed Air`,
+  choices: [
+    {
+      label: "YES",
+      next: "consignee_account_mapping",
+      icon: "fa-solid fa-circle-check",
+      desc: "The debtor is in the listed accounts."
+    },
+    {
+      label: "NO",
+      next: "consignee_q2",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "The debtor is not in the listed accounts."
+    }
+  ]
+},
 
   consignee_account_mapping: {
     text: "Move the PRO based on the matched listed account.",
     help: "Use the queue mapping based on the matched account.",
-    note: `-FedEx Account 91774785 -> move to PATS
+    note: `
+-FedEx Account 91774785 -> move to PATS
 -LM Lockheed Martin -> move to PATT
 -Parker Hannifin -> move to PARS
 -Baker Hughes, BHGE -> move to PCM
@@ -2431,7 +2483,7 @@ const NODES = {
   consignee_account_check_step1: {
     text: "1. Click on Invoice Profile.",
     help: "Open the Invoice Profile of the account.",
-    image: "Paud TPKN images/consignee-account-check-step1.png",
+    image: "Paud TPKN images/shipper-account-check-step1.png",
     choices: [
       {
         label: "Continue",
@@ -2445,7 +2497,7 @@ const NODES = {
   consignee_account_check_step2: {
     text: "2. Check the Invoice Group of the account. Make sure it is not UEST, PSTU, or PSTL.",
     help: "If the Invoice Group is UEST, PSTU, or PSTL, the account should not be used.",
-    image: "Paud TPKN images/consignee-account-check-step2.png",
+    image: "Paud TPKN images/shipper-account-check-step2.png",
     choices: [
       {
         label: "Back to decision",
@@ -2472,7 +2524,7 @@ const NODES = {
   consignee_good_account_step2: {
     text: "2. If you are changing the consignee code, a window will pop up asking 'Is this a reconsignment?' choose NO.",
     help: "When asked 'Is this a reconsignment?' choose NO.",
-    image: "Paud TPKN images/consignee-step2-reconsignment-no.png",
+    image: "Paud TPKN images/consignee-step2-reconsignment-no.jpg",
     choices: [
       {
         label: "Continue",
@@ -2680,7 +2732,7 @@ const NODES = {
   consignee_corr_step7: {
     text: "7. In the first open line in the HU/Keyword Column Enter CORR and Tab over to Description Field and enter ACCR.",
     help: "Enter CORR and ACCR exactly as shown.",
-    image: "Paud TPKN images/consignee-step7-corr-accr-left.png",
+    image: "Paud TPKN images/shipper-step7-corr-accr.png",
     choices: [
       {
         label: "Continue",
@@ -2707,7 +2759,7 @@ const NODES = {
   consignee_corr_step10: {
     text: "10. To complete the correction, use the Accept All button or the F6 function key.",
     help: "Complete the correction using Accept All or F6.",
-    image: "Paud TPKN images/consignee-step10-accept-all-left.png",
+    image: "Paud TPKN images/shipper-step10-accept-all.png",
     choices: [
       {
         label: "Continue",
@@ -2747,7 +2799,7 @@ const NODES = {
   consignee_corr_step7_ld: {
     text: "7. In the first open line in the HU/Keyword Column Enter CORR and Tab over to Description Field and enter ACCR.",
     help: "Enter CORR and ACCR exactly as shown.",
-    image: "Paud TPKN images/consignee-step7-corr-accr-right.png",
+    image: "Paud TPKN images/shipper-step7-corr-accr.png",
     choices: [
       {
         label: "Continue",
@@ -2774,7 +2826,7 @@ const NODES = {
   consignee_corr_step10_ld: {
     text: "10. To complete the correction, use the Accept All button or the F6 function key.",
     help: "Complete the correction using Accept All or F6.",
-    image: "Paud TPKN images/consignee-step10-accept-all-right.png",
+    image: "Paud TPKN images/shipper-step10-accept-all.png",
     choices: [
       {
         label: "Continue",
@@ -3361,7 +3413,7 @@ function goToStep(index){
       document.getElementById("inlineRestart").onclick = restart;
     }
 
-    function renderNode(key){
+function renderNode(key){
   currentKey = key;
   const node = NODES[key];
 
@@ -3420,12 +3472,17 @@ function goToStep(index){
         <h2 class="question-text">${escapeHtml(node.text || "")}</h2>
         ${node.help ? `<p class="question-help">${escapeHtml(node.help)}</p>` : ""}
 
+        ${node.note ? `
+          <div class="question-highlight">
+            ${escapeHtml(node.note)}
+          </div>
+        ` : ""}
+
         ${node.image ? `
           <div class="question-image" onclick="openImageModal('${String(node.image).replace(/'/g, "\\'")}')">
             <img src="${escapeHtml(node.image)}" alt="Step Image">
           </div>
         ` : ""}
-        
       </div>
 
       <div class="choices">${choices}</div>
