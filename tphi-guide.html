@@ -1,0 +1,2795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TPHI Guide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root{
+      --bg:#07111f;
+      --bg-soft:#0c1728;
+      --panel:#0f1c31;
+      --panel-2:#12233d;
+      --card:#ffffff;
+      --card-soft:#f8fafc;
+      --text:#0f172a;
+      --text-soft:#475569;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.18);
+      --white-line:rgba(255,255,255,.08);
+      --accent:#6d28d9;
+      --accent-2:#4d148c;
+      --accent-3:#ff6600;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10);
+      --shadow-card:0 16px 40px rgba(15,23,42,.06);
+      --radius-xl:28px;
+      --radius-lg:20px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --max:1920px;
+      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+      z-index:0;
+    }
+
+    a{color:inherit}
+    button,input,textarea{font:inherit}
+
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:100;
+      backdrop-filter:blur(16px);
+      background:rgba(7,17,31,.72);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .topbar-inner{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+      min-height:82px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand-wrap{
+      display:flex;
+      align-items:center;
+      gap:28px;
+      min-width:0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      text-decoration:none;
+      flex-shrink:0;
+    }
+
+    .brand-meta{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+    }
+
+    .brand-kicker{
+      color:rgba(255,255,255,.64);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      margin-bottom:4px;
+    }
+
+    .brand-title{
+      color:#fff;
+      font-size:15px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    .nav-tabs{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .tab{
+      text-decoration:none;
+      color:rgba(255,255,255,.78);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:600;
+      transition:.22s ease;
+      position:relative;
+    }
+
+    .tab:hover{
+      color:#fff;
+      background:rgba(255,255,255,.07);
+    }
+
+    .tab.active{
+      color:#fff;
+      background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
+    }
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-shrink:0;
+    }
+
+    .clock-pill,
+    .icon-btn{
+      border:none;
+      cursor:pointer;
+      transition:.22s ease;
+    }
+
+    .clock-pill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      font-weight:700;
+    }
+
+    .clock-pill:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.12);
+    }
+
+    .clock-label{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      line-height:1.05;
+    }
+
+    .clock-small{
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.54);
+      margin-bottom:3px;
+    }
+
+    .icon-btn{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      background:rgba(255,255,255,.08);
+      color:#fff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+      font-size:18px;
+    }
+
+    .icon-btn:hover{
+      transform:translateY(-2px);
+      background:linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    }
+
+    #timeCalendarPopup{
+      display:none;
+      position:fixed;
+      top:92px;
+      right:24px;
+      width:min(360px, calc(100vw - 32px));
+      background:rgba(255,255,255,.94);
+      border-radius:28px;
+      box-shadow:var(--shadow-xl);
+      border:1px solid rgba(148,163,184,.16);
+      padding:20px;
+      z-index:999;
+      backdrop-filter:blur(16px);
+    }
+
+    .popup-time{
+      font-size:34px;
+      font-weight:800;
+      letter-spacing:-.05em;
+      color:#0f172a;
+      margin-bottom:4px;
+    }
+
+    .popup-date{
+      font-size:14px;
+      color:#64748b;
+      margin-bottom:16px;
+    }
+
+    .calendar-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+    }
+
+    .calendar-header span{
+      cursor:pointer;
+      color:#4d148c;
+      font-weight:800;
+      font-size:18px;
+      user-select:none;
+      width:28px;
+      text-align:center;
+    }
+
+    .calendar-title{
+      color:#0f172a;
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .calendar-grid{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:8px;
+    }
+
+    .calendar-grid .day-name{
+      text-align:center;
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+      padding:6px 0;
+    }
+
+    .calendar-grid .day{
+      display:grid;
+      place-items:center;
+      aspect-ratio:1;
+      border-radius:16px;
+      background:#fff;
+      font-size:14px;
+      font-weight:700;
+      color:#334155;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);
+    }
+
+    .calendar-grid .day:hover{ background:#f8fafc; }
+
+    .calendar-grid .today{
+      background:linear-gradient(135deg, #4d148c, #6d28d9);
+      color:#fff;
+      box-shadow:none;
+    }
+
+    .app-shell{
+      width:min(calc(100% - 32px), var(--max));
+      margin:22px auto 24px;
+    }
+
+    .app-frame{
+      min-height:calc(100vh - 180px);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.68);
+      border-radius:34px;
+      box-shadow:var(--shadow-xl);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:minmax(0,1.45fr) 420px 480px;
+    }
+
+    .main{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-width:0;
+    }
+
+    .main-topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:16px 18px;
+      border-radius:24px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(219,228,240,.9);
+      box-shadow:var(--shadow-md);
+    }
+
+    .main-topbar h1{
+      margin:0;
+      font-size:24px;
+      letter-spacing:-.03em;
+    }
+
+    .main-status{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 14px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid #dbe4f0;
+      font-size:12px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .pill.primary{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border:none;
+    }
+
+    .workspace{
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:16px;
+      min-height:0;
+    }
+
+    .progress-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:16px 18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .progress-title{
+      font-size:14px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .progress-status{
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .progress-bar{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+      transition:width .28s ease;
+    }
+
+    .stage-area{
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr;
+    }
+
+    .stage-card{
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border:1px solid #dbe4f0;
+      border-radius:30px;
+      box-shadow:var(--shadow-card);
+      min-height:640px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    .stage-top{
+      padding:22px 22px 0;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .badge.alt{
+      background:#f8fafc;
+      color:#334155;
+    }
+
+    .question-wrap{
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      flex:1;
+    }
+
+    .question-card{
+      position:relative;
+      padding:30px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+        linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid #e6edf7;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+    }
+
+    .question-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      pointer-events:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+    }
+
+    .question-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#334155;
+    }
+
+    .question-text{
+      margin:18px 0 0;
+      font-size:36px;
+      line-height:1.08;
+      letter-spacing:-.045em;
+      font-weight:900;
+    }
+
+    .question-help{
+      margin:14px 0 0;
+      color:#64748b;
+      font-size:14px;
+      line-height:1.75;
+      max-width:760px;
+      white-space:pre-wrap;
+    }
+
+    .choices{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .choice{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      text-align:left;
+      border-radius:24px;
+      padding:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border:1px solid #e2e8f0;
+      box-shadow:0 12px 28px rgba(15,23,42,.05);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      min-height:112px;
+    }
+
+    .choice:hover{
+      transform:translateY(-3px);
+      box-shadow:0 18px 36px rgba(15,23,42,.08);
+      border-color:#c7d5e6;
+    }
+
+    .choice.selected{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border-color:transparent;
+    }
+
+    .choice-icon{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:#eef4ff;
+      color:#2563eb;
+      flex:0 0 auto;
+      font-size:17px;
+    }
+
+    .choice.selected .choice-icon{
+      background:rgba(255,255,255,.14);
+      color:#fff;
+    }
+
+    .choice-body{min-width:0}
+
+    .choice-title{
+      font-size:16px;
+      font-weight:800;
+      line-height:1.35;
+    }
+
+    .choice-desc{
+      font-size:12px;
+      line-height:1.6;
+      color:#64748b;
+      margin-top:6px;
+    }
+
+    .choice.selected .choice-desc{
+      color:rgba(255,255,255,.8);
+    }
+
+    .decision-footer{
+      margin-top:auto;
+      padding:18px 22px 22px;
+      border-top:1px solid #e8eef7;
+      background:linear-gradient(180deg,rgba(248,250,252,.2),#f8fbff);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .decision-footer-left{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .footer-label{
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#64748b;
+    }
+
+    .footer-value{
+      font-size:14px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .decision-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .app-btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:12px 16px;
+      border-radius:14px;
+      font-size:14px;
+      font-weight:800;
+      transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .app-btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .app-btn.primary{
+      background:#111827;
+      color:#fff;
+      box-shadow:0 8px 20px rgba(17,24,39,.14);
+    }
+
+    .app-btn.secondary{
+      background:#fff;
+      color:#111827;
+      border:1px solid #dbe4f0;
+    }
+
+    .app-btn.ghost{
+      background:#f8fafc;
+      color:#0f172a;
+      border:1px solid #e2e8f0;
+    }
+
+    .final-card{
+      margin:20px;
+      padding:20px 20px 18px;
+      border-radius:24px;
+      background:linear-gradient(180deg,#f0fdf4,#ffffff);
+      border:1px solid #dcfce7;
+      box-shadow:0 16px 34px rgba(22,163,74,.08);
+    }
+
+    .final-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#dcfce7;
+      color:#166534;
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    .final-title{
+      margin:14px 0 0;
+      font-size:14px;
+      font-weight:800;
+      color:#166534;
+    }
+
+    .final-text{
+      margin:12px 0 0;
+      font-size:30px;
+      line-height:1.5;
+      letter-spacing:-.02em;
+      font-weight:800;
+      color:#111827;
+      white-space:pre-wrap;
+      max-width:980px;
+    }
+
+    .final-note{
+      margin-top:12px;
+      color:#475569;
+      line-height:1.7;
+      white-space:pre-wrap;
+    }
+
+    .final-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:22px;
+    }
+
+    .side-panel{
+      padding:18px 14px 18px 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .template-panel{
+      padding:18px 18px 18px 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .side-panel .summary-card,
+    .template-panel .summary-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .summary-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+      font-size:14px;
+      font-weight:900;
+    }
+
+    .summary-head i{color:#7c3aed}
+
+    .recommendation{
+      min-height:120px;
+      border-radius:18px;
+      padding:16px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      line-height:1.75;
+      color:#0f172a;
+      white-space:pre-wrap;
+    }
+
+    .recommendation.empty,
+    .path-empty,
+    .template-box.empty{
+      color:#94a3b8;
+    }
+
+    .path-box{
+      min-height:160px;
+      border-radius:18px;
+      padding:16px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+    }
+
+    .path-item{
+      padding:12px 14px;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid #e2e8f0;
+      margin-bottom:10px;
+    }
+    
+    .path-item{
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.path-item:hover{
+  transform:translateY(-2px);
+  background:#ffffff;
+  box-shadow:0 10px 24px rgba(15,23,42,.08);
+}
+
+    .path-item:last-child{margin-bottom:0}
+
+    .step-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 12px;
+  border-radius:999px;
+  background:#eef4ff;
+  color:#2563eb;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+  margin-left:2px; /* slight left align to match question */
+  animation:stepBadgePop .35s ease;
+}
+
+.path-q{
+  font-size:12px;
+  color:#64748b;
+  margin-bottom:6px;
+  font-weight:700;
+}
+
+.path-a{
+  font-size:14px;
+  font-weight:800;
+  color:#111827;
+  padding-left:2px;
+}
+
+.path-item-enter{
+  opacity:0;
+  transform:translateY(10px);
+  animation:pathItemFadeUp .35s ease forwards;
+}
+
+@keyframes pathItemFadeUp{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@keyframes stepBadgePop{
+  from{
+    opacity:0;
+    transform:translateY(4px) scale(.96);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .metric{
+      border-radius:18px;
+      padding:14px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+    }
+
+    .metric-label{
+      display:block;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#64748b;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .metric-value{
+      display:block;
+      font-size:24px;
+      font-weight:900;
+      color:#111827;
+      line-height:1.1;
+      word-break:break-word;
+    }
+
+    .template-stack{
+      display:grid;
+      gap:14px;
+    }
+
+    .template-card{
+      border:1px solid #dbe4f0;
+      border-radius:20px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:var(--shadow-card);
+    }
+
+    .template-card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px 16px 14px;
+      border-bottom:1px solid #edf2f7;
+    }
+
+    .template-title-wrap{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .template-icon{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10));
+      color:#4d148c;
+      flex:0 0 auto;
+      font-size:17px;
+    }
+
+    .template-title{
+      font-size:15px;
+      font-weight:900;
+      color:#111827;
+      line-height:1.25;
+    }
+
+    .template-sub{
+      margin-top:4px;
+      font-size:12px;
+      color:#64748b;
+      line-height:1.5;
+    }
+
+    .template-actions{
+      display:flex;
+      gap:8px;
+    }
+
+    .template-icon-btn{
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:12px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      cursor:pointer;
+      color:#0f172a;
+      transition:.18s ease;
+    }
+
+    .template-icon-btn:hover{
+      transform:translateY(-1px);
+      background:#fff;
+    }
+
+    .template-body{
+      padding:16px;
+    }
+
+    .template-box{
+      min-height:120px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      padding:14px;
+      color:#111827;
+      line-height:1.7;
+      white-space:pre-wrap;
+      font-size:13px;
+    }
+
+    .template-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:0 16px 16px;
+      flex-wrap:wrap;
+    }
+
+    .template-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .template-copy{
+      border:none;
+      cursor:pointer;
+      border-radius:12px;
+      padding:10px 14px;
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      color:#fff;
+      font-weight:800;
+      transition:.22s ease;
+    }
+
+    .template-copy:hover{
+      transform:translateY(-1px);
+    }
+
+    .template-copy.copied{
+      background:linear-gradient(135deg,#16a34a,#15803d);
+    }
+
+    .note-card{
+      border-radius:18px;
+      background:linear-gradient(135deg,#f8fafc,#ffffff);
+      border:1px solid #e2e8f0;
+      padding:14px 16px;
+      color:#64748b;
+      line-height:1.7;
+      font-size:13px;
+    }
+
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.54);
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:1001;
+      backdrop-filter:blur(10px);
+    }
+
+    .modal-content{
+      width:min(100%, 640px);
+      background:#fff;
+      border-radius:26px;
+      border:1px solid rgba(219,228,240,.9);
+      box-shadow:var(--shadow-xl);
+      padding:22px;
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size:20px;
+      font-weight:900;
+      color:#111827;
+      margin-bottom:16px;
+    }
+
+    .modal-close{
+      cursor:pointer;
+      font-size:24px;
+      color:#94a3b8;
+      line-height:1;
+    }
+
+    .modal-close:hover{ color:#111827; }
+
+    input, textarea{
+      width:100%;
+      border:none;
+      outline:none;
+      margin-top:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+      padding:14px 16px;
+      color:#0f172a;
+      font-size:14px;
+      transition:.18s ease;
+      font-family:inherit;
+    }
+
+    input:focus, textarea:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .rating-container{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .rating-star{
+      cursor:pointer;
+      font-size:28px;
+      color:#cbd5e1;
+      transition:color .2s, transform .2s;
+    }
+
+    .rating-star:hover{ transform:scale(1.12); }
+    .rating-star.selected{ color:#ff6600; }
+
+    .comment-modal-footer{
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      justify-content:flex-start;
+      gap:14px;
+      margin-top:16px;
+    }
+
+    #feedbackMessage{
+      display:none;
+      margin-top:12px;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .link-text{
+      color:#4d148c;
+      cursor:pointer;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .link-text:hover{ text-decoration:underline; }
+
+    .comment-list-item{
+      padding:14px 0;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+
+    .comment-list-item:last-child{ border-bottom:none; }
+
+    #commentsList .stars{
+      color:#ff6600;
+      font-size:18px;
+      margin-bottom:6px;
+      display:block;
+    }
+
+    footer{
+      background:#0b1525;
+      border-top:1px solid rgba(255,255,255,.08);
+      color:#fff;
+      margin-top:10px;
+    }
+
+    .footer-inner{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+      padding:18px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .footer-left strong{
+      display:block;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .footer-left span,
+    .footer-right{
+      color:rgba(255,255,255,.68);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    @media (max-width:1450px){
+      .app-frame{
+        grid-template-columns:minmax(0,1fr) 340px 360px;
+      }
+    }
+
+    @media (max-width:1220px){
+      .app-frame{
+        grid-template-columns:1fr;
+      }
+      .side-panel,
+      .template-panel{
+        padding:0 18px 18px;
+      }
+    }
+
+    @media (max-width:1100px){
+      .topbar-inner{
+        min-height:auto;
+        padding:14px 0;
+        align-items:flex-start;
+      }
+      .brand-wrap{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:14px;
+      }
+    }
+
+    @media (max-width:760px){
+      .topbar-inner,
+      .footer-inner,
+      .app-shell{
+        width:min(calc(100% - 20px), var(--max));
+      }
+      .app-shell{margin:16px auto}
+      .app-frame{min-height:100vh;border-radius:24px}
+      .main{padding:18px}
+      .topbar{position:static}
+      .main-topbar{flex-direction:column;align-items:flex-start}
+      .question-text{font-size:28px}
+      .choices{grid-template-columns:1fr}
+      .summary-grid{grid-template-columns:1fr}
+      .decision-footer{flex-direction:column;align-items:flex-start}
+      .actions{width:100%;justify-content:flex-start;flex-wrap:wrap}
+      .clock-pill{flex:1 1 220px}
+      .icon-btn{width:46px;height:46px;border-radius:14px}
+      #timeCalendarPopup{right:10px;top:86px}
+      .modal{padding:14px}
+      .modal-content{padding:20px;border-radius:22px}
+    }
+/*this is for images to show */
+.question-image{
+  margin-top:18px;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  box-shadow:0 14px 30px rgba(15,23,42,.08);
+  cursor:zoom-in;
+  transition:.22s ease;
+}
+
+.question-image:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 36px rgba(15,23,42,.12);
+}
+
+.question-image img{
+  width:100%;
+  display:block;
+  max-height:420px;
+  object-fit:contain;
+  background:#fff;
+}
+
+.image-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:rgba(2,6,23,.86);
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  cursor:zoom-out;
+  backdrop-filter:blur(8px);
+}
+
+.image-modal img{
+  max-width:96vw;
+  max-height:92vh;
+  border-radius:18px;
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+  background:#fff;
+}
+ /*this is for notes to show */
+.question-highlight{
+  margin-top:16px;
+  padding:16px 18px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#f8fafc,#eef2ff);
+  border:1px solid #e2e8f0;
+  font-size:13.5px;
+  line-height:1.6;
+  color:#0f172a;
+  white-space:pre-wrap;
+  box-shadow:0 8px 20px rgba(15,23,42,.05);
+  position:relative;
+}
+
+.question-highlight::before{
+  content:"NOTE";
+  position:absolute;
+  top:-10px;
+  left:14px;
+  background:#4D148C;
+  color:#fff;
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:600;
+  letter-spacing:.3px;
+} 
+
+.page-subtitle{
+  margin-top:6px;
+  font-size:13px;
+  color:#64748b;
+  font-weight:600;
+}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-wrap">
+          <a href="index.html" class="brand">
+            <div class="brand-meta">
+              <span class="brand-kicker">Internal Platform</span>
+              <span class="brand-title">Decision Support System</span>
+            </div>
+          </a>
+
+          <nav class="nav-tabs">
+            <a href="index.html" class="tab">Home</a>
+            <a href="case-directory.html" class="tab">Case Directory</a>
+            <a href="ebs-response-template.html" class="tab">EBS Response</a>
+            <a href="volume-application.html" class="tab">Volume Application</a>
+          </nav>
+        </div>
+
+        <div class="actions">
+          <button id="clockBtn" class="clock-pill" type="button">
+            <i class="fa-regular fa-clock"></i>
+            <div class="clock-label">
+              <span class="clock-small">Manila time</span>
+              <span id="clockText">--:-- --</span>
+            </div>
+          </button>
+
+          <button class="icon-btn" id="commentIcon" type="button" title="Feedback">
+            <i class="fa-solid fa-comment-dots"></i>
+          </button>
+
+          <button class="icon-btn" id="helpIcon" type="button" title="Get Help">
+            <i class="fa-solid fa-circle-question"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="timeCalendarPopup">
+      <div class="popup-time" id="popupTime">--:--:-- --</div>
+      <div class="popup-date" id="popupDate">Loading date…</div>
+
+      <div class="calendar-header">
+        <span id="prevMonth">‹</span>
+        <div class="calendar-title" id="monthYear"></div>
+        <span id="nextMonth">›</span>
+      </div>
+
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+  <div>
+    <h1>TPHI Guide Guide</h1>
+    <p class="page-subtitle">
+      Follow this guide to resolve TPHI dispute or any related concern.
+    </p>
+  </div>
+            <div class="main-status">
+              <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Progress</div>
+                <div class="progress-status" id="progressText">Not started</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            </section>
+
+            <section class="stage-area">
+              <div class="stage-card" id="stageCard"></div>
+            </section>
+          </div>
+        </main>
+
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
+            <div id="pathBox" class="path-box path-empty">No steps selected yet. The full path will appear here as the user moves through the guide.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Recommended Action</div>
+            <div class="recommendation empty" id="recommendationBox">No recommendation yet. Follow the flow to reach the final instruction.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-label">Steps</span>
+                <span class="metric-value" id="metricSteps">0</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Last Answer</span>
+                <span class="metric-value" id="metricAnswer">—</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-file-lines"></i> Suggested Templates</div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Comment</div>
+                      <div class="template-sub">Internal case note</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Corr Code</div>
+                      <div class="template-sub">Correction code guidance</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr code</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Email</div>
+                      <div class="template-sub">Customer response draft</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="note-card" style="margin-top:14px;">
+              Note: These are suggested templates. Personalized emails or comments are always more appreciated.
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div id="helpModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      Get Help
+      <span class="modal-close" onclick="closeHelp()">×</span>
+    </div>
+
+    <p style="margin-top:0; color:#475569; line-height:1.75;">
+      Welcome. This page helps you quickly find the correct guide for the case you are handling. Use the sections below to know where to start and what to do next.
+    </p>
+
+    <div style="display:grid; gap:14px; margin:18px 0 20px;">
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">1. Search for the issue or request</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Use the search bar on the main page to type keywords such as dispute type, surcharge, account update, correction code, service level, or document request.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">2. Open the guide that matches your case</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Review the card title and short description, then open the guide that best matches the customer's concern or required action.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">3. Follow the guide step by step</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Answer each part carefully and follow the process flow until you reach the correct action, decision, or next handling step.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">4. Use the result to complete the case correctly</strong>
+            <span style="color:#475569; font-size:14px; line-height:1.7;">Apply the correct disposition, update, correction, validation, or communication based on the guide result.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:18px; border-radius:20px; background:linear-gradient(135deg, #f5f3ff, #fff7ed); border:1px solid rgba(148,163,184,.14); margin-bottom:18px;">
+      <strong style="display:block; color:#0f172a; margin-bottom:10px; font-size:15px;">Quick tips</strong>
+      <ul style="margin:0; padding-left:18px; color:#475569; line-height:1.8; font-size:14px;">
+        <li>Use specific keywords when searching so you can find the right guide faster.</li>
+        <li>If more than one guide looks similar, open the one with the description that best matches the request.</li>
+        <li>Use the feedback button if you notice a missing step, unclear logic, or something that needs improvement.</li>
+        <li>Use the clock in the header if you need to check Manila time while working.</li>
+      </ul>
+    </div>
+
+    <div style="padding:16px 18px; border-radius:18px; background:#0f172a; color:#fff;">
+      <strong style="display:block; margin-bottom:6px; font-size:15px;">Need more support?</strong>
+      <span style="display:block; color:rgba(255,255,255,.76); line-height:1.7; font-size:14px;">If the case still does not match any guide or you are unsure which path to take, contact your team lead or EBS Operations support for clarification.</span>
+    </div>
+  </div>
+</div>
+
+<style>
+/*style for the feedback modal and disregard old styles*/
+.feedback-modal{
+  width:min(100%, 560px);
+  background:#ffffff;
+  border-radius:24px;
+  padding:26px 24px 22px;
+  box-shadow:0 30px 70px rgba(15,23,42,.24);
+  border:1px solid rgba(226,232,240,.9);
+  position:relative;
+}
+
+.feedback-title{
+  font-size:18px;
+  font-weight:800;
+  color:#0f172a;
+  margin-bottom:22px;
+}
+
+.feedback-close{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:14px;
+  background:#f1f5f9;
+  color:#64748b;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+}
+
+.feedback-close:hover{
+  background:#e2e8f0;
+  color:#334155;
+}
+
+.feedback-stars{
+  justify-content:center;
+  gap:14px;
+  margin:8px 0 22px;
+}
+
+.feedback-stars .rating-star{
+  font-size:30px; /* 👈 bigger */
+  color:#cbd5e1;  /* 👈 default gray (IMPORTANT) */
+  transition:transform .18s ease, color .18s ease;
+  cursor:pointer;
+}
+
+.rating-star.selected{
+  color:#f97316;
+}
+
+.feedback-stars .rating-star:hover{
+  transform:scale(1.12);
+}
+
+.feedback-modal input,
+.feedback-modal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(203,213,225,.9);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  font-family:inherit;
+}
+
+.feedback-modal input{
+  margin-top:0;
+  margin-bottom:12px;
+  height:46px;
+}
+
+.feedback-modal textarea{
+  margin-top:0;
+  min-height:128px;
+  resize:vertical;
+  margin-bottom:18px;
+}
+
+.feedback-modal input::placeholder,
+.feedback-modal textarea::placeholder{
+  color:#94a3b8;
+}
+
+.feedback-modal input:focus,
+.feedback-modal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(99,102,241,.14);
+}
+
+.feedback-send-btn{
+  width:100%;
+  min-height:48px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(90deg, #5b21b6 0%, #6d28d9 100%);
+  color:#fff;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  box-shadow:0 12px 28px rgba(109,40,217,.28);
+  margin-bottom:14px;
+}
+
+.feedback-send-btn:hover{
+  transform:translateY(-1px);
+}
+
+.feedback-link{
+  display:inline-block;
+  color:#5b21b6;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.feedback-link:hover{
+  text-decoration:underline;
+}
+
+#feedbackMessage{
+  display:none;
+  margin-top:12px;
+  font-size:14px;
+  font-weight:700;
+}
+
+
+</style>
+
+<div id="commentModal" class="modal">
+  <div class="feedback-modal" onclick="event.stopPropagation()">
+    <button class="feedback-close" onclick="closeComment()" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="feedback-title">How do you rate the tool?</div>
+
+    <div class="rating-container feedback-stars">
+      <i class="fa-solid fa-star rating-star" data-value="1"></i>
+      <i class="fa-solid fa-star rating-star" data-value="2"></i>
+      <i class="fa-solid fa-star rating-star" data-value="3"></i>
+      <i class="fa-solid fa-star rating-star" data-value="4"></i>
+      <i class="fa-solid fa-star rating-star" data-value="5"></i>
+    </div>
+
+    <input type="text" id="commentName" placeholder="Your Name (optional)">
+    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
+
+    <button class="feedback-send-btn" onclick="sendComment()">
+      <span>Send feedback</span>
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+
+    <span class="feedback-link" onclick="showAllComments()">View all comments & ratings</span>
+
+    <div id="feedbackMessage"></div>
+  </div>
+</div>
+
+        <div id="feedbackMessage"></div>
+      </div>
+    </div>
+
+    <div id="allCommentsModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          All Ratings & Comments
+          <span class="modal-close" onclick="closeAllComments()">×</span>
+        </div>
+        <div id="commentsList"></div>
+      </div>
+    </div>
+
+    <div id="passwordModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          Enter Password to Edit
+          <span class="modal-close" onclick="closePasswordModal()">×</span>
+        </div>
+        <input type="password" id="adminPassword" placeholder="Password">
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="checkPassword()">Continue</button>
+          <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <span id="modalTitle">Edit</span>
+          <span class="modal-close" onclick="closeEditModal()">×</span>
+        </div>
+        <textarea id="editTextarea"></textarea>
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="saveEdit()">Save</button>
+          <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-left">
+          <strong>© 2025 EBS Operations</strong>
+          <span>Premium main page experience for faster guide access and cleaner navigation.</span>
+        </div>
+        <div class="footer-right">
+          “Your feedback is important to us. Please feel free to email us with any comments or questions.” — Jules
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+        authDomain:"bdgg-database.firebaseapp.com",
+        projectId:"bdgg-database",
+        storageBucket:"bdgg-database.appspot.com",
+        messagingSenderId:"43574975434",
+        appId:"1:43574975434:web:4c79e581267fdfcc6ccd33"
+      });
+    }
+
+    const db = firebase.firestore();
+
+    const TEMPLATE_COLLECTION = "tphi_template";
+    const FEEDBACK_COLLECTION = "feedback";
+    const MAX_STEPS = 8;
+
+    const els = {
+      clockBtn: document.getElementById("clockBtn"),
+      clockText: document.getElementById("clockText"),
+      popupTime: document.getElementById("popupTime"),
+      popupDate: document.getElementById("popupDate"),
+      calendarPopup: document.getElementById("timeCalendarPopup"),
+      calendarGrid: document.getElementById("calendarGrid"),
+      monthYear: document.getElementById("monthYear"),
+
+      stageCard: document.getElementById("stageCard"),
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      recommendationBox: document.getElementById("recommendationBox"),
+      pathBox: document.getElementById("pathBox"),
+      metricSteps: document.getElementById("metricSteps"),
+      metricAnswer: document.getElementById("metricAnswer"),
+      statusPill: document.getElementById("statusPill"),
+
+      suggestedComment: document.getElementById("suggestedComment"),
+      suggestedCorrCode: document.getElementById("suggestedCorrCode"),
+      suggestedEmail: document.getElementById("suggestedEmail"),
+
+      passwordModal: document.getElementById("passwordModal"),
+      editModal: document.getElementById("editModal"),
+      adminPassword: document.getElementById("adminPassword"),
+      editTextarea: document.getElementById("editTextarea"),
+      modalTitle: document.getElementById("modalTitle"),
+
+      helpModal: document.getElementById("helpModal"),
+      commentModal: document.getElementById("commentModal"),
+      allCommentsModal: document.getElementById("allCommentsModal"),
+      commentsList: document.getElementById("commentsList"),
+      commentName: document.getElementById("commentName"),
+      commentText: document.getElementById("commentText"),
+      feedbackMessage: document.getElementById("feedbackMessage")
+    };
+
+    let currentDate = new Date();
+    let selectedRating = 0;
+    let path = [];
+    let historyStack = [];
+    let currentFinalRecommendation = "";
+    let currentEditType = "";
+    let currentKey = "start";
+    const templateCache = {};
+
+//node here
+const NODES = {
+  start: {
+    text: "TPHI",
+    help: "TEMP-SYS MATCH-CHARGE ACCOUNT TO ACCOUNT PER TEMP AUDIT AUTO MATCHING PROCESS",
+    note: "NOTE: If account provided is ARCHIVED or FLAGGED as DO NOT USE look for a better account. Ensure that debtor to be use is a good account. If another code is to be use, follow CORR CODE on job aid. If unable to to find a better account move to TPCL.",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_intro",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the TPHI flow."
+      }
+    ]
+  },
+
+  tphi_intro: {
+    text: "TEMP-SYS MATCH-CHARGE ACCOUNT TO ACCOUNT PER TEMP AUDIT AUTO MATCHING PROCESS",
+    help: "Follow the decision flow carefully before updating the Bill To account and correction notes.",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_shipper_related",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Go to the first decision."
+      }
+    ]
+  },
+
+  tphi_shipper_related: {
+    text: "Is the shipper account related to bill to?",
+    help: "Check whether the shipper account is related to the Bill To account.",
+    choices: [
+      {
+        label: "YES",
+        next: "tphi_billto_abt",
+        icon: "fa-solid fa-circle-check",
+        desc: "Proceed to check whether Bill To is an ABT of the shipper."
+      },
+      {
+        label: "NO",
+        next: "tphi_check_bol",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Validate first using the BOL."
+      }
+    ]
+  },
+
+  tphi_billto_abt: {
+    text: "Is the bill to is an ABT of the shipper?",
+    help: "Check whether the Bill To account is set up as an ABT of the shipper.",
+    choices: [
+      {
+        label: "YES",
+        next: "tphi_update_terms",
+        icon: "fa-solid fa-circle-check",
+        desc: "Update the terms based on the ABT relationship."
+      },
+      {
+        label: "NO",
+        next: "tphi_correction_request",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Skip term update and proceed to the correction request step."
+      }
+    ]
+  },
+
+  tphi_update_terms: {
+    text: "Update the terms depending which account has the BT as an ABT",
+    help: "Update the terms based on which account has the Bill To as an ABT.",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_correction_request",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed to the correction request instructions."
+      }
+    ]
+  },
+
+  tphi_check_bol: {
+    text: "Check BOL for validation, Check if the requested code is related per BOL",
+    help: "Validate the requested code against the BOL before proceeding.",
+    choices: [
+      {
+        label: "Related / Valid",
+        next: "tphi_billto_abt",
+        icon: "fa-solid fa-circle-check",
+        desc: "Return to the main left-side account flow."
+      },
+      {
+        label: "NO",
+        next: "tphi_check_aem",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Check AEM for another account that can be used."
+      }
+    ]
+  },
+
+  tphi_check_aem: {
+    text: "Check AEM for other account that we can use",
+    help: "Search AEM for another usable account.",
+    choices: [
+      {
+        label: "Found account",
+        next: "tphi_correction_request",
+        icon: "fa-solid fa-circle-check",
+        desc: "Use the better account and continue the correction flow."
+      },
+      {
+        label: "None",
+        next: "tphi_use_requested_code",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "No better account found."
+      }
+    ]
+  },
+
+  tphi_use_requested_code: {
+    text: "If none, proceed on using the requested code. CORR ACCR must be use.",
+    help: "If no better account is found, proceed using the requested code and use CORR ACCR.",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_scroll_notes",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed to the notes section."
+      }
+    ]
+  },
+
+  tphi_correction_request: {
+    text: "Follow the instructions in the Correction Request comments and enter the correct account in the Bill To field and use the Enter Key.",
+    help: "Use the correction request comments, enter the correct Bill To account, then press Enter.",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_auto_rate_1",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed to Auto Rate."
+      }
+    ]
+  },
+
+  tphi_auto_rate_1: {
+    text: "Auto Rate to pull the correct discounts if applicable.",
+    help: "Run Auto Rate to pull the correct discounts if applicable.",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_amount_check",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Check the result after Auto Rate."
+      }
+    ]
+  },
+
+  tphi_amount_check: {
+    text: "After you Auto Rate and the amounts don’t match or the rates increase by at least 50%, move to TPCL queue.",
+    help: "If the amounts do not match or the rates increase by at least 50%, move the case to TPCL. Otherwise continue.",
+    choices: [
+      {
+        label: "Move to TPCL",
+        action: "Move to TPCL queue.",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Amounts do not match or rate increased by at least 50%."
+      },
+      {
+        label: "Continue",
+        next: "tphi_scroll_notes",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Amounts are acceptable. Continue to the notes section."
+      }
+    ]
+  },
+
+  tphi_scroll_notes: {
+    text: "Use the scoll bar on the right side in the body of the correction request to scroll to the bottom of the notes.",
+    help: "In the first open line in the HU/Keyword Column Enter CORR. Tab over to Description Field and enter ACCR.",
+    image: "tphi-guide/tphi-step-notes.jpg",
+    note: "-In the first open line in the HU/Keyword Column Enter CORR\n-Tab over to Description Field and enter ACCR-",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_auto_rate_2",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed to auto rate again."
+      }
+    ]
+  },
+
+  tphi_auto_rate_2: {
+    text: "Auto Rate again –using same steps as above to insure the amounts remain the same.",
+    help: "To complete the correction- use the Accept All Button or the F6 function Key. When the Correction is complete the next pro in the queue will automatically populate.",
+    choices: [
+      {
+        label: "Continue",
+        next: "tphi_final_result",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed to the final result check."
+      }
+    ]
+  },
+
+  tphi_final_result: {
+    text: "If you auto-rate and get the following pop up, remove the NOAR and auto-rate again.",
+    help: "If balance decreases, continue with the correction. CORR ACCR. If balance increases or doesn’t change, move to TPCL.",
+    choices: [
+      {
+        label: "Balance decreases",
+        action: "Continue with the correction. CORR ACCR.",
+        icon: "fa-solid fa-circle-check",
+        desc: "Proceed with the correction."
+      },
+      {
+        label: "Balance increases or doesn’t change",
+        action: "Move to TPCL.",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Move the case to TPCL."
+      }
+    ]
+  }
+};
+    function escapeHtml(str){
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function slugify(str){
+      return String(str || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .replace(/_+/g, "_");
+    }
+
+    function getDocId(recommendation, type){
+      return `${slugify(recommendation)}_${type}`;
+    }
+
+    function updateClock(){
+      const now = new Date();
+
+      const headerTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      }).format(now);
+
+      const popupTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+      }).format(now);
+
+      const popupDate = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Manila",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      }).format(now);
+
+      els.clockText.textContent = headerTime;
+      els.popupTime.textContent = popupTime;
+      els.popupDate.textContent = popupDate;
+    }
+
+    function renderCalendar(date){
+      els.calendarGrid.innerHTML = "";
+
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      els.monthYear.textContent = date.toLocaleString("en-PH", {
+        month: "long",
+        year: "numeric"
+      });
+
+      const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+      dayNames.forEach(d => {
+        const el = document.createElement("div");
+        el.className = "day-name";
+        el.textContent = d;
+        els.calendarGrid.appendChild(el);
+      });
+
+      for(let i = 0; i < firstDay; i++){
+        const blank = document.createElement("div");
+        els.calendarGrid.appendChild(blank);
+      }
+
+      const nowManila = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+
+      for(let d = 1; d <= daysInMonth; d++){
+        const day = document.createElement("div");
+        day.className = "day";
+        day.textContent = d;
+
+        if(
+          d === nowManila.getDate() &&
+          month === nowManila.getMonth() &&
+          year === nowManila.getFullYear()
+        ){
+          day.classList.add("today");
+        }
+
+        els.calendarGrid.appendChild(day);
+      }
+    }
+
+    els.clockBtn.onclick = function(e){
+      e.stopPropagation();
+      els.calendarPopup.style.display =
+        els.calendarPopup.style.display === "block" ? "none" : "block";
+      renderCalendar(currentDate);
+    };
+
+    document.addEventListener("click", function(e){
+      if(!els.calendarPopup.contains(e.target) && e.target !== els.clockBtn && !els.clockBtn.contains(e.target)){
+        els.calendarPopup.style.display = "none";
+      }
+    });
+
+    document.getElementById("prevMonth").onclick = function(e){
+      e.stopPropagation();
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar(currentDate);
+    };
+
+    document.getElementById("nextMonth").onclick = function(e){
+      e.stopPropagation();
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar(currentDate);
+    };
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    document.getElementById("helpIcon").onclick = () => els.helpModal.style.display = "flex";
+    document.getElementById("commentIcon").onclick = () => {
+      clearCommentForm();
+      els.commentModal.style.display = "flex";
+    };
+
+    function closeHelp(){ els.helpModal.style.display = "none"; }
+    function closeComment(){ els.commentModal.style.display = "none"; }
+    function closeAllComments(){ els.allCommentsModal.style.display = "none"; }
+    function closePasswordModal(){ els.passwordModal.style.display = "none"; }
+    function closeEditModal(){ els.editModal.style.display = "none"; }
+
+  document.querySelectorAll(".rating-star").forEach(star => {
+  star.addEventListener("click", function(){
+    selectedRating = Number(this.dataset.value);
+
+    // clear all
+    document.querySelectorAll(".rating-star").forEach(s => {
+      s.classList.remove("selected");
+    });
+
+    // fill up to selected
+    document.querySelectorAll(".rating-star").forEach(s => {
+      if(Number(s.dataset.value) <= selectedRating){
+        s.classList.add("selected");
+      }
+    });
+  });
+});
+
+    async function sendComment(){
+      const name = els.commentName.value.trim();
+      const comment = els.commentText.value.trim();
+
+      if(!selectedRating){
+        alert("Please select a rating.");
+        return;
+      }
+
+      try {
+        await db.collection(FEEDBACK_COLLECTION).add({
+          name: name || "Anonymous",
+          comment,
+          rating: selectedRating,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        els.feedbackMessage.style.display = "block";
+        els.feedbackMessage.style.color = "#16a34a";
+        els.feedbackMessage.textContent = "Feedback sent successfully.";
+
+        els.commentName.value = "";
+        els.commentText.value = "";
+        selectedRating = 0;
+        document.querySelectorAll(".rating-star").forEach(s => s.classList.remove("selected"));
+
+        setTimeout(() => {
+          els.feedbackMessage.style.display = "none";
+          els.feedbackMessage.textContent = "";
+          closeComment();
+        }, 1200);
+      } catch (error) {
+        els.feedbackMessage.style.display = "block";
+        els.feedbackMessage.style.color = "#ef4444";
+        els.feedbackMessage.textContent = "Unable to send feedback. Please try again.";
+      }
+    }
+
+    async function showAllComments(){
+      try{
+        const snap = await db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").get();
+        els.commentsList.innerHTML = "";
+
+        if(snap.empty){
+          els.commentsList.innerHTML = `<p style="color:#64748b;">No comments yet.</p>`;
+        } else {
+          snap.forEach(doc => {
+            const d = doc.data();
+            const item = document.createElement("div");
+            item.className = "comment-list-item";
+            item.innerHTML = `
+              <span class="stars">${"★".repeat(d.rating || 0)}${"☆".repeat(5 - (d.rating || 0))}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(d.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(d.comment || "")}</div>
+            `;
+            els.commentsList.appendChild(item);
+          });
+        }
+
+        closeComment();
+        els.allCommentsModal.style.display = "flex";
+      } catch(err){
+        alert("Unable to load comments right now.");
+      }
+    }
+
+    function clearCommentForm(){
+      selectedRating = 0;
+      els.commentName.value = "";
+      els.commentText.value = "";
+      document.querySelectorAll(".rating-star").forEach(s => s.classList.remove("selected"));
+      els.feedbackMessage.style.display = "none";
+      els.feedbackMessage.textContent = "";
+    }
+
+    function getDefaultTemplates(){
+      return { comment:"", corr:"", email:"" };
+    }
+
+    function setTemplateValue(el, text){
+      el.textContent = text || "";
+      el.classList.toggle("empty", !text);
+    }
+
+    async function loadTemplatesForRecommendation(recommendation){
+      if(!recommendation){
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+        return;
+      }
+
+      const defaults = getDefaultTemplates();
+
+      const ids = {
+        comment: getDocId(recommendation, "comment"),
+        corr: getDocId(recommendation, "corr"),
+        email: getDocId(recommendation, "email")
+      };
+
+      try{
+        const [commentDoc, corrDoc, emailDoc] = await Promise.all([
+          db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
+          db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
+          db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
+        ]);
+
+        const finalComment = commentDoc.exists ? (commentDoc.data().text || defaults.comment) : defaults.comment;
+        const finalCorr = corrDoc.exists ? (corrDoc.data().text || defaults.corr) : defaults.corr;
+        const finalEmail = emailDoc.exists ? (emailDoc.data().text || defaults.email) : defaults.email;
+
+        templateCache[ids.comment] = finalComment;
+        templateCache[ids.corr] = finalCorr;
+        templateCache[ids.email] = finalEmail;
+
+        setTemplateValue(els.suggestedComment, finalComment);
+        setTemplateValue(els.suggestedCorrCode, finalCorr);
+        setTemplateValue(els.suggestedEmail, finalEmail);
+      } catch(err){
+        setTemplateValue(els.suggestedComment, defaults.comment);
+        setTemplateValue(els.suggestedCorrCode, defaults.corr);
+        setTemplateValue(els.suggestedEmail, defaults.email);
+      }
+    }
+
+    function setCopiedState(btn, originalText){
+      btn.classList.add("copied");
+      btn.textContent = "Copied";
+      clearTimeout(btn._copiedTimer);
+      btn._copiedTimer = setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.textContent = originalText;
+      }, 1400);
+    }
+
+    async function copyTemplateText(targetId, btn){
+      const target = document.getElementById(targetId);
+      const value = target.innerText.trim();
+      if(!value || target.classList.contains("empty")) return;
+
+      try{
+        await navigator.clipboard.writeText(value);
+        const original = btn.textContent;
+        setCopiedState(btn, original);
+      } catch {
+        alert("Unable to copy text.");
+      }
+    }
+
+    function attemptEdit(type){
+      if(!currentFinalRecommendation){
+        alert("Reach a final recommendation first before editing templates.");
+        return;
+      }
+      currentEditType = type;
+      els.adminPassword.value = "";
+      els.passwordModal.style.display = "flex";
+    }
+
+    function checkPassword(){
+      if(els.adminPassword.value === "admin"){
+        closePasswordModal();
+        openEditModal();
+      } else {
+        alert("Incorrect password");
+      }
+    }
+
+    function openEditModal(){
+      const map = {
+        comment: "suggestedComment",
+        email: "suggestedEmail",
+        corr: "suggestedCorrCode"
+      };
+
+      els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+      els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+      els.editModal.style.display = "flex";
+    }
+
+    async function saveEdit(){
+      const val = els.editTextarea.value.trim();
+
+      if(!val){
+        alert("Cannot save empty text.");
+        return;
+      }
+
+      const docId = getDocId(currentFinalRecommendation, currentEditType);
+
+      try{
+        await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
+          text: val,
+          type: currentEditType,
+          recommendation: currentFinalRecommendation,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        templateCache[docId] = val;
+
+        if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
+        if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
+        if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
+
+        closeEditModal();
+        alert("Saved!");
+      } catch(err){
+        alert("Unable to save right now.");
+      }
+    }
+
+    function getPercent(isFinal){
+      if(isFinal) return 100;
+      if(path.length === 0) return 0;
+      return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
+    }
+
+    function updateMeta(isFinal){
+      const pct = getPercent(isFinal);
+      const lastAnswer = path.length ? path[path.length - 1].answer : "—";
+      const progressLabel = isFinal ? "Recommendation ready" : path.length ? `Step ${path.length}` : "Not started";
+
+      els.progressFill.style.width = pct + "%";
+      els.progressText.textContent = progressLabel;
+      els.metricSteps.textContent = String(path.length);
+      els.metricAnswer.textContent = lastAnswer;
+      els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "In Progress" : "Ready"}`;
+    }
+
+function updatePath(){
+  if(!path.length){
+    els.pathBox.className = "path-box path-empty";
+    els.pathBox.textContent = "No steps selected yet. The full path will appear here as the user moves through the guide.";
+    return;
+  }
+
+  els.pathBox.className = "path-box";
+  els.pathBox.innerHTML = path.map((step, index) => `
+    <div class="path-item path-item-enter" 
+         style="animation-delay:${index * 0.06}s;"
+         data-step-index="${index}">
+
+      <div class="step-badge">STEP ${index + 1}</div>
+      <div class="path-q">${escapeHtml(step.question)}</div>
+      <div class="path-a">→ ${escapeHtml(step.answer)}</div>
+    </div>
+  `).join("");
+
+  // 🔥 CLICK HANDLER
+  document.querySelectorAll(".path-item").forEach(el => {
+    el.addEventListener("click", () => {
+      const index = Number(el.dataset.stepIndex);
+      goToStep(index);
+    });
+  });
+}
+
+function goToStep(index){
+  const target = historyStack[index];
+
+  if(!target) return;
+
+  // trim path + history
+  path = path.slice(0, index);
+  historyStack = historyStack.slice(0, index);
+
+  updatePath();
+  renderNode(target.key);
+}
+
+    function updateRecommendation(text, isFinal){
+      els.recommendationBox.textContent = text || "No recommendation yet. Follow the flow to reach the final instruction.";
+      els.recommendationBox.classList.toggle("empty", !text);
+
+      currentFinalRecommendation = isFinal ? text : "";
+
+      if(isFinal){
+        loadTemplatesForRecommendation(text);
+      } else {
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+      }
+    }
+
+    function renderFinal(node){
+      currentKey = "__final__";
+      const finalText = node.action || node.text || "";
+      const finalNote = node.note || "";
+
+      updateRecommendation(finalText, true);
+      updateMeta(true);
+
+      const footerStepText = `Completed after ${path.length} step${path.length > 1 ? "s" : ""}`;
+
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-check-circle"></i> Final Recommendation</div>
+          <div class="badge alt"><i class="fa-solid fa-sparkles"></i> TPHI</div>
+        </div>
+
+        <div class="final-card">
+          <div class="final-badge"><i class="fa-solid fa-circle-check"></i> Recommendation Ready</div>
+          <div class="final-title">Recommended Action</div>
+          <div class="final-text">${escapeHtml(finalText)}</div>
+          ${finalNote ? `<div class="final-note">${escapeHtml(finalNote)}</div>` : ""}
+
+          <div class="final-actions">
+            <button class="app-btn secondary" id="inlineBack">Go Back</button>
+            <button class="app-btn primary" id="inlineRestart">Start Over</button>
+          </div>
+        </div>
+
+        <div class="decision-footer">
+          <div class="decision-footer-left">
+            <div class="footer-label">Decision Guide</div>
+            <div class="footer-value">${footerStepText}</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("inlineBack").onclick = goBack;
+      document.getElementById("inlineRestart").onclick = restart;
+    }
+
+function renderNode(key){
+  currentKey = key;
+  const node = NODES[key];
+
+  if(!node){
+    updateRecommendation("", false);
+    updateMeta(false);
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+      </div>
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-text" style="font-size:28px;">Node not found: ${escapeHtml(key)}</div>
+          <p class="question-help">Check the node key in your decision tree.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if(node.action || (!node.choices || node.choices.length === 0)){
+    renderFinal(node);
+    return;
+  }
+
+  updateRecommendation("", false);
+  updateMeta(false);
+
+  const choices = (node.choices || []).map(choice => `
+    <button class="choice" type="button"
+      data-type="${choice.action ? "final" : "next"}"
+      data-next="${escapeHtml(choice.next || "")}"
+      data-label="${escapeHtml(choice.label || "")}"
+      data-action="${escapeHtml(choice.action || "")}"
+      data-note="${escapeHtml(choice.note || "")}">
+      <div class="choice-icon"><i class="${escapeHtml(choice.icon || "fa-solid fa-circle-dot")}"></i></div>
+      <div class="choice-body">
+        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+        <div class="choice-desc">${escapeHtml(choice.desc || "")}</div>
+      </div>
+    </button>
+  `).join("");
+
+  const nextStep = path.length + 1;
+  const footerStepText = `Next → Step ${nextStep}`;
+
+  els.stageCard.innerHTML = `
+    <div class="stage-top">
+      <div class="badge"><i class="fa-solid fa-route"></i> TPHI Flow</div>
+      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> Interactive Guide</div>
+    </div>
+
+    <div class="question-wrap">
+      <div class="question-card">
+        <div class="question-label"><i class="fa-solid fa-circle-question"></i> Current Decision</div>
+        <h2 class="question-text">${escapeHtml(node.text || "")}</h2>
+        ${node.help ? `<p class="question-help">${escapeHtml(node.help)}</p>` : ""}
+
+        ${node.note ? `
+          <div class="question-highlight">
+            ${escapeHtml(node.note)}
+          </div>
+        ` : ""}
+
+        ${node.image ? `
+          <div class="question-image" onclick="openImageModal('${String(node.image).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(node.image)}" alt="Step Image">
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="choices">${choices}</div>
+    </div>
+
+    <div class="decision-footer">
+      <div class="decision-footer-left">
+        <div class="footer-label">Decision Guide</div>
+        <div class="footer-value">${footerStepText}</div>
+      </div>
+
+      <div class="decision-actions">
+        <button class="app-btn secondary" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+      </div>
+    </div>
+  `;
+
+  const inlineBack = document.getElementById("inlineBack");
+  const inlineRestart = document.getElementById("inlineRestart");
+
+  if(inlineBack) inlineBack.onclick = goBack;
+  if(inlineRestart) inlineRestart.onclick = restart;
+
+  els.stageCard.querySelectorAll(".choice").forEach(btn => {
+    btn.addEventListener("click", () => {
+      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      const type = btn.dataset.type;
+      const next = btn.dataset.next;
+      const label = btn.dataset.label;
+      const action = btn.dataset.action;
+      const note = btn.dataset.note;
+
+      historyStack.push({
+        key: currentKey,
+        path: JSON.parse(JSON.stringify(path))
+      });
+
+      path.push({
+        question: node.text,
+        answer: label
+      });
+
+      updatePath();
+      updateMeta(false);
+
+      setTimeout(() => {
+        if(type === "final"){
+          renderFinal({ action, note });
+        } else {
+          renderNode(next);
+        }
+      }, 120);
+    });
+  });
+}
+    function goBack(){
+      if(!historyStack.length) return;
+      const prev = historyStack.pop();
+      path = prev.path || [];
+      updatePath();
+
+      if(prev.key === "__final__"){
+        renderNode("start");
+      } else {
+        renderNode(prev.key);
+      }
+    }
+
+    function restart(){
+      path = [];
+      historyStack = [];
+      currentFinalRecommendation = "";
+      currentEditType = "";
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      updatePath();
+      updateRecommendation("", false);
+      renderNode("start");
+    }
+
+    updatePath();
+    updateRecommendation("", false);
+    updateMeta(false);
+    renderNode("start");
+    
+function openImageModal(src){
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("imageModalImg");
+  if(!modal || !img) return;
+  img.src = src;
+  modal.style.display = "flex";
+}
+
+function closeImageModal(){
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("imageModalImg");
+  if(!modal || !img) return;
+  modal.style.display = "none";
+  img.src = "";
+}
+
+    
+  </script>
+  <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+  <img id="imageModalImg" src="" alt="Expanded step image">
+</div>
+</body>
+</html>
