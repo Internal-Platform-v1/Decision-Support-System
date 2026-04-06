@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Canadian Surcharge Guide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+ <style>
+  :root{
+    --bg:#07111f;
+    --bg-soft:#0c1728;
+    --panel:#0f1c31;
+    --panel-2:#12233d;
+    --card:#ffffff;
+    --card-soft:#f8fafc;
+    --text:#0f172a;
+    --text-soft:#475569;
+    --muted:#94a3b8;
+    --line:rgba(148,163,184,.18);
+    --white-line:rgba(255,255,255,.08);
+    --accent:#6d28d9;
+    --accent-2:#4d148c;
+    --accent-3:#ff6600;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+    --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+    --shadow-md:0 10px 28px rgba(15,23,42,.10);
+    --shadow-card:0 16px 40px rgba(15,23,42,.06);
+    --radius-xl:28px;
+    --radius-lg:20px;
+    --radius-md:16px;
+    --radius-sm:12px;
+    --max:1720px;
+    font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+      radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+      linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:36px 36px;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+    z-index:0;
+  }
+
+  a{color:inherit}
+  button,input,textarea{font:inherit}
+
+  .page{
+    position:relative;
+    z-index:1;
+  }
+
+  .app-shell{
+    width:min(calc(100% - 32px), var(--max));
+    margin:22px auto 24px;
+  }
+
+  .app-frame{
+    min-height:calc(100vh - 180px);
+    background:rgba(255,255,255,.58);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.68);
+    border-radius:34px;
+    box-shadow:var(--shadow-xl);
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:minmax(0,1.45fr) 380px 420px;
+  }
+
+  .main{
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    min-width:0;
+  }
+
+  .main-topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:16px 18px;
+    border-radius:24px;
+    background:rgba(255,255,255,.85);
+    border:1px solid rgba(219,228,240,.9);
+    box-shadow:var(--shadow-md);
+  }
+
+  .main-topbar h1{
+    margin:0;
+    font-size:24px;
+    letter-spacing:-.03em;
+  }
+
+  .main-status{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:11px 14px;
+    border-radius:999px;
+    background:#fff;
+    border:1px solid #dbe4f0;
+    font-size:12px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .pill.primary{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    border:none;
+  }
+
+  .workspace{
+    display:grid;
+    grid-template-rows:auto 1fr;
+    gap:16px;
+    min-height:0;
+  }
+
+  .progress-card{
+    background:#fff;
+    border:1px solid #dbe4f0;
+    border-radius:22px;
+    padding:16px 18px;
+    box-shadow:var(--shadow-md);
+  }
+
+  .progress-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .progress-title{
+    font-size:14px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .progress-status{
+    font-size:12px;
+    font-weight:800;
+    color:#64748b;
+  }
+
+  .progress-bar{
+    height:12px;
+    background:#eaf0f7;
+    border-radius:999px;
+    overflow:hidden;
+  }
+
+  .progress-fill{
+    height:100%;
+    width:0%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+    transition:width .28s ease;
+  }
+
+  .stage-area{
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .stage-card{
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border:1px solid #dbe4f0;
+    border-radius:30px;
+    box-shadow:var(--shadow-card);
+    min-height:640px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  .stage-top{
+    padding:22px 22px 0;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 13px;
+    border-radius:999px;
+    background:#eef4ff;
+    color:#1d4ed8;
+    font-size:12px;
+    font-weight:800;
+  }
+
+  .badge.alt{
+    background:#f8fafc;
+    color:#334155;
+  }
+
+  .question-wrap{
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    flex:1;
+  }
+
+  .question-card{
+    position:relative;
+    padding:30px;
+    border-radius:28px;
+    background:
+      radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+      linear-gradient(180deg,#ffffff,#f8fbff);
+    border:1px solid #e6edf7;
+    box-shadow:0 12px 30px rgba(15,23,42,.04);
+  }
+
+  .question-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+  }
+
+  .question-label{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#334155;
+  }
+
+  .question-text{
+    margin:18px 0 0;
+    font-size:36px;
+    line-height:1.08;
+    letter-spacing:-.045em;
+    font-weight:900;
+  }
+
+  .question-help{
+    margin:14px 0 0;
+    color:#64748b;
+    font-size:14px;
+    line-height:1.75;
+    max-width:760px;
+  }
+
+  .choices{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+  }
+
+  .choice{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    border-radius:24px;
+    padding:18px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border:1px solid #e2e8f0;
+    box-shadow:0 12px 28px rgba(15,23,42,.05);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    min-height:112px;
+  }
+
+  .choice:hover{
+    transform:translateY(-3px);
+    box-shadow:0 18px 36px rgba(15,23,42,.08);
+    border-color:#c7d5e6;
+  }
+
+  .choice.selected{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .choice-icon{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    background:#eef4ff;
+    color:#2563eb;
+    flex:0 0 auto;
+    font-size:17px;
+  }
+
+  .choice.selected .choice-icon{
+    background:rgba(255,255,255,.14);
+    color:#fff;
+  }
+
+  .choice-body{min-width:0}
+
+  .choice-title{
+    font-size:16px;
+    font-weight:800;
+    line-height:1.35;
+  }
+
+  .choice-desc{
+    font-size:12px;
+    line-height:1.6;
+    color:#64748b;
+    margin-top:6px;
+  }
+
+  .choice.selected .choice-desc{
+    color:rgba(255,255,255,.8);
+  }
+
+  .decision-footer{
+    margin-top:auto;
+    padding:18px 22px 22px;
+    border-top:1px solid #e8eef7;
+    background:linear-gradient(180deg,rgba(248,250,252,.2),#f8fbff);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .decision-footer-left{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .footer-label{
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#64748b;
+  }
+
+  .footer-value{
+    font-size:14px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .decision-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .app-btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:12px 16px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:800;
+    transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+
+  .app-btn:hover{
+    transform:translateY(-1px);
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin:0;
+    min-height:50px;
+    padding:0 18px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+    color:#fff;
+    text-decoration:none;
+    font-weight:800;
+    box-shadow:0 14px 24px rgba(77,20,140,.18);
+    transition:.22s ease;
+    width:100%;
+    cursor:pointer;
+  }
+
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 18px 30px rgba(77,20,140,.24);
+  }
+
+  .app-btn.primary{
+    background:#111827;
+    color:#fff;
+    box-shadow:0 8px 20px rgba(17,24,39,.14);
+  }
+
+  .app-btn.secondary{
+    background:#fff;
+    color:#111827;
+    border:1px solid #dbe4f0;
+  }
+
+  .app-btn.ghost{
+    background:#f8fafc;
+    color:#0f172a;
+    border:1px solid #e2e8f0;
+  }
+
+  .final-card{
+    margin:20px;
+    padding:24px;
+    border-radius:24px;
+    background:linear-gradient(180deg,#f0fdf4,#ffffff);
+    border:1px solid #dcfce7;
+    box-shadow:0 16px 34px rgba(22,163,74,.08);
+  }
+
+  .final-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 12px;
+    border-radius:999px;
+    background:#dcfce7;
+    color:#166534;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+  }
+
+  .final-title{
+    margin:16px 0 0;
+    font-size:14px;
+    font-weight:800;
+    color:#166534;
+  }
+
+  .final-text{
+    margin:10px 0 0;
+    font-size:24px;
+    line-height:1.5;
+    letter-spacing:-.02em;
+    font-weight:800;
+    color:#111827;
+  }
+
+  .final-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:18px;
+  }
+
+  .side-panel{
+    padding:18px 14px 18px 0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-width:0;
+  }
+
+  .template-panel{
+    padding:18px 18px 18px 0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-width:0;
+  }
+
+  .side-panel .summary-card,
+  .template-panel .summary-card{
+    background:#fff;
+    border:1px solid #dbe4f0;
+    border-radius:22px;
+    padding:18px;
+    box-shadow:var(--shadow-md);
+  }
+
+  .summary-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    font-size:14px;
+    font-weight:900;
+  }
+
+  .summary-head i{color:#7c3aed}
+
+  .recommendation{
+    min-height:120px;
+    padding:16px;
+    border-radius:18px;
+    background:linear-gradient(180deg,#fff8eb,#fff);
+    border-left:4px solid #f59e0b;
+    font-size:14px;
+    line-height:1.7;
+  }
+
+  .recommendation.empty{
+    background:#f8fafc;
+    border-left-color:#cbd5e1;
+    color:#64748b;
+  }
+
+  .summary-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .metric{
+    padding:14px;
+    border-radius:18px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+  }
+
+  .metric-k{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#64748b;
+    font-weight:800;
+    margin-bottom:6px;
+  }
+
+  .metric-v{
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:-.03em;
+    word-break:break-word;
+  }
+
+  .path-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    max-height:600px;
+    overflow:auto;
+    padding-right:4px;
+  }
+
+  .path-empty{
+    padding:16px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px dashed #d7e1ef;
+    color:#64748b;
+    font-size:13px;
+    line-height:1.7;
+  }
+
+  .path-item{
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+  }
+
+  .path-step{
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#2563eb;
+    margin-bottom:6px;
+  }
+
+  .path-question{
+    font-size:13px;
+    font-weight:700;
+    line-height:1.5;
+  }
+
+  .path-answer{
+    font-size:13px;
+    color:#64748b;
+    line-height:1.5;
+    margin-top:6px;
+  }
+
+  .section-note{
+    font-size:12px;
+    color:#64748b;
+    line-height:1.6;
+    margin-top:-2px;
+  }
+
+  .template-stack{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:14px;
+  }
+
+  .template-card{
+    border:1px solid #e5ebf4;
+    border-radius:18px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    overflow:hidden;
+  }
+
+  .template-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:14px 14px 10px;
+  }
+
+  .template-title-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+
+  .template-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:#f3e8ff;
+    color:#7c3aed;
+    flex:0 0 auto;
+  }
+
+  .template-title{
+    font-size:14px;
+    font-weight:900;
+    color:#0f172a;
+  }
+
+  .template-sub{
+    font-size:12px;
+    color:#64748b;
+    margin-top:2px;
+  }
+
+  .template-actions{
+    display:flex;
+    gap:8px;
+  }
+
+  .template-icon-btn{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:10px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    color:#475569;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    transition:all .16s ease;
+  }
+
+  .template-icon-btn:hover{
+    background:#eef4ff;
+    color:#1d4ed8;
+    border-color:#cfe0ff;
+  }
+
+  .template-body{
+    padding:0 14px 14px;
+  }
+
+  .template-box{
+    min-height:108px;
+    padding:14px;
+    border-radius:14px;
+    background:#f8fbff;
+    border:1px solid #e4ebf5;
+    font-size:13px;
+    line-height:1.7;
+    color:#334155;
+    white-space:pre-wrap;
+  }
+
+  .template-box.empty{
+    color:#94a3b8;
+  }
+
+  .template-foot{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:0 14px 14px;
+  }
+
+  .template-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 10px;
+    border-radius:999px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    font-size:11px;
+    font-weight:800;
+    color:#64748b;
+  }
+
+  .template-copy{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:12px;
+    background:#111827;
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    transition:all .18s ease;
+  }
+
+  .template-copy.copied,
+  .template-icon-btn.copied{
+    background:#dcfce7 !important;
+    color:#166534 !important;
+    border-color:#bbf7d0 !important;
+  }
+
+  @media (max-width:1450px){
+    .app-frame{
+      grid-template-columns:minmax(0,1fr) 340px 360px;
+    }
+  }
+
+  @media (max-width:1220px){
+    .app-frame{
+      grid-template-columns:1fr;
+    }
+    .side-panel,
+    .template-panel{
+      padding:0 18px 18px;
+    }
+  }
+
+  @media (max-width:760px){
+    .app-shell{
+      width:min(calc(100% - 20px), var(--max));
+    }
+    .app-shell{margin:16px auto}
+    .app-frame{min-height:100vh;border-radius:24px}
+    .main{padding:18px}
+    .main-topbar{flex-direction:column;align-items:flex-start}
+    .question-text{font-size:28px}
+    .choices{grid-template-columns:1fr}
+    .summary-grid{grid-template-columns:1fr}
+    .decision-footer{flex-direction:column;align-items:flex-start}
+  }
+  
+  /*images*/
+  
+  .question-image{
+  margin-top:16px;
+  border-radius:18px;
+  overflow:hidden;
+  cursor:zoom-in;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  max-height:320px;
+  min-height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  box-shadow:0 12px 28px rgba(15,23,42,.08);
+}
+
+.question-image::after{
+  content:"Click to enlarge";
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(15,23,42,.72);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  opacity:0;
+  transform:translateY(6px);
+  transition:.2s ease;
+  pointer-events:none;
+}
+
+.question-image:hover::after{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.question-image img{
+  width:100%;
+  height:100%;
+  max-height:320px;
+  object-fit:contain;
+  display:block;
+  transition:transform .28s ease;
+  transform-origin:center center;
+}
+
+.question-image:hover img{
+  transform:scale(1.06);
+}
+
+.image-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(2,6,23,.88);
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  backdrop-filter:blur(8px);
+  cursor:zoom-out;
+}
+
+.image-modal.open{
+  display:flex;
+}
+
+.image-modal img{
+  max-width:94vw;
+  max-height:90vh;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+  cursor:default;
+}
+
+.image-modal-close{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:46px;
+  height:46px;
+  border:none;
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  transition:.2s ease;
+}
+
+.image-modal-close:hover{
+  background:rgba(255,255,255,.2);
+}
+
+@media (max-width:760px){
+  .question-image{
+    max-height:260px;
+    min-height:140px;
+  }
+
+  .question-image img{
+    max-height:260px;
+  }
+
+  .image-modal{
+    padding:14px;
+  }
+
+  .image-modal img{
+    max-width:96vw;
+    max-height:86vh;
+    border-radius:14px;
+  }
+
+  .image-modal-close{
+    top:10px;
+    right:10px;
+    width:42px;
+    height:42px;
+  }
+}
+
+    /*title/subtitle*/  
+.page-title-block{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.page-title-block h1{
+  margin:0;
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.03em;
+  color:#0f172a;
+}
+
+.page-subtitle{
+  margin:0;
+  font-size:13px;
+  color:#64748b;
+  line-height:1.6;
+  max-width:620px;
+}
+
+.main-topbar{
+  align-items:flex-start; /* 🔥 important */
+}
+
+/*premium note*/
+.note-card{
+  margin-top:18px;
+  padding:18px 18px 18px 20px;
+  border-radius:20px;
+  background:linear-gradient(180deg, #fff8eb 0%, #ffffff 100%);
+  border:1px solid rgba(245,158,11,.18);
+  box-shadow:
+    0 14px 30px rgba(15,23,42,.06),
+    inset 0 1px 0 rgba(255,255,255,.75);
+  position:relative;
+  overflow:hidden;
+}
+
+.note-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:5px;
+  background:linear-gradient(180deg, #f59e0b 0%, #ff6600 100%);
+}
+
+.note-head{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#fff7ed;
+  border:1px solid rgba(245,158,11,.18);
+  color:#b45309;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.note-body{
+  color:#475569;
+  line-height:1.8;
+  font-size:14px;
+  white-space:pre-wrap;
+}   
+
+/*links*/
+
+.note-body{
+  color:#5b6474;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.note-body a{
+  text-decoration:none;
+}
+.smart-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  margin-top:8px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff !important;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:0 10px 18px rgba(77,20,140,.18);
+  transition:.2s ease;
+}
+
+.smart-link:hover{
+  transform:translateY(-2px) scale(1.02);
+  box-shadow:0 14px 24px rgba(77,20,140,.25);
+}
+
+/*for edit/save comments,email and corr code modal*/
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:10000;
+}
+
+.modal-content{
+  background:#fff;
+  width:100%;
+  max-width:560px;
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.22);
+  border:1px solid #e2e8f0;
+  max-height:85vh;
+  overflow:auto;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+.modal-close{
+  font-size:22px;
+  cursor:pointer;
+  color:#64748b;
+  line-height:1;
+}
+
+.modal-close:hover{
+  color:#4d148c;
+}
+
+#passwordModal input,
+#editModal textarea{
+  width:100%;
+  border:1px solid #dbe4f0;
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:14px;
+  outline:none;
+  background:#fff;
+}
+
+#passwordModal input:focus,
+#editModal textarea:focus{
+  border-color:#c4b5fd;
+  box-shadow:0 0 0 4px rgba(109,40,217,.10);
+}
+
+#editModal textarea{
+  min-height:220px;
+  resize:vertical;
+}
+   
+  
+</style>
+</head>
+<body data-page="">
+  <div class="page">
+<div id="site-header"></div>
+
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+            <div>
+<div class="page-title-block">
+  <h1>Canadian Surcharge Guide</h1>
+  <p class="page-subtitle">
+    Follow this guide to accurately resolve Canadian Surcharge disputes by validating ZIP eligibility, reviewing tariff conditions, and applying the correct action—whether removal, rebill, or escalation.
+  </p>
+</div>
+            </div>
+            <div class="main-status">
+              <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Progress</div>
+                <div class="progress-status" id="progressText">Not started</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            </section>
+
+            <section class="stage-area">
+              <div class="stage-card" id="stageCard"></div>
+            </section>
+          </div>
+        </main>
+
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
+            <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as the user moves through the app.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Recommended Action</div>
+            <div class="recommendation empty" id="recommendationBox">No recommendation yet. Follow the flow to reach the final instruction.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v" id="metricSteps">0</span>
+              </div>
+              <div class="metric">
+                <span class="metric-k">Last Answer</span>
+                <span class="metric-v" id="metricAnswer">—</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
+            <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Comment</div>
+                      <div class="template-sub">Internal case note</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Corr Code Note</div>
+                      <div class="template-sub">Correction code guidance</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr code</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Email</div>
+                      <div class="template-sub">Customer communication</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div id="passwordModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          Enter Password
+          <span class="modal-close" onclick="closePasswordModal()">×</span>
+        </div>
+        <input id="adminPassword" type="password" placeholder="Enter admin password">
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="checkPassword()">Continue</button>
+          <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <span id="modalTitle">Edit</span>
+          <span class="modal-close" onclick="closeEditModal()">×</span>
+        </div>
+        <textarea id="editTextarea"></textarea>
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="saveEdit()">Save</button>
+          <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+<div id="site-footer"></div>
+
+<script>
+  window.SITE_BASE = "../";
+</script>    
+    
+  </div>
+<script src="../assets/js/header-loader.js"></script>
+<script src="../assets/js/header.js"></script>
+<script src="../assets/js/footer-loader.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    });
+  }
+
+  const db = firebase.firestore();
+  const TEMPLATE_COLLECTION = "canadian_surcharge_template";
+  const FEEDBACK_COLLECTION = "feedback";
+  const MAX_STEPS = 8;
+
+  const els = {
+    stageCard: document.getElementById("stageCard"),
+    progressFill: document.getElementById("progressFill"),
+    progressText: document.getElementById("progressText"),
+    recommendationBox: document.getElementById("recommendationBox"),
+    pathBox: document.getElementById("pathBox"),
+    metricSteps: document.getElementById("metricSteps"),
+    metricAnswer: document.getElementById("metricAnswer"),
+    statusPill: document.getElementById("statusPill"),
+
+    suggestedComment: document.getElementById("suggestedComment"),
+    suggestedCorrCode: document.getElementById("suggestedCorrCode"),
+    suggestedEmail: document.getElementById("suggestedEmail"),
+
+    passwordModal: document.getElementById("passwordModal"),
+    editModal: document.getElementById("editModal"),
+    adminPassword: document.getElementById("adminPassword"),
+    editTextarea: document.getElementById("editTextarea"),
+    modalTitle: document.getElementById("modalTitle")
+  };
+
+  let selectedRating = 0;
+  let path = [];
+  let historyStack = [];
+  let currentFinalRecommendation = "";
+  let currentEditType = "";
+  let commentsUnsubscribe = null;
+  let ratingStars = [];
+  let currentKey = "start";
+  const templateCache = {};
+
+const NODES = {
+
+  start: {
+    text: "What is the dispute of the customer?",
+    choices: [
+      {
+        label: "Rebill",
+        next: "rebill",
+        icon: "fa-solid fa-rotate",
+        desc: "Customer is requesting rebill."
+      },
+      {
+        label: "Validity",
+        next: "validity_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Check if the fee is valid."
+      },
+      {
+        label: "Rates",
+        next: "rates",
+        icon: "fa-solid fa-percent",
+        desc: "Rate-related dispute."
+      }
+    ]
+  },
+
+  /* ================= REBILL ================= */
+
+  rebill: {
+    text: "Rebill",
+    action: "Advise the customer that we cannot rebill the fee to a different debtor since the Canadian surcharge will follow the Freight term."
+  },
+
+  /* ================= RATES ================= */
+
+  rates: {
+    text: "Rates",
+    action: "Move the case to Pricing Small for further review. Make sure to put complete internal comment."
+  },
+
+  /* ================= VALIDITY ================= */
+
+validity_check: {
+  text: "Check if the Shipper/Consignee ZIP is included on below link:",
+  help: "Review the official Canadian surcharge ZIP reference before proceeding.",
+  note: `
+If the shipment is not 2026, use the FXF Rules Tariff effective at the time of Shipment.
+
+<a href="https://www.fedex.com/content/dam/fedex/us-united-states/services/Freight_Canadian_surcharge_2026.pdf" 
+   target="_blank"
+   style="
+     display:inline-flex;
+     align-items:center;
+     gap:6px;
+     margin-top:10px;
+     font-size:12px;
+     font-weight:800;
+     color:#fff;
+     text-decoration:none;
+     padding:1px 12px; /* 🔥 reduced height */
+     border-radius:10px;
+     background:linear-gradient(135deg,#4d148c,#6d28d9);
+     box-shadow:0 6px 14px rgba(77,20,140,.18);
+   ">
+   <i class="fa-solid fa-up-right-from-square" style="font-size:11px;"></i>
+   View Canadian Surcharge ZIP List
+</a>
+`,
+  choices: [
+    {
+      label: "Continue",
+      next: "zip_in_list",
+      icon: "fa-solid fa-arrow-right",
+      desc: "Proceed after reviewing the Canadian surcharge ZIP list."
+    }
+  ]
+},
+
+  zip_in_list: {
+    text: "Does the Shipper/Consignee ZIP included on the list?",
+    choices: [
+      {
+        label: "Yes",
+        next: "brap_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "ZIP is included."
+      },
+      {
+        label: "No",
+        next: "remove_surcharge",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "ZIP is NOT included."
+      }
+    ]
+  },
+
+  /* ================= NO PATH ================= */
+
+  remove_surcharge: {
+    text: "Remove Canadian Surcharge",
+    action: "Remove the Canadian Surcharge per the Shipper/Consignee ZIP is not included on the Canadian surcharge ZIP list."
+  },
+
+  /* ================= YES PATH ================= */
+
+  brap_check: {
+    text: "Does the BRAP in the body of the bill shows FXF PZONE or FXF EZONE, or FXF 1100 rate tariffs?",
+    choices: [
+      {
+        label: "Yes",
+        next: "remove_fee",
+        icon: "fa-solid fa-circle-check",
+        desc: "Valid tariff condition."
+      },
+      {
+        label: "No",
+        next: "fee_valid",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Fee remains valid."
+      }
+    ]
+  },
+
+  remove_fee: {
+    text: "Remove Fee",
+    action: "Remove the fee per FXF Rules Tariff Item 751."
+  },
+
+  fee_valid: {
+    text: "Fee is Valid",
+    action: "Advise the customer that fee is valid since the Shipper/Consignee ZIP is included on the Canadian surcharge ZIP list."
+  }
+
+};
+
+  function escapeHtml(value){
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function normalizeId(str){
+    return String(str || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+  }
+
+  function getDocId(recommendation, type){
+    return `${type}__${normalizeId(recommendation)}`;
+  }
+
+  function getNodeText(node){
+    return node?.text || node?.question || "";
+  }
+
+  function getNodeHelp(node){
+    return node?.help || "";
+  }
+
+  function getNodeNote(node){
+    return node?.note || "";
+  }
+
+  function getNodeImage(node){
+    return node?.image || "";
+  }
+
+  function getNodeChoices(node){
+    return Array.isArray(node?.choices) ? node.choices : [];
+  }
+
+  function isFinalNode(node){
+    return !!node?.action || (!getNodeChoices(node).length && !node?.next);
+  }
+
+  function initRatingStars() {
+    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+
+    ratingStars.forEach(star => {
+      star.onclick = function () {
+        selectedRating = Number(this.dataset.value);
+        ratingStars.forEach(s => {
+          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
+        });
+      };
+    });
+  }
+
+  function setTemplateValue(el, text){
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle("empty", !text);
+  }
+
+  async function loadTemplatesForRecommendation(recommendation){
+    if(!recommendation){
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      return;
+    }
+
+    const ids = {
+      comment: getDocId(recommendation, "comment"),
+      corr: getDocId(recommendation, "corr"),
+      email: getDocId(recommendation, "email")
+    };
+
+    try{
+      const [commentDoc, corrDoc, emailDoc] = await Promise.all([
+        db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
+        db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
+        db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
+      ]);
+
+      const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
+      const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
+      const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
+
+      templateCache[ids.comment] = finalComment;
+      templateCache[ids.corr] = finalCorr;
+      templateCache[ids.email] = finalEmail;
+
+      setTemplateValue(els.suggestedComment, finalComment);
+      setTemplateValue(els.suggestedCorrCode, finalCorr);
+      setTemplateValue(els.suggestedEmail, finalEmail);
+    } catch(err){
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+    }
+  }
+
+  function setCopiedState(btn, originalText){
+    btn.classList.add("copied");
+    btn.textContent = "Copied";
+    clearTimeout(btn._copiedTimer);
+    btn._copiedTimer = setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.textContent = originalText;
+    }, 1400);
+  }
+
+  async function copyTemplateText(targetId, btn){
+    const target = document.getElementById(targetId);
+    const value = target?.innerText.trim();
+    if(!value || target.classList.contains("empty")) return;
+
+    try{
+      await navigator.clipboard.writeText(value);
+      setCopiedState(btn, btn.textContent);
+    } catch {
+      alert("Unable to copy text.");
+    }
+  }
+
+  function attemptEdit(type){
+    if(!currentFinalRecommendation){
+      alert("Reach a final recommendation first before editing templates.");
+      return;
+    }
+    currentEditType = type;
+    els.adminPassword.value = "";
+    els.passwordModal.style.display = "flex";
+  }
+
+  function closePasswordModal(){ els.passwordModal.style.display = "none"; }
+  function closeEditModal(){ els.editModal.style.display = "none"; }
+
+  function checkPassword(){
+    if(els.adminPassword.value === "admin"){
+      closePasswordModal();
+      openEditModal();
+    } else {
+      alert("Incorrect password");
+    }
+  }
+
+  function openEditModal(){
+    const map = {
+      comment: "suggestedComment",
+      email: "suggestedEmail",
+      corr: "suggestedCorrCode"
+    };
+
+    els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+    els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+    els.editModal.style.display = "flex";
+  }
+
+
+  async function saveEdit(){
+    const val = els.editTextarea.value.trim();
+
+    if(!val){
+      alert("Cannot save empty text.");
+      return;
+    }
+
+    const docId = getDocId(currentFinalRecommendation, currentEditType);
+
+    try{
+      await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
+        text: val,
+        type: currentEditType,
+        recommendation: currentFinalRecommendation,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      templateCache[docId] = val;
+
+      if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
+      if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
+      if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
+
+      closeEditModal();
+      alert("Saved!");
+    } catch(err){
+      alert("Unable to save right now.");
+    }
+  }
+
+  function getPercent(isFinal){
+    if (isFinal) return 100;
+    if(path.length === 0) return 0;
+    return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
+  }
+
+  function updateMeta(isFinal){
+    const pct = getPercent(isFinal);
+    const lastAnswer = path.length ? path[path.length - 1].answer : "—";
+    const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
+
+    els.progressFill.style.width = pct + "%";
+    els.progressText.textContent = progressLabel;
+    els.metricSteps.textContent = String(path.length);
+    els.metricAnswer.textContent = lastAnswer;
+    els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
+  }
+
+  function updatePath(){
+    if(!path.length){
+      els.pathBox.className = "path-empty";
+      els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+      return;
+    }
+
+    const html = path.map((item,index)=>`
+      <div class="path-item">
+        <div class="path-step">Step ${index + 1}</div>
+        <div class="path-question">${escapeHtml(item.question)}</div>
+        <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+      </div>
+    `).join("");
+
+    els.pathBox.className = "path-list";
+    els.pathBox.innerHTML = html;
+  }
+
+  function updateRecommendation(text, isFinal){
+    if(!isFinal){
+      els.recommendationBox.className = "recommendation empty";
+      els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
+      return;
+    }
+
+    els.recommendationBox.className = "recommendation";
+    els.recommendationBox.textContent = text;
+  }
+
+function openImageModal(src){
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("imageModalImg");
+  if (!modal || !img) return;
+
+  img.src = src;
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeImageModal(e){
+  if (e) e.stopPropagation();
+
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("imageModalImg");
+  if (!modal || !img) return;
+
+  modal.classList.remove("open");
+  img.src = "";
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeImageModal();
+});
+
+  async function renderFinal(finalNode){
+    const finalText = finalNode.action || getNodeText(finalNode) || "";
+    const finalNote = finalNode.note || "";
+
+    currentFinalRecommendation = finalText;
+    updateMeta(true);
+    updatePath();
+    updateRecommendation(finalText, true);
+    await loadTemplatesForRecommendation(finalText);
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+      </div>
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${escapeHtml(finalText)}</div>
+        ${finalNote ? `<div style="margin-top:12px; color:#475569; line-height:1.7; white-space:pre-wrap;">${escapeHtml(finalNote)}</div>` : ""}
+        <div class="final-actions">
+          <button class="app-btn secondary" id="inlineBack">Go Back</button>
+          <button class="app-btn primary" id="inlineRestart">Start Over</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("inlineBack").onclick = goBack;
+    document.getElementById("inlineRestart").onclick = restart;
+  }
+  
+  function formatNoteContent(text){
+  if (!text) return "";
+
+  return escapeHtml(text)
+    .replace(/\n/g, "<br>")
+    .replace(
+      /(^|[\s(>])((https?:\/\/[^\s]+)|([A-Za-z0-9._/-]+\.html))(?=$|[\s)<])/g,
+      (match, prefix, url) => {
+        const clean = url.trim();
+        const label = clean
+          .replace(".html", "")
+          .replace(/[-_]/g, " ")
+          .replace(/\b\w/g, c => c.toUpperCase());
+
+        return `${prefix}<a href="${clean}" target="_blank" class="smart-link">${label} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+      }
+    );
+}
+
+ async function renderNode(key){
+  currentKey = key;
+  const node = NODES[key];
+  if (!node) {
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+      </div>
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+          <div class="question-help">Check the node key in your NODES object.</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const choices = getNodeChoices(node);
+  const isFinal = isFinalNode(node);
+
+  if (isFinal) {
+    await renderFinal(node);
+    return;
+  }
+
+  updateMeta(false);
+  updatePath();
+  updateRecommendation("", false);
+
+  currentFinalRecommendation = "";
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+
+  const nodeText = getNodeText(node);
+  const nodeHelp = getNodeHelp(node);
+  const nodeNote = getNodeNote(node);
+  const nodeImage = getNodeImage(node);
+
+  const hasHtmlNote = nodeNote && /<[^>]+>/.test(nodeNote);
+
+  const formattedPlainNote = nodeNote
+    ? escapeHtml(nodeNote)
+        .replace(/\n/g, "<br>")
+        .replace(
+          /(^|[\s(>])([A-Za-z0-9._/-]+\.html)(?=$|[\s)<])/g,
+          '$1<a href="$2" target="_blank" class="auto-note-link">Open ${"$2".replace(".html","").replace(/[-_]/g," ")} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'
+        )
+    : "";
+
+  const choicesHtml = choices.map(choice => `
+    <button class="choice"
+      data-next="${escapeHtml(choice.next || "")}"
+      data-label="${escapeHtml(choice.label || "")}"
+      data-action="${escapeHtml(choice.action || "")}"
+      data-note="${escapeHtml(choice.note || "")}">
+      <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+      <div class="choice-body">
+        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+        <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+      </div>
+    </button>
+  `).join("");
+
+  const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
+
+  els.stageCard.innerHTML = `
+    <div class="stage-top">
+      <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
+    </div>
+
+    <div class="question-wrap">
+      <div class="question-card">
+        <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+        <div class="question-text">${escapeHtml(nodeText)}</div>
+        ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
+
+        ${nodeNote ? `
+          <div class="note-card">
+            <div class="note-head">
+              <i class="fa-solid fa-bell"></i>
+              Reminder
+            </div>
+            <div class="note-body">${hasHtmlNote ? nodeNote : formatNoteContent(nodeNote)}</div>
+          </div>
+        ` : ""}
+
+        ${nodeImage ? `
+          <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="choices">${choicesHtml}</div>
+    </div>
+
+    <div class="decision-footer">
+      <div class="decision-footer-left">
+        <div class="footer-label">Decision Guide</div>
+        <div class="footer-value">${footerStepText}</div>
+      </div>
+
+      <div class="decision-actions">
+        <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+      </div>
+    </div>
+  `;
+
+  const inlineBack = document.getElementById("inlineBack");
+  const inlineRestart = document.getElementById("inlineRestart");
+
+  if(inlineBack) inlineBack.onclick = goBack;
+  if(inlineRestart) inlineRestart.onclick = restart;
+
+  els.stageCard.querySelectorAll(".choice").forEach(btn => {
+    btn.addEventListener("click", () => {
+      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      const next = btn.dataset.next;
+      const label = btn.dataset.label;
+      const action = btn.dataset.action;
+      const note = btn.dataset.note;
+
+      historyStack.push({ key: currentKey, path: [...path] });
+      path.push({ question: nodeText, answer: label });
+
+      updatePath();
+      updateMeta(false);
+
+      setTimeout(() => {
+        if (action) {
+          renderFinal({ action, note });
+        } else {
+          renderNode(next);
+        }
+      }, 120);
+    });
+  });
+}
+
+  function goBack(){
+    if(!historyStack.length) return;
+    const prev = historyStack.pop();
+    path = prev.path || [];
+    renderNode(prev.key);
+  }
+
+  function restart(){
+    path = [];
+    historyStack = [];
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+    updatePath();
+    updateRecommendation("", false);
+    renderNode("start");
+  }
+
+  function openComment() {
+    const modal = document.getElementById("commentModal");
+    const feedbackMessage = document.getElementById("feedbackMessage");
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "none";
+      feedbackMessage.textContent = "";
+    }
+    if (modal) modal.style.display = "flex";
+  }
+
+  function closeComment() {
+    const modal = document.getElementById("commentModal");
+    const feedbackMessage = document.getElementById("feedbackMessage");
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "none";
+      feedbackMessage.textContent = "";
+    }
+    if (modal) modal.style.display = "none";
+  }
+
+  function openHelp() {
+    const modal = document.getElementById("helpModal");
+    if (modal) modal.style.display = "flex";
+  }
+
+  function closeHelp() {
+    const modal = document.getElementById("helpModal");
+    if (modal) modal.style.display = "none";
+  }
+
+  function closeAllComments() {
+    const modal = document.getElementById("allCommentsModal");
+    if (modal) modal.style.display = "none";
+    if (commentsUnsubscribe) {
+      commentsUnsubscribe();
+      commentsUnsubscribe = null;
+    }
+  }
+
+  async function sendComment() {
+    const commentName = document.getElementById("commentName");
+    const commentText = document.getElementById("commentText");
+    const feedbackMessage = document.getElementById("feedbackMessage");
+
+    const name = commentName ? commentName.value.trim() : "";
+    const comment = commentText ? commentText.value.trim() : "";
+
+    if (!selectedRating) {
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#ef4444";
+        feedbackMessage.textContent = "Please select a star rating first.";
+      }
+      return;
+    }
+
+    try {
+      await db.collection(FEEDBACK_COLLECTION).add({
+        name: name || "Anonymous",
+        comment,
+        rating: selectedRating,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#16a34a";
+        feedbackMessage.textContent = "Feedback sent successfully.";
+      }
+
+      if (commentName) commentName.value = "";
+      if (commentText) commentText.value = "";
+      selectedRating = 0;
+      ratingStars.forEach(s => s.classList.remove("selected"));
+
+      setTimeout(() => {
+        if (feedbackMessage) {
+          feedbackMessage.style.display = "none";
+          feedbackMessage.textContent = "";
+        }
+        closeComment();
+      }, 1200);
+    } catch (error) {
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#ef4444";
+        feedbackMessage.textContent = "Unable to send feedback. Please try again.";
+      }
+    }
+  }
+
+  async function showAllComments() {
+    const commentsList = document.getElementById("commentsList");
+    const allCommentsModal = document.getElementById("allCommentsModal");
+    if (!commentsList || !allCommentsModal) return;
+
+    try {
+      commentsList.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>";
+
+      const snap = await db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").get();
+      commentsList.innerHTML = "";
+
+      if (snap.empty) {
+        commentsList.innerHTML = `<p style="color:#64748b;">No comments yet.</p>`;
+      } else {
+        snap.forEach(doc => {
+          const d = doc.data();
+          const item = document.createElement("div");
+          item.className = "comment-list-item";
+          item.innerHTML = `
+            <span class="stars">${"★".repeat(d.rating || 0)}${"☆".repeat(5 - (d.rating || 0))}</span>
+            <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(d.name || "Anonymous")}</strong>
+            <div style="color:#475569; line-height:1.7;">${escapeHtml(d.comment || "")}</div>
+          `;
+          commentsList.appendChild(item);
+        });
+      }
+
+      closeComment();
+      allCommentsModal.style.display = "flex";
+    } catch(err) {
+      alert("Unable to load comments right now.");
+    }
+  }
+
+  window.addEventListener("click", function(e){
+    const helpModal = document.getElementById("helpModal");
+    const commentModal = document.getElementById("commentModal");
+    const allCommentsModal = document.getElementById("allCommentsModal");
+
+    if(e.target === helpModal) closeHelp();
+    if(e.target === commentModal) closeComment();
+    if(e.target === allCommentsModal) closeAllComments();
+    if(e.target === els.passwordModal) closePasswordModal();
+    if(e.target === els.editModal) closeEditModal();
+  });
+
+  window.openComment = openComment;
+  window.closeComment = closeComment;
+  window.openHelp = openHelp;
+  window.closeHelp = closeHelp;
+  window.closeAllComments = closeAllComments;
+  window.sendComment = sendComment;
+  window.showAllComments = showAllComments;
+
+  window.attemptEdit = attemptEdit;
+  window.copyTemplateText = copyTemplateText;
+  window.closePasswordModal = closePasswordModal;
+  window.closeEditModal = closeEditModal;
+  window.checkPassword = checkPassword;
+  window.saveEdit = saveEdit;
+  window.goBack = goBack;
+  window.restart = restart;
+  window.openImageModal = openImageModal;
+  window.closeImageModal = closeImageModal;
+
+  document.addEventListener("headerLoaded", () => {
+    initRatingStars();
+  });
+
+  renderNode("start");
+});
+</script>
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+  <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
+  <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
+</div>
+</body>
+</html>
