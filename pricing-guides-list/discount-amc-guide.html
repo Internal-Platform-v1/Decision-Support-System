@@ -1023,38 +1023,7 @@
   font-size:14px;
   white-space:pre-wrap;
 }   
-
-/*links*/
-
-.note-body{
-  color:#5b6474;
-  font-size:14px;
-  line-height:1.8;
-}
-
-.note-body a{
-  text-decoration:none;
-}
-.smart-link{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 14px;
-  margin-top:8px;
-  border-radius:12px;
-  background:linear-gradient(135deg,#4d148c,#6d28d9);
-  color:#fff !important;
-  text-decoration:none;
-  font-size:12px;
-  font-weight:800;
-  box-shadow:0 10px 18px rgba(77,20,140,.18);
-  transition:.2s ease;
-}
-
-.smart-link:hover{
-  transform:translateY(-2px) scale(1.02);
-  box-shadow:0 14px 24px rgba(77,20,140,.25);
-}
+   
 
 /*for edit/save comments,email and corr code modal*/
 .modal{
@@ -1123,7 +1092,6 @@
   min-height:220px;
   resize:vertical;
 }
-   
   
 </style>
 </head>
@@ -1772,7 +1740,6 @@ checking-eprs.html
     els.editModal.style.display = "flex";
   }
 
-
   async function saveEdit(){
     const val = els.editTextarea.value.trim();
 
@@ -1908,171 +1875,139 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("inlineBack").onclick = goBack;
     document.getElementById("inlineRestart").onclick = restart;
   }
-  
-  function formatNoteContent(text){
-  if (!text) return "";
 
-  return escapeHtml(text)
-    .replace(/\n/g, "<br>")
-    .replace(
-      /(^|[\s(>])((https?:\/\/[^\s]+)|([A-Za-z0-9._/-]+\.html))(?=$|[\s)<])/g,
-      (match, prefix, url) => {
-        const clean = url.trim();
-        const label = clean
-          .replace(".html", "")
-          .replace(/[-_]/g, " ")
-          .replace(/\b\w/g, c => c.toUpperCase());
+  async function renderNode(key){
+    currentKey = key;
+    const node = NODES[key];
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        </div>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
 
-        return `${prefix}<a href="${clean}" target="_blank" class="smart-link">${label} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
-      }
-    );
-}
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
 
- async function renderNode(key){
-  currentKey = key;
-  const node = NODES[key];
-  if (!node) {
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
+
+    updateMeta(false);
+    updatePath();
+    updateRecommendation("", false);
+
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
+
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
+
+    const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
+
     els.stageCard.innerHTML = `
       <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
       </div>
+
       <div class="question-wrap">
         <div class="question-card">
           <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-          <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-          <div class="question-help">Check the node key in your NODES object.</div>
+          <div class="question-text">${escapeHtml(nodeText)}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
+          ${nodeNote ? `
+  <div class="note-card">
+    <div class="note-head">
+      <i class="fa-solid fa-bell"></i>
+      Reminder
+    </div>
+    <div class="note-body">${escapeHtml(nodeNote)}</div>
+  </div>
+` : ""}
+          ${nodeImage ? `
+  <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+    <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+  </div>
+` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
         </div>
       </div>
     `;
-    return;
-  }
 
-  const choices = getNodeChoices(node);
-  const isFinal = isFinalNode(node);
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
 
-  if (isFinal) {
-    await renderFinal(node);
-    return;
-  }
+    if(inlineBack) inlineBack.onclick = goBack;
+    if(inlineRestart) inlineRestart.onclick = restart;
 
-  updateMeta(false);
-  updatePath();
-  updateRecommendation("", false);
+    els.stageCard.querySelectorAll(".choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+        btn.classList.add("selected");
 
-  currentFinalRecommendation = "";
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
+        const next = btn.dataset.next;
+        const label = btn.dataset.label;
+        const action = btn.dataset.action;
+        const note = btn.dataset.note;
 
-  const nodeText = getNodeText(node);
-  const nodeHelp = getNodeHelp(node);
-  const nodeNote = getNodeNote(node);
-  const nodeImage = getNodeImage(node);
+        historyStack.push({ key: currentKey, path: [...path] });
+        path.push({ question: nodeText, answer: label });
 
-  const hasHtmlNote = nodeNote && /<[^>]+>/.test(nodeNote);
+        updatePath();
+        updateMeta(false);
 
-  const formattedPlainNote = nodeNote
-    ? escapeHtml(nodeNote)
-        .replace(/\n/g, "<br>")
-        .replace(
-          /(^|[\s(>])([A-Za-z0-9._/-]+\.html)(?=$|[\s)<])/g,
-          '$1<a href="$2" target="_blank" class="auto-note-link">Open ${"$2".replace(".html","").replace(/[-_]/g," ")} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'
-        )
-    : "";
-
-  const choicesHtml = choices.map(choice => `
-    <button class="choice"
-      data-next="${escapeHtml(choice.next || "")}"
-      data-label="${escapeHtml(choice.label || "")}"
-      data-action="${escapeHtml(choice.action || "")}"
-      data-note="${escapeHtml(choice.note || "")}">
-      <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-      <div class="choice-body">
-        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-        <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-      </div>
-    </button>
-  `).join("");
-
-  const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
-
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
-    </div>
-
-    <div class="question-wrap">
-      <div class="question-card">
-        <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-        <div class="question-text">${escapeHtml(nodeText)}</div>
-        ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
-
-        ${nodeNote ? `
-          <div class="note-card">
-            <div class="note-head">
-              <i class="fa-solid fa-bell"></i>
-              Reminder
-            </div>
-            <div class="note-body">${hasHtmlNote ? nodeNote : formatNoteContent(nodeNote)}</div>
-          </div>
-        ` : ""}
-
-        ${nodeImage ? `
-          <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
-            <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
-          </div>
-        ` : ""}
-      </div>
-
-      <div class="choices">${choicesHtml}</div>
-    </div>
-
-    <div class="decision-footer">
-      <div class="decision-footer-left">
-        <div class="footer-label">Decision Guide</div>
-        <div class="footer-value">${footerStepText}</div>
-      </div>
-
-      <div class="decision-actions">
-        <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-      </div>
-    </div>
-  `;
-
-  const inlineBack = document.getElementById("inlineBack");
-  const inlineRestart = document.getElementById("inlineRestart");
-
-  if(inlineBack) inlineBack.onclick = goBack;
-  if(inlineRestart) inlineRestart.onclick = restart;
-
-  els.stageCard.querySelectorAll(".choice").forEach(btn => {
-    btn.addEventListener("click", () => {
-      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-      btn.classList.add("selected");
-
-      const next = btn.dataset.next;
-      const label = btn.dataset.label;
-      const action = btn.dataset.action;
-      const note = btn.dataset.note;
-
-      historyStack.push({ key: currentKey, path: [...path] });
-      path.push({ question: nodeText, answer: label });
-
-      updatePath();
-      updateMeta(false);
-
-      setTimeout(() => {
-        if (action) {
-          renderFinal({ action, note });
-        } else {
-          renderNode(next);
-        }
-      }, 120);
+        setTimeout(() => {
+          if (action) {
+            renderFinal({ action, note });
+          } else {
+            renderNode(next);
+          }
+        }, 120);
+      });
     });
-  });
-}
+  }
 
   function goBack(){
     if(!historyStack.length) return;
