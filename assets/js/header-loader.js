@@ -3,12 +3,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!target) return;
 
   try {
-    const response = await fetch("./header.html");
-    if (!response.ok) throw new Error("Failed to load header.html");
+    const response = await fetch("header.html"); // 🔥 IMPORTANT: no ./
+    if (!response.ok) throw new Error("Failed to load header");
 
     target.innerHTML = await response.text();
-    document.dispatchEvent(new CustomEvent("headerLoaded"));
-  } catch (error) {
-    console.error("Failed to load header.html:", error);
+
+    // 🔥 TRIGGER HEADER READY
+    document.dispatchEvent(new Event("headerLoaded"));
+
+  } catch (err) {
+    console.error("Header failed:", err);
   }
 });
