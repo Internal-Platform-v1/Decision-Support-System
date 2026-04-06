@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TPHI Guide</title>
+  <title>DISCOUNT-AMC Guide</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
   
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -1023,7 +1023,38 @@
   font-size:14px;
   white-space:pre-wrap;
 }   
-   
+
+/*links*/
+
+.note-body{
+  color:#5b6474;
+  font-size:14px;
+  line-height:1.8;
+}
+
+.note-body a{
+  text-decoration:none;
+}
+.smart-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  margin-top:8px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff !important;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:0 10px 18px rgba(77,20,140,.18);
+  transition:.2s ease;
+}
+
+.smart-link:hover{
+  transform:translateY(-2px) scale(1.02);
+  box-shadow:0 14px 24px rgba(77,20,140,.25);
+}
 
 /*for edit/save comments,email and corr code modal*/
 .modal{
@@ -1092,6 +1123,7 @@
   min-height:220px;
   resize:vertical;
 }
+   
   
 </style>
 </head>
@@ -1105,9 +1137,9 @@
           <div class="main-topbar">
             <div>
 <div class="page-title-block">
-<h1>TPHI Guide</h1>
+<h1>DISCOUNT-AMC Guide</h1>
 <p class="page-subtitle">
-Follow this guide to resolve TPHI dispute or any related concern.
+Follow this guide to resolve DISCOUNT-AMC dispute or any related concern.
 </p>
 </div>
             </div>
@@ -1278,11 +1310,15 @@ Follow this guide to resolve TPHI dispute or any related concern.
     </div>
 
 <div id="site-footer"></div>
+
+<script>
+  window.SITE_BASE = "../";
+</script>    
     
   </div>
-<script src="assets/js/header-loader.js"></script>
-<script src="assets/js/header.js"></script>
-<script src="assets/js/footer-loader.js"></script>
+<script src="../assets/js/header-loader.js"></script>
+<script src="../assets/js/header.js"></script>
+<script src="../assets/js/footer-loader.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   if (!firebase.apps.length) {
@@ -1297,7 +1333,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const db = firebase.firestore();
-  const TEMPLATE_COLLECTION = "tphi_template";
+  const TEMPLATE_COLLECTION = "discount_amc_template";
   const FEEDBACK_COLLECTION = "feedback";
   const MAX_STEPS = 8;
 
@@ -1332,228 +1368,255 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentKey = "start";
   const templateCache = {};
 
-  const NODES = {
-    start: {
-      text: "TPHI",
-      help: "TEMP-SYS MATCH-CHARGE ACCOUNT TO ACCOUNT PER TEMP AUDIT AUTO MATCHING PROCESS",
-      note: "NOTE: If account provided is ARCHIVED or FLAGGED as DO NOT USE look for a better account. Ensure that debtor to be use is a good account. If another code is to be use, follow CORR CODE on job aid. If unable to to find a better account move to TPCL.",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_intro",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Start the TPHI flow."
-        }
-      ]
-    },
+const NODES = {
+  start: {
+    text: "DISCOUNT - AMC",
+    help: "Follow the decision flow to validate billing account, best pricing, agreement exceptions, and AMC-related handling.",
+    choices: [
+      {
+        label: "Continue",
+        next: "discount_bol_check",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the Discount / AMC flow."
+      }
+    ]
+  },
 
-    tphi_intro: {
-      text: "TEMP-SYS MATCH-CHARGE ACCOUNT TO ACCOUNT PER TEMP AUDIT AUTO MATCHING PROCESS",
-      help: "Follow the decision flow carefully before updating the Bill To account and correction notes.",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_shipper_related",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Go to the first decision."
-        }
-      ]
-    },
+  discount_bol_check: {
+    text: "Are we billing the correct account per BOL?",
+    help: "Validate first if the account currently billed matches the correct account based on the BOL.",
+    choices: [
+      {
+        label: "YES",
+        next: "discount_best_account_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Proceed to check if this is also the best account for the customer."
+      },
+      {
+        label: "NO",
+        action: "Find an account and bill the correct debtor per BOL. Advise the customer accordingly.",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Find the correct debtor per BOL and advise the customer."
+      }
+    ]
+  },
 
-    tphi_shipper_related: {
-      text: "Is the shipper account related to bill to?",
-      help: "Check whether the shipper account is related to the Bill To account.",
-      choices: [
-        {
-          label: "YES",
-          next: "tphi_billto_abt",
-          icon: "fa-solid fa-circle-check",
-          desc: "Proceed to check whether Bill To is an ABT of the shipper."
-        },
-        {
-          label: "NO",
-          next: "tphi_check_bol",
-          icon: "fa-solid fa-circle-xmark",
-          desc: "Validate first using the BOL."
-        }
-      ]
-    },
+  discount_best_account_check: {
+    text: "Are we billing the best account of the customer?",
+    help: "Even if the billed account is correct per BOL, check whether there is a better account with more favorable pricing.",
+    choices: [
+      {
+        label: "YES",
+        next: "discount_check_agreement",
+        icon: "fa-solid fa-circle-check",
+        desc: "Proceed to review the customer agreement and pricing exception."
+      },
+      {
+        label: "NO",
+        action: "Find an account with better pricing and bill it.",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Find a better account with more favorable pricing."
+      }
+    ]
+  },
 
-    tphi_billto_abt: {
-      text: "Is the bill to is an ABT of the shipper?",
-      help: "Check whether the Bill To account is set up as an ABT of the shipper.",
-      choices: [
-        {
-          label: "YES",
-          next: "tphi_update_terms",
-          icon: "fa-solid fa-circle-check",
-          desc: "Update the terms based on the ABT relationship."
-        },
-        {
-          label: "NO",
-          next: "tphi_correction_request",
-          icon: "fa-solid fa-circle-xmark",
-          desc: "Skip term update and proceed to the correction request step."
-        }
-      ]
-    },
-
-    tphi_update_terms: {
-      text: "Update the terms depending which account has the BT as an ABT",
-      help: "Update the terms based on which account has the Bill To as an ABT.",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_correction_request",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Proceed to the correction request instructions."
-        }
-      ]
-    },
-
-    tphi_check_bol: {
-      text: "Check BOL for validation, Check if the requested code is related per BOL",
-      help: "Validate the requested code against the BOL before proceeding.",
-      choices: [
-        {
-          label: "Related / Valid",
-          next: "tphi_billto_abt",
-          icon: "fa-solid fa-circle-check",
-          desc: "Return to the main left-side account flow."
-        },
-        {
-          label: "NO",
-          next: "tphi_check_aem",
-          icon: "fa-solid fa-circle-xmark",
-          desc: "Check AEM for another account that can be used."
-        }
-      ]
-    },
-
-    tphi_check_aem: {
-      text: "Check AEM for other account that we can use",
-      help: "Search AEM for another usable account.",
-      choices: [
-        {
-          label: "Found account",
-          next: "tphi_correction_request",
-          icon: "fa-solid fa-circle-check",
-          desc: "Use the better account and continue the correction flow."
-        },
-        {
-          label: "None",
-          next: "tphi_use_requested_code",
-          icon: "fa-solid fa-circle-xmark",
-          desc: "No better account found."
-        }
-      ]
-    },
-
-    tphi_use_requested_code: {
-      text: "If none, proceed on using the requested code. CORR ACCR must be use.",
-      help: "If no better account is found, proceed using the requested code and use CORR ACCR.",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_scroll_notes",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Proceed to the notes section."
-        }
-      ]
-    },
-
-    tphi_correction_request: {
-      text: "Follow the instructions in the Correction Request comments and enter the correct account in the Bill To field and use the Enter Key.",
-      help: "Use the correction request comments, enter the correct Bill To account, then press Enter.",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_auto_rate_1",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Proceed to Auto Rate."
-        }
-      ]
-    },
-
-    tphi_auto_rate_1: {
-      text: "Auto Rate to pull the correct discounts if applicable.",
-      help: "Run Auto Rate to pull the correct discounts if applicable.",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_amount_check",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Check the result after Auto Rate."
-        }
-      ]
-    },
-
-    tphi_amount_check: {
-      text: "After you Auto Rate and the amounts don’t match or the rates increase by at least 50%, move to TPCL queue.",
-      help: "If the amounts do not match or the rates increase by at least 50%, move the case to TPCL. Otherwise continue.",
-      choices: [
-        {
-          label: "Move to TPCL",
-          action: "Move to TPCL queue.",
-          icon: "fa-solid fa-circle-xmark",
-          desc: "Amounts do not match or rate increased by at least 50%."
-        },
-        {
-          label: "Continue",
-          next: "tphi_scroll_notes",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Amounts are acceptable. Continue to the notes section."
-        }
-      ]
-    },
-
-    tphi_scroll_notes: {
-      text: "Use the scoll bar on the right side in the body of the correction request to scroll to the bottom of the notes.",
-      help: "In the first open line in the HU/Keyword Column Enter CORR. Tab over to Description Field and enter ACCR.",
-      image: "tphi-guide/tphi-step-notes.jpg",
-      note: "-In the first open line in the HU/Keyword Column Enter CORR\n-Tab over to Description Field and enter ACCR-",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_auto_rate_2",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Proceed to auto rate again."
-        }
-      ]
-    },
-
-    tphi_auto_rate_2: {
-      text: "Auto Rate again –using same steps as above to insure the amounts remain the same.",
-      help: "To complete the correction- use the Accept All Button or the F6 function Key. When the Correction is complete the next pro in the queue will automatically populate.",
-      choices: [
-        {
-          label: "Continue",
-          next: "tphi_final_result",
-          icon: "fa-solid fa-arrow-right",
-          desc: "Proceed to the final result check."
-        }
-      ]
-    },
-
-    tphi_final_result: {
-      text: "If you auto-rate and get the following pop up, remove the NOAR and auto-rate again.",
-      help: "If balance decreases, continue with the correction. CORR ACCR. If balance increases or doesn’t change, move to TPCL.",
-      choices: [
-        {
-          label: "Balance decreases",
-          action: "Continue with the correction. CORR ACCR.",
-          icon: "fa-solid fa-circle-check",
-          desc: "Proceed with the correction."
-        },
-        {
-          label: "Balance increases or doesn’t change",
-          action: "Move to TPCL.",
-          icon: "fa-solid fa-circle-xmark",
-          desc: "Move the case to TPCL."
-        }
-      ]
+discount_check_agreement: {
+  text: "Check the customer's agreement.",
+  help: "Review the customer’s agreement and verify pricing setup using the ePRS tool below.",
+note: `
+Check ePRS for customer agreement and pricing validation
+checking-eprs.html
+`,
+  choices: [
+    {
+      label: "Continue",
+      next: "discount_exception_effective",
+      icon: "fa-solid fa-arrow-right",
+      desc: "Proceed to pricing exception validation."
     }
-  };
+  ]
+},
+
+  discount_exception_effective: {
+    text: "Does the customer have pricing exception effective at the time of shipment?",
+    help: "Check whether the pricing exception was active on the shipment date.",
+    choices: [
+      {
+        label: "YES",
+        next: "discount_yes_exception_branch",
+        icon: "fa-solid fa-circle-check",
+        desc: "There is a pricing exception effective at shipment time."
+      },
+      {
+        label: "NO",
+        next: "discount_no_exception_branch",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "There is no pricing exception effective at shipment time."
+      }
+    ]
+  },
+
+  discount_yes_exception_branch: {
+    text: "Which situation applies?",
+    help: "Choose the option that best matches what happens after checking the customer’s pricing exception.",
+    choices: [
+      {
+        label: "Exception applies",
+        next: "discount_read_exception",
+        icon: "fa-solid fa-circle-check",
+        desc: "Pricing exception exists and applies to the shipment."
+      },
+      {
+        label: "Exception exists but does not apply on PRO after autorating",
+        next: "discount_quote_verify",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Run a quote to validate whether pricing is already fixed."
+      }
+    ]
+  },
+
+  discount_read_exception: {
+    text: "Read carefully and understand the exception of the customer if it can be applied on the shipment.",
+    help: "Review the customer agreement details, shipment facts, and any AMC impact before proceeding.",
+    choices: [
+      {
+        label: "Continue",
+        next: "discount_amc_sample",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Review the AMC sample and next action."
+      }
+    ]
+  },
+
+  discount_amc_sample: {
+    text: "AMC sample review",
+    help: "Review the AMC example to understand how discount application may be limited by the AMC floor.",
+    note: "Sample PRO 8920117706\nBase rate of $867.90\nIf 88.5% ($763.75) discount was applied, net charge would be $104.15\n$104.15 is below the AMC of $122.33\nSystem applied DMCF of $745.57 so net charge will not go below the AMC",
+    choices: [
+      {
+        label: "Continue",
+        action: "Verify if ePRT is needed by following the ePRT guideline.",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed to ePRT validation if exception still does not apply."
+      }
+    ]
+  },
+
+  discount_quote_verify: {
+    text: "Run a quote to verify whether their pricing is already fixed.",
+    help: "Run a quote and determine whether the correct pricing is returned.",
+    choices: [
+      {
+        label: "Rate quote pulls correct pricing",
+        action: "Send an email to the Training Team for approval to manually rate the invoice.",
+        icon: "fa-solid fa-circle-check",
+        desc: "Request approval to manually rate the invoice."
+      },
+      {
+        label: "Rate quote does not pull correct pricing",
+        action: "Verify whether ePRT is needed by following the ePRT guideline.",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Use the ePRT process to determine the next corrective action."
+      }
+    ]
+  },
+
+  discount_no_exception_branch: {
+    text: "Which no-exception scenario applies?",
+    help: "Choose whether there was no previous exception and a later agreement was published, or whether pricing exception exists before and after shipment.",
+    choices: [
+      {
+        label: "No previous exception, later agreement published",
+        next: "discount_later_agreement",
+        icon: "fa-solid fa-file-signature",
+        desc: "Check the effective date against the ship date."
+      },
+      {
+        label: "Pricing exception exists before and after shipment",
+        next: "discount_before_after_exception",
+        icon: "fa-solid fa-calendar-check",
+        desc: "Check whether pricing gap exists."
+      }
+    ]
+  },
+
+  discount_later_agreement: {
+    text: "No previous exception was published, but the customer later decided to publish an agreement with FedEx.",
+    help: "Check whether the agreement effective date falls within 180 days from the ship date.",
+    choices: [
+      {
+        label: "Effective within 180 days from ship date",
+        action: "Apply the pricing exception.",
+        icon: "fa-solid fa-circle-check",
+        desc: "Pricing exception may be applied."
+      },
+      {
+        label: "Effective more than 180 days from ship date",
+        action: "Inform the customer appropriately regarding their pricing details.",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Explain the pricing result to the customer."
+      }
+    ]
+  },
+
+  discount_before_after_exception: {
+    text: "Does the customer have a pricing exception before and after the shipment?",
+    help: "If yes, verify whether there is a pricing gap. If no, inform the customer appropriately.",
+    choices: [
+      {
+        label: "YES",
+        next: "discount_verify_gap",
+        icon: "fa-solid fa-circle-check",
+        desc: "Check if the customer has a pricing gap."
+      },
+      {
+        label: "NO",
+        action: "Inform the customer appropriately regarding their pricing details.",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Explain the pricing outcome to the customer."
+      }
+    ]
+  },
+
+  discount_verify_gap: {
+    text: "Verify if the customer has pricing gap.",
+    help: "Determine whether the pricing gap is less than 2 weeks or more than 2 weeks.",
+    choices: [
+      {
+        label: "Gap is less than 2 weeks (14 days)",
+        action: "Go ahead and rerate without asking for approval.",
+        icon: "fa-solid fa-circle-check",
+        desc: "If there is no override of a previous agreement and you are only applying the customer’s pricing due to a short gap of 14 days or less, rerate directly."
+      },
+      {
+        label: "Gap is more than 2 weeks (15 days+)",
+        next: "discount_gap_more_2weeks",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Check whether you are speaking to the customer or Sales Rep."
+      }
+    ]
+  },
+
+  discount_gap_more_2weeks: {
+    text: "If the gap is more than 2 weeks (15 days+), check if you are talking to the Sales Rep or Customer.",
+    help: "The next action depends on who you are currently communicating with.",
+    choices: [
+      {
+        label: "Talking to customer",
+        action: "Send an email to the Training Team, who will forward the case to Dustin Carlton. Dustin will then reach out to the Sales Rep who will send a rerate request.",
+        icon: "fa-solid fa-user",
+        desc: "Escalate through the Training Team for Sales Rep follow-up."
+      },
+      {
+        label: "Talking to Sales Representative",
+        action: "Advise the Sales Rep to fill out a Back Date Form and send a rerate request.",
+        icon: "fa-solid fa-user-tie",
+        desc: "Sales must submit the proper backdate and rerate request documentation."
+      }
+    ]
+  }
+};
+
   function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -1713,6 +1776,7 @@ document.addEventListener("DOMContentLoaded", () => {
     els.editModal.style.display = "flex";
   }
 
+
   async function saveEdit(){
     const val = els.editTextarea.value.trim();
 
@@ -1848,139 +1912,171 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("inlineBack").onclick = goBack;
     document.getElementById("inlineRestart").onclick = restart;
   }
+  
+  function formatNoteContent(text){
+  if (!text) return "";
 
-  async function renderNode(key){
-    currentKey = key;
-    const node = NODES[key];
-    if (!node) {
-      els.stageCard.innerHTML = `
-        <div class="stage-top">
-          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
-        </div>
-        <div class="question-wrap">
-          <div class="question-card">
-            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-            <div class="question-help">Check the node key in your NODES object.</div>
-          </div>
-        </div>
-      `;
-      return;
-    }
+  return escapeHtml(text)
+    .replace(/\n/g, "<br>")
+    .replace(
+      /(^|[\s(>])((https?:\/\/[^\s]+)|([A-Za-z0-9._/-]+\.html))(?=$|[\s)<])/g,
+      (match, prefix, url) => {
+        const clean = url.trim();
+        const label = clean
+          .replace(".html", "")
+          .replace(/[-_]/g, " ")
+          .replace(/\b\w/g, c => c.toUpperCase());
 
-    const choices = getNodeChoices(node);
-    const isFinal = isFinalNode(node);
+        return `${prefix}<a href="${clean}" target="_blank" class="smart-link">${label} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+      }
+    );
+}
 
-    if (isFinal) {
-      await renderFinal(node);
-      return;
-    }
-
-    updateMeta(false);
-    updatePath();
-    updateRecommendation("", false);
-
-    currentFinalRecommendation = "";
-    setTemplateValue(els.suggestedComment, "");
-    setTemplateValue(els.suggestedCorrCode, "");
-    setTemplateValue(els.suggestedEmail, "");
-
-    const nodeText = getNodeText(node);
-    const nodeHelp = getNodeHelp(node);
-    const nodeNote = getNodeNote(node);
-    const nodeImage = getNodeImage(node);
-
-    const choicesHtml = choices.map(choice => `
-      <button class="choice"
-        data-next="${escapeHtml(choice.next || "")}"
-        data-label="${escapeHtml(choice.label || "")}"
-        data-action="${escapeHtml(choice.action || "")}"
-        data-note="${escapeHtml(choice.note || "")}">
-        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-        <div class="choice-body">
-          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-        </div>
-      </button>
-    `).join("");
-
-    const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
-
+ async function renderNode(key){
+  currentKey = key;
+  const node = NODES[key];
+  if (!node) {
     els.stageCard.innerHTML = `
       <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
+        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
       </div>
-
       <div class="question-wrap">
         <div class="question-card">
           <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-          <div class="question-text">${escapeHtml(nodeText)}</div>
-          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
-          ${nodeNote ? `
-  <div class="note-card">
-    <div class="note-head">
-      <i class="fa-solid fa-bell"></i>
-      Reminder
-    </div>
-    <div class="note-body">${escapeHtml(nodeNote)}</div>
-  </div>
-` : ""}
-          ${nodeImage ? `
-  <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
-    <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
-  </div>
-` : ""}
-        </div>
-
-        <div class="choices">${choicesHtml}</div>
-      </div>
-
-      <div class="decision-footer">
-        <div class="decision-footer-left">
-          <div class="footer-label">Decision Guide</div>
-          <div class="footer-value">${footerStepText}</div>
-        </div>
-
-        <div class="decision-actions">
-          <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+          <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+          <div class="question-help">Check the node key in your NODES object.</div>
         </div>
       </div>
     `;
-
-    const inlineBack = document.getElementById("inlineBack");
-    const inlineRestart = document.getElementById("inlineRestart");
-
-    if(inlineBack) inlineBack.onclick = goBack;
-    if(inlineRestart) inlineRestart.onclick = restart;
-
-    els.stageCard.querySelectorAll(".choice").forEach(btn => {
-      btn.addEventListener("click", () => {
-        els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-        btn.classList.add("selected");
-
-        const next = btn.dataset.next;
-        const label = btn.dataset.label;
-        const action = btn.dataset.action;
-        const note = btn.dataset.note;
-
-        historyStack.push({ key: currentKey, path: [...path] });
-        path.push({ question: nodeText, answer: label });
-
-        updatePath();
-        updateMeta(false);
-
-        setTimeout(() => {
-          if (action) {
-            renderFinal({ action, note });
-          } else {
-            renderNode(next);
-          }
-        }, 120);
-      });
-    });
+    return;
   }
+
+  const choices = getNodeChoices(node);
+  const isFinal = isFinalNode(node);
+
+  if (isFinal) {
+    await renderFinal(node);
+    return;
+  }
+
+  updateMeta(false);
+  updatePath();
+  updateRecommendation("", false);
+
+  currentFinalRecommendation = "";
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+
+  const nodeText = getNodeText(node);
+  const nodeHelp = getNodeHelp(node);
+  const nodeNote = getNodeNote(node);
+  const nodeImage = getNodeImage(node);
+
+  const hasHtmlNote = nodeNote && /<[^>]+>/.test(nodeNote);
+
+  const formattedPlainNote = nodeNote
+    ? escapeHtml(nodeNote)
+        .replace(/\n/g, "<br>")
+        .replace(
+          /(^|[\s(>])([A-Za-z0-9._/-]+\.html)(?=$|[\s)<])/g,
+          '$1<a href="$2" target="_blank" class="auto-note-link">Open ${"$2".replace(".html","").replace(/[-_]/g," ")} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'
+        )
+    : "";
+
+  const choicesHtml = choices.map(choice => `
+    <button class="choice"
+      data-next="${escapeHtml(choice.next || "")}"
+      data-label="${escapeHtml(choice.label || "")}"
+      data-action="${escapeHtml(choice.action || "")}"
+      data-note="${escapeHtml(choice.note || "")}">
+      <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+      <div class="choice-body">
+        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+        <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+      </div>
+    </button>
+  `).join("");
+
+  const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
+
+  els.stageCard.innerHTML = `
+    <div class="stage-top">
+      <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
+    </div>
+
+    <div class="question-wrap">
+      <div class="question-card">
+        <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+        <div class="question-text">${escapeHtml(nodeText)}</div>
+        ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
+
+        ${nodeNote ? `
+          <div class="note-card">
+            <div class="note-head">
+              <i class="fa-solid fa-bell"></i>
+              Reminder
+            </div>
+            <div class="note-body">${hasHtmlNote ? nodeNote : formatNoteContent(nodeNote)}</div>
+          </div>
+        ` : ""}
+
+        ${nodeImage ? `
+          <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="choices">${choicesHtml}</div>
+    </div>
+
+    <div class="decision-footer">
+      <div class="decision-footer-left">
+        <div class="footer-label">Decision Guide</div>
+        <div class="footer-value">${footerStepText}</div>
+      </div>
+
+      <div class="decision-actions">
+        <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+      </div>
+    </div>
+  `;
+
+  const inlineBack = document.getElementById("inlineBack");
+  const inlineRestart = document.getElementById("inlineRestart");
+
+  if(inlineBack) inlineBack.onclick = goBack;
+  if(inlineRestart) inlineRestart.onclick = restart;
+
+  els.stageCard.querySelectorAll(".choice").forEach(btn => {
+    btn.addEventListener("click", () => {
+      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      const next = btn.dataset.next;
+      const label = btn.dataset.label;
+      const action = btn.dataset.action;
+      const note = btn.dataset.note;
+
+      historyStack.push({ key: currentKey, path: [...path] });
+      path.push({ question: nodeText, answer: label });
+
+      updatePath();
+      updateMeta(false);
+
+      setTimeout(() => {
+        if (action) {
+          renderFinal({ action, note });
+        } else {
+          renderNode(next);
+        }
+      }, 120);
+    });
+  });
+}
 
   function goBack(){
     if(!historyStack.length) return;
