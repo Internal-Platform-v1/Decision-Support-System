@@ -67,7 +67,7 @@
     }
 
     a{color:inherit}
-    button,input,textarea{font:inherit}
+    button,input,textarea,select{font:inherit}
 
     .page{
       position:relative;
@@ -112,12 +112,6 @@
       gap:14px;
       text-decoration:none;
       flex-shrink:0;
-    }
-
-    .brand-logo{
-      height:40px;
-      display:block;
-      filter:drop-shadow(0 10px 20px rgba(0,0,0,.25));
     }
 
     .brand-meta{
@@ -471,10 +465,10 @@
       100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); }
     }
 
-    /* SEARCH SECTION */
+    /* SEARCH */
     .search-wrap{
-      margin-top:-18px;
-      margin-bottom:18px;
+      margin-top:0;
+      margin-bottom:52px;
     }
 
     .search-card{
@@ -538,36 +532,6 @@
     .search-input-wrap{
       position:relative;
     }
-    
-    #clearSearchBtn{
-  position:absolute;
-  right:14px;
-  top:50%;
-  transform:translateY(-50%);
-  width:32px;
-  height:32px;
-  border:none;
-  border-radius:999px;
-  background:#e2e8f0;
-  color:#475569;
-  font-size:18px;
-  font-weight:700;
-  cursor:pointer;
-  display:none;
-  transition:.2s ease;
-}
-
-#clearSearchBtn:hover{
-  background:#cbd5e1;
-  color:#0f172a;
-}
-
-mark.search-highlight{
-  background:#fef08a;
-  color:#0f172a;
-  padding:0 2px;
-  border-radius:4px;
-}
 
     .search-input-wrap i{
       position:absolute;
@@ -599,7 +563,40 @@ mark.search-highlight{
       box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08);
     }
 
-    #guideSearch::placeholder{ color:#94a3b8; font-weight:500; }
+    #guideSearch::placeholder{
+      color:#94a3b8;
+      font-weight:500;
+    }
+
+    #clearSearchBtn{
+      position:absolute;
+      right:14px;
+      top:50%;
+      transform:translateY(-50%);
+      width:32px;
+      height:32px;
+      border:none;
+      border-radius:999px;
+      background:#e2e8f0;
+      color:#475569;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+      display:none;
+      transition:.2s ease;
+    }
+
+    #clearSearchBtn:hover{
+      background:#cbd5e1;
+      color:#0f172a;
+    }
+
+    mark.search-highlight{
+      background:#fef08a;
+      color:#0f172a;
+      padding:0 2px;
+      border-radius:4px;
+    }
 
     .search-btn{
       border:none;
@@ -620,381 +617,315 @@ mark.search-highlight{
       box-shadow:0 20px 34px rgba(255,102,0,.28);
     }
 
-    #noResults{
+    .guide-filters{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto 18px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+    }
+
+    .filter-chip{
+      border:none;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      color:#475569;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(15,23,42,.05), inset 0 0 0 1px rgba(148,163,184,.12);
+      transition:.2s ease;
+    }
+
+    .filter-chip:hover{
+      transform:translateY(-1px);
+      background:#ffffff;
+      color:#0f172a;
+    }
+
+    .filter-chip.active{
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      color:#fff;
+      box-shadow:0 12px 22px rgba(77,20,140,.18);
+    }
+
+    #resultsCount{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto 10px;
       text-align:center;
       display:none;
-      font-weight:700;
-      color:#64748b;
-      padding:24px 10px 2px;
+      font-weight:800;
+      color:#475569;
+      padding:0;
     }
-    
-    .guide-filters{
-  width:min(calc(100% - 32px), var(--max));
-  margin:14px auto 0;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-}
 
-.filter-chip{
-  border:none;
-  padding:10px 16px;
-  border-radius:999px;
-  background:#ffffff;
-  color:#475569;
-  font-size:13px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  transition:.2s ease;
-}
+    #resultsCount span{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:12px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(226,232,240,.96);
+      box-shadow:0 10px 24px rgba(15,23,42,.06);
+    }
 
-.filter-chip:hover{
-  transform:translateY(-1px);
-  background:#f8fafc;
-  color:#0f172a;
-}
+    #noResults{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto 10px;
+      text-align:center;
+      display:none;
+      font-weight:800;
+      color:#64748b;
+      padding:0;
+    }
 
-.filter-chip.active{
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-  color:#fff;
-  box-shadow:0 12px 22px rgba(77,20,140,.18);
-}
+    #noResults span{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:14px 18px;
+      border-radius:18px;
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(226,232,240,.96);
+      box-shadow:0 10px 24px rgba(15,23,42,.06);
+    }
 
     /* GUIDE GRID */
-.search-wrap{
-  margin-top:0;
-  margin-bottom:52px;
-}
+    .grid-wrap{
+      padding:8px 0 58px;
+      position:relative;
+      z-index:1;
+      scroll-margin-top:120px;
+    }
 
-#resultsCount{
-  width:min(calc(100% - 32px), var(--max));
-  margin:0 auto 10px;
-  text-align:center;
-  display:none;
-  font-weight:800;
-  color:#475569;
-  padding:0;
-}
+    .grid-wrap::before{
+      content:"";
+      position:absolute;
+      top:22px;
+      left:50%;
+      width:min(1280px, calc(100% - 80px));
+      height:92%;
+      transform:translateX(-50%);
+      border-radius:42px;
+      background:radial-gradient(circle at top center, rgba(109,40,217,.12), transparent 38%), linear-gradient(180deg, rgba(255,255,255,.62), rgba(248,250,252,.42));
+      filter:blur(8px);
+      z-index:-1;
+    }
 
-#resultsCount span{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 16px;
-  border-radius:999px;
-  background:rgba(255,255,255,.88);
-  border:1px solid rgba(226,232,240,.96);
-  box-shadow:0 10px 24px rgba(15,23,42,.06);
-}
+    .library-panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(248,250,252,.96));
+      border:1px solid rgba(226,232,240,.96);
+      border-radius:36px;
+      padding:32px;
+      box-shadow:0 26px 60px rgba(15,23,42,.08);
+    }
 
-#noResults{
-  width:min(calc(100% - 32px), var(--max));
-  margin:0 auto 10px;
-  text-align:center;
-  display:none;
-  font-weight:800;
-  color:#64748b;
-  padding:0;
-}
+    .section-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      margin-bottom:26px;
+      flex-wrap:wrap;
+    }
 
-#noResults span{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:14px 18px;
-  border-radius:18px;
-  background:rgba(255,255,255,.88);
-  border:1px solid rgba(226,232,240,.96);
-  box-shadow:0 10px 24px rgba(15,23,42,.06);
-}
+    .section-head-left{
+      flex:1 1 700px;
+      min-width:280px;
+    }
 
-.guide-filters{
-  width:min(calc(100% - 32px), var(--max));
-  margin:0 auto 18px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-}
+    .section-overline{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:12px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:linear-gradient(180deg, #f5f3ff, #ede9fe);
+      border:1px solid #e9ddff;
+      color:#5b21b6;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
 
-.filter-chip{
-  border:none;
-  padding:10px 16px;
-  border-radius:999px;
-  background:rgba(255,255,255,.88);
-  color:#475569;
-  font-size:13px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 8px 18px rgba(15,23,42,.05), inset 0 0 0 1px rgba(148,163,184,.12);
-  transition:.2s ease;
-}
+    .section-head-left h3{
+      margin:0 0 10px;
+      font-size:38px;
+      letter-spacing:-.055em;
+      color:#0f172a !important;
+      font-weight:900;
+      line-height:1;
+    }
 
-.filter-chip:hover{
-  transform:translateY(-1px);
-  background:#ffffff;
-  color:#0f172a;
-}
+    .section-head-left p{
+      margin:0;
+      color:#64748b !important;
+      font-size:15px;
+      line-height:1.75;
+      max-width:760px;
+    }
 
-.filter-chip.active{
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-  color:#fff;
-  box-shadow:0 12px 22px rgba(77,20,140,.18);
-}
+    .section-note{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:14px 18px;
+      border-radius:18px;
+      background:linear-gradient(180deg, #ffffff, #f8fafc);
+      border:1px solid rgba(203,213,225,.92);
+      box-shadow:0 14px 30px rgba(15,23,42,.06);
+      color:#334155;
+      font-weight:800;
+      font-size:13px;
+      flex:0 0 auto;
+    }
 
-.grid-wrap{
-  padding:8px 0 58px;
-  position:relative;
-  z-index:1;
-  scroll-margin-top:120px;
-}
+    .shell{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:22px;
+      align-items:stretch;
+    }
 
-.grid-wrap::before{
-  content:"";
-  position:absolute;
-  top:22px;
-  left:50%;
-  width:min(1280px, calc(100% - 80px));
-  height:92%;
-  transform:translateX(-50%);
-  border-radius:42px;
-  background:radial-gradient(circle at top center, rgba(109,40,217,.12), transparent 38%), linear-gradient(180deg, rgba(255,255,255,.62), rgba(248,250,252,.42));
-  filter:blur(8px);
-  z-index:-1;
-}
+    .card{
+      position:relative;
+      background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border:1px solid rgba(226,232,240,.96);
+      border-radius:28px;
+      padding:18px 18px 20px;
+      box-shadow:0 14px 30px rgba(15,23,42,.08);
+      transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:300px;
+      height:100%;
+      opacity:0;
+      transform:translateY(20px);
+      animation:cardFadeIn .55s ease forwards;
+    }
 
-.library-panel{
-  background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(248,250,252,.96));
-  border:1px solid rgba(226,232,240,.96);
-  border-radius:36px;
-  padding:32px;
-  box-shadow:0 26px 60px rgba(15,23,42,.08);
-}
+    .card::before{
+      content:"";
+      position:absolute;
+      left:18px;
+      right:18px;
+      top:0;
+      height:4px;
+      border-radius:0 0 999px 999px;
+      background:linear-gradient(90deg, #4d148c, #7c3aed, #ff6600);
+      opacity:.98;
+    }
 
-.section-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:18px;
-  margin-bottom:26px;
-  flex-wrap:wrap;
-}
+    .card::after{
+      content:"";
+      position:absolute;
+      top:-56px;
+      right:-46px;
+      width:150px;
+      height:150px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(124,58,237,.08), transparent 68%);
+      pointer-events:none;
+    }
 
-.section-head-left{
-  flex:1 1 700px;
-  min-width:280px;
-}
+    .card:hover{
+      transform:translateY(-7px);
+      box-shadow:0 28px 54px rgba(15,23,42,.12);
+      border-color:rgba(167,139,250,.55);
+    }
 
-.section-overline{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:12px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:linear-gradient(180deg, #f5f3ff, #ede9fe);
-  border:1px solid #e9ddff;
-  color:#5b21b6;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
+    .card-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+    }
 
-.section-head-left h3{
-  margin:0 0 10px;
-  font-size:38px;
-  letter-spacing:-.055em;
-  color:#0f172a !important;
-  font-weight:900;
-  line-height:1;
-}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:linear-gradient(180deg, #f8f6ff, #f1ecff);
+      color:#5b21b6;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.02em;
+      border:1px solid #ece5ff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+    }
 
-.section-head-left p{
-  margin:0;
-  color:#64748b !important;
-  font-size:15px;
-  line-height:1.75;
-  max-width:760px;
-}
+    .guide-icon{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      color:#5b21b6;
+      background:linear-gradient(180deg, rgba(91,33,182,.08), rgba(255,102,0,.08));
+      box-shadow:inset 0 0 0 1px rgba(91,33,182,.08);
+      font-size:17px;
+      flex-shrink:0;
+    }
 
-.section-note{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:14px 18px;
-  border-radius:18px;
-  background:linear-gradient(180deg, #ffffff, #f8fafc);
-  border:1px solid rgba(203,213,225,.92);
-  box-shadow:0 14px 30px rgba(15,23,42,.06);
-  color:#334155;
-  font-weight:800;
-  font-size:13px;
-  flex:0 0 auto;
-}
+    .card h1{
+      margin:0 0 10px;
+      font-size:18px;
+      letter-spacing:-.03em;
+      line-height:1.25;
+      color:#111827;
+      min-height:46px;
+    }
 
-.shell{
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
-  gap:22px;
-  align-items:stretch;
-}
+    .lead{
+      margin:0 0 18px;
+      color:#516173;
+      font-size:14px;
+      line-height:1.72;
+      min-height:84px;
+    }
 
-.card{
-  position:relative;
-  background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-  border:1px solid rgba(226,232,240,.96);
-  border-radius:28px;
-  padding:18px 18px 20px;
-  box-shadow:0 14px 30px rgba(15,23,42,.08);
-  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  min-height:300px;
-  height:100%;
-  opacity:0;
-  transform:translateY(20px);
-}
+    .small{
+      margin-top:auto;
+      color:#64748b;
+      font-size:13px;
+      line-height:1.65;
+      padding-top:14px;
+      border-top:1px dashed rgba(203,213,225,.9);
+    }
 
-.card::before{
-  content:"";
-  position:absolute;
-  left:18px;
-  right:18px;
-  top:0;
-  height:4px;
-  border-radius:0 0 999px 999px;
-  background:linear-gradient(90deg, #4d148c, #7c3aed, #ff6600);
-  opacity:.98;
-}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin:6px 0 14px;
+      min-height:50px;
+      padding:0 18px;
+      border-radius:17px;
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
+      box-shadow:0 14px 24px rgba(77,20,140,.16);
+      transition:.22s ease;
+      width:100%;
+      border:none;
+      cursor:pointer;
+    }
 
-.card::after{
-  content:"";
-  position:absolute;
-  top:-56px;
-  right:-46px;
-  width:150px;
-  height:150px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(124,58,237,.08), transparent 68%);
-  pointer-events:none;
-}
-
-.card:hover{
-  transform:translateY(-7px);
-  box-shadow:0 28px 54px rgba(15,23,42,.12);
-  border-color:rgba(167,139,250,.55);
-}
-
-.card-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:18px;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:linear-gradient(180deg, #f8f6ff, #f1ecff);
-  color:#5b21b6;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.02em;
-  border:1px solid #ece5ff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
-}
-
-.guide-icon{
-  width:46px;
-  height:46px;
-  border-radius:16px;
-  display:grid;
-  place-items:center;
-  color:#5b21b6;
-  background:linear-gradient(180deg, rgba(91,33,182,.08), rgba(255,102,0,.08));
-  box-shadow:inset 0 0 0 1px rgba(91,33,182,.08);
-  font-size:17px;
-  flex-shrink:0;
-}
-
-.card h1{
-  margin:0 0 10px;
-  font-size:18px;
-  letter-spacing:-.03em;
-  line-height:1.25;
-  color:#111827;
-  min-height:46px;
-}
-
-.lead{
-  margin:0 0 18px;
-  color:#516173;
-  font-size:14px;
-  line-height:1.72;
-  min-height:84px;
-}
-
-.small{
-  margin-top:auto;
-  color:#64748b;
-  font-size:13px;
-  line-height:1.65;
-  padding-top:14px;
-  border-top:1px dashed rgba(203,213,225,.9);
-}
-
-.btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  margin:6px 0 14px;
-  min-height:50px;
-  padding:0 18px;
-  border-radius:17px;
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-  color:#fff;
-  text-decoration:none;
-  font-weight:800;
-  box-shadow:0 14px 24px rgba(77,20,140,.16);
-  transition:.22s ease;
-  width:100%;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.22);
-}
-
-@media (max-width:720px){
-  .grid-wrap .container{
-    padding:22px 16px;
-    border-radius:24px;
-  }
-
-  .section-head{
-    align-items:flex-start;
-  }
-
-  .section-head-left h3{
-    font-size:28px;
-  }
-
-  .section-note{
-    width:100%;
-    justify-content:center;
-    white-space:normal;
-    border-radius:18px;
-  }
-}
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 30px rgba(77,20,140,.22);
+    }
 
     /* FOOTER */
     footer{
@@ -1107,10 +1038,15 @@ mark.search-highlight{
       transition:transform .2s ease, color .2s ease;
     }
 
-    .rating-star:hover{ transform:translateY(-2px) scale(1.08); }
-    .rating-star.selected{ color:#ff6600; }
+    .rating-star:hover{
+      transform:translateY(-2px) scale(1.08);
+    }
 
-    input, textarea{
+    .rating-star.selected{
+      color:#ff6600;
+    }
+
+    input, textarea, .timezone-picker select{
       width:100%;
       border:none;
       outline:none;
@@ -1124,12 +1060,15 @@ mark.search-highlight{
       transition:.18s ease;
     }
 
-    input:focus, textarea:focus{
+    input:focus, textarea:focus, .timezone-picker select:focus{
       background:#fff;
       box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
     }
 
-    textarea{ min-height:120px; resize:vertical; }
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
 
     .comment-modal-footer{
       display:flex;
@@ -1156,7 +1095,12 @@ mark.search-highlight{
     }
 
     .comment-list-item:last-child{ border-bottom:none; }
-    #commentsList .stars{ color:#ff6600; font-size:18px; margin-bottom:6px; display:block; }
+    #commentsList .stars{
+      color:#ff6600;
+      font-size:18px;
+      margin-bottom:6px;
+      display:block;
+    }
 
     /* CALENDAR POPUP */
     #timeCalendarPopup{
@@ -1211,77 +1155,24 @@ mark.search-highlight{
     }
 
     .calendar-title{
-      color:#0f172a;
-      font-size:15px;
       font-weight:800;
+      color:#0f172a;
     }
 
     .calendar-grid{
       display:grid;
-      grid-template-columns:repeat(7,1fr);
+      grid-template-columns:repeat(7, 1fr);
       gap:8px;
     }
 
-    .calendar-grid .day-name{
-      text-align:center;
-      font-size:12px;
-      font-weight:800;
-      color:#64748b;
-      padding:6px 0;
-    }
-
-    .calendar-grid .day{
-      display:grid;
-      place-items:center;
-      aspect-ratio:1;
-      border-radius:16px;
-      background:#fff;
-      font-size:14px;
+    .timezone-picker label{
+      display:block;
+      font-size:13px;
       font-weight:700;
-      color:#334155;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);
+      color:#475569;
+      margin-top:6px;
+      margin-bottom:6px;
     }
-
-    .calendar-grid .day:hover{ background:#f8fafc; }
-    .calendar-grid .today{
-      background:linear-gradient(135deg, #4d148c, #6d28d9);
-      color:#fff;
-      box-shadow:none;
-    }
-    
-    .timezone-picker{
-  display:grid;
-  gap:8px;
-  margin-bottom:16px;
-}
-
-.timezone-picker label{
-  font-size:12px;
-  font-weight:800;
-  color:#64748b;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.timezone-picker select{
-  width:100%;
-  min-height:48px;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  padding:0 14px;
-  font-size:14px;
-  font-weight:700;
-  color:#0f172a;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  cursor:pointer;
-}
-
-.timezone-picker select:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
-}
 
     @keyframes cardFadeIn{
       from{ opacity:0; transform:translateY(22px); }
@@ -1322,64 +1213,9 @@ mark.search-highlight{
     }
   </style>
 </head>
-<body>
+<body data-page="home">
   <div class="page">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand-wrap">
-          <a href="index.html" class="brand">
-            <div class="brand-meta">
-              <span class="brand-kicker">Internal Platform</span>
-              <span class="brand-title">Decision Support System</span>
-            </div>
-          </a>
-
-          <nav class="nav-tabs">
-            <a href="index.html" class="tab active">Home</a>
-            <a href="case-directory.html" class="tab">Case Directory</a>
-            <a href="ebs-response-template.html" class="tab">EBS Response</a>
-            <a href="volume-application.html" class="tab">Volume Application</a>
-          </nav>
-        </div>
-
-        <div class="actions">
-<button class="clock-pill" id="clockBtn" type="button">
-  <i class="fa-regular fa-clock"></i>
-  <div class="clock-label">
-    <span class="clock-small" id="clockZoneLabel">Local Time</span>
-    <span id="clockText">--:--</span>
-  </div>
-</button>
-
-          <button class="icon-btn" id="commentIcon" type="button" title="Feedback">
-            <i class="fa-solid fa-comment-dots"></i>
-          </button>
-
-          <button class="icon-btn" id="helpIcon" type="button" title="Get Help">
-            <i class="fa-solid fa-circle-question"></i>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <div id="timeCalendarPopup">
-      <div class="popup-time" id="popupTime"></div>
-      <div class="popup-date" id="popupDate"></div>
-
-
-      <div class="calendar-header">
-        <span id="prevMonth">‹</span>
-        <div id="monthYear" class="calendar-title"></div>
-        <span id="nextMonth">›</span>
-      </div>
-      
-     
-      <div class="calendar-grid" id="calendarGrid"></div>
-      
-      <button id="openTimeSettings" class="btn" style="margin-top:14px;">
-  <i class="fa-solid fa-gear"></i> Date & Time Settings
-</button>
-    </div>
+    <div id="site-header"></div>
 
     <main>
       <section class="hero-wrap">
@@ -1399,17 +1235,17 @@ mark.search-highlight{
 
                 <div class="hero-stats">
                   <div class="stat-card">
-  <div class="stat-value">20+</div>
-  <div class="stat-label">Guides ready to help you handle different case types.</div>
-</div>
-<div class="stat-card">
-  <div class="stat-value">1</div>
-  <div class="stat-label">Use search to quickly find the guide that fits your case.</div>
-</div>
-<div class="stat-card">
-  <div class="stat-value">Live</div>
-  <div class="stat-label">Check time, get help, and send feedback while you work.</div>
-</div>
+                    <div class="stat-value">20+</div>
+                    <div class="stat-label">Guides ready to help you handle different case types.</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">Use search to quickly find the guide that fits your case.</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-value">Live</div>
+                    <div class="stat-label">Check time, get help, and send feedback while you work.</div>
+                  </div>
                 </div>
               </div>
 
@@ -1417,42 +1253,49 @@ mark.search-highlight{
                 <div class="quick-panel">
                   <div>
                     <div class="panel-title">
-  <span>Quick guide</span>
-  <span>Start here</span>
-</div>
+                      <span>How to use</span>
+                      <span>4 steps</span>
+                    </div>
 
-<ul class="quick-list">
-  <li class="quick-item">
-    <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-    <div>
-      <strong>Search for your case</strong>
-      <span>Type a keyword such as dispute type, surcharge, correction code, account update, or service level.</span>
-    </div>
-  </li>
-  <li class="quick-item">
-    <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
-    <div>
-      <strong>Open the matching guide</strong>
-      <span>Review the card title and description, then select the guide that best matches the request.</span>
-    </div>
-  </li>
-  <li class="quick-item">
-    <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
-    <div>
-      <strong>Follow the steps</strong>
-      <span>Use the guide result to complete the correct action, update, validation, or communication.</span>
-    </div>
-  </li>
-</ul>
+                    <ul class="quick-list">
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div>
+                          <strong>Search for the guide</strong>
+                          <span>Type a keyword, topic, or process you need help with.</span>
+                        </div>
+                      </li>
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
+                        <div>
+                          <strong>Open the best match</strong>
+                          <span>Use the card title and description to choose the correct guide.</span>
+                        </div>
+                      </li>
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+                        <div>
+                          <strong>Follow the steps carefully</strong>
+                          <span>Answer each part and continue until you reach the correct outcome.</span>
+                        </div>
+                      </li>
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div>
+                          <strong>Complete the handling</strong>
+                          <span>Apply the final action, update, or next step shown in the guide.</span>
+                        </div>
+                      </li>
+                    </ul>
                   </div>
 
-                 <div class="live-strip">
-  <div>
-    <strong>Ready when you are</strong>
-    <span>Search the guides below and open the one that matches your case.</span>
-  </div>
-  <div class="pulse"></div>
-</div>
+                  <div class="live-strip">
+                    <div>
+                      <strong>System ready</strong>
+                      <span>Search, feedback, and time tools are available.</span>
+                    </div>
+                    <div class="pulse"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1465,470 +1308,131 @@ mark.search-highlight{
           <div class="search-card">
             <div class="search-top">
               <div class="search-copy">
-                <h2>Find your guide instantly</h2>
-                <p>Search by queue, process, surcharge, correction, account type, or any keyword inside the cards below.</p>
+                <h2>Search the guide library</h2>
+                <p>Find the guide you need faster by searching with a keyword, issue type, or process name.</p>
               </div>
 
               <div class="chip-row">
-                <div class="chip"><i class="fa-solid fa-file-circle-check"></i> Process-ready</div>
-                <div class="chip"><i class="fa-solid fa-shield-heart"></i> Policy-aligned</div>
-                <div class="chip"><i class="fa-solid fa-magnifying-glass"></i> Search-first</div>
+                <div class="chip"><i class="fa-solid fa-bolt"></i> Fast access</div>
+                <div class="chip"><i class="fa-solid fa-layer-group"></i> Organized guides</div>
+                <div class="chip"><i class="fa-solid fa-clock"></i> Time tools</div>
               </div>
             </div>
 
             <div class="search-bar">
-<div class="search-input-wrap">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="text" id="guideSearch" placeholder="Search guides, disputes, correction codes, account handling." onkeyup="filterGuides()">
-  <button type="button" id="clearSearchBtn" onclick="clearSearch()" aria-label="Clear search">×</button>
-</div>
-              <button class="search-btn" onclick="filterGuides()">Search guides</button>
+              <div class="search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  id="guideSearch"
+                  type="text"
+                  placeholder="Search guides, processes, actions, or keywords..."
+                  oninput="filterGuides(true)"
+                >
+                <button id="clearSearchBtn" type="button" onclick="clearSearch()">×</button>
+              </div>
+
+              <button class="search-btn" type="button" onclick="filterGuides(true)">
+                Search guide
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-<p id="noResults"><span><i class="fa-solid fa-circle-info"></i> No guides found. Try keywords like billing, surcharge, RVSL, notify, or service level.</span></p>
-<p id="resultsCount"></p>
+      <div class="guide-filters">
+        <button class="filter-chip active" data-filter="all" onclick="filterByCategory('all', this)">All</button>
+        <button class="filter-chip" data-filter="billing" onclick="filterByCategory('billing', this)">Billing</button>
+        <button class="filter-chip" data-filter="reference" onclick="filterByCategory('reference', this)">Reference</button>
+        <button class="filter-chip" data-filter="invoice" onclick="filterByCategory('invoice', this)">Invoice</button>
+        <button class="filter-chip" data-filter="payment" onclick="filterByCategory('payment', this)">Payment</button>
+      </div>
 
-<div class="guide-filters">
-  <button class="filter-chip active" type="button" data-filter="all" onclick="filterByCategory('all', this)">All</button>
-  <button class="filter-chip" type="button" data-filter="billing" onclick="filterByCategory('billing', this)">Billing</button>
-  <button class="filter-chip" type="button" data-filter="pricing" onclick="filterByCategory('pricing', this)">Pricing</button>
-  <button class="filter-chip" type="button" data-filter="claims" onclick="filterByCategory('claims', this)">Claims</button>
-  <button class="filter-chip" type="button" data-filter="rebill" onclick="filterByCategory('rebill', this)">Rebill</button>
-  <button class="filter-chip" type="button" data-filter="reweigh" onclick="filterByCategory('reweigh', this)">Reweigh</button>
-  <button class="filter-chip" type="button" data-filter="correction" onclick="filterByCategory('correction', this)">Correction</button>
-  <button class="filter-chip" type="button" data-filter="service" onclick="filterByCategory('service', this)">Service</button>
-</div>
+      <div id="resultsCount"></div>
+      <div id="noResults"><span><i class="fa-solid fa-circle-info"></i> No matching guides found.</span></div>
 
+      <section class="grid-wrap" id="guideResultsSection">
+        <div class="container">
+          <div class="library-panel">
+            <div class="section-head">
+              <div class="section-head-left">
+                <div class="section-overline">
+                  <i class="fa-solid fa-sparkles"></i>
+                  Guide library
+                </div>
+                <h3>Browse available guides</h3>
+                <p>Open the guide that best matches the case you are handling and follow the steps until you reach the correct action.</p>
+              </div>
 
-<section class="grid-wrap" id="guideLibrarySection">
-  <div class="container">
-    <div class="library-panel">
-    <div class="section-head">
-  <div class="section-head-left">
-    <div class="section-overline"><i class="fa-solid fa-layer-group"></i> Guide workspace</div>
-    <h3>Guide library</h3>
-    <p>
-      Browse all guides below. Each card shows what it’s for—open the one that matches your case and follow the steps.
-    </p>
-  </div>
+              <div class="section-note">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Guides ready — select one to start
+              </div>
+            </div>
 
-  <div class="section-note">
-    <i class="fa-solid fa-sparkles"></i>
-    Guides ready — select one to start
-  </div>
-</div>
+            <div class="shell" id="guideContainer">
+              <article class="card" data-category="billing invoice">
+                <div class="card-top">
+                  <span class="badge"><i class="fa-solid fa-file-invoice"></i> Invoice</span>
+                  <div class="guide-icon"><i class="fa-solid fa-file-lines"></i></div>
+                </div>
+                <h1>Demand Invoice Guide</h1>
+                <p class="lead">Use this guide to identify the correct handling path for demand invoice questions and related invoice setup concerns.</p>
+                <a class="btn" href="demand-invoice-guide.html">Open guide <i class="fa-solid fa-arrow-right"></i></a>
+                <p class="small">Best for invoice email setup, invoice group checks, and invoice routing questions.</p>
+              </article>
 
-    <div class="shell" id="guideContainer">
+              <article class="card" data-category="reference billing">
+                <div class="card-top">
+                  <span class="badge"><i class="fa-solid fa-hashtag"></i> Reference</span>
+                  <div class="guide-icon"><i class="fa-solid fa-list-check"></i></div>
+                </div>
+                <h1>Reference Number Guide</h1>
+                <p class="lead">Follow the decision path for reference number issues so you can complete the correct update or next action with confidence.</p>
+                <a class="btn" href="reference-number-guide.html">Open guide <i class="fa-solid fa-arrow-right"></i></a>
+                <p class="small">Best for reference edits, account checks, and handling rules tied to reference validation.</p>
+              </article>
 
-  <div class="card" data-category="billing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-scale-balanced"></i> Billing</div>
-      <div class="guide-icon"><i class="fa-solid fa-diagram-project"></i></div>
-    </div>
-    <h1>BD — General Guide</h1>
-    <p class="lead">Standard Billing Dispute decision tree used for billing dispute cases.</p>
-    <a class="btn" href="BD GENERAL GUIDE.html">Open BD General Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for billing dispute handling and decision support.</div>
-  </div>
+              <article class="card" data-category="payment billing">
+                <div class="card-top">
+                  <span class="badge"><i class="fa-solid fa-money-bill-wave"></i> Payment</span>
+                  <div class="guide-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                </div>
+                <h1>Keep or Remove Payment Guide</h1>
+                <p class="lead">Use this guide to decide whether a payment should stay on the account or be removed based on the handling conditions.</p>
+                <a class="btn" href="keep-or-remove-payment-guide.html">Open guide <i class="fa-solid fa-arrow-right"></i></a>
+                <p class="small">Best for payment movement checks, correction handling, and payment application decisions.</p>
+              </article>
 
-  <div class="card" data-category="pricing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-tags"></i> Pricing</div>
-      <div class="guide-icon"><i class="fa-solid fa-chart-line"></i></div>
-    </div>
-    <h1>Pricing General Guides</h1>
-    <p class="lead">Directory of pricing dispute guides including Fuel, Surcharge, ePRT, Base Rater, and other pricing tools.</p>
-    <a class="btn" href="pricing-guides.html">Open Pricing Guides <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for pricing disputes, surcharge issues, and rating validation.</div>
-  </div>
+              <article class="card" data-category="billing">
+                <div class="card-top">
+                  <span class="badge"><i class="fa-solid fa-diagram-project"></i> Billing</span>
+                  <div class="guide-icon"><i class="fa-solid fa-code-branch"></i></div>
+                </div>
+                <h1>SCAC / BU Decision Flow</h1>
+                <p class="lead">Use this flow to determine the correct handling path based on SCAC and business unit routing requirements.</p>
+                <a class="btn" href="scac-bu-guide.html">Open guide <i class="fa-solid fa-arrow-right"></i></a>
+                <p class="small">Best for routing decisions, account ownership checks, and business unit handling logic.</p>
+              </article>
+            </div>
 
-  <div class="card" data-category="claims">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-file-signature"></i> Claims</div>
-      <div class="guide-icon"><i class="fa-solid fa-shield"></i></div>
-    </div>
-    
-    <h1>OVC — General Guideline</h1>
-    <p class="lead">Official OVC guideline for handling customer claims and disputes.</p>
-    <a class="btn" href="OVC GENERAL GUIDE.html">Open OVC Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for OVC claim handling and requirement checks.</div>
-  </div>
+            <div style="margin-top:22px; padding:18px; border-radius:20px; background:linear-gradient(135deg, #f5f3ff, #fff7ed); border:1px solid rgba(148,163,184,.14); margin-bottom:18px;">
+              <strong style="display:block; color:#0f172a; margin-bottom:10px; font-size:15px;">Quick tips</strong>
+              <ul style="margin:0; padding-left:18px; color:#475569; line-height:1.8; font-size:14px;">
+                <li>Use specific keywords when searching so you can find the right guide faster.</li>
+                <li>If more than one guide looks similar, open the one with the description that best matches the request.</li>
+                <li>Use the feedback button if you notice a missing step, unclear logic, or something that needs improvement.</li>
+                <li>Use the clock in the header if you need to check Manila time while working.</li>
+              </ul>
+            </div>
 
-  <div class="card" data-category="rebill">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-receipt"></i> Rebill</div>
-      <div class="guide-icon"><i class="fa-solid fa-rotate"></i></div>
-    </div>
-    <h1>LOA — Rebill Guide</h1>
-    <p class="lead">Decision tree for correcting BOL debtor, 3PL, FPAY, or Collector via LOA.</p>
-    <a class="btn" href="Rebill per LOA General Guide.html">Open LOA Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for rebill and LOA-related corrections.</div>
-  </div>
-
-  <div class="card" data-category="reweigh">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-weight-scale"></i> Reweigh</div>
-      <div class="guide-icon"><i class="fa-solid fa-arrows-up-down-left-right"></i></div>
-    </div>
-    <h1>Reweigh — General Guide</h1>
-    <p class="lead">Decision guide for reweigh disputes and corrections.</p>
-    <a class="btn" href="Reweigh General Guide.html">Open Reweigh Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for weight disputes and reweigh validation.</div>
-  </div>
-
-  <div class="card" data-category="billing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-circle-check"></i> Audit</div>
-      <div class="guide-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
-    </div>
-    <h1>FPAY — PAUD Audit Guide</h1>
-    <p class="lead">Decision tree for FPAY or PAUD review using BOL-based validation.</p>
-    <a class="btn" href="PAUD FPAY Guide.html">Open FPAY PAUD Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for FPAY and PAUD debtor validation review.</div>
-  </div>
-
-  <div class="card" data-category="correction">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-code"></i> Correction</div>
-      <div class="guide-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-    </div>
-    <h1>Correction Code Guide</h1>
-    <p class="lead">Decision tree to determine the correct CORR CODE.</p>
-    <a class="btn" href="Correction Code Guide.html">Open Correction Code Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for selecting the correct correction code.</div>
-  </div>
-
-  <div class="card" data-category="service">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-truck-fast"></i> Direct</div>
-      <div class="guide-icon"><i class="fa-solid fa-road"></i></div>
-    </div>
-    <h1>FedEx Direct Guide</h1>
-    <p class="lead">Decision tree for FedEx Direct disputes and validation.</p>
-    <a class="btn" href="FedEx Direct Guide.html">Open FedEx Direct Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for FedEx Direct dispute handling.</div>
-  </div>
-
-  <div class="card" data-category="service">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-boxes-stacked"></i> Class</div>
-      <div class="guide-icon"><i class="fa-solid fa-layer-group"></i></div>
-    </div>
-    <h1>Class Update Guide</h1>
-    <p class="lead">Decision tree for handling Class Update requests.</p>
-    <a class="btn" href="class-update-guide.html">Open Class Update Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for class correction requests.</div>
-  </div>
-
-  <div class="card" data-category="pricing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-file-invoice-dollar"></i> Quote</div>
-      <div class="guide-icon"><i class="fa-solid fa-sack-dollar"></i></div>
-    </div>
-    <h1>Rate & Volume Quote Guide</h1>
-    <p class="lead">Decision tree for validating LTL and Volume Quotes.</p>
-    <a class="btn" href="rate-volume-guide.html">Open Rate/Volume Quote Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for quote validation and rate disputes.</div>
-  </div>
-
-  <div class="card" data-category="service">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-clipboard-list"></i> CRAU</div>
-      <div class="guide-icon"><i class="fa-solid fa-network-wired"></i></div>
-    </div>
-    <h1>CRAU — Request Decision Guide</h1>
-    <p class="lead">Decision tree for CRAU requests and validations.</p>
-    <a class="btn" href="crau-guide.html">Open CRAU Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for CRAU request handling.</div>
-  </div>
-
-  <div class="card" data-category="reweigh">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-weight-hanging"></i> Weight</div>
-      <div class="guide-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
-    </div>
-    <h1>Weight Update per BOL Guide</h1>
-    <p class="lead">Decision tree for handling weight disputes.</p>
-    <a class="btn" href="weight-update-per-bol-guide.html">Open Weight Update Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for BOL weight validation and updates.</div>
-  </div>
-
-  <div class="card" data-category="service">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-user-gear"></i> Accounts</div>
-      <div class="guide-icon"><i class="fa-solid fa-building-shield"></i></div>
-    </div>
-    <h1>Account Handling Guide</h1>
-    <p class="lead">Decision tree for handling account disputes.</p>
-    <a class="btn" href="account-handling-guides.html">Open Account Handling Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for account validation and status handling.</div>
-  </div>
-
-  <div class="card" data-category="billing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-arrow-right-arrow-left"></i> RVSL</div>
-      <div class="guide-icon"><i class="fa-solid fa-people-arrows"></i></div>
-    </div>
-    <h1>RVSL — Debtor Update Guide</h1>
-    <p class="lead">Decision tree for RVSL requests.</p>
-    <a class="btn" href="rvsl-guide.html">Open RVSL Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for debtor update and validation.</div>
-  </div>
-
-  <div class="card" data-category="service">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-barcode"></i> Validation</div>
-      <div class="guide-icon"><i class="fa-solid fa-magnifying-glass-location"></i></div>
-    </div>
-    <h1>Verifying Tracking Number Guide</h1>
-    <p class="lead">Guide for validating freight information.</p>
-    <a class="btn" href="information-validation-guide.html">Open Pro Validation Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for delivery and tracking validation.</div>
-  </div>
-
-  <div class="card" data-category="service">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-folder-open"></i> Documents</div>
-      <div class="guide-icon"><i class="fa-solid fa-file-lines"></i></div>
-    </div>
-    <h1>Missing Documents Guide</h1>
-    <p class="lead">Guide for requesting missing documents.</p>
-    <a class="btn" href="missing-docs-guide.html">Open Missing Documents Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for missing BOL and document requests.</div>
-  </div>
-
-  <div class="card" data-category="pricing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-bolt"></i> Surcharge</div>
-      <div class="guide-icon"><i class="fa-solid fa-receipt"></i></div>
-    </div>
-    <h1>Other Surcharges Guide</h1>
-    <p class="lead">Decision tree for handling additional surcharges.</p>
-    <a class="btn" href="other-surcharges-guide.html">Open Other Surcharges Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for special surcharge validation.</div>
-  </div>
-
-  <div class="card" data-category="pricing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-filter-circle-dollar"></i> Fees</div>
-      <div class="guide-icon"><i class="fa-solid fa-shuffle"></i></div>
-    </div>
-    <h1>Sort & Segregate Guide</h1>
-    <p class="lead">Decision tree for validating Sort & Segregate disputes.</p>
-    <a class="btn" href="sort-and-segregate-guide.html">Open Sort & Seg Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for sort and segregate fee handling.</div>
-  </div>
-
-  <div class="card" data-category="pricing">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-bell"></i> Notify</div>
-      <div class="guide-icon"><i class="fa-solid fa-phone-volume"></i></div>
-    </div>
-    <h1>Notify Fee Guide</h1>
-    <p class="lead">Decision tree for handling Notify Fee disputes.</p>
-    <a class="btn" href="notify-fee-guide.html">Open Notify Fee Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for notify charge validation.</div>
-  </div>
-
-  <div class="card" data-category="service">
-    <div class="card-top">
-      <div class="badge"><i class="fa-solid fa-gauge-high"></i> Service</div>
-      <div class="guide-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
-    </div>
-    <h1>Service Level/Type Guide</h1>
-    <p class="lead">Decision tree for validating service level disputes.</p>
-    <a class="btn" href="service-level-type-guide.html">Open Service Level/Type Guide <i class="fa-solid fa-arrow-right"></i></a>
-    <div class="small">Use this for service level validation.</div>
-  </div>
-
-<div class="card" data-category="billing">
-  <div class="card-top">
-    <span class="badge">
-      <i class="fa-solid fa-money-bill-wave"></i> Payment
-    </span>
-    <div class="guide-icon">
-      <i class="fa-solid fa-scale-balanced"></i>
-    </div>
-  </div>
-
-  <h1>Keep or Remove Payment Guide</h1>
-
-  <p class="lead">
-    Determine whether to keep or remove payments based on LOA, billing corrections, and pricing scenarios.
-  </p>
-
-  <a href="keep_or_remove_payment_guide_fixed.html" class="btn">
-    Open Keep or Remove Payment Guide <i class="fa-solid fa-arrow-right"></i>
-  </a>
-
-  <p class="small">
-    Covers LOA correction requests, billing errors, and pricing/reweigh handling with clear decision steps.
-  </p>
-</div>
-
-<!-- DEMAND INVOICE GUIDE -->
-<div class="card">
-  <div class="card-top">
-    <span class="badge">
-      <i class="fa-solid fa-diagram-project"></i>
-      Invoice
-    </span>
-
-    <div class="guide-icon">
-      <i class="fa-solid fa-file-invoice"></i>
-    </div>
-  </div>
-
-  <h1>Demand Invoice Guide</h1>
-
-  <p class="lead">
-    Follow a structured decision flow for demand invoice cases including PRO posted checks, queue handling, resend scenarios, and invoice types.
-  </p>
-
-  <a href="demand-invoice-guide.html" class="btn">
-    Open Demand Invoice Guide
-    <i class="fa-solid fa-arrow-right"></i>
-  </a>
-
-  <div class="small">
-    Covers resend invoice, duplicate invoice handling, PRO posted logic, and queue escalation steps.
-  </div>
-</div>
-
-<!-- PAUD / TPKN GUIDE -->
-<div class="card" data-title="PAUD TPKN Guide" data-category="billing">
-  <div class="card-top">
-    <span class="badge">Guide</span>
-    <div class="guide-icon">
-      <i class="fa-solid fa-arrow-right-arrow-left"></i>
-    </div>
-  </div>
-
-  <h1>PAUD / TPKN Guide</h1>
-
-  <p class="lead">
-    Follow the step-by-step process for replacing Shipper Code requests including account validation, auto-rating, and correction handling.
-  </p>
-
-  <a href="paud-tpkn-guide.html" class="btn">
-    Open PAUD / TPKN Guide
-    <i class="fa-solid fa-arrow-right"></i>
-  </a>
-
-  <p class="small">
-    Covers queue movement, NOAR scenarios, pricing checks, and correction steps.
-  </p>
-</div>
-<!-- REFERENCE NUMBER GUIDE -->
-<div class="card">
-  <div class="card-top">
-    <span class="badge">REFERENCE</span>
-    <div class="guide-icon">
-      <i class="fa-solid fa-hashtag"></i>
-    </div>
-  </div>
-
-  <h1>Reference Number Guide</h1>
-
-  <p class="lead">
-    Follow this guide to add, edit, or delete reference numbers and complete the correct correction process.
-  </p>
-
-  <a href="reference-number-guide.html" class="btn">
-    Open Guide
-    <i class="fa-solid fa-arrow-right"></i>
-  </a>
-
-  <p class="small">
-    Covers Add, Edit, and Delete reference flows including correction steps and Demand Invoice handling.
-  </p>
-</div>      
-
-</div>
+            <div style="padding:16px 18px; border-radius:18px; background:#0f172a; color:#fff;">
+              <strong style="display:block; margin-bottom:6px; font-size:15px;">Need more support?</strong>
+              <span style="display:block; color:rgba(255,255,255,.76); line-height:1.7; font-size:14px;">If the case still does not match any guide or you are unsure which path to take, contact your team lead or EBS Operations support for clarification.</span>
+            </div>
+          </div>
         </div>
       </section>
     </main>
-
-    <div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help
-      <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-
-    <p style="margin-top:0; color:#475569; line-height:1.75;">
-      Welcome. This page helps you quickly find the correct guide for the case you are handling. Use the sections below to know where to start and what to do next.
-    </p>
-
-    <div style="display:grid; gap:14px; margin:18px 0 20px;">
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">1. Search for the issue or request</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Use the search bar on the main page to type keywords such as dispute type, surcharge, account update, correction code, service level, or document request.</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-folder-open"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">2. Open the guide that matches your case</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Review the card title and short description, then open the guide that best matches the customer's concern or required action.</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-route"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">3. Follow the guide step by step</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Answer each part carefully and follow the process flow until you reach the correct action, decision, or next handling step.</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-circle-check"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">4. Use the result to complete the case correctly</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Apply the correct disposition, update, correction, validation, or communication based on the guide result.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="padding:18px; border-radius:20px; background:linear-gradient(135deg, #f5f3ff, #fff7ed); border:1px solid rgba(148,163,184,.14); margin-bottom:18px;">
-      <strong style="display:block; color:#0f172a; margin-bottom:10px; font-size:15px;">Quick tips</strong>
-      <ul style="margin:0; padding-left:18px; color:#475569; line-height:1.8; font-size:14px;">
-        <li>Use specific keywords when searching so you can find the right guide faster.</li>
-        <li>If more than one guide looks similar, open the one with the description that best matches the request.</li>
-        <li>Use the feedback button if you notice a missing step, unclear logic, or something that needs improvement.</li>
-        <li>Use the clock in the header if you need to check Manila time while working.</li>
-      </ul>
-    </div>
-
-    <div style="padding:16px 18px; border-radius:18px; background:#0f172a; color:#fff;">
-      <strong style="display:block; margin-bottom:6px; font-size:15px;">Need more support?</strong>
-      <span style="display:block; color:rgba(255,255,255,.76); line-height:1.7; font-size:14px;">If the case still does not match any guide or you are unsure which path to take, contact your team lead or EBS Operations support for clarification.</span>
-    </div>
-  </div>
-</div>
 
     <div id="commentModal" class="modal">
       <div class="modal-content" onclick="event.stopPropagation()">
@@ -1946,8 +1450,8 @@ mark.search-highlight{
         </div>
 
         <input type="text" id="commentName" placeholder="Your Name (optional)">
-        <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-<p id="feedbackMessage" style="display:none; margin-top:12px; font-size:14px; font-weight:700;"></p>
+        <textarea id="commentText" placeholder="Enter your comment."></textarea>
+        <p id="feedbackMessage" style="display:none; margin-top:12px; font-size:14px; font-weight:700;"></p>
 
         <div class="comment-modal-footer">
           <button class="btn" onclick="sendComment()">Send feedback <i class="fa-solid fa-paper-plane"></i></button>
@@ -1973,7 +1477,7 @@ mark.search-highlight{
           <span>Premium main page experience for faster guide access and cleaner navigation.</span>
         </div>
         <div class="footer-right">
-          “Your feedback is important to us. Please feel free to email us with any comments or questions.” — Jules
+          Please feel free to email us with any comments or questions.” — Jules
         </div>
       </div>
     </footer>
@@ -1982,42 +1486,8 @@ mark.search-highlight{
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
- <div class="modal" id="timeSettingsModal">
-  <div class="modal-content">
-    
-    <div class="modal-header">
-      <span>Date & Time Settings</span>
-      <div class="modal-close" id="closeTimeSettings">
-        <i class="fa-solid fa-xmark"></i>
-      </div>
-    </div>
-
-    <p>Select your preferred time zone. This will update the clock across the system.</p>
-
-    <div class="timezone-picker">
-      <label>Select Time Zone</label>
-      <select id="timezoneSelectSettings">
-        <option value="Asia/Manila">Philippines — Asia/Manila</option>
-        <option value="Asia/Kolkata">India — Asia/Kolkata</option>
-        <option value="America/New_York">US Eastern</option>
-        <option value="America/Chicago">US Central</option>
-        <option value="America/Denver">US Mountain</option>
-        <option value="America/Los_Angeles">US Pacific</option>
-        <option value="Europe/London">UK — London</option>
-        <option value="Europe/Paris">Europe — Paris</option>
-        <option value="Asia/Dubai">UAE — Dubai</option>
-        <option value="Asia/Singapore">Singapore</option>
-        <option value="Asia/Tokyo">Japan</option>
-        <option value="Australia/Sydney">Australia</option>
-      </select>
-    </div>
-
-    <button id="saveTimeSettings" class="btn" style="margin-top:16px;">
-      Save Changes
-    </button>
-
-  </div>
-</div>
+  <script src="assets/js/header-loader.js"></script>
+  <script src="assets/js/header.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -2032,470 +1502,225 @@ mark.search-highlight{
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-   const DEFAULT_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Manila";
-  let selectedTimeZone = localStorage.getItem("bdToolsTimeZone") || DEFAULT_TIMEZONE;
+    let selectedRating = 0;
+    let commentsUnsubscribe = null;
+    let activeCategory = "all";
 
-  const clockBtn = document.getElementById("clockBtn");
-  const calendarPopup = document.getElementById("timeCalendarPopup");
-  const calendarGrid = document.getElementById("calendarGrid");
-  const monthYear = document.getElementById("monthYear");
-  const timezoneSelect = document.getElementById("timezoneSelect");
-  const clockZoneLabel = document.getElementById("clockZoneLabel");
+    const container = document.getElementById("guideContainer");
+    const cards = Array.from(container.querySelectorAll(".card"));
+    const originalOrder = [...cards];
 
-  let currentDate = new Date();
-
-  function formatZoneLabel(zone){
-    const parts = zone.split("/");
-    return parts[parts.length - 1].replace(/_/g, " ");
-  }
-
-  function getDatePartsInTimeZone(date, timeZone){
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZone,
-      year: "numeric",
-      month: "numeric",
-      day: "numeric"
-    }).formatToParts(date);
-
-    const map = {};
-    parts.forEach(part => {
-      if (part.type !== "literal") map[part.type] = part.value;
+    cards.forEach(card => {
+      card.dataset.originalHtml = card.innerHTML;
     });
 
-    return {
-      year: Number(map.year),
-      month: Number(map.month),
-      day: Number(map.day)
-    };
-  }
-
-  function updateClock(){
-    const now = new Date();
-
-    const headerTime = new Intl.DateTimeFormat("en-US", {
-      timeZone: selectedTimeZone,
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true
-    }).format(now);
-
-    const popupTime = new Intl.DateTimeFormat("en-US", {
-      timeZone: selectedTimeZone,
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true
-    }).format(now);
-
-    const popupDate = new Intl.DateTimeFormat("en-US", {
-      timeZone: selectedTimeZone,
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    }).format(now);
-
-    document.getElementById("clockText").textContent = headerTime;
-    document.getElementById("popupTime").textContent = popupTime;
-    document.getElementById("popupDate").textContent = popupDate;
-    clockZoneLabel.textContent = formatZoneLabel(selectedTimeZone);
-  }
-
-  function renderCalendar(date){
-    calendarGrid.innerHTML = "";
-
-    const year = date.getFullYear();
-    const month = date.getMonth();
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    monthYear.textContent = new Intl.DateTimeFormat("en-US", {
-      month: "long",
-      year: "numeric"
-    }).format(new Date(year, month, 1));
-
-    const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-    dayNames.forEach(day => {
-      const dayName = document.createElement("div");
-      dayName.className = "day-name";
-      dayName.textContent = day;
-      calendarGrid.appendChild(dayName);
+    const ratingStars = document.querySelectorAll(".rating-star");
+    ratingStars.forEach(star => {
+      star.addEventListener("click", () => {
+        selectedRating = Number(star.dataset.value);
+        ratingStars.forEach(s => {
+          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
+        });
+      });
     });
 
-    for(let i = 0; i < firstDay; i++){
-      const empty = document.createElement("div");
-      empty.className = "day";
-      empty.style.visibility = "hidden";
-      calendarGrid.appendChild(empty);
+    function openComment() {
+      document.getElementById("commentModal").style.display = "flex";
     }
 
-    const tzToday = getDatePartsInTimeZone(new Date(), selectedTimeZone);
+    function closeComment() {
+      document.getElementById("commentModal").style.display = "none";
+    }
 
-    for(let day = 1; day <= daysInMonth; day++){
-      const dayEl = document.createElement("div");
-      dayEl.className = "day";
-      dayEl.textContent = day;
+    function openHelp() {
+      alert("Use the guide library to search and open the guide that matches your case. If needed, contact your team lead or support.");
+    }
 
-      if (
-        year === tzToday.year &&
-        month === (tzToday.month - 1) &&
-        day === tzToday.day
-      ){
-        dayEl.classList.add("today");
+    function closeAllComments() {
+      document.getElementById("allCommentsModal").style.display = "none";
+      if (commentsUnsubscribe) {
+        commentsUnsubscribe();
+        commentsUnsubscribe = null;
+      }
+    }
+
+    async function sendComment() {
+      const name = document.getElementById("commentName").value.trim();
+      const comment = document.getElementById("commentText").value.trim();
+      const message = document.getElementById("feedbackMessage");
+
+      if (!selectedRating) {
+        message.style.display = "block";
+        message.style.color = "#ef4444";
+        message.textContent = "Please select a star rating first.";
+        return;
       }
 
-      calendarGrid.appendChild(dayEl);
-    }
-  }
+      try {
+        await db.collection("feedback").add({
+          rating: selectedRating,
+          name: name || "",
+          comment: comment || "",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-  if (timezoneSelect) {
-    timezoneSelect.value = selectedTimeZone;
+        message.style.display = "block";
+        message.style.color = "#16a34a";
+        message.textContent = "Thank you. Your feedback has been submitted.";
 
-    timezoneSelect.addEventListener("change", function(){
-      selectedTimeZone = this.value;
-      localStorage.setItem("bdToolsTimeZone", selectedTimeZone);
-      updateClock();
-      renderCalendar(currentDate);
-    });
-  }
+        document.getElementById("commentName").value = "";
+        document.getElementById("commentText").value = "";
+        selectedRating = 0;
+        ratingStars.forEach(s => s.classList.remove("selected"));
 
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  clockBtn.onclick = function(e){
-    e.stopPropagation();
-    calendarPopup.style.display = calendarPopup.style.display === "block" ? "none" : "block";
-    renderCalendar(currentDate);
-  };
-
-  document.addEventListener("click", function(){
-    calendarPopup.style.display = "none";
-  });
-
-  calendarPopup.addEventListener("click", function(e){
-    e.stopPropagation();
-  });
-
-  document.getElementById("prevMonth").onclick = function(e){
-    e.stopPropagation();
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar(currentDate);
-  };
-
-  document.getElementById("nextMonth").onclick = function(e){
-    e.stopPropagation();
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar(currentDate);
-  };
-  
-  
-  
-    function closeHelp(){
-      document.getElementById("helpModal").style.display = "none";
+        setTimeout(() => {
+          message.style.display = "none";
+          closeComment();
+        }, 1200);
+      } catch (error) {
+        console.error(error);
+        message.style.display = "block";
+        message.style.color = "#ef4444";
+        message.textContent = "Something went wrong while sending feedback.";
+      }
     }
 
-    let selectedRating = 0;
-    document.querySelectorAll('.rating-star').forEach(star => {
-      star.onclick = function(ev){
-        selectedRating = parseInt(this.getAttribute('data-value'));
-        document.querySelectorAll('.rating-star').forEach(s =>
-          s.classList.toggle('selected', parseInt(s.getAttribute('data-value')) <= selectedRating)
-        );
-        ev.stopPropagation();
-      };
-    });
+    function showAllComments() {
+      document.getElementById("allCommentsModal").style.display = "flex";
+      const list = document.getElementById("commentsList");
+      list.innerHTML = "<p>Loading comments...</p>";
 
-    function sendComment(){
-      const name = document.getElementById('commentName').value.trim();
-      const comment = document.getElementById('commentText').value.trim();
-      if(selectedRating === 0){ alert("Select a rating."); return; }
+      if (commentsUnsubscribe) commentsUnsubscribe();
 
-      db.collection("feedback").add({
-        rating: selectedRating,
-        name: name || "Anonymous",
-        comment: comment,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-}).then(() => {
-  const msg = document.getElementById("feedbackMessage");
-  msg.style.display = "block";
-  msg.style.color = "#16a34a";
-  msg.textContent = "Feedback sent successfully.";
-  clearCommentForm();
-  setTimeout(() => {
-    msg.style.display = "none";
-    msg.textContent = "";
-  }, 2500);
-}).catch(() => {
-  const msg = document.getElementById("feedbackMessage");
-  msg.style.display = "block";
-  msg.style.color = "#ef4444";
-  msg.textContent = "Unable to send feedback. Please try again.";
-});
-    }
+      commentsUnsubscribe = db.collection("feedback")
+        .orderBy("createdAt", "desc")
+        .onSnapshot(snapshot => {
+          if (snapshot.empty) {
+            list.innerHTML = "<p>No comments yet.</p>";
+            return;
+          }
 
-    function clearCommentForm(){
-      selectedRating = 0;
-      document.getElementById('commentName').value = "";
-      document.getElementById('commentText').value = "";
-document.querySelectorAll('.rating-star').forEach(s => s.classList.remove('selected'));
-const msg = document.getElementById("feedbackMessage");
-if (msg) {
-  msg.style.display = "none";
-  msg.textContent = "";
-}
-    }
-
-    let unsubscribeListener = null;
-    function showAllComments(){
-      const listEl = document.getElementById('commentsList');
-      listEl.innerHTML = "Loading…";
-
-      if(unsubscribeListener) unsubscribeListener();
-
-      unsubscribeListener = db.collection("feedback").orderBy("createdAt", "desc")
-        .onSnapshot(snap => {
-          listEl.innerHTML = "";
-          if(snap.empty){ listEl.innerHTML = "<p>No feedback yet.</p>"; }
-          snap.forEach(doc => {
-            const d = doc.data();
-            const div = document.createElement('div');
-            div.className = "comment-list-item";
-            div.innerHTML = `<div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5 - d.rating)}</div><strong>${d.name}</strong><p>${d.comment || ""}</p>`;
-            listEl.appendChild(div);
+          let html = "";
+          snapshot.forEach(doc => {
+            const item = doc.data();
+            const stars = "★".repeat(item.rating || 0) + "☆".repeat(5 - (item.rating || 0));
+            html += `
+              <div class="comment-list-item">
+                <span class="stars">${stars}</span>
+                <strong>${item.name || "Anonymous"}</strong>
+                <p style="margin:6px 0 0;">${item.comment || "No comment provided."}</p>
+              </div>
+            `;
           });
-          document.getElementById('allCommentsModal').style.display = 'flex';
+
+          list.innerHTML = html;
+        }, error => {
+          console.error(error);
+          list.innerHTML = "<p>Unable to load comments right now.</p>";
         });
     }
 
-    document.getElementById('commentIcon').onclick = function(e){
-      clearCommentForm();
-      document.getElementById('commentModal').style.display = 'flex';
-      e.stopPropagation();
-    };
+    window.addEventListener("click", (e) => {
+      const commentModal = document.getElementById("commentModal");
+      const allCommentsModal = document.getElementById("allCommentsModal");
 
-    function closeComment(){
-      clearCommentForm();
-      document.getElementById('commentModal').style.display = 'none';
-    }
-
-    function closeAllComments(){
-      document.getElementById('allCommentsModal').style.display = 'none';
-    }
-
-    ["helpModal", "commentModal", "allCommentsModal"].forEach(id => {
-      const modal = document.getElementById(id);
-      modal.addEventListener("click", () => modal.style.display = "none");
+      if (e.target === commentModal) closeComment();
+      if (e.target === allCommentsModal) closeAllComments();
     });
 
-    window.addEventListener('load', () => {
-      const cards = document.querySelectorAll('.card');
-      cards.forEach((card, i) => {
-        card.style.animation = `cardFadeIn 0.55s ease-out forwards`;
-        card.style.animationDelay = `${0.08 + i * 0.04}s`;
+    function scrollToGuideResults() {
+      const target = document.getElementById("guideResultsSection");
+      if (!target) return;
+      const y = target.getBoundingClientRect().top + window.pageYOffset - 110;
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    }
+
+    function highlightCard(card, keywords) {
+      const selectors = ["h1", ".lead", ".small"];
+      selectors.forEach(selector => {
+        card.querySelectorAll(selector).forEach(el => {
+          let html = el.textContent;
+          keywords.forEach(keyword => {
+            const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const regex = new RegExp(`(${escaped})`, "gi");
+            html = html.replace(regex, '<mark class="search-highlight">$1</mark>');
+          });
+          el.innerHTML = html;
+        });
       });
-    });
+    }
 
-    document.getElementById("guideSearch").focus();
+    function filterGuides(shouldScroll = false) {
+      const input = document.getElementById("guideSearch");
+      const query = input.value.trim().toLowerCase();
+      const keywords = query.split(/\s+/).filter(Boolean);
+      const clearBtn = document.getElementById("clearSearchBtn");
+      const noResults = document.getElementById("noResults");
+      const resultsCount = document.getElementById("resultsCount");
 
-const container = document.getElementById("guideContainer");
-const cards = Array.from(container.querySelectorAll(".card"));
-const originalOrder = [...cards];
-let activeCategory = "all";
+      clearBtn.style.display = query ? "block" : "none";
 
-originalOrder.forEach(card => {
-  card.dataset.originalHtml = card.innerHTML;
-});
+      container.innerHTML = "";
 
-function scrollToGuideResults() {
-  const target = document.getElementById("guideLibrarySection");
-  if (!target) return;
+      const matches = [];
+      const nonMatches = [];
 
-  requestAnimationFrame(() => {
-    target.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  });
-}
+      originalOrder.forEach(card => {
+        card.innerHTML = card.dataset.originalHtml;
 
-function filterGuides(shouldScroll = true) {
-  const input = document.getElementById("guideSearch");
-  const clearBtn = document.getElementById("clearSearchBtn");
-  const filter = input.value.trim().toLowerCase();
-  const keywords = filter.split(/\s+/).filter(Boolean);
+        const cardText = card.textContent.toLowerCase();
+        const cardCategory = (card.dataset.category || "").toLowerCase();
+        const categoryPass = activeCategory === "all" || cardCategory.includes(activeCategory);
+        const textPass = !query || keywords.every(keyword => cardText.includes(keyword));
 
-  clearBtn.style.display = filter ? "grid" : "none";
+        if (categoryPass && textPass) {
+          if (keywords.length) highlightCard(card, keywords);
+          matches.push(card);
+        } else {
+          nonMatches.push(card);
+        }
+      });
 
-  if (filter === "" && activeCategory === "all") {
-    resetCards(false);
-    if (shouldScroll) scrollToGuideResults();
-    return;
-  }
+      noResults.style.display = matches.length === 0 ? "block" : "none";
 
-  let matches = [];
-  let nonMatches = [];
-
-  cards.forEach(card => {
-    card.innerHTML = card.dataset.originalHtml;
-
-    const cardText = card.innerText.toLowerCase();
-    const keywordMatch = keywords.every(keyword => cardText.includes(keyword));
-    const categoryMatch = activeCategory === "all" || card.dataset.category === activeCategory;
-    const isMatch = keywordMatch && categoryMatch;
-
-    if (isMatch) {
-      if (keywords.length > 0) {
-        highlightCard(card, keywords);
+      if (matches.length > 0) {
+        resultsCount.style.display = "block";
+        resultsCount.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${matches.length} matching guide${matches.length > 1 ? "s" : ""}</span>`;
+      } else {
+        resultsCount.style.display = "none";
+        resultsCount.innerHTML = "";
       }
-      matches.push(card);
-    } else {
-      nonMatches.push(card);
-    }
-  });
 
-  const noResults = document.getElementById("noResults");
-  const resultsCount = document.getElementById("resultsCount");
-
-  noResults.style.display = matches.length === 0 ? "block" : "none";
-
-  if (matches.length > 0) {
-    resultsCount.style.display = "block";
-    resultsCount.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${matches.length} matching guide${matches.length > 1 ? "s" : ""}</span>`;
-  } else {
-    resultsCount.style.display = "none";
-    resultsCount.innerHTML = "";
-  }
-
-  container.innerHTML = "";
-
-  matches.forEach(card => {
-    card.style.display = "flex";
-    container.appendChild(card);
-  });
-
-  nonMatches.forEach(card => {
-    card.style.display = "none";
-    container.appendChild(card);
-  });
-
-  if (shouldScroll) {
-    scrollToGuideResults();
-  }
-}
-
-function highlightCard(card, keywords) {
-  const selectors = ["h1", ".lead", ".small"];
-  selectors.forEach(selector => {
-    card.querySelectorAll(selector).forEach(el => {
-      let html = el.innerHTML;
-      keywords.forEach(keyword => {
-        const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const regex = new RegExp(`(${escaped})`, "gi");
-        html = html.replace(regex, '<mark class="search-highlight">$1</mark>');
+      matches.forEach(card => {
+        card.style.display = "flex";
+        container.appendChild(card);
       });
-      el.innerHTML = html;
-    });
-  });
-}
 
-function clearSearch() {
-  const input = document.getElementById("guideSearch");
-  input.value = "";
-  filterGuides(true);
-  input.focus();
-}
+      nonMatches.forEach(card => {
+        card.style.display = "none";
+        container.appendChild(card);
+      });
 
-function filterByCategory(category, button) {
-  activeCategory = category;
+      if (shouldScroll) scrollToGuideResults();
+    }
 
-  document.querySelectorAll(".filter-chip").forEach(chip => {
-    chip.classList.remove("active");
-  });
+    function clearSearch() {
+      const input = document.getElementById("guideSearch");
+      input.value = "";
+      filterGuides(true);
+      input.focus();
+    }
 
-  if (button) {
-    button.classList.add("active");
-  }
+    function filterByCategory(category, button) {
+      activeCategory = category;
 
-  filterGuides(true);
-}
+      document.querySelectorAll(".filter-chip").forEach(chip => {
+        chip.classList.remove("active");
+      });
 
-function resetCards(shouldScroll = false) {
-  container.innerHTML = "";
-  document.getElementById("noResults").style.display = "none";
-
-  const resultsCount = document.getElementById("resultsCount");
-  if (resultsCount) {
-    resultsCount.style.display = "none";
-    resultsCount.innerHTML = "";
-  }
-
-  const clearBtn = document.getElementById("clearSearchBtn");
-  if (clearBtn) {
-    clearBtn.style.display = "none";
-  }
-
-  activeCategory = "all";
-
-  document.querySelectorAll(".filter-chip").forEach(chip => {
-    chip.classList.remove("active");
-  });
-
-  const allChip = document.querySelector('.filter-chip[data-filter="all"]');
-  if (allChip) {
-    allChip.classList.add("active");
-  }
-
-  originalOrder.forEach(card => {
-    card.innerHTML = card.dataset.originalHtml;
-    card.style.display = "flex";
-    container.appendChild(card);
-  });
-
-  if (shouldScroll) {
-    scrollToGuideResults();
-  }
-}
-
-
-const timeSettingsModal = document.getElementById("timeSettingsModal");
-const openTimeSettings = document.getElementById("openTimeSettings");
-const closeTimeSettings = document.getElementById("closeTimeSettings");
-const timezoneSelectSettings = document.getElementById("timezoneSelectSettings");
-const saveTimeSettings = document.getElementById("saveTimeSettings");
-
-// Open modal
-openTimeSettings.onclick = () => {
-  timeSettingsModal.style.display = "flex";
-  timezoneSelectSettings.value = selectedTimeZone;
-};
-
-// Close modal
-closeTimeSettings.onclick = () => {
-  timeSettingsModal.style.display = "none";
-};
-
-// Save timezone
-saveTimeSettings.onclick = () => {
-  selectedTimeZone = timezoneSelectSettings.value;
-
-  // Save permanently
-  localStorage.setItem("bdToolsTimeZone", selectedTimeZone);
-
-  // Update UI instantly
-  updateClock();
-
-  // Close modal
-  timeSettingsModal.style.display = "none";
-};
-
-// Load saved timezone on page load
-const savedTZ = localStorage.getItem("bdToolsTimeZone");
-if(savedTZ){
-  selectedTimeZone = savedTZ;
-}
-
+      if (button) button.classList.add("active");
+      filterGuides(true);
+    }
   </script>
- 
 </body>
 </html>
