@@ -1215,33 +1215,33 @@ Follow this guide to resolve DISCOUNT-AMC dispute or any related concern.
       </div>
     </div>
 
-    <div id="passwordModal" class="modal">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          Enter Password
-          <span class="modal-close" onclick="closePasswordModal()">×</span>
-        </div>
-        <input id="adminPassword" type="password" placeholder="Enter admin password">
-        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
-          <button class="app-btn primary" onclick="checkPassword()">Continue</button>
-          <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
-        </div>
-      </div>
+<div id="passwordModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      Enter Password
+      <span class="modal-close" onclick="closePasswordModal()">×</span>
     </div>
+    <input id="adminPassword" type="password" placeholder="Enter admin password">
+    <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+      <button class="app-btn primary" onclick="checkPassword()">Continue</button>
+      <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
-    <div id="editModal" class="modal">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          <span id="modalTitle">Edit</span>
-          <span class="modal-close" onclick="closeEditModal()">×</span>
-        </div>
-        <textarea id="editTextarea"></textarea>
-        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
-          <button class="app-btn primary" onclick="saveEdit()">Save</button>
-          <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
-        </div>
-      </div>
+<div id="editModal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span id="modalTitle">Edit</span>
+      <span class="modal-close" onclick="closeEditModal()">×</span>
     </div>
+    <textarea id="editTextarea"></textarea>
+    <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+      <button class="app-btn primary" onclick="saveEdit()">Save</button>
+      <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <div id="site-footer"></div>
     
@@ -1672,39 +1672,39 @@ checking-eprs.html
     }
   }
 
-  function attemptEdit(type){
-    if(!currentFinalRecommendation){
-      alert("Reach a final recommendation first before editing templates.");
-      return;
-    }
-    currentEditType = type;
-    els.adminPassword.value = "";
-    els.passwordModal.style.display = "flex";
+function attemptEdit(type){
+  if(!currentFinalRecommendation){
+    alert("Reach a final recommendation first before editing templates.");
+    return;
   }
+  currentEditType = type;
+  els.adminPassword.value = "";
+  els.passwordModal.style.display = "flex";
+}
 
-  function closePasswordModal(){ els.passwordModal.style.display = "none"; }
-  function closeEditModal(){ els.editModal.style.display = "none"; }
+function closePasswordModal(){ els.passwordModal.style.display = "none"; }
+function closeEditModal(){ els.editModal.style.display = "none"; }
 
-  function checkPassword(){
-    if(els.adminPassword.value === "admin"){
-      closePasswordModal();
-      openEditModal();
-    } else {
-      alert("Incorrect password");
-    }
+function checkPassword(){
+  if(els.adminPassword.value === "admin"){
+    closePasswordModal();
+    openEditModal();
+  } else {
+    alert("Incorrect password");
   }
+}
 
-  function openEditModal(){
-    const map = {
-      comment: "suggestedComment",
-      email: "suggestedEmail",
-      corr: "suggestedCorrCode"
-    };
+function openEditModal(){
+  const map = {
+    comment: "suggestedComment",
+    email: "suggestedEmail",
+    corr: "suggestedCorrCode"
+  };
 
-    els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
-    els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
-    els.editModal.style.display = "flex";
-  }
+  els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+  els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+  els.editModal.style.display = "flex";
+}
 
   async function saveEdit(){
     const val = els.editTextarea.value.trim();
