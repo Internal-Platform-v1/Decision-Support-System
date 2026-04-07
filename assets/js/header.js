@@ -33,7 +33,7 @@ function getTimeZoneDateParts(date, timeZone) {
   }).formatToParts(date);
 
   const result = {};
-  parts.forEach(part => {
+  parts.forEach((part) => {
     if (part.type !== "literal") result[part.type] = part.value;
   });
 
@@ -102,7 +102,7 @@ function renderHeaderCalendar() {
   monthYear.textContent = monthLabel;
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  dayNames.forEach(day => {
+  dayNames.forEach((day) => {
     const cell = document.createElement("div");
     cell.textContent = day;
     cell.style.fontWeight = "700";
@@ -149,13 +149,114 @@ function renderHeaderCalendar() {
 
 function setHeaderActiveTab() {
   const currentPage = document.body.dataset.page || "";
-  document.querySelectorAll(".nav-tabs .tab").forEach(tab => {
+  document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
     tab.classList.remove("active");
     if (tab.dataset.page === currentPage) {
       tab.classList.add("active");
     }
   });
 }
+
+/* =========================
+   PREMIUM PAGE REVEAL SYSTEM
+========================= */
+
+function markRevealTargets() {
+  const selectors = [
+    ".hero",
+    ".page-hero",
+    ".guide-hero",
+    ".search-wrap",
+    ".search-section",
+    ".search-shell",
+    ".main-content",
+    ".content-grid",
+    ".cards-grid",
+    ".guides-grid",
+    ".flow-shell",
+    ".flow-panel",
+    ".recommendation-panel",
+    ".template-panel",
+    ".card",
+    ".guide-card",
+    ".step-card",
+    ".premium-step-card",
+    ".template-card",
+    ".panel",
+    ".glass-card"
+  ];
+
+  const elements = document.querySelectorAll(selectors.join(","));
+
+  elements.forEach((el, index) => {
+    if (
+      !el.classList.contains("reveal") &&
+      !el.classList.contains("reveal-up") &&
+      !el.classList.contains("reveal-left") &&
+      !el.classList.contains("reveal-right") &&
+      !el.classList.contains("reveal-scale")
+    ) {
+      el.classList.add("reveal-scale");
+    }
+
+    el.classList.add(`stagger-${(index % 6) + 1}`);
+  });
+}
+
+function initPremiumReveal() {
+  const items = document.querySelectorAll(
+    ".reveal, .reveal-up, .reveal-left, .reveal-right, .reveal-scale"
+  );
+
+  if (!items.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("show");
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.12,
+      rootMargin: "0px 0px -40px 0px"
+    }
+  );
+
+  items.forEach((item) => observer.observe(item));
+}
+
+window.animateStepSwitch = function (selector) {
+  const el = document.querySelector(selector);
+  if (!el) return;
+
+  el.classList.remove("step-switch");
+  void el.offsetWidth;
+  el.classList.add("step-switch");
+};
+
+window.showRevealNow = function (root = document) {
+  const items = root.querySelectorAll(
+    ".reveal, .reveal-up, .reveal-left, .reveal-right, .reveal-scale"
+  );
+
+  items.forEach((item) => item.classList.add("show"));
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  markRevealTargets();
+
+  requestAnimationFrame(() => {
+    document.body.classList.add("page-ready");
+    document.documentElement.classList.remove("preload");
+    initPremiumReveal();
+  });
+});
+
+/* =========================
+   HEADER EVENTS
+========================= */
 
 document.addEventListener("headerLoaded", () => {
   const clockBtn = document.getElementById("clockBtn");
