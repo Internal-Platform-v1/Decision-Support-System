@@ -583,3 +583,171 @@
     font-size:16px;
   }
 }
+
+/* =========================================================
+   PREMIUM SHARED PAGE ANIMATIONS
+========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+body.page-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.preload *,
+.preload *::before,
+.preload *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Shared reveal animations */
+.reveal,
+.reveal-up {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.72s cubic-bezier(.2,.65,.2,1), transform 0.72s cubic-bezier(.2,.65,.2,1);
+  will-change: opacity, transform;
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition: opacity 0.72s cubic-bezier(.2,.65,.2,1), transform 0.72s cubic-bezier(.2,.65,.2,1);
+  will-change: opacity, transform;
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity 0.72s cubic-bezier(.2,.65,.2,1), transform 0.72s cubic-bezier(.2,.65,.2,1);
+  will-change: opacity, transform;
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
+  transition: opacity 0.75s cubic-bezier(.2,.65,.2,1), transform 0.75s cubic-bezier(.2,.65,.2,1);
+  will-change: opacity, transform;
+}
+
+.reveal.show,
+.reveal-up.show,
+.reveal-left.show,
+.reveal-right.show,
+.reveal-scale.show {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Stagger */
+.stagger-1 { transition-delay: 0.06s; }
+.stagger-2 { transition-delay: 0.12s; }
+.stagger-3 { transition-delay: 0.18s; }
+.stagger-4 { transition-delay: 0.24s; }
+.stagger-5 { transition-delay: 0.30s; }
+.stagger-6 { transition-delay: 0.36s; }
+
+/* Header + footer fade in after loading */
+#site-header,
+#site-footer {
+  opacity: 0;
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  will-change: opacity, transform;
+}
+
+#site-header {
+  transform: translateY(-10px);
+}
+
+#site-footer {
+  transform: translateY(10px);
+}
+
+#site-header.loaded,
+#site-footer.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Smooth hover on common cards/panels */
+.card,
+.guide-card,
+.step-card,
+.premium-step-card,
+.template-card,
+.panel,
+.glass-card,
+.flow-panel,
+.recommendation-panel,
+.template-panel {
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease,
+    background 0.28s ease;
+}
+
+.card:hover,
+.guide-card:hover,
+.step-card:hover,
+.premium-step-card:hover,
+.template-card:hover,
+.panel:hover,
+.glass-card:hover,
+.flow-panel:hover,
+.recommendation-panel:hover,
+.template-panel:hover {
+  transform: translateY(-2px);
+}
+
+/* Step change animation */
+.step-switch {
+  animation: premiumStepIn 0.42s cubic-bezier(.2,.65,.2,1);
+}
+
+@keyframes premiumStepIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  #site-header,
+  #site-footer,
+  .reveal,
+  .reveal-up,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale,
+  .card,
+  .guide-card,
+  .step-card,
+  .premium-step-card,
+  .template-card,
+  .panel,
+  .glass-card,
+  .flow-panel,
+  .recommendation-panel,
+  .template-panel {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
