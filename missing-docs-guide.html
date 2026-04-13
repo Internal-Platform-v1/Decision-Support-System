@@ -1249,6 +1249,18 @@
   color:#4D148C;
   text-decoration:none;
   font-weight:600;
+}  
+
+.final-note-html{
+  margin-top:12px;
+  color:#475569;
+  line-height:1.7;
+}
+
+.final-note-html a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
 }   
 
 </style>
@@ -3095,14 +3107,6 @@ async function renderFinal(finalNode){
   const finalNote = finalNode.note || "";
   const finalImage = finalNode.image || "";
 
-  const cleanedFinalNote = escapeHtml(finalNote)
-    .replace(/\r\n/g, "\n")
-    .replace(/^\s+/, "")
-    .split("\n")
-    .map(line => line.trimStart())
-    .join("\n")
-    .trim();
-
   currentFinalRecommendation = finalText;
   updateMeta(true);
   updatePath();
@@ -3119,7 +3123,7 @@ async function renderFinal(finalNode){
       <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
       <div class="final-title">Use this handling outcome</div>
       <div class="final-text">${escapeHtml(finalText)}</div>
-      ${cleanedFinalNote ? `<div style="margin-top:12px; color:#475569; line-height:1.7; white-space:pre-wrap;">${cleanedFinalNote}</div>` : ""}
+      ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
 
       ${finalImage ? `
         <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
