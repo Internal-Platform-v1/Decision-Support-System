@@ -2610,6 +2610,8 @@ function jumpToPathStep(index){
 
   /* ===== HEADER MODAL FIX ===== */
 
+/* ===== HEADER MODAL FIX ===== */
+
 function openModalAnimated(id) {
   const modal = document.getElementById(id);
   if (!modal) return;
@@ -2641,28 +2643,146 @@ function closeComment(){ closeModalAnimated("commentModal"); }
 function openHelp(){ openModalAnimated("helpModal"); }
 function closeHelp(){ closeModalAnimated("helpModal"); }
 
-function showAllComments(){ openModalAnimated("allCommentsModal"); }
 function closeAllComments(){ closeModalAnimated("allCommentsModal"); }
 
-  window.attemptEdit = attemptEdit;
-  window.closePasswordModal = closePasswordModal;
-  window.closeEditModal = closeEditModal;
-  window.checkPassword = checkPassword;
-  window.saveEdit = saveEdit;
-  window.copyTemplateText = copyTemplateText;
-  window.goBack = goBack;
-  window.restart = restart;
-  window.openImageModal = openImageModal;
-  window.closeImageModal = closeImageModal;
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+  if (!ratingStars.length) return;
 
-  window.openComment = openComment;
-  window.closeComment = closeComment;
-  window.openHelp = openHelp;
-  window.closeHelp = closeHelp;
-  window.showAllComments = showAllComments;
-  window.closeAllComments = closeAllComments;
+  ratingStars.forEach(star => {
+    star.onclick = function (e) {
+      e.stopPropagation();
+      selectedRating = Number(this.dataset.value || 0);
 
-  renderNode("start");
+      ratingStars.forEach(s => {
+        const val = Number(s.dataset.value || 0);
+        s.classList.toggle("selected", val <= selectedRating);
+      });
+    };
+  });
+}
+
+async function sendComment() {
+  const nameEl = document.getElementById("commentName");
+  const textEl = document.getElementById("commentText");
+  const feedbackMessage = document.getElementById("feedbackMessage");
+
+  const name = (nameEl?.value || "").trim();
+  const comment = (textEl?.value || "").trim();
+
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
+    }
+    return;
+  }
+
+  try {
+    await db.collection(FEEDBACK_COLLECTION).add({
+      name: name || "Anonymous",
+      comment,
+      rating: selectedRating,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    if (nameEl) nameEl.value = "";
+    if (textEl) textEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
+
+    setTimeout(() => {
+      closeComment();
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
+      }
+    }, 900);
+  } catch (err) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
+    }
+  }
+}
+
+async function showAllComments() {
+  const commentsList = document.getElementById("commentsList");
+  if (!commentsList) return;
+
+  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+  try {
+    const snap = await db
+      .collection(FEEDBACK_COLLECTION)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    if (snap.empty) {
+      commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+    } else {
+      commentsList.innerHTML = snap.docs.map(doc => {
+        const data = doc.data() || {};
+        const rating = Number(data.rating || 0);
+        const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+        const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+        return `
+          <div style="padding:14px 0; border-bottom:1px solid #e2e8f0;">
+            <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:6px;">
+              <strong style="color:#0f172a;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <span style="color:#ff6600; font-weight:800; white-space:nowrap;">${filled}${empty}</span>
+            </div>
+            <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "")}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    openModalAnimated("allCommentsModal");
+  } catch (err) {
+    commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+    openModalAnimated("allCommentsModal");
+  }
+}
+
+window.attemptEdit = attemptEdit;
+window.closePasswordModal = closePasswordModal;
+window.closeEditModal = closeEditModal;
+window.checkPassword = checkPassword;
+window.saveEdit = saveEdit;
+window.copyTemplateText = copyTemplateText;
+window.goBack = goBack;
+window.restart = restart;
+window.openImageModal = openImageModal;
+window.closeImageModal = closeImageModal;
+
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
+
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+});
+
+setTimeout(() => {
+  initRatingStars();
+}, 300);
+
+renderNode("start");
 });
 </script>
 <div id="imageModal" class="image-modal" onclick="closeImageModal()">
