@@ -248,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
   markRevealTargets();
 
   requestAnimationFrame(() => {
-    document.body.classList.add("page-ready");
     document.documentElement.classList.remove("preload");
     initPremiumReveal();
   });
