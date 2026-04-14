@@ -2198,11 +2198,21 @@ const NODES = {
     }
   }
 
-  function getPercent(isFinal){
-    if (isFinal) return 100;
-    if (path.length === 0) return 0;
-    return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
+function getPercent(isFinal){
+  if (isFinal) return 100;
+
+  // find current step index in path
+  const currentIndex = path.findIndex(item => item.nextKey === currentKey);
+
+  if (currentIndex === -1) {
+    // fallback (start or unknown)
+    return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95);
   }
+
+  const progress = ((currentIndex + 1) / MAX_STEPS) * 100;
+
+  return Math.min(Math.round(progress), 95);
+}
 
   function updateMeta(isFinal){
     const pct = getPercent(isFinal);
@@ -2253,34 +2263,36 @@ const NODES = {
     });
   }
 
-  function jumpToPathStep(index){
-    if(index < 0 || index >= path.length) return;
+function jumpToPathStep(index){
+  if(index < 0 || index >= path.length) return;
 
-    const target = path[index];
-    if(!target) return;
+  const target = path[index];
+  if(!target) return;
 
-    historyStack = [];
-    for(let i = 0; i < index; i++){
-      historyStack.push({
-        key: path[i].fromKey,
-        path: path.slice(0, i)
-      });
-    }
+  currentKey = target.nextKey; // 🔥 THIS FIX
 
-    currentFinalRecommendation = "";
-
-    setTemplateValue(els.suggestedComment, "");
-    setTemplateValue(els.suggestedCorrCode, "");
-    setTemplateValue(els.suggestedEmail, "");
-
-    if(target.nextKey === "__final__" && target.finalNode){
-      renderFinal(target.finalNode);
-      return;
-    }
-
-    updateRecommendation("", false);
-    renderNode(target.nextKey);
+  historyStack = [];
+  for(let i = 0; i < index; i++){
+    historyStack.push({
+      key: path[i].fromKey,
+      path: path.slice(0, i)
+    });
   }
+
+  currentFinalRecommendation = "";
+
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+
+  if(target.nextKey === "__final__" && target.finalNode){
+    renderFinal(target.finalNode);
+    return;
+  }
+
+  updateRecommendation("", false);
+  renderNode(target.nextKey);
+}
 
   function updateRecommendation(text, isFinal){
     if(!isFinal){
@@ -2534,47 +2546,53 @@ const NODES = {
   }
 
   function goBack(){
-    const currentPathIndex = path.findIndex(item =>
-      item.nextKey === currentKey ||
-      (currentKey === "__final__" && item.nextKey === "__final__")
-    );
+  const currentPathIndex = path.findIndex(item =>
+    item.nextKey === currentKey ||
+    (currentKey === "__final__" && item.nextKey === "__final__")
+  );
 
-    if(currentPathIndex === -1){
-      currentFinalRecommendation = "";
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-      updateRecommendation("", false);
-      renderNode("start");
-      return;
-    }
-
-    if(currentPathIndex === 0){
-      currentFinalRecommendation = "";
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-      updateRecommendation("", false);
-      renderNode("start");
-      return;
-    }
-
-    const previousStep = path[currentPathIndex - 1];
-
+  if(currentPathIndex === -1){
     currentFinalRecommendation = "";
+    currentKey = "start"; // 🔥 sync
     setTemplateValue(els.suggestedComment, "");
     setTemplateValue(els.suggestedCorrCode, "");
     setTemplateValue(els.suggestedEmail, "");
     updateRecommendation("", false);
-
-    if(previousStep.nextKey === "__final__" && previousStep.finalNode){
-      renderFinal(previousStep.finalNode);
-      return;
-    }
-
-    renderNode(previousStep.nextKey);
+    renderNode("start");
+    return;
   }
 
+  if(currentPathIndex === 0){
+    currentFinalRecommendation = "";
+    currentKey = "start"; // 🔥 sync
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+    updateRecommendation("", false);
+    renderNode("start");
+    return;
+  }
+
+  const previousStep = path[currentPathIndex - 1];
+
+  currentFinalRecommendation = "";
+
+  // 🔥 CRITICAL FIX — sync current step
+  currentKey = previousStep.nextKey;
+
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  if(previousStep.nextKey === "__final__" && previousStep.finalNode){
+    renderFinal(previousStep.finalNode);
+    return;
+  }
+
+  renderNode(previousStep.nextKey);
+}
+  
   function restart(){
     path = [];
     historyStack = [];
