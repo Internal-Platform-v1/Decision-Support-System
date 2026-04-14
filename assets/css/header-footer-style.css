@@ -596,7 +596,6 @@ body {
   min-height: 100vh;
 }
 
-/* Prevent transition flash during first paint */
 .preload *,
 .preload *::before,
 .preload *::after {
@@ -604,7 +603,6 @@ body {
   animation: none !important;
 }
 
-/* Shared reveal animations */
 .reveal,
 .reveal-up {
   opacity: 0;
@@ -651,7 +649,6 @@ body {
   transform: translate(0, 0) scale(1);
 }
 
-/* Stagger */
 .stagger-1 { transition-delay: 0.06s; }
 .stagger-2 { transition-delay: 0.12s; }
 .stagger-3 { transition-delay: 0.18s; }
@@ -659,44 +656,49 @@ body {
 .stagger-5 { transition-delay: 0.30s; }
 .stagger-6 { transition-delay: 0.36s; }
 
-/* Keep header/footer above page content */
-#site-header,
-#site-footer {
+/* Keep shared header above all page content */
+#site-header {
   position: relative;
+  z-index: 2147483000;
   opacity: 0;
+  transform: translateY(-10px);
   transition: opacity 0.45s ease, transform 0.45s ease;
   will-change: opacity, transform;
 }
 
-#site-header {
-  z-index: 10000;
-  transform: translateY(-10px);
+#site-header.loaded {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 #site-footer {
+  position: relative;
   z-index: 100;
+  opacity: 0;
   transform: translateY(10px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  will-change: opacity, transform;
 }
 
-#site-header.loaded,
 #site-footer.loaded {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Shared popups/modals must stay above page layers */
+/* Real popup/modal ids from header.html */
 #timeCalendarPopup,
-#feedbackModal,
-#getHelpModal,
+#timeSettingsModal,
+#commentModal,
+#allCommentsModal,
+#helpModal {
+  z-index: 2147483647 !important;
+}
+
+/* Keep common modal class high too */
 .modal {
-  z-index: 99999 !important;
+  z-index: 2147483647 !important;
 }
 
-#timeCalendarPopup {
-  position: fixed;
-}
-
-/* Smooth hover on common cards/panels */
 .card,
 .guide-card,
 .step-card,
@@ -727,7 +729,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Step change animation */
 .step-switch {
   animation: premiumStepIn 0.42s cubic-bezier(.2,.65,.2,1);
 }
