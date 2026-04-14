@@ -1,1793 +1,1489 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Billing Dispute General Guide</title>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+      <title>Billing Dispute General Guide</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+      <link rel="stylesheet" href="assets/css/header-footer-style.css">
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <style>
-    :root{
-      --bg:#07111f;
-      --bg-soft:#0c1728;
-      --panel:#0f1c31;
-      --panel-2:#12233d;
-      --card:#ffffff;
-      --card-soft:#f8fafc;
-      --text:#0f172a;
-      --text-soft:#475569;
-      --muted:#94a3b8;
-      --line:rgba(148,163,184,.18);
-      --white-line:rgba(255,255,255,.08);
-      --accent:#6d28d9;
-      --accent-2:#4d148c;
-      --accent-3:#ff6600;
-      --success:#16a34a;
-      --warning:#f59e0b;
-      --danger:#ef4444;
-      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
-      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
-      --shadow-md:0 10px 28px rgba(15,23,42,.10);
-      --shadow-card:0 16px 40px rgba(15,23,42,.06);
-      --radius-xl:28px;
-      --radius-lg:20px;
-      --radius-md:16px;
-      --radius-sm:12px;
-      --max:1920px;
-      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+     <style>
+      :root{
+        --bg:#07111f;
+        --bg-soft:#0c1728;
+        --panel:#0f1c31;
+        --panel-2:#12233d;
+        --card:#ffffff;
+        --card-soft:#f8fafc;
+        --text:#0f172a;
+        --text-soft:#475569;
+        --muted:#94a3b8;
+        --line:rgba(148,163,184,.18);
+        --white-line:rgba(255,255,255,.08);
+        --accent:#6d28d9;
+        --accent-2:#4d148c;
+        --accent-3:#ff6600;
+        --success:#16a34a;
+        --warning:#f59e0b;
+        --danger:#ef4444;
+        --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+        --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+        --shadow-md:0 10px 28px rgba(15,23,42,.10);
+        --shadow-card:0 16px 40px rgba(15,23,42,.06);
+        --radius-xl:28px;
+        --radius-lg:20px;
+        --radius-md:16px;
+        --radius-sm:12px;
+        --max:1720px;
+        font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
 
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      min-height:100vh;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
-        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
-        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
-      overflow-x:hidden;
-    }
+      *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:36px 36px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
-      z-index:0;
-    }
+      body{
+        margin:0;
+        min-height:100vh;
+        color:var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+          radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+          linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+        overflow-x:hidden;
+      }
 
-    a{color:inherit}
-    button,input,textarea{font:inherit}
+      body::before{
+        content:"";
+        position:fixed;
+        inset:0;
+        pointer-events:none;
+        background:
+          linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+        background-size:36px 36px;
+        mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+        z-index:0;
+      }
 
-    .page{
+      a{color:inherit}
+      button,input,textarea{font:inherit}
+
+      .page{
+        position:relative;
+        z-index:1;
+      }
+
+      .app-shell{
+        width:min(calc(100% - 32px), var(--max));
+        margin:22px auto 24px;
+      }
+
+      .app-frame{
+        min-height:calc(100vh - 180px);
+        background:rgba(255,255,255,.58);
+        backdrop-filter:blur(16px);
+        border:1px solid rgba(255,255,255,.68);
+        border-radius:34px;
+        box-shadow:var(--shadow-xl);
+        overflow:hidden;
+        display:grid;
+        grid-template-columns:minmax(0,1.45fr) 380px 420px;
+      }
+
+      .main{
+        padding:18px;
+        display:flex;
+        flex-direction:column;
+        gap:16px;
+        min-width:0;
+      }
+
+      .main-topbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+        padding:16px 18px;
+        border-radius:24px;
+        background:rgba(255,255,255,.85);
+        border:1px solid rgba(219,228,240,.9);
+        box-shadow:var(--shadow-md);
+      }
+
+      .main-topbar h1{
+        margin:0;
+        font-size:24px;
+        letter-spacing:-.03em;
+      }
+
+      .main-status{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+      }
+
+      .pill{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:11px 14px;
+        border-radius:999px;
+        background:#fff;
+        border:1px solid #dbe4f0;
+        font-size:12px;
+        font-weight:800;
+        color:#0f172a;
+      }
+
+      .pill.primary{
+        background:linear-gradient(135deg,#2563eb,#1d4ed8);
+        color:#fff;
+        border:none;
+      }
+
+      .workspace{
+        display:grid;
+        grid-template-rows:auto 1fr;
+        gap:16px;
+        min-height:0;
+      }
+
+      .progress-card{
+        background:#fff;
+        border:1px solid #dbe4f0;
+        border-radius:22px;
+        padding:16px 18px;
+        box-shadow:var(--shadow-md);
+      }
+
+      .progress-head{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+        margin-bottom:10px;
+      }
+
+      .progress-title{
+        font-size:14px;
+        font-weight:800;
+        color:#0f172a;
+      }
+
+      .progress-status{
+        font-size:12px;
+        font-weight:800;
+        color:#64748b;
+      }
+
+      .progress-bar{
+        height:12px;
+        background:#eaf0f7;
+        border-radius:999px;
+        overflow:hidden;
+      }
+
+      .progress-fill{
+        height:100%;
+        width:0%;
+        border-radius:inherit;
+        background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+        transition:width .28s ease;
+      }
+
+      .stage-area{
+        min-height:0;
+        display:grid;
+        grid-template-columns:1fr;
+      }
+
+      .stage-card{
+        background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+        border:1px solid #dbe4f0;
+        border-radius:30px;
+        box-shadow:var(--shadow-card);
+        min-height:640px;
+        display:flex;
+        flex-direction:column;
+        overflow:hidden;
+      }
+
+      .stage-top{
+        padding:22px 22px 0;
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        flex-wrap:wrap;
+      }
+
+      .badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:10px 13px;
+        border-radius:999px;
+        background:#eef4ff;
+        color:#1d4ed8;
+        font-size:12px;
+        font-weight:800;
+      }
+
+      .badge.alt{
+        background:#f8fafc;
+        color:#334155;
+      }
+
+      .question-wrap{
+        padding:22px;
+        display:flex;
+        flex-direction:column;
+        gap:18px;
+        flex:1;
+      }
+
+      .question-card{
+        position:relative;
+        padding:30px;
+        border-radius:28px;
+        background:
+          radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+          linear-gradient(180deg,#ffffff,#f8fbff);
+        border:1px solid #e6edf7;
+        box-shadow:0 12px 30px rgba(15,23,42,.04);
+      }
+
+      .question-card::after{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:inherit;
+        pointer-events:none;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+      }
+
+      .question-label{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:8px 12px;
+        border-radius:999px;
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        font-size:11px;
+        font-weight:900;
+        text-transform:uppercase;
+        letter-spacing:.12em;
+        color:#334155;
+      }
+
+      .question-text{
+        margin:18px 0 0;
+        font-size:36px;
+        line-height:1.08;
+        letter-spacing:-.045em;
+        font-weight:900;
+      }
+
+      .question-help{
+        margin:14px 0 0;
+        color:#64748b;
+        font-size:14px;
+        line-height:1.75;
+        max-width:760px;
+      }
+
+      .choices{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:14px;
+      }
+
+      .choice{
+        appearance:none;
+        border:none;
+        cursor:pointer;
+        text-align:left;
+        border-radius:24px;
+        padding:18px;
+        background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+        border:1px solid #e2e8f0;
+        box-shadow:0 12px 28px rgba(15,23,42,.05);
+        transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+        display:flex;
+        gap:14px;
+        align-items:flex-start;
+        min-height:112px;
+      }
+
+      .choice:hover{
+        transform:translateY(-3px);
+        box-shadow:0 18px 36px rgba(15,23,42,.08);
+        border-color:#c7d5e6;
+      }
+
+      .choice.selected{
+        background:linear-gradient(135deg,#2563eb,#1d4ed8);
+        color:#fff;
+        border-color:transparent;
+      }
+
+      .choice-icon{
+        width:48px;
+        height:48px;
+        border-radius:16px;
+        display:grid;
+        place-items:center;
+        background:#eef4ff;
+        color:#2563eb;
+        flex:0 0 auto;
+        font-size:17px;
+      }
+
+      .choice.selected .choice-icon{
+        background:rgba(255,255,255,.14);
+        color:#fff;
+      }
+
+      .choice-body{min-width:0}
+
+      .choice-title{
+        font-size:16px;
+        font-weight:800;
+        line-height:1.35;
+      }
+
+      .choice-desc{
+        font-size:12px;
+        line-height:1.6;
+        color:#64748b;
+        margin-top:6px;
+      }
+
+      .choice.selected .choice-desc{
+        color:rgba(255,255,255,.8);
+      }
+
+      .decision-footer{
+        margin-top:auto;
+        padding:18px 22px 22px;
+        border-top:1px solid #e8eef7;
+        background:linear-gradient(180deg,rgba(248,250,252,.2),#f8fbff);
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:14px;
+        flex-wrap:wrap;
+      }
+
+      .decision-footer-left{
+        display:flex;
+        flex-direction:column;
+        gap:4px;
+      }
+
+      .footer-label{
+        font-size:11px;
+        font-weight:900;
+        letter-spacing:.12em;
+        text-transform:uppercase;
+        color:#64748b;
+      }
+
+      .footer-value{
+        font-size:14px;
+        font-weight:800;
+        color:#0f172a;
+      }
+
+      .decision-actions{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+      }
+
+      .app-btn{
+        appearance:none;
+        border:none;
+        cursor:pointer;
+        padding:12px 16px;
+        border-radius:14px;
+        font-size:14px;
+        font-weight:800;
+        transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+      }
+
+      .app-btn:hover{
+        transform:translateY(-1px);
+      }
+
+      .btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        margin:0;
+        min-height:50px;
+        padding:0 18px;
+        border:none;
+        border-radius:16px;
+        background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+        color:#fff;
+        text-decoration:none;
+        font-weight:800;
+        box-shadow:0 14px 24px rgba(77,20,140,.18);
+        transition:.22s ease;
+        width:100%;
+        cursor:pointer;
+      }
+
+      .btn:hover{
+        transform:translateY(-2px);
+        box-shadow:0 18px 30px rgba(77,20,140,.24);
+      }
+
+      .app-btn.primary{
+        background:#111827;
+        color:#fff;
+        box-shadow:0 8px 20px rgba(17,24,39,.14);
+      }
+
+      .app-btn.secondary{
+        background:#fff;
+        color:#111827;
+        border:1px solid #dbe4f0;
+      }
+
+      .app-btn.ghost{
+        background:#f8fafc;
+        color:#0f172a;
+        border:1px solid #e2e8f0;
+      }
+
+      .final-card{
+        margin:20px;
+        padding:24px;
+        border-radius:24px;
+        background:linear-gradient(180deg,#f0fdf4,#ffffff);
+        border:1px solid #dcfce7;
+        box-shadow:0 16px 34px rgba(22,163,74,.08);
+      }
+
+      .final-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:9px 12px;
+        border-radius:999px;
+        background:#dcfce7;
+        color:#166534;
+        font-size:12px;
+        font-weight:900;
+        text-transform:uppercase;
+        letter-spacing:.12em;
+      }
+
+      .final-title{
+        margin:16px 0 0;
+        font-size:14px;
+        font-weight:800;
+        color:#166534;
+      }
+
+      .final-text{
+        margin:10px 0 0;
+        font-size:24px;
+        line-height:1.5;
+        letter-spacing:-.02em;
+        font-weight:800;
+        color:#111827;
+      }
+
+      .final-actions{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        margin-top:18px;
+      }
+
+      .side-panel{
+        padding:18px 14px 18px 0;
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+        min-width:0;
+      }
+
+      .template-panel{
+        padding:18px 18px 18px 0;
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+        min-width:0;
+      }
+
+      .side-panel .summary-card,
+      .template-panel .summary-card{
+        background:#fff;
+        border:1px solid #dbe4f0;
+        border-radius:22px;
+        padding:18px;
+        box-shadow:var(--shadow-md);
+      }
+
+      .summary-head{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin-bottom:12px;
+        font-size:14px;
+        font-weight:900;
+      }
+
+      .summary-head i{color:#7c3aed}
+
+      .recommendation{
+        min-height:120px;
+        padding:16px;
+        border-radius:18px;
+        background:linear-gradient(180deg,#fff8eb,#fff);
+        border-left:4px solid #f59e0b;
+        font-size:14px;
+        line-height:1.7;
+      }
+
+      .recommendation.empty{
+        background:#f8fafc;
+        border-left-color:#cbd5e1;
+        color:#64748b;
+      }
+
+      .summary-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10px;
+      }
+
+      .metric{
+        padding:14px;
+        border-radius:18px;
+        background:#f8fafc;
+        border:1px solid #e7edf4;
+      }
+
+      .metric-k{
+        display:block;
+        font-size:10px;
+        text-transform:uppercase;
+        letter-spacing:.12em;
+        color:#64748b;
+        font-weight:800;
+        margin-bottom:6px;
+      }
+
+      .metric-v{
+        font-size:18px;
+        font-weight:900;
+        letter-spacing:-.03em;
+        word-break:break-word;
+      }
+
+      .path-list{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+        max-height:600px;
+        overflow:auto;
+        padding-right:4px;
+      }
+
+      .path-empty{
+        padding:16px;
+        border-radius:16px;
+        background:#f8fafc;
+        border:1px dashed #d7e1ef;
+        color:#64748b;
+        font-size:13px;
+        line-height:1.7;
+      }
+
+      .path-item{
+        padding:12px;
+        border-radius:16px;
+        background:#f8fafc;
+        border:1px solid #e7edf4;
+      }
+
+      .path-step{
+        font-size:11px;
+        font-weight:900;
+        text-transform:uppercase;
+        letter-spacing:.12em;
+        color:#2563eb;
+        margin-bottom:6px;
+      }
+
+      .path-question{
+        font-size:13px;
+        font-weight:700;
+        line-height:1.5;
+      }
+
+      .path-answer{
+        font-size:13px;
+        color:#64748b;
+        line-height:1.5;
+        margin-top:6px;
+      }
+
+      .path-item{
+    padding:0;
+    border:none;
+    background:transparent;
+  }
+
+  .path-jump{
+    width:100%;
+    text-align:left;
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .path-jump:hover{
+    transform:translateY(-1px);
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    box-shadow:0 10px 22px rgba(37,99,235,.08);
+  }
+
+  .path-jump.active{
+    background:#f8fafc;
+    border:2px solid #2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+  }
+
+  .path-jump.active .path-step{
+    color:#2563eb;
+  }
+
+  .path-jump.active .path-question{
+    color:#0f172a;
+  }
+
+  .path-jump.active .path-answer{
+    color:#475569;
+  }
+
+      .section-note{
+        font-size:12px;
+        color:#64748b;
+        line-height:1.6;
+        margin-top:-2px;
+      }
+
+      .template-stack{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        margin-top:14px;
+      }
+
+      .template-card{
+        border:1px solid #e5ebf4;
+        border-radius:18px;
+        background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+        overflow:hidden;
+      }
+
+      .template-card-head{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        padding:14px 14px 10px;
+      }
+
+      .template-title-wrap{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        min-width:0;
+      }
+
+      .template-icon{
+        width:36px;
+        height:36px;
+        border-radius:12px;
+        display:grid;
+        place-items:center;
+        background:#f3e8ff;
+        color:#7c3aed;
+        flex:0 0 auto;
+      }
+
+      .template-title{
+        font-size:14px;
+        font-weight:900;
+        color:#0f172a;
+      }
+
+      .template-sub{
+        font-size:12px;
+        color:#64748b;
+        margin-top:2px;
+      }
+
+      .template-actions{
+        display:flex;
+        gap:8px;
+      }
+
+      .template-icon-btn{
+        width:34px;
+        height:34px;
+        border:none;
+        border-radius:10px;
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        color:#475569;
+        cursor:pointer;
+        display:grid;
+        place-items:center;
+        transition:all .16s ease;
+      }
+
+      .template-icon-btn:hover{
+        background:#eef4ff;
+        color:#1d4ed8;
+        border-color:#cfe0ff;
+      }
+
+      .template-body{
+        padding:0 14px 14px;
+      }
+
+      .template-box{
+        min-height:108px;
+        padding:14px;
+        border-radius:14px;
+        background:#f8fbff;
+        border:1px solid #e4ebf5;
+        font-size:13px;
+        line-height:1.7;
+        color:#334155;
+        white-space:pre-wrap;
+      }
+
+      .template-box.empty{
+        color:#94a3b8;
+      }
+
+      .template-foot{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        padding:0 14px 14px;
+      }
+
+      .template-tag{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:7px 10px;
+        border-radius:999px;
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        font-size:11px;
+        font-weight:800;
+        color:#64748b;
+      }
+
+      .template-copy{
+        appearance:none;
+        border:none;
+        cursor:pointer;
+        padding:10px 14px;
+        border-radius:12px;
+        background:#111827;
+        color:#fff;
+        font-size:12px;
+        font-weight:800;
+        transition:all .18s ease;
+      }
+
+      .template-copy.copied,
+      .template-icon-btn.copied{
+        background:#dcfce7 !important;
+        color:#166534 !important;
+        border-color:#bbf7d0 !important;
+      }
+
+      @media (max-width:1450px){
+        .app-frame{
+          grid-template-columns:minmax(0,1fr) 340px 360px;
+        }
+      }
+
+      @media (max-width:1220px){
+        .app-frame{
+          grid-template-columns:1fr;
+        }
+        .side-panel,
+        .template-panel{
+          padding:0 18px 18px;
+        }
+      }
+
+      @media (max-width:760px){
+        .app-shell{
+          width:min(calc(100% - 20px), var(--max));
+        }
+        .app-shell{margin:16px auto}
+        .app-frame{min-height:100vh;border-radius:24px}
+        .main{padding:18px}
+        .main-topbar{flex-direction:column;align-items:flex-start}
+        .question-text{font-size:28px}
+        .choices{grid-template-columns:1fr}
+        .summary-grid{grid-template-columns:1fr}
+        .decision-footer{flex-direction:column;align-items:flex-start}
+      }
+
+      /*images*/
+
+      .question-image{
+      margin-top:16px;
+      border-radius:18px;
+      overflow:hidden;
+      cursor:zoom-in;
+      border:1px solid #e2e8f0;
+      background:#fff;
+      max-height:320px;
+      min-height:180px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       position:relative;
-      z-index:1;
+      box-shadow:0 12px 28px rgba(15,23,42,.08);
     }
 
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:100;
-      backdrop-filter:blur(16px);
-      background:rgba(7,17,31,.72);
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-
-    .topbar-inner{
-      width:min(calc(100% - 32px), var(--max));
-      margin:0 auto;
-      min-height:82px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:20px;
-    }
-
-    .brand-wrap{
-      display:flex;
-      align-items:center;
-      gap:28px;
-      min-width:0;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      text-decoration:none;
-      flex-shrink:0;
-    }
-
-    .brand-meta{
-      display:flex;
-      flex-direction:column;
-      line-height:1.05;
-    }
-
-    .brand-kicker{
-      color:rgba(255,255,255,.64);
+    .question-image::after{
+      content:"Click to enlarge";
+      position:absolute;
+      right:12px;
+      bottom:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(15,23,42,.72);
+      color:#fff;
       font-size:11px;
-      font-weight:700;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      margin-bottom:4px;
+      font-weight:800;
+      letter-spacing:.04em;
+      opacity:0;
+      transform:translateY(6px);
+      transition:.2s ease;
+      pointer-events:none;
     }
 
-    .brand-title{
-      color:#fff;
-      font-size:15px;
-      font-weight:700;
-      white-space:nowrap;
+    .question-image:hover::after{
+      opacity:1;
+      transform:translateY(0);
     }
 
-    .nav-tabs{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
+    .question-image img{
+      width:100%;
+      height:100%;
+      max-height:320px;
+      object-fit:contain;
+      display:block;
+      transition:transform .28s ease;
+      transform-origin:center center;
     }
 
-    .tab{
-      text-decoration:none;
-      color:rgba(255,255,255,.78);
-      padding:10px 14px;
-      border-radius:999px;
-      font-size:14px;
-      font-weight:600;
-      transition:.22s ease;
-      position:relative;
+    .question-image:hover img{
+      transform:scale(1.06);
     }
 
-    .tab:hover{
-      color:#fff;
-      background:rgba(255,255,255,.07);
-    }
-
-    .tab.active{
-      color:#fff;
-      background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
-    }
-
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      flex-shrink:0;
-    }
-
-    .clock-pill,
-    .icon-btn{
-      border:none;
-      cursor:pointer;
-      transition:.22s ease;
-    }
-
-    .clock-pill{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:12px 16px;
-      border-radius:999px;
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-      font-weight:700;
-    }
-
-    .clock-pill:hover{
-      transform:translateY(-1px);
-      background:rgba(255,255,255,.12);
-    }
-
-    .clock-label{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-start;
-      line-height:1.05;
-    }
-
-    .clock-small{
-      font-size:10px;
-      font-weight:700;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.54);
-      margin-bottom:3px;
-    }
-
-    .icon-btn{
-      width:48px;
-      height:48px;
-      border-radius:16px;
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-      font-size:18px;
-    }
-
-    .icon-btn:hover{
-      transform:translateY(-2px);
-      background:linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
-    }
-
-    #timeCalendarPopup{
+    .image-modal{
       display:none;
       position:fixed;
-      top:92px;
-      right:24px;
-      width:min(360px, calc(100vw - 32px));
-      background:rgba(255,255,255,.94);
-      border-radius:28px;
-      box-shadow:var(--shadow-xl);
-      border:1px solid rgba(148,163,184,.16);
-      padding:20px;
-      z-index:999;
-      backdrop-filter:blur(16px);
-    }
-
-    .popup-time{
-      font-size:34px;
-      font-weight:800;
-      letter-spacing:-.05em;
-      color:#0f172a;
-      margin-bottom:4px;
-    }
-
-    .popup-date{
-      font-size:14px;
-      color:#64748b;
-      margin-bottom:16px;
-    }
-
-    .calendar-header{
-      display:flex;
+      inset:0;
+      z-index:99999;
+      background:rgba(2,6,23,.88);
       align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:10px;
-      padding:10px 12px;
-      border-radius:16px;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+      justify-content:center;
+      padding:24px;
+      backdrop-filter:blur(8px);
+      cursor:zoom-out;
     }
 
-    .calendar-header span{
+    .image-modal.open{
+      display:flex;
+    }
+
+    .image-modal img{
+      max-width:94vw;
+      max-height:90vh;
+      width:auto;
+      height:auto;
+      object-fit:contain;
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 30px 80px rgba(0,0,0,.45);
+      cursor:default;
+    }
+
+    .image-modal-close{
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:46px;
+      height:46px;
+      border:none;
+      border-radius:14px;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:22px;
       cursor:pointer;
-      color:#4d148c;
-      font-weight:800;
-      font-size:18px;
-      user-select:none;
-      width:28px;
-      text-align:center;
-    }
-
-    .calendar-title{
-      color:#0f172a;
-      font-size:15px;
-      font-weight:800;
-    }
-
-    .calendar-grid{
-      display:grid;
-      grid-template-columns:repeat(7,1fr);
-      gap:8px;
-    }
-
-    .calendar-grid .day-name{
-      text-align:center;
-      font-size:12px;
-      font-weight:800;
-      color:#64748b;
-      padding:6px 0;
-    }
-
-    .calendar-grid .day{
       display:grid;
       place-items:center;
-      aspect-ratio:1;
-      border-radius:16px;
-      background:#fff;
-      font-size:14px;
-      font-weight:700;
-      color:#334155;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.14);
+      transition:.2s ease;
     }
 
-    .calendar-grid .day:hover{ background:#f8fafc; }
-
-    .calendar-grid .today{
-      background:linear-gradient(135deg, #4d148c, #6d28d9);
-      color:#fff;
-      box-shadow:none;
+    .image-modal-close:hover{
+      background:rgba(255,255,255,.2);
     }
 
-    .app-shell{
-      width:min(calc(100% - 32px), var(--max));
-      margin:22px auto 24px;
+    @media (max-width:760px){
+      .question-image{
+        max-height:260px;
+        min-height:140px;
+      }
+
+      .question-image img{
+        max-height:260px;
+      }
+
+      .image-modal{
+        padding:14px;
+      }
+
+      .image-modal img{
+        max-width:96vw;
+        max-height:86vh;
+        border-radius:14px;
+      }
+
+      .image-modal-close{
+        top:10px;
+        right:10px;
+        width:42px;
+        height:42px;
+      }
     }
 
-    .app-frame{
-      min-height:calc(100vh - 180px);
-      background:rgba(255,255,255,.58);
-      backdrop-filter:blur(16px);
-      border:1px solid rgba(255,255,255,.68);
-      border-radius:34px;
-      box-shadow:var(--shadow-xl);
-      overflow:hidden;
-      display:grid;
-      grid-template-columns:minmax(0,1.45fr) 420px 480px;
-    }
-
-    .main{
-      padding:18px;
+        /*title/subtitle*/  
+    .page-title-block{
       display:flex;
       flex-direction:column;
-      gap:16px;
-      min-width:0;
+      gap:6px;
+    }
+
+    .page-title-block h1{
+      margin:0;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#0f172a;
+    }
+
+    .page-subtitle{
+      margin:0;
+      font-size:13px;
+      color:#64748b;
+      line-height:1.6;
+      max-width:620px;
     }
 
     .main-topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      padding:16px 18px;
-      border-radius:24px;
-      background:rgba(255,255,255,.85);
-      border:1px solid rgba(219,228,240,.9);
-      box-shadow:var(--shadow-md);
+      align-items:flex-start; /* 🔥 important */
     }
 
-    .main-topbar h1{
-      margin:0;
-      font-size:24px;
-      letter-spacing:-.03em;
-    }
-
-    .main-status{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:11px 14px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid #dbe4f0;
-      font-size:12px;
-      font-weight:800;
-      color:#0f172a;
-    }
-
-    .pill.primary{
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
-      color:#fff;
-      border:none;
-    }
-
-    .workspace{
-      display:grid;
-      grid-template-rows:auto 1fr;
-      gap:16px;
-      min-height:0;
-    }
-
-    .progress-card{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:22px;
-      padding:16px 18px;
-      box-shadow:var(--shadow-md);
-    }
-
-    .progress-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-    }
-
-    .progress-title{
-      font-size:14px;
-      font-weight:800;
-      color:#0f172a;
-    }
-
-    .progress-status{
-      font-size:12px;
-      font-weight:800;
-      color:#64748b;
-    }
-
-    .progress-bar{
-      height:12px;
-      background:#eaf0f7;
-      border-radius:999px;
-      overflow:hidden;
-    }
-
-    .progress-fill{
-      height:100%;
-      width:0%;
-      border-radius:inherit;
-      background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
-      transition:width .28s ease;
-    }
-
-    .stage-area{
-      min-height:0;
-      display:grid;
-      grid-template-columns:1fr;
-    }
-
-    .stage-card{
-      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
-      border:1px solid #dbe4f0;
-      border-radius:30px;
-      box-shadow:var(--shadow-card);
-      min-height:640px;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-
-    .stage-top{
-      padding:22px 22px 0;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 13px;
-      border-radius:999px;
-      background:#eef4ff;
-      color:#1d4ed8;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .badge.alt{
-      background:#f8fafc;
-      color:#334155;
-    }
-
-    .question-wrap{
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      flex:1;
-    }
-
-    .question-card{
+    /*premium note*/
+    .note-card{
+      margin-top:18px;
+      padding:18px 18px 18px 20px;
+      border-radius:20px;
+      background:linear-gradient(180deg, #fff8eb 0%, #ffffff 100%);
+      border:1px solid rgba(245,158,11,.18);
+      box-shadow:
+        0 14px 30px rgba(15,23,42,.06),
+        inset 0 1px 0 rgba(255,255,255,.75);
       position:relative;
-      padding:30px;
-      border-radius:28px;
-      background:
-        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
-        linear-gradient(180deg,#ffffff,#f8fbff);
-      border:1px solid #e6edf7;
-      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
     }
 
-    .question-card::after{
+    .note-card::before{
       content:"";
       position:absolute;
-      inset:0;
-      border-radius:inherit;
-      pointer-events:none;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+      top:0;
+      left:0;
+      bottom:0;
+      width:5px;
+      background:linear-gradient(180deg, #f59e0b 0%, #ff6600 100%);
     }
 
-    .question-label{
+    .note-head{
       display:inline-flex;
       align-items:center;
       gap:8px;
+      margin-bottom:12px;
       padding:8px 12px;
       border-radius:999px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#334155;
-    }
-
-    .question-text{
-      margin:18px 0 0;
-      font-size:36px;
-      line-height:1.08;
-      letter-spacing:-.045em;
-      font-weight:900;
-    }
-
-    .question-help{
-      margin:14px 0 0;
-      color:#64748b;
-      font-size:14px;
-      line-height:1.75;
-      max-width:760px;
-      white-space:pre-wrap;
-    }
-
-    .choices{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:14px;
-    }
-
-    .choice{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      text-align:left;
-      border-radius:24px;
-      padding:18px;
-      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
-      border:1px solid #e2e8f0;
-      box-shadow:0 12px 28px rgba(15,23,42,.05);
-      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
-      display:flex;
-      gap:14px;
-      align-items:flex-start;
-      min-height:112px;
-    }
-
-    .choice:hover{
-      transform:translateY(-3px);
-      box-shadow:0 18px 36px rgba(15,23,42,.08);
-      border-color:#c7d5e6;
-    }
-
-    .choice.selected{
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
-      color:#fff;
-      border-color:transparent;
-    }
-
-    .choice-icon{
-      width:48px;
-      height:48px;
-      border-radius:16px;
-      display:grid;
-      place-items:center;
-      background:#eef4ff;
-      color:#2563eb;
-      flex:0 0 auto;
-      font-size:17px;
-    }
-
-    .choice.selected .choice-icon{
-      background:rgba(255,255,255,.14);
-      color:#fff;
-    }
-
-    .choice-body{min-width:0}
-
-    .choice-title{
-      font-size:16px;
-      font-weight:800;
-      line-height:1.35;
-    }
-
-    .choice-desc{
-      font-size:12px;
-      line-height:1.6;
-      color:#64748b;
-      margin-top:6px;
-    }
-
-    .choice.selected .choice-desc{
-      color:rgba(255,255,255,.8);
-    }
-
-    .decision-footer{
-      margin-top:auto;
-      padding:18px 22px 22px;
-      border-top:1px solid #e8eef7;
-      background:linear-gradient(180deg,rgba(248,250,252,.2),#f8fbff);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      flex-wrap:wrap;
-    }
-
-    .decision-footer-left{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-
-    .footer-label{
+      background:#fff7ed;
+      border:1px solid rgba(245,158,11,.18);
+      color:#b45309;
       font-size:11px;
       font-weight:900;
       letter-spacing:.12em;
       text-transform:uppercase;
-      color:#64748b;
     }
 
-    .footer-value{
-      font-size:14px;
-      font-weight:800;
-      color:#0f172a;
-    }
-
-    .decision-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .app-btn{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      padding:12px 16px;
-      border-radius:14px;
-      font-size:14px;
-      font-weight:800;
-      transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
-    }
-
-    .app-btn:hover{
-      transform:translateY(-1px);
-    }
-
-    .app-btn.primary{
-      background:#111827;
-      color:#fff;
-      box-shadow:0 8px 20px rgba(17,24,39,.14);
-    }
-
-    .app-btn.secondary{
-      background:#fff;
-      color:#111827;
-      border:1px solid #dbe4f0;
-    }
-
-    .app-btn.ghost{
-      background:#f8fafc;
-      color:#0f172a;
-      border:1px solid #e2e8f0;
-    }
-
-    .final-card{
-      margin:20px;
-      padding:20px 20px 18px;
-      border-radius:24px;
-      background:linear-gradient(180deg,#f0fdf4,#ffffff);
-      border:1px solid #dcfce7;
-      box-shadow:0 16px 34px rgba(22,163,74,.08);
-    }
-
-    .final-badge{
+    .smart-link{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:9px 12px;
-      border-radius:999px;
-      background:#dcfce7;
-      color:#166534;
-      font-size:12px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-    }
-
-    .final-title{
-      margin:14px 0 0;
-      font-size:14px;
-      font-weight:800;
-      color:#166534;
-    }
-
-    .final-text{
-      margin:12px 0 0;
-      font-size:16px;
-      line-height:1.5;
-      letter-spacing:-.02em;
-      font-weight:800;
-      color:#111827;
-      white-space:pre-wrap;
-      max-width:980px;
-    }
-
-    .final-note{
-      margin-top:12px;
-      color:#475569;
-      line-height:1.7;
-      white-space:pre-wrap;
-    }
-
-    .final-actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:22px;
-    }
-
-    .side-panel{
-      padding:18px 14px 18px 0;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      min-width:0;
-    }
-
-    .template-panel{
-      padding:18px 18px 18px 0;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      min-width:0;
-    }
-
-    .side-panel .summary-card,
-    .template-panel .summary-card{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:22px;
-      padding:18px;
-      box-shadow:var(--shadow-md);
-    }
-
-    .summary-head{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:12px;
-      font-size:14px;
-      font-weight:900;
-    }
-
-    .summary-head i{color:#7c3aed}
-
-    .recommendation{
-      min-height:120px;
-      border-radius:18px;
-      padding:16px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      line-height:1.75;
-      color:#0f172a;
-      white-space:pre-wrap;
-    }
-
-    .recommendation.empty,
-    .path-empty,
-    .template-box.empty{
-      color:#94a3b8;
-    }
-
-    .path-box{
-      min-height:160px;
-      border-radius:18px;
-      padding:16px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-    }
-
-    .path-item{
-      padding:12px 14px;
-      border-radius:16px;
-      background:#fff;
-      border:1px solid #e2e8f0;
-      margin-bottom:10px;
-    }
-    
-    .path-item{
-  cursor:pointer;
-  transition:.18s ease;
-}
-
-.path-item:hover{
-  transform:translateY(-2px);
-  background:#ffffff;
-  box-shadow:0 10px 24px rgba(15,23,42,.08);
-}
-
-    .path-item:last-child{margin-bottom:0}
-
-    .step-badge{
-  display:inline-flex;
-  align-items:center;
-  padding:6px 12px;
-  border-radius:999px;
-  background:#eef4ff;
-  color:#2563eb;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  margin-bottom:8px;
-  margin-left:2px; /* slight left align to match question */
-  animation:stepBadgePop .35s ease;
-}
-
-.path-q{
-  font-size:12px;
-  color:#64748b;
-  margin-bottom:6px;
-  font-weight:700;
-}
-
-.path-a{
-  font-size:14px;
-  font-weight:800;
-  color:#111827;
-  padding-left:2px;
-}
-
-.path-item-enter{
-  opacity:0;
-  transform:translateY(10px);
-  animation:pathItemFadeUp .35s ease forwards;
-}
-
-@keyframes pathItemFadeUp{
-  from{
-    opacity:0;
-    transform:translateY(10px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-@keyframes stepBadgePop{
-  from{
-    opacity:0;
-    transform:translateY(4px) scale(.96);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
-}
-
-    .summary-grid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-    }
-
-    .metric{
-      border-radius:18px;
-      padding:14px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-    }
-
-    .metric-label{
-      display:block;
-      font-size:11px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#64748b;
-      font-weight:800;
-      margin-bottom:8px;
-    }
-
-    .metric-value{
-      display:block;
-      font-size:24px;
-      font-weight:900;
-      color:#111827;
-      line-height:1.1;
-      word-break:break-word;
-    }
-
-    .template-stack{
-      display:grid;
-      gap:14px;
-    }
-
-    .template-card{
-      border:1px solid #dbe4f0;
-      border-radius:20px;
-      overflow:hidden;
-      background:#fff;
-      box-shadow:var(--shadow-card);
-    }
-
-    .template-card-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:16px 16px 14px;
-      border-bottom:1px solid #edf2f7;
-    }
-
-    .template-title-wrap{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:0;
-    }
-
-    .template-icon{
-      width:44px;
-      height:44px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10));
-      color:#4d148c;
-      flex:0 0 auto;
-      font-size:17px;
-    }
-
-    .template-title{
-      font-size:15px;
-      font-weight:900;
-      color:#111827;
-      line-height:1.25;
-    }
-
-    .template-sub{
-      margin-top:4px;
-      font-size:12px;
-      color:#64748b;
-      line-height:1.5;
-    }
-
-    .template-actions{
-      display:flex;
-      gap:8px;
-    }
-
-    .template-icon-btn{
-      width:38px;
-      height:38px;
-      border:none;
-      border-radius:12px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      cursor:pointer;
-      color:#0f172a;
-      transition:.18s ease;
-    }
-
-    .template-icon-btn:hover{
-      transform:translateY(-1px);
-      background:#fff;
-    }
-
-    .template-body{
-      padding:16px;
-    }
-
-    .template-box{
-      min-height:120px;
-      border-radius:16px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      padding:14px;
-      color:#111827;
-      line-height:1.7;
-      white-space:pre-wrap;
-      font-size:13px;
-    }
-
-    .template-foot{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:0 16px 16px;
-      flex-wrap:wrap;
-    }
-
-    .template-tag{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      font-size:12px;
-      font-weight:800;
-      color:#64748b;
-    }
-
-    .template-copy{
-      border:none;
-      cursor:pointer;
-      border-radius:12px;
       padding:10px 14px;
-      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-      color:#fff;
+      margin-top:8px;
+      border-radius:12px;
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      color:#fff !important;
+      text-decoration:none;
+      font-size:12px;
       font-weight:800;
-      transition:.22s ease;
+      box-shadow:0 10px 18px rgba(77,20,140,.18);
+      transition:.2s ease;
     }
 
-    .template-copy:hover{
-      transform:translateY(-1px);
+    .smart-link:hover{
+      transform:translateY(-2px) scale(1.02);
+      box-shadow:0 14px 24px rgba(77,20,140,.25);
     }
 
-    .template-copy.copied{
-      background:linear-gradient(135deg,#16a34a,#15803d);
-    }
-
-    .note-card{
-      border-radius:18px;
-      background:linear-gradient(135deg,#f8fafc,#ffffff);
-      border:1px solid #e2e8f0;
-      padding:14px 16px;
-      color:#64748b;
-      line-height:1.7;
-      font-size:13px;
-    }
-
+    /*for edit/save comments,email and corr code modal*/
     .modal{
       display:none;
       position:fixed;
       inset:0;
-      background:rgba(2,6,23,.54);
-      align-items:center;
+      background:rgba(15,23,42,.45);
       justify-content:center;
-      padding:18px;
-      z-index:1001;
-      backdrop-filter:blur(10px);
+      align-items:center;
+      padding:20px;
+      z-index:10000;
     }
 
     .modal-content{
-      width:min(100%, 640px);
       background:#fff;
-      border-radius:26px;
-      border:1px solid rgba(219,228,240,.9);
-      box-shadow:var(--shadow-xl);
-      padding:22px;
+      width:100%;
+      max-width:560px;
+      border-radius:22px;
+      padding:24px;
+      box-shadow:0 24px 60px rgba(15,23,42,.22);
+      border:1px solid #e2e8f0;
+      max-height:85vh;
+      overflow:auto;
     }
 
     .modal-header{
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       gap:12px;
       font-size:20px;
       font-weight:900;
-      color:#111827;
-      margin-bottom:16px;
+      margin-bottom:14px;
+      color:#0f172a;
     }
 
     .modal-close{
+      font-size:22px;
       cursor:pointer;
-      font-size:24px;
-      color:#94a3b8;
+      color:#64748b;
       line-height:1;
     }
 
-    .modal-close:hover{ color:#111827; }
+    .modal-close:hover{
+      color:#4d148c;
+    }
 
-    input, textarea{
+    #passwordModal input,
+    #editModal textarea{
       width:100%;
-      border:none;
-      outline:none;
-      margin-top:12px;
-      border-radius:16px;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-      padding:14px 16px;
-      color:#0f172a;
+      border:1px solid #dbe4f0;
+      border-radius:14px;
+      padding:12px 14px;
       font-size:14px;
-      transition:.18s ease;
-      font-family:inherit;
-    }
-
-    input:focus, textarea:focus{
+      outline:none;
       background:#fff;
-      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
     }
 
-    textarea{
-      min-height:120px;
+    #passwordModal input:focus,
+    #editModal textarea:focus{
+      border-color:#c4b5fd;
+      box-shadow:0 0 0 4px rgba(109,40,217,.10);
+    }
+
+    #editModal textarea{
+      min-height:220px;
       resize:vertical;
     }
 
-    .rating-container{
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      margin-top:12px;
+
+    .aj-card{
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+      padding:14px;
+      margin-bottom:14px;
     }
 
-    .rating-star{
-      cursor:pointer;
-      font-size:28px;
-      color:#cbd5e1;
-      transition:color .2s, transform .2s;
-    }
-
-    .rating-star:hover{ transform:scale(1.12); }
-    .rating-star.selected{ color:#ff6600; }
-
-    .comment-modal-footer{
-      display:flex;
-      flex-direction:column;
-      align-items:stretch;
-      justify-content:flex-start;
-      gap:14px;
-      margin-top:16px;
-    }
-
-    #feedbackMessage{
-      display:none;
-      margin-top:12px;
-      font-size:14px;
-      font-weight:700;
-    }
-
-    .link-text{
+    .aj-card h3{
+      margin-bottom:8px;
       color:#4d148c;
-      cursor:pointer;
-      text-decoration:none;
-      font-size:14px;
+    }
+
+    .advise-box{
+      background:#eef6ff;
+      border-left:4px solid #4d148c;
+      padding:10px;
+      margin:6px 0 10px;
+      border-radius:6px;
+      font-size:13px;
+    }
+
+    .aj-header{
       font-weight:700;
+      cursor:pointer;
+      padding:10px;
+      background:#f1f5f9;
+      border-radius:8px;
+      transition:.2s;
     }
 
-    .link-text:hover{ text-decoration:underline; }
-
-    .comment-list-item{
-      padding:14px 0;
-      border-bottom:1px solid rgba(148,163,184,.18);
+    .aj-header:hover{
+      background:#e2e8f0;
     }
 
-    .comment-list-item:last-child{ border-bottom:none; }
-
-    #commentsList .stars{
-      color:#ff6600;
-      font-size:18px;
-      margin-bottom:6px;
-      display:block;
-    }
-
-    footer{
-      background:#0b1525;
-      border-top:1px solid rgba(255,255,255,.08);
-      color:#fff;
+    .aj-content{
+      display:none;
       margin-top:10px;
+      animation:fadeIn .3s ease-in;
     }
 
-    .footer-inner{
-      width:min(calc(100% - 32px), var(--max));
-      margin:0 auto;
-      padding:18px 0;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap;
+    .aj-search-container{
+      position:sticky;
+      top:0;
+      background:#fff;
+      padding:10px;
+      z-index:5;
+      border-bottom:1px solid #ddd;
     }
 
-    .footer-left strong{
-      display:block;
+    #ajSearch{
+      width:100%;
+      padding:8px 12px;
+      font-size:13px;
+      border-radius:6px;
+      border:1px solid #ccc;
+    }
+
+    .link-btn{
+      color:#0073e6;
+      font-weight:600;
+      cursor:pointer;
+      text-decoration:underline;
+    }
+
+    .link-btn:hover{
+      color:#005bb5;
+    }
+
+    .stage-card p,
+    .node-text {
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+
+    /* 🔧 Fix NOTE spacing (final clean version) */
+
+    .note-body{
+      color:#475569;
       font-size:14px;
-      margin-bottom:4px;
-    }
-
-    .footer-left span,
-    .footer-right{
-      color:rgba(255,255,255,.68);
-      font-size:12px;
       line-height:1.6;
     }
 
-    @media (max-width:1450px){
-      .app-frame{
-        grid-template-columns:minmax(0,1fr) 340px 360px;
-      }
+    /* Remove excessive spacing from elements inside notes */
+    .note-body p{
+      margin:6px 0;
     }
 
-    @media (max-width:1220px){
-      .app-frame{
-        grid-template-columns:1fr;
-      }
-      .side-panel,
-      .template-panel{
-        padding:0 18px 18px;
-      }
+    .note-body ul{
+      margin:8px 0;
+      padding-left:18px;
     }
 
-    @media (max-width:1100px){
-      .topbar-inner{
-        min-height:auto;
-        padding:14px 0;
-        align-items:flex-start;
-      }
-      .brand-wrap{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:14px;
-      }
+    .note-body li{
+      margin:0;
     }
 
-    @media (max-width:760px){
-      .topbar-inner,
-      .footer-inner,
-      .app-shell{
-        width:min(calc(100% - 20px), var(--max));
-      }
-      .app-shell{margin:16px auto}
-      .app-frame{min-height:100vh;border-radius:24px}
-      .main{padding:18px}
-      .topbar{position:static}
-      .main-topbar{flex-direction:column;align-items:flex-start}
-      .question-text{font-size:28px}
-      .choices{grid-template-columns:1fr}
-      .summary-grid{grid-template-columns:1fr}
-      .decision-footer{flex-direction:column;align-items:flex-start}
-      .actions{width:100%;justify-content:flex-start;flex-wrap:wrap}
-      .clock-pill{flex:1 1 220px}
-      .icon-btn{width:46px;height:46px;border-radius:14px}
-      #timeCalendarPopup{right:10px;top:86px}
-      .modal{padding:14px}
-      .modal-content{padding:20px;border-radius:22px}
+    /* Fix nested div spacing inside notes */
+    .note-body div{
+      margin:6px 0;
     }
-  </style>
-</head>
-<body>
-  <div class="page">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand-wrap">
-          <a href="index.html" class="brand">
-            <div class="brand-meta">
-              <span class="brand-kicker">Internal Platform</span>
-              <span class="brand-title">Decision Support System</span>
-            </div>
-          </a>
 
-          <nav class="nav-tabs">
-            <a href="index.html" class="tab">Home</a>
-            <a href="case-directory.html" class="tab">Case Directory</a>
-            <a href="ebs-response-template.html" class="tab">EBS Response</a>
-            <a href="volume-application.html" class="tab">Volume Application</a>
-          </nav>
-        </div>
+    /* Tighten strong/inline text spacing */
+    .note-body strong{
+      font-weight:600;
+    }
 
-        <div class="actions">
-          <button id="clockBtn" class="clock-pill" type="button">
-            <i class="fa-regular fa-clock"></i>
-            <div class="clock-label">
-              <span class="clock-small">Manila time</span>
-              <span id="clockText">--:-- --</span>
-            </div>
-          </button>
+    /* Optional: clean link look */
+    .note-body a{
+      color:#4D148C;
+      text-decoration:none;
+      font-weight:600;
+    }  
 
-          <button class="icon-btn" id="commentIcon" type="button" title="Feedback">
-            <i class="fa-solid fa-comment-dots"></i>
-          </button>
+    .final-note-html{
+      margin-top:12px;
+      color:#475569;
+      line-height:1.7;
+    }
 
-          <button class="icon-btn" id="helpIcon" type="button" title="Get Help">
-            <i class="fa-solid fa-circle-question"></i>
-          </button>
-        </div>
-      </div>
-    </header>
+    .final-note-html a{
+      color:#4D148C;
+      text-decoration:none;
+      font-weight:600;
+    }   
 
-    <div id="timeCalendarPopup">
-      <div class="popup-time" id="popupTime">--:--:-- --</div>
-      <div class="popup-date" id="popupDate">Loading date…</div>
+    </style>
+    </head>
+    <body data-page="">
+      <div class="page">
+    <div id="site-header"></div>
 
-      <div class="calendar-header">
-        <span id="prevMonth">‹</span>
-        <div class="calendar-title" id="monthYear"></div>
-        <span id="nextMonth">›</span>
-      </div>
-
-      <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="app-shell">
+          <div class="app-frame">
+            <main class="main">
+              <div class="main-topbar">
+                <div>
+    <div class="page-title-block">
+      <h1>Billing Dispute General Guide</h1>
+      <p class="page-subtitle">
+        Follow a structured decision flow for Billing Dispute. That includes change of terms and add/update BT account.
+      </p>
     </div>
-
-    <div class="app-shell">
-      <div class="app-frame">
-        <main class="main">
-          <div class="main-topbar">
-            <div>
-              <h1>Billing Dispute General Guide</h1>
-            </div>
-            <div class="main-status">
-              <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
-            </div>
-          </div>
-
-          <div class="workspace">
-            <section class="progress-card">
-              <div class="progress-head">
-                <div class="progress-title">Progress</div>
-                <div class="progress-status" id="progressText">Not started</div>
+                </div>
+                <div class="main-status">
+                  <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
+                </div>
               </div>
-              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-            </section>
 
-            <section class="stage-area">
-              <div class="stage-card" id="stageCard"></div>
-            </section>
-          </div>
-        </main>
+              <div class="workspace">
+                <section class="progress-card">
+                  <div class="progress-head">
+                    <div class="progress-title">Progress</div>
+                    <div class="progress-status" id="progressText">Not started</div>
+                  </div>
+                  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                </section>
 
-        <aside class="side-panel">
-          <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
-            <div id="pathBox" class="path-box path-empty">No steps selected yet. The full path will appear here as the user moves through the guide.</div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Recommended Action</div>
-            <div class="recommendation empty" id="recommendationBox">No recommendation yet. Follow the flow to reach the final instruction.</div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
-            <div class="summary-grid">
-              <div class="metric">
-                <span class="metric-label">Steps</span>
-                <span class="metric-value" id="metricSteps">0</span>
+                <section class="stage-area">
+                  <div class="stage-card" id="stageCard"></div>
+                </section>
               </div>
-              <div class="metric">
-                <span class="metric-label">Last Answer</span>
-                <span class="metric-value" id="metricAnswer">—</span>
+            </main>
+
+            <aside class="side-panel">
+              <div class="summary-card">
+                <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
+                <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as the user moves through the app.</div>
               </div>
-            </div>
-          </div>
-        </aside>
 
-        <aside class="template-panel">
-          <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-file-lines"></i> Suggested Templates</div>
+              <div class="summary-card">
+                <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Recommended Action</div>
+                <div class="recommendation empty" id="recommendationBox">No recommendation yet. Follow the flow to reach the final instruction.</div>
+              </div>
 
-            <div class="template-stack">
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-comment-dots"></i></div>
-                    <div>
-                      <div class="template-title">Suggested Comment</div>
-                      <div class="template-sub">Internal case note</div>
+              <div class="summary-card">
+                <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+                <div class="summary-grid">
+                  <div class="metric">
+                    <span class="metric-k">Steps</span>
+                    <span class="metric-v" id="metricSteps">0</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-k">Last Answer</span>
+                    <span class="metric-v" id="metricAnswer">—</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <aside class="template-panel">
+              <div class="summary-card">
+                <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
+                <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
+
+                <div class="template-stack">
+                  <div class="template-card">
+                    <div class="template-card-head">
+                      <div class="template-title-wrap">
+                        <div class="template-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                        <div>
+                          <div class="template-title">Suggested Comment</div>
+                          <div class="template-sub">Internal case note</div>
+                        </div>
+                      </div>
+
+                      <div class="template-actions">
+                        <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
+                          <i class="fa-solid fa-pen"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="template-body">
+                      <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
+                    </div>
+
+                    <div class="template-foot">
+                      <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
+                      <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
                     </div>
                   </div>
 
-                  <div class="template-actions">
-                    <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
-                      <i class="fa-solid fa-pen"></i>
-                    </button>
-                  </div>
-                </div>
+                  <div class="template-card">
+                    <div class="template-card-head">
+                      <div class="template-title-wrap">
+                        <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                        <div>
+                          <div class="template-title">Suggested Corr Code Note</div>
+                          <div class="template-sub">Correction code guidance</div>
+                        </div>
+                      </div>
 
-                <div class="template-body">
-                  <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
-                </div>
+                      <div class="template-actions">
+                        <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
+                          <i class="fa-solid fa-pen"></i>
+                        </button>
+                      </div>
+                    </div>
 
-                <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
-                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
-                </div>
-              </div>
+                    <div class="template-body">
+                      <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
+                    </div>
 
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
-                    <div>
-                      <div class="template-title">Suggested Corr Code</div>
-                      <div class="template-sub">Correction code guidance</div>
+                    <div class="template-foot">
+                      <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr code</span>
+                      <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
                     </div>
                   </div>
 
-                  <div class="template-actions">
-                    <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
-                      <i class="fa-solid fa-pen"></i>
-                    </button>
-                  </div>
-                </div>
+                  <div class="template-card">
+                    <div class="template-card-head">
+                      <div class="template-title-wrap">
+                        <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div>
+                          <div class="template-title">Suggested Email</div>
+                          <div class="template-sub">Customer communication</div>
+                        </div>
+                      </div>
 
-                <div class="template-body">
-                  <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
-                </div>
+                      <div class="template-actions">
+                        <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
+                          <i class="fa-solid fa-pen"></i>
+                        </button>
+                      </div>
+                    </div>
 
-                <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr code</span>
-                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
-                </div>
-              </div>
+                    <div class="template-body">
+                      <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
+                    </div>
 
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
-                    <div>
-                      <div class="template-title">Suggested Email</div>
-                      <div class="template-sub">Customer response draft</div>
+                    <div class="template-foot">
+                      <span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email</span>
+                      <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
                     </div>
                   </div>
-
-                  <div class="template-actions">
-                    <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
-                      <i class="fa-solid fa-pen"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email</span>
-                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
                 </div>
               </div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="passwordModal" class="modal">
+          <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+              Enter Password
+              <span class="modal-close" onclick="closePasswordModal()">×</span>
             </div>
-
-            <div class="note-card" style="margin-top:14px;">
-              Note: These are suggested templates. Personalized emails or comments are always more appreciated.
+            <input id="adminPassword" type="password" placeholder="Enter admin password">
+            <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+              <button class="app-btn primary" onclick="checkPassword()">Continue</button>
+              <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
             </div>
           </div>
-        </aside>
-      </div>
-    </div>
+        </div>
 
-    <div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help
-      <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-
-    <p style="margin-top:0; color:#475569; line-height:1.75;">
-      Welcome. This page helps you quickly find the correct guide for the case you are handling. Use the sections below to know where to start and what to do next.
-    </p>
-
-    <div style="display:grid; gap:14px; margin:18px 0 20px;">
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">1. Search for the issue or request</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Use the search bar on the main page to type keywords such as dispute type, surcharge, account update, correction code, service level, or document request.</span>
+        <div id="editModal" class="modal">
+          <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+              <span id="modalTitle">Edit</span>
+              <span class="modal-close" onclick="closeEditModal()">×</span>
+            </div>
+            <textarea id="editTextarea"></textarea>
+            <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+              <button class="app-btn primary" onclick="saveEdit()">Save</button>
+              <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
+            </div>
           </div>
         </div>
+
+    <div id="site-footer"></div>
+
+
       </div>
-
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-folder-open"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">2. Open the guide that matches your case</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Review the card title and short description, then open the guide that best matches the customer's concern or required action.</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-route"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">3. Follow the guide step by step</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Answer each part carefully and follow the process flow until you reach the correct action, decision, or next handling step.</span>
-          </div>
-        </div>
-      </div>
-
-      <div style="padding:16px; border-radius:18px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);">
-        <div style="display:flex; align-items:flex-start; gap:12px;">
-          <div style="width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(77,20,140,.10), rgba(255,102,0,.10)); color:#4d148c; flex-shrink:0;">
-            <i class="fa-solid fa-circle-check"></i>
-          </div>
-          <div>
-            <strong style="display:block; color:#0f172a; margin-bottom:6px; font-size:15px;">4. Use the result to complete the case correctly</strong>
-            <span style="color:#475569; font-size:14px; line-height:1.7;">Apply the correct disposition, update, correction, validation, or communication based on the guide result.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="padding:18px; border-radius:20px; background:linear-gradient(135deg, #f5f3ff, #fff7ed); border:1px solid rgba(148,163,184,.14); margin-bottom:18px;">
-      <strong style="display:block; color:#0f172a; margin-bottom:10px; font-size:15px;">Quick tips</strong>
-      <ul style="margin:0; padding-left:18px; color:#475569; line-height:1.8; font-size:14px;">
-        <li>Use specific keywords when searching so you can find the right guide faster.</li>
-        <li>If more than one guide looks similar, open the one with the description that best matches the request.</li>
-        <li>Use the feedback button if you notice a missing step, unclear logic, or something that needs improvement.</li>
-        <li>Use the clock in the header if you need to check Manila time while working.</li>
-      </ul>
-    </div>
-
-    <div style="padding:16px 18px; border-radius:18px; background:#0f172a; color:#fff;">
-      <strong style="display:block; margin-bottom:6px; font-size:15px;">Need more support?</strong>
-      <span style="display:block; color:rgba(255,255,255,.76); line-height:1.7; font-size:14px;">If the case still does not match any guide or you are unsure which path to take, contact your team lead or EBS Operations support for clarification.</span>
-    </div>
-  </div>
-</div>
-
-<style>
-/*style for the feedback modal and disregard old styles*/
-.feedback-modal{
-  width:min(100%, 560px);
-  background:#ffffff;
-  border-radius:24px;
-  padding:26px 24px 22px;
-  box-shadow:0 30px 70px rgba(15,23,42,.24);
-  border:1px solid rgba(226,232,240,.9);
-  position:relative;
-}
-
-.feedback-title{
-  font-size:18px;
-  font-weight:800;
-  color:#0f172a;
-  margin-bottom:22px;
-}
-
-.feedback-close{
-  position:absolute;
-  top:20px;
-  right:20px;
-  width:38px;
-  height:38px;
-  border:none;
-  border-radius:14px;
-  background:#f1f5f9;
-  color:#64748b;
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  font-size:18px;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-}
-
-.feedback-close:hover{
-  background:#e2e8f0;
-  color:#334155;
-}
-
-.feedback-stars{
-  justify-content:center;
-  gap:14px;
-  margin:8px 0 22px;
-}
-
-.feedback-stars .rating-star{
-  font-size:30px; /* 👈 bigger */
-  color:#cbd5e1;  /* 👈 default gray (IMPORTANT) */
-  transition:transform .18s ease, color .18s ease;
-  cursor:pointer;
-}
-
-.rating-star.selected{
-  color:#f97316;
-}
-
-.feedback-stars .rating-star:hover{
-  transform:scale(1.12);
-}
-
-.feedback-modal input,
-.feedback-modal textarea{
-  width:100%;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(203,213,225,.9);
-  padding:14px 16px;
-  color:#0f172a;
-  font-size:14px;
-  font-family:inherit;
-}
-
-.feedback-modal input{
-  margin-top:0;
-  margin-bottom:12px;
-  height:46px;
-}
-
-.feedback-modal textarea{
-  margin-top:0;
-  min-height:128px;
-  resize:vertical;
-  margin-bottom:18px;
-}
-
-.feedback-modal input::placeholder,
-.feedback-modal textarea::placeholder{
-  color:#94a3b8;
-}
-
-.feedback-modal input:focus,
-.feedback-modal textarea:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(99,102,241,.14);
-}
-
-.feedback-send-btn{
-  width:100%;
-  min-height:48px;
-  border:none;
-  border-radius:16px;
-  background:linear-gradient(90deg, #5b21b6 0%, #6d28d9 100%);
-  color:#fff;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  box-shadow:0 12px 28px rgba(109,40,217,.28);
-  margin-bottom:14px;
-}
-
-.feedback-send-btn:hover{
-  transform:translateY(-1px);
-}
-
-.feedback-link{
-  display:inline-block;
-  color:#5b21b6;
-  font-size:15px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.feedback-link:hover{
-  text-decoration:underline;
-}
-
-#feedbackMessage{
-  display:none;
-  margin-top:12px;
-  font-size:14px;
-  font-weight:700;
-}
-
-
-</style>
-
-<div id="commentModal" class="modal">
-  <div class="feedback-modal" onclick="event.stopPropagation()">
-    <button class="feedback-close" onclick="closeComment()" aria-label="Close">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-
-    <div class="feedback-title">How do you rate the tool?</div>
-
-    <div class="rating-container feedback-stars">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-
-    <button class="feedback-send-btn" onclick="sendComment()">
-      <span>Send feedback</span>
-      <i class="fa-solid fa-paper-plane"></i>
-    </button>
-
-    <span class="feedback-link" onclick="showAllComments()">View all comments & ratings</span>
-
-    <div id="feedbackMessage"></div>
-  </div>
-</div>
-
-        <div id="feedbackMessage"></div>
-      </div>
-    </div>
-
-    <div id="allCommentsModal" class="modal">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          All Ratings & Comments
-          <span class="modal-close" onclick="closeAllComments()">×</span>
-        </div>
-        <div id="commentsList"></div>
-      </div>
-    </div>
-
-    <div id="passwordModal" class="modal">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          Enter Password to Edit
-          <span class="modal-close" onclick="closePasswordModal()">×</span>
-        </div>
-        <input type="password" id="adminPassword" placeholder="Password">
-        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
-          <button class="app-btn primary" onclick="checkPassword()">Continue</button>
-          <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="editModal" class="modal">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-          <span id="modalTitle">Edit</span>
-          <span class="modal-close" onclick="closeEditModal()">×</span>
-        </div>
-        <textarea id="editTextarea"></textarea>
-        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
-          <button class="app-btn primary" onclick="saveEdit()">Save</button>
-          <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <footer>
-      <div class="footer-inner">
-        <div class="footer-left">
-          <strong>© 2025 EBS Operations</strong>
-          <span>Premium main page experience for faster guide access and cleaner navigation.</span>
-        </div>
-        <div class="footer-right">
-          “Your feedback is important to us. Please feel free to email us with any comments or questions.” — Jules
-        </div>
-      </div>
-    </footer>
-  </div>
-
+    <script src="assets/js/header-loader.js"></script>
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer-loader.js"></script>
   <script>
+  document.addEventListener("DOMContentLoaded", () => {
     if (!firebase.apps.length) {
       firebase.initializeApp({
-        apiKey:"AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-        authDomain:"bdgg-database.firebaseapp.com",
-        projectId:"bdgg-database",
-        storageBucket:"bdgg-database.appspot.com",
-        messagingSenderId:"43574975434",
-        appId:"1:43574975434:web:4c79e581267fdfcc6ccd33"
+        apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+        authDomain: "bdgg-database.firebaseapp.com",
+        projectId: "bdgg-database",
+        storageBucket: "bdgg-database.appspot.com",
+        messagingSenderId: "43574975434",
+        appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
       });
     }
 
     const db = firebase.firestore();
-
     const TEMPLATE_COLLECTION = "billing_dispute_general_template";
-    const FEEDBACK_COLLECTION = "feedback";
     const MAX_STEPS = 8;
 
     const els = {
-      clockBtn: document.getElementById("clockBtn"),
-      clockText: document.getElementById("clockText"),
-      popupTime: document.getElementById("popupTime"),
-      popupDate: document.getElementById("popupDate"),
-      calendarPopup: document.getElementById("timeCalendarPopup"),
-      calendarGrid: document.getElementById("calendarGrid"),
-      monthYear: document.getElementById("monthYear"),
-
       stageCard: document.getElementById("stageCard"),
       progressFill: document.getElementById("progressFill"),
       progressText: document.getElementById("progressText"),
@@ -1805,19 +1501,9 @@
       editModal: document.getElementById("editModal"),
       adminPassword: document.getElementById("adminPassword"),
       editTextarea: document.getElementById("editTextarea"),
-      modalTitle: document.getElementById("modalTitle"),
-
-      helpModal: document.getElementById("helpModal"),
-      commentModal: document.getElementById("commentModal"),
-      allCommentsModal: document.getElementById("allCommentsModal"),
-      commentsList: document.getElementById("commentsList"),
-      commentName: document.getElementById("commentName"),
-      commentText: document.getElementById("commentText"),
-      feedbackMessage: document.getElementById("feedbackMessage")
+      modalTitle: document.getElementById("modalTitle")
     };
 
-    let currentDate = new Date();
-    let selectedRating = 0;
     let path = [];
     let historyStack = [];
     let currentFinalRecommendation = "";
@@ -2242,242 +1928,53 @@
       }
     };
 
-    function escapeHtml(str){
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+    function escapeHtml(value){
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
     }
 
-    function slugify(str){
+    function normalizeId(str){
       return String(str || "")
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "_")
-        .replace(/^_+|_+$/g, "")
-        .replace(/_+/g, "_");
+        .replace(/^_+|_+$/g, "");
     }
 
     function getDocId(recommendation, type){
-      return `${slugify(recommendation)}_${type}`;
+      return `${type}__${normalizeId(recommendation)}`;
     }
 
-    function updateClock(){
-      const now = new Date();
-
-      const headerTime = new Intl.DateTimeFormat("en-US", {
-        timeZone: "Asia/Manila",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-      }).format(now);
-
-      const popupTime = new Intl.DateTimeFormat("en-US", {
-        timeZone: "Asia/Manila",
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
-      }).format(now);
-
-      const popupDate = new Intl.DateTimeFormat("en-US", {
-        timeZone: "Asia/Manila",
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      }).format(now);
-
-      els.clockText.textContent = headerTime;
-      els.popupTime.textContent = popupTime;
-      els.popupDate.textContent = popupDate;
+    function getNodeText(node){
+      return node?.text || node?.question || "";
     }
 
-    function renderCalendar(date){
-      els.calendarGrid.innerHTML = "";
-
-      const year = date.getFullYear();
-      const month = date.getMonth();
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      els.monthYear.textContent = date.toLocaleString("en-PH", {
-        month: "long",
-        year: "numeric"
-      });
-
-      const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-      dayNames.forEach(d => {
-        const el = document.createElement("div");
-        el.className = "day-name";
-        el.textContent = d;
-        els.calendarGrid.appendChild(el);
-      });
-
-      for(let i = 0; i < firstDay; i++){
-        const blank = document.createElement("div");
-        els.calendarGrid.appendChild(blank);
-      }
-
-      const nowManila = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-
-      for(let d = 1; d <= daysInMonth; d++){
-        const day = document.createElement("div");
-        day.className = "day";
-        day.textContent = d;
-
-        if(
-          d === nowManila.getDate() &&
-          month === nowManila.getMonth() &&
-          year === nowManila.getFullYear()
-        ){
-          day.classList.add("today");
-        }
-
-        els.calendarGrid.appendChild(day);
-      }
+    function getNodeHelp(node){
+      return node?.help || "";
     }
 
-    els.clockBtn.onclick = function(e){
-      e.stopPropagation();
-      els.calendarPopup.style.display =
-        els.calendarPopup.style.display === "block" ? "none" : "block";
-      renderCalendar(currentDate);
-    };
-
-    document.addEventListener("click", function(e){
-      if(!els.calendarPopup.contains(e.target) && e.target !== els.clockBtn && !els.clockBtn.contains(e.target)){
-        els.calendarPopup.style.display = "none";
-      }
-    });
-
-    document.getElementById("prevMonth").onclick = function(e){
-      e.stopPropagation();
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar(currentDate);
-    };
-
-    document.getElementById("nextMonth").onclick = function(e){
-      e.stopPropagation();
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar(currentDate);
-    };
-
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    document.getElementById("helpIcon").onclick = () => els.helpModal.style.display = "flex";
-    document.getElementById("commentIcon").onclick = () => {
-      clearCommentForm();
-      els.commentModal.style.display = "flex";
-    };
-
-    function closeHelp(){ els.helpModal.style.display = "none"; }
-    function closeComment(){ els.commentModal.style.display = "none"; }
-    function closeAllComments(){ els.allCommentsModal.style.display = "none"; }
-    function closePasswordModal(){ els.passwordModal.style.display = "none"; }
-    function closeEditModal(){ els.editModal.style.display = "none"; }
-
-  document.querySelectorAll(".rating-star").forEach(star => {
-  star.addEventListener("click", function(){
-    selectedRating = Number(this.dataset.value);
-
-    // clear all
-    document.querySelectorAll(".rating-star").forEach(s => {
-      s.classList.remove("selected");
-    });
-
-    // fill up to selected
-    document.querySelectorAll(".rating-star").forEach(s => {
-      if(Number(s.dataset.value) <= selectedRating){
-        s.classList.add("selected");
-      }
-    });
-  });
-});
-
-    async function sendComment(){
-      const name = els.commentName.value.trim();
-      const comment = els.commentText.value.trim();
-
-      if(!selectedRating){
-        alert("Please select a rating.");
-        return;
-      }
-
-      try {
-        await db.collection(FEEDBACK_COLLECTION).add({
-          name: name || "Anonymous",
-          comment,
-          rating: selectedRating,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        els.feedbackMessage.style.display = "block";
-        els.feedbackMessage.style.color = "#16a34a";
-        els.feedbackMessage.textContent = "Feedback sent successfully.";
-
-        els.commentName.value = "";
-        els.commentText.value = "";
-        selectedRating = 0;
-        document.querySelectorAll(".rating-star").forEach(s => s.classList.remove("selected"));
-
-        setTimeout(() => {
-          els.feedbackMessage.style.display = "none";
-          els.feedbackMessage.textContent = "";
-          closeComment();
-        }, 1200);
-      } catch (error) {
-        els.feedbackMessage.style.display = "block";
-        els.feedbackMessage.style.color = "#ef4444";
-        els.feedbackMessage.textContent = "Unable to send feedback. Please try again.";
-      }
+    function getNodeNote(node){
+      return node?.note || "";
     }
 
-    async function showAllComments(){
-      try{
-        const snap = await db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").get();
-        els.commentsList.innerHTML = "";
-
-        if(snap.empty){
-          els.commentsList.innerHTML = `<p style="color:#64748b;">No comments yet.</p>`;
-        } else {
-          snap.forEach(doc => {
-            const d = doc.data();
-            const item = document.createElement("div");
-            item.className = "comment-list-item";
-            item.innerHTML = `
-              <span class="stars">${"★".repeat(d.rating || 0)}${"☆".repeat(5 - (d.rating || 0))}</span>
-              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(d.name || "Anonymous")}</strong>
-              <div style="color:#475569; line-height:1.7;">${escapeHtml(d.comment || "")}</div>
-            `;
-            els.commentsList.appendChild(item);
-          });
-        }
-
-        closeComment();
-        els.allCommentsModal.style.display = "flex";
-      } catch(err){
-        alert("Unable to load comments right now.");
-      }
+    function getNodeImage(node){
+      return node?.image || "";
     }
 
-    function clearCommentForm(){
-      selectedRating = 0;
-      els.commentName.value = "";
-      els.commentText.value = "";
-      document.querySelectorAll(".rating-star").forEach(s => s.classList.remove("selected"));
-      els.feedbackMessage.style.display = "none";
-      els.feedbackMessage.textContent = "";
+    function getNodeChoices(node){
+      return Array.isArray(node?.choices) ? node.choices : [];
     }
 
-    function getDefaultTemplates(){
-      return { comment:"", corr:"", email:"" };
+    function isFinalNode(node){
+      return !!node?.action || (!getNodeChoices(node).length && !node?.next);
     }
 
     function setTemplateValue(el, text){
-      el.textContent = text || "";
+      if (!el) return;
+      el.textContent = text;
       el.classList.toggle("empty", !text);
     }
 
@@ -2488,8 +1985,6 @@
         setTemplateValue(els.suggestedEmail, "");
         return;
       }
-
-      const defaults = getDefaultTemplates();
 
       const ids = {
         comment: getDocId(recommendation, "comment"),
@@ -2504,9 +1999,9 @@
           db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
         ]);
 
-        const finalComment = commentDoc.exists ? (commentDoc.data().text || defaults.comment) : defaults.comment;
-        const finalCorr = corrDoc.exists ? (corrDoc.data().text || defaults.corr) : defaults.corr;
-        const finalEmail = emailDoc.exists ? (emailDoc.data().text || defaults.email) : defaults.email;
+        const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
+        const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
+        const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
 
         templateCache[ids.comment] = finalComment;
         templateCache[ids.corr] = finalCorr;
@@ -2516,9 +2011,9 @@
         setTemplateValue(els.suggestedCorrCode, finalCorr);
         setTemplateValue(els.suggestedEmail, finalEmail);
       } catch(err){
-        setTemplateValue(els.suggestedComment, defaults.comment);
-        setTemplateValue(els.suggestedCorrCode, defaults.corr);
-        setTemplateValue(els.suggestedEmail, defaults.email);
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
       }
     }
 
@@ -2534,13 +2029,12 @@
 
     async function copyTemplateText(targetId, btn){
       const target = document.getElementById(targetId);
-      const value = target.innerText.trim();
+      const value = target?.innerText.trim();
       if(!value || target.classList.contains("empty")) return;
 
       try{
         await navigator.clipboard.writeText(value);
-        const original = btn.textContent;
-        setCopiedState(btn, original);
+        setCopiedState(btn, btn.textContent);
       } catch {
         alert("Unable to copy text.");
       }
@@ -2554,6 +2048,14 @@
       currentEditType = type;
       els.adminPassword.value = "";
       els.passwordModal.style.display = "flex";
+    }
+
+    function closePasswordModal(){
+      els.passwordModal.style.display = "none";
+    }
+
+    function closeEditModal(){
+      els.editModal.style.display = "none";
     }
 
     function checkPassword(){
@@ -2609,266 +2111,415 @@
     }
 
     function getPercent(isFinal){
-      if(isFinal) return 100;
-      if(path.length === 0) return 0;
+      if (isFinal) return 100;
+      if (path.length === 0) return 0;
       return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
     }
 
     function updateMeta(isFinal){
       const pct = getPercent(isFinal);
       const lastAnswer = path.length ? path[path.length - 1].answer : "—";
-      const progressLabel = isFinal ? "Recommendation ready" : path.length ? `Step ${path.length}` : "Not started";
+      const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
 
       els.progressFill.style.width = pct + "%";
       els.progressText.textContent = progressLabel;
       els.metricSteps.textContent = String(path.length);
       els.metricAnswer.textContent = lastAnswer;
-      els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "In Progress" : "Ready"}`;
+      els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
     }
 
-function updatePath(){
-  if(!path.length){
-    els.pathBox.className = "path-box path-empty";
-    els.pathBox.textContent = "No steps selected yet. The full path will appear here as the user moves through the guide.";
-    return;
-  }
-
-  els.pathBox.className = "path-box";
-  els.pathBox.innerHTML = path.map((step, index) => `
-    <div class="path-item path-item-enter" 
-         style="animation-delay:${index * 0.06}s;"
-         data-step-index="${index}">
-
-      <div class="step-badge">STEP ${index + 1}</div>
-      <div class="path-q">${escapeHtml(step.question)}</div>
-      <div class="path-a">→ ${escapeHtml(step.answer)}</div>
-    </div>
-  `).join("");
-
-  // 🔥 CLICK HANDLER
-  document.querySelectorAll(".path-item").forEach(el => {
-    el.addEventListener("click", () => {
-      const index = Number(el.dataset.stepIndex);
-      goToStep(index);
-    });
-  });
-}
-
-function goToStep(index){
-  const target = historyStack[index];
-
-  if(!target) return;
-
-  // trim path + history
-  path = path.slice(0, index);
-  historyStack = historyStack.slice(0, index);
-
-  updatePath();
-  renderNode(target.key);
-}
-
-    function updateRecommendation(text, isFinal){
-      els.recommendationBox.textContent = text || "No recommendation yet. Follow the flow to reach the final instruction.";
-      els.recommendationBox.classList.toggle("empty", !text);
-
-      currentFinalRecommendation = isFinal ? text : "";
-
-      if(isFinal){
-        loadTemplatesForRecommendation(text);
-      } else {
-        setTemplateValue(els.suggestedComment, "");
-        setTemplateValue(els.suggestedCorrCode, "");
-        setTemplateValue(els.suggestedEmail, "");
+    function updatePath(){
+      if(!path.length){
+        els.pathBox.className = "path-empty";
+        els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+        return;
       }
-    }
 
-    function renderFinal(node){
-      currentKey = "__final__";
-      const finalText = node.action || node.text || "";
-      const finalNote = node.note || "";
+      const activePathKey = currentKey;
 
-      updateRecommendation(finalText, true);
-      updateMeta(true);
-
-      const footerStepText = `Completed after ${path.length} step${path.length > 1 ? "s" : ""}`;
-
-      els.stageCard.innerHTML = `
-        <div class="stage-top">
-          <div class="badge"><i class="fa-solid fa-check-circle"></i> Final Recommendation</div>
-          <div class="badge alt"><i class="fa-solid fa-sparkles"></i> Billing Dispute</div>
-        </div>
-
-        <div class="final-card">
-          <div class="final-badge"><i class="fa-solid fa-circle-check"></i> Recommendation Ready</div>
-          <div class="final-title">Recommended Action</div>
-          <div class="final-text">${escapeHtml(finalText)}</div>
-          ${finalNote ? `<div class="final-note">${escapeHtml(finalNote)}</div>` : ""}
-
-          <div class="final-actions">
-            <button class="app-btn secondary" id="inlineBack">Go Back</button>
-            <button class="app-btn primary" id="inlineRestart">Start Over</button>
-          </div>
-        </div>
-
-        <div class="decision-footer">
-          <div class="decision-footer-left">
-            <div class="footer-label">Decision Guide</div>
-            <div class="footer-value">${footerStepText}</div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById("inlineBack").onclick = goBack;
-      document.getElementById("inlineRestart").onclick = restart;
-    }
-
-    function renderNode(key){
-      currentKey = key;
-      const node = NODES[key];
-
-      if(!node){
-        updateRecommendation("", false);
-        updateMeta(false);
-        els.stageCard.innerHTML = `
-          <div class="stage-top">
-            <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
-          </div>
-          <div class="question-wrap">
-            <div class="question-card">
-              <div class="question-text" style="font-size:28px;">Node not found: ${escapeHtml(key)}</div>
-              <p class="question-help">Check the node key in your decision tree.</p>
-            </div>
+      const html = path.map((item, index) => {
+        const isActive = item.nextKey === activePathKey;
+        return `
+          <div class="path-item">
+            <button
+              type="button"
+              class="path-jump ${isActive ? "active" : ""}"
+              data-step-index="${index}"
+            >
+              <div class="path-step">Step ${index + 1}</div>
+              <div class="path-question">${escapeHtml(item.question)}</div>
+              <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+            </button>
           </div>
         `;
-        return;
-      }
+      }).join("");
 
-      if(node.action || (!node.choices || node.choices.length === 0)){
-        renderFinal(node);
-        return;
-      }
+      els.pathBox.className = "path-list";
+      els.pathBox.innerHTML = html;
 
-      updateRecommendation("", false);
-      updateMeta(false);
-
-      const choices = (node.choices || []).map(choice => `
-        <button class="choice" type="button"
-          data-type="${choice.action ? "final" : "next"}"
-          data-next="${escapeHtml(choice.next || "")}"
-          data-label="${escapeHtml(choice.label || "")}"
-          data-action="${escapeHtml(choice.action || "")}"
-          data-note="${escapeHtml(choice.note || "")}">
-          <div class="choice-icon"><i class="${escapeHtml(choice.icon || "fa-solid fa-circle-dot")}"></i></div>
-          <div class="choice-body">
-            <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-            <div class="choice-desc">${escapeHtml(choice.desc || "")}</div>
-          </div>
-        </button>
-      `).join("");
-
-      const nextStep = path.length + 1;
-const footerStepText = `Next → Step ${nextStep}`;
-
-      els.stageCard.innerHTML = `
-        <div class="stage-top">
-          <div class="badge"><i class="fa-solid fa-route"></i> Billing Dispute Flow</div>
-          <div class="badge alt"><i class="fa-solid fa-layer-group"></i> Interactive Guide</div>
-        </div>
-
-        <div class="question-wrap">
-          <div class="question-card">
-            <div class="question-label"><i class="fa-solid fa-circle-question"></i> Current Decision</div>
-            <h2 class="question-text">${escapeHtml(node.text || "")}</h2>
-            ${node.help ? `<p class="question-help">${escapeHtml(node.help)}</p>` : ""}
-          </div>
-
-          <div class="choices">${choices}</div>
-        </div>
-
-        <div class="decision-footer">
-          <div class="decision-footer-left">
-            <div class="footer-label">Decision Guide</div>
-            <div class="footer-value">${footerStepText}</div>
-          </div>
-
-          <div class="decision-actions">
-            <button class="app-btn secondary" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-            <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-          </div>
-        </div>
-      `;
-
-      const inlineBack = document.getElementById("inlineBack");
-      const inlineRestart = document.getElementById("inlineRestart");
-
-      if(inlineBack) inlineBack.onclick = goBack;
-      if(inlineRestart) inlineRestart.onclick = restart;
-
-      els.stageCard.querySelectorAll(".choice").forEach(btn => {
+      els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
         btn.addEventListener("click", () => {
-          els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-          btn.classList.add("selected");
-
-          const type = btn.dataset.type;
-          const next = btn.dataset.next;
-          const label = btn.dataset.label;
-          const action = btn.dataset.action;
-          const note = btn.dataset.note;
-
-          historyStack.push({
-            key: currentKey,
-            path: JSON.parse(JSON.stringify(path))
-          });
-
-          path.push({
-            question: node.text,
-            answer: label
-          });
-
-          updatePath();
-          updateMeta(false);
-
-          setTimeout(() => {
-            if(type === "final"){
-              renderFinal({ action, note });
-            } else {
-              renderNode(next);
-            }
-          }, 120);
+          const index = Number(btn.dataset.stepIndex);
+          jumpToPathStep(index);
         });
       });
     }
 
-    function goBack(){
-      if(!historyStack.length) return;
-      const prev = historyStack.pop();
-      path = prev.path || [];
-      updatePath();
+  function jumpToPathStep(index){
+    if(index < 0 || index >= path.length) return;
 
-      if(prev.key === "__final__"){
-        renderNode("start");
-      } else {
-        renderNode(prev.key);
-      }
+    const target = path[index];
+    if(!target) return;
+
+    historyStack = [];
+    for(let i = 0; i < index; i++){
+      historyStack.push({
+        key: path[i].fromKey,
+        path: path.slice(0, i)
+      });
     }
+
+    currentFinalRecommendation = "";
+
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    if(target.nextKey === "__final__" && target.finalNode){
+      renderFinal(target.finalNode);
+      return;
+    }
+
+    updateRecommendation("", false);
+    renderNode(target.nextKey);
+  }
+
+    function updateRecommendation(text, isFinal){
+      if(!isFinal){
+        els.recommendationBox.className = "recommendation empty";
+        els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
+        return;
+      }
+
+      els.recommendationBox.className = "recommendation";
+      els.recommendationBox.textContent = text;
+    }
+
+    function openImageModal(src){
+      const modal = document.getElementById("imageModal");
+      const img = document.getElementById("imageModalImg");
+      if (!modal || !img) return;
+
+      img.src = src;
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeImageModal(e){
+      if (e) e.stopPropagation();
+
+      const modal = document.getElementById("imageModal");
+      const img = document.getElementById("imageModalImg");
+      if (!modal || !img) return;
+
+      modal.classList.remove("open");
+      img.src = "";
+      document.body.style.overflow = "";
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeImageModal();
+    });
+
+    async function renderFinal(finalNode){
+    const finalText = finalNode.action || getNodeText(finalNode) || "";
+    const finalNote = finalNode.note || "";
+    const finalImage = finalNode.image || "";
+
+    const formattedFinalText = escapeHtml(finalText)
+      .replace(/\r\n/g, "\n")
+      .replace(/\n/g, "<br>");
+
+    currentFinalRecommendation = finalText;
+    currentKey = "__final__";
+    updateMeta(true);
+    updatePath();
+    updateRecommendation(finalText, true);
+    await loadTemplatesForRecommendation(finalText);
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+      </div>
+
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${formattedFinalText}</div>
+        ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+
+        ${finalImage ? `
+          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
+          </div>
+        ` : ""}
+
+        <div class="final-actions">
+          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart">Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+  }
+
+    async function renderNode(key){
+    currentKey = key;
+    const node = NODES[key];
+
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        </div>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
+
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
+
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
+
+    const activeStepIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    const footerStepText = activeStepIndex !== -1
+      ? `Currently on step ${activeStepIndex + 1}`
+      : (path.length ? "Currently on step 1" : "Ready to begin");
+
+    const badgeStepText = activeStepIndex !== -1
+      ? `Step ${activeStepIndex + 1}`
+      : (path.length ? "Step 1" : "Start");
+
+    const hasPreviousStep = currentKey !== "start" && (
+      activeStepIndex > 0 ||
+      activeStepIndex === 0 ||
+      currentKey === "__final__"
+    );
+
+    updateMeta(false);
+    updatePath();
+    updateRecommendation("", false);
+
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">${escapeHtml(nodeText)}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
+
+          ${nodeNote ? `
+            <div class="note-card">
+              <div class="note-head">
+                <i class="fa-solid fa-bell"></i>
+                Reminder
+              </div>
+              <div class="note-body">${nodeNote}</div>
+            </div>
+          ` : ""}
+
+          ${nodeImage ? `
+            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+            </div>
+          ` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+
+    els.stageCard.querySelectorAll(".choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        const next = btn.dataset.next;
+        const label = btn.dataset.label;
+        const action = btn.dataset.action;
+        const note = btn.dataset.note;
+
+        const currentPathIndex = path.findIndex(item => item.nextKey === currentKey);
+
+        if (currentPathIndex !== -1 && currentPathIndex < path.length - 1) {
+          path = path.slice(0, currentPathIndex + 1);
+        }
+
+        historyStack.push({
+          key: currentKey,
+          path: [...path]
+        });
+
+        path.push({
+          question: nodeText,
+          answer: label,
+          fromKey: currentKey,
+          nextKey: action ? "__final__" : next,
+          finalNode: action ? { action, note } : null
+        });
+
+        updatePath();
+        updateMeta(false);
+
+        setTimeout(() => {
+          if (action) {
+            renderFinal({ action, note });
+          } else {
+            renderNode(next);
+          }
+        }, 120);
+      });
+    });
+  }
+
+  function goBack(){
+    const currentPathIndex = path.findIndex(item =>
+      item.nextKey === currentKey ||
+      (currentKey === "__final__" && item.nextKey === "__final__")
+    );
+
+    if(currentPathIndex === -1){
+      currentFinalRecommendation = "";
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      updateRecommendation("", false);
+      renderNode("start");
+      return;
+    }
+
+    if(currentPathIndex === 0){
+      currentFinalRecommendation = "";
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      updateRecommendation("", false);
+      renderNode("start");
+      return;
+    }
+
+    const previousStep = path[currentPathIndex - 1];
+
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+    updateRecommendation("", false);
+
+    if(previousStep.nextKey === "__final__" && previousStep.finalNode){
+      renderFinal(previousStep.finalNode);
+      return;
+    }
+
+    renderNode(previousStep.nextKey);
+  }
 
     function restart(){
       path = [];
       historyStack = [];
       currentFinalRecommendation = "";
-      currentEditType = "";
+      currentKey = "start";
+
       setTemplateValue(els.suggestedComment, "");
       setTemplateValue(els.suggestedCorrCode, "");
       setTemplateValue(els.suggestedEmail, "");
+
       updatePath();
       updateRecommendation("", false);
       renderNode("start");
     }
 
-    updatePath();
-    updateRecommendation("", false);
-    updateMeta(false);
+    window.attemptEdit = attemptEdit;
+    window.closePasswordModal = closePasswordModal;
+    window.closeEditModal = closeEditModal;
+    window.checkPassword = checkPassword;
+    window.saveEdit = saveEdit;
+    window.copyTemplateText = copyTemplateText;
+    window.goBack = goBack;
+    window.restart = restart;
+    window.openImageModal = openImageModal;
+    window.closeImageModal = closeImageModal;
+
     renderNode("start");
+  });
   </script>
-</body>
-</html>
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+      <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
+      <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
+    </div>
+
+    </body>
+    </html>
