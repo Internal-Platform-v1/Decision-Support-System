@@ -641,6 +641,42 @@
     line-height:1.5;
     margin-top:6px;
   }
+  
+  .path-jump{
+    width:100%;
+    text-align:left;
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .path-jump:hover{
+    transform:translateY(-1px);
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    box-shadow:0 10px 22px rgba(37,99,235,.08);
+  }
+
+  .path-jump.active{
+    background:#f8fafc;
+    border:2px solid #2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+  }
+
+  .path-jump.active .path-step{
+    color:#2563eb;
+  }
+
+  .path-jump.active .path-question{
+    color:#0f172a;
+  }
+
+  .path-jump.active .path-answer{
+    color:#475569;
+  }
 
   .section-note{
     font-size:12px;
@@ -1978,649 +2014,594 @@ const NODES = {
 
 };
 
-  function escapeHtml(value){
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
-
-  function normalizeId(str){
-    return String(str || "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "");
-  }
-
-  function getDocId(recommendation, type){
-    return `${type}__${normalizeId(recommendation)}`;
-  }
-
-  function getNodeText(node){
-    return node?.text || node?.question || "";
-  }
-
-  function getNodeHelp(node){
-    return node?.help || "";
-  }
-
-  function getNodeNote(node){
-    return node?.note || "";
-  }
-
-  function getNodeImage(node){
-    return node?.image || "";
-  }
-
-  function getNodeChoices(node){
-    return Array.isArray(node?.choices) ? node.choices : [];
-  }
-
-  function isFinalNode(node){
-    return !!node?.action || (!getNodeChoices(node).length && !node?.next);
-  }
-
-  function initRatingStars() {
-    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-
-    ratingStars.forEach(star => {
-      star.onclick = function () {
-        selectedRating = Number(this.dataset.value);
-        ratingStars.forEach(s => {
-          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
-        });
-      };
-    });
-  }
-
-  function setTemplateValue(el, text){
-    if (!el) return;
-    el.textContent = text;
-    el.classList.toggle("empty", !text);
-  }
-
-  async function loadTemplatesForRecommendation(recommendation){
-    if(!recommendation){
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-      return;
+    function escapeHtml(value){
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
     }
 
-    const ids = {
-      comment: getDocId(recommendation, "comment"),
-      corr: getDocId(recommendation, "corr"),
-      email: getDocId(recommendation, "email")
-    };
-
-    try{
-      const [commentDoc, corrDoc, emailDoc] = await Promise.all([
-        db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
-        db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
-        db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
-      ]);
-
-      const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
-      const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
-      const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
-
-      templateCache[ids.comment] = finalComment;
-      templateCache[ids.corr] = finalCorr;
-      templateCache[ids.email] = finalEmail;
-
-      setTemplateValue(els.suggestedComment, finalComment);
-      setTemplateValue(els.suggestedCorrCode, finalCorr);
-      setTemplateValue(els.suggestedEmail, finalEmail);
-    } catch(err){
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-    }
-  }
-
-  function setCopiedState(btn, originalText){
-    btn.classList.add("copied");
-    btn.textContent = "Copied";
-    clearTimeout(btn._copiedTimer);
-    btn._copiedTimer = setTimeout(() => {
-      btn.classList.remove("copied");
-      btn.textContent = originalText;
-    }, 1400);
-  }
-
-  async function copyTemplateText(targetId, btn){
-    const target = document.getElementById(targetId);
-    const value = target?.innerText.trim();
-    if(!value || target.classList.contains("empty")) return;
-
-    try{
-      await navigator.clipboard.writeText(value);
-      setCopiedState(btn, btn.textContent);
-    } catch {
-      alert("Unable to copy text.");
-    }
-  }
-
-  function attemptEdit(type){
-    if(!currentFinalRecommendation){
-      alert("Reach a final recommendation first before editing templates.");
-      return;
-    }
-    currentEditType = type;
-    els.adminPassword.value = "";
-    els.passwordModal.style.display = "flex";
-  }
-
-  function closePasswordModal(){ els.passwordModal.style.display = "none"; }
-  function closeEditModal(){ els.editModal.style.display = "none"; }
-
-  function checkPassword(){
-    if(els.adminPassword.value === "admin"){
-      closePasswordModal();
-      openEditModal();
-    } else {
-      alert("Incorrect password");
-    }
-  }
-
-  function openEditModal(){
-    const map = {
-      comment: "suggestedComment",
-      email: "suggestedEmail",
-      corr: "suggestedCorrCode"
-    };
-
-    els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
-    els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
-    els.editModal.style.display = "flex";
-  }
-
-
-  async function saveEdit(){
-    const val = els.editTextarea.value.trim();
-
-    if(!val){
-      alert("Cannot save empty text.");
-      return;
+    function normalizeId(str){
+      return String(str || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
     }
 
-    const docId = getDocId(currentFinalRecommendation, currentEditType);
-
-    try{
-      await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
-        text: val,
-        type: currentEditType,
-        recommendation: currentFinalRecommendation,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      templateCache[docId] = val;
-
-      if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
-      if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
-      if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
-
-      closeEditModal();
-      alert("Saved!");
-    } catch(err){
-      alert("Unable to save right now.");
-    }
-  }
-
-  function getPercent(isFinal){
-    if (isFinal) return 100;
-    if(path.length === 0) return 0;
-    return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
-  }
-
-  function updateMeta(isFinal){
-    const pct = getPercent(isFinal);
-    const lastAnswer = path.length ? path[path.length - 1].answer : "—";
-    const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
-
-    els.progressFill.style.width = pct + "%";
-    els.progressText.textContent = progressLabel;
-    els.metricSteps.textContent = String(path.length);
-    els.metricAnswer.textContent = lastAnswer;
-    els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
-  }
-
-  function updatePath(){
-    if(!path.length){
-      els.pathBox.className = "path-empty";
-      els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
-      return;
+    function getDocId(recommendation, type){
+      return `${type}__${normalizeId(recommendation)}`;
     }
 
-    const html = path.map((item,index)=>`
-      <div class="path-item">
-        <div class="path-step">Step ${index + 1}</div>
-        <div class="path-question">${escapeHtml(item.question)}</div>
-        <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
-      </div>
-    `).join("");
-
-    els.pathBox.className = "path-list";
-    els.pathBox.innerHTML = html;
-  }
-
-  function updateRecommendation(text, isFinal){
-    if(!isFinal){
-      els.recommendationBox.className = "recommendation empty";
-      els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
-      return;
+    function getNodeText(node){
+      return node?.text || node?.question || "";
     }
 
-    els.recommendationBox.className = "recommendation";
-    els.recommendationBox.textContent = text;
-  }
+    function getNodeHelp(node){
+      return node?.help || "";
+    }
 
-function openImageModal(src){
-  const modal = document.getElementById("imageModal");
-  const img = document.getElementById("imageModalImg");
-  if (!modal || !img) return;
+    function getNodeNote(node){
+      return node?.note || "";
+    }
 
-  img.src = src;
-  modal.classList.add("open");
-  document.body.style.overflow = "hidden";
-}
+    function getNodeImage(node){
+      return node?.image || "";
+    }
 
-function closeImageModal(e){
-  if (e) e.stopPropagation();
+    function getNodeChoices(node){
+      return Array.isArray(node?.choices) ? node.choices : [];
+    }
 
-  const modal = document.getElementById("imageModal");
-  const img = document.getElementById("imageModalImg");
-  if (!modal || !img) return;
+    function isFinalNode(node){
+      return !!node?.action || (!getNodeChoices(node).length && !node?.next);
+    }
 
-  modal.classList.remove("open");
-  img.src = "";
-  document.body.style.overflow = "";
-}
+    function setTemplateValue(el, text){
+      if (!el) return;
+      el.textContent = text;
+      el.classList.toggle("empty", !text);
+    }
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeImageModal();
-});
-
-async function renderFinal(finalNode){
-  const finalText = finalNode.action || getNodeText(finalNode) || "";
-  const finalNote = finalNode.note || "";
-  const finalImage = finalNode.image || "";
-
-  currentFinalRecommendation = finalText;
-  updateMeta(true);
-  updatePath();
-  updateRecommendation(finalText, true);
-  await loadTemplatesForRecommendation(finalText);
-
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
-      <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
-    </div>
-
-    <div class="final-card">
-      <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
-      <div class="final-title">Use this handling outcome</div>
-      <div class="final-text">${escapeHtml(finalText)}</div>
-      ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
-
-      ${finalImage ? `
-        <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
-          <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
-        </div>
-      ` : ""}
-
-      <div class="final-actions">
-        <button class="app-btn secondary" id="inlineBack">Go Back</button>
-        <button class="app-btn primary" id="inlineRestart">Start Over</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("inlineBack").onclick = goBack;
-  document.getElementById("inlineRestart").onclick = restart;
-}
-  
-  function formatNoteContent(text){
-  if (!text) return "";
-
-  return escapeHtml(text)
-    .replace(/\n/g, "<br>")
-    .replace(
-      /(^|[\s(>])((https?:\/\/[^\s]+)|([A-Za-z0-9._/-]+\.html))(?=$|[\s)<])/g,
-      (match, prefix, url) => {
-        const clean = url.trim();
-        const label = clean
-          .replace(".html", "")
-          .replace(/[-_]/g, " ")
-          .replace(/\b\w/g, c => c.toUpperCase());
-
-        return `${prefix}<a href="${clean}" target="_blank" class="smart-link">${label} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+    async function loadTemplatesForRecommendation(recommendation){
+      if(!recommendation){
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+        return;
       }
-    );
-}
 
- async function renderNode(key){
-  currentKey = key;
-  const node = NODES[key];
+      const ids = {
+        comment: getDocId(recommendation, "comment"),
+        corr: getDocId(recommendation, "corr"),
+        email: getDocId(recommendation, "email")
+      };
 
-  if (!node) {
+      try{
+        const [commentDoc, corrDoc, emailDoc] = await Promise.all([
+          db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
+          db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
+          db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
+        ]);
+
+        const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
+        const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
+        const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
+
+        templateCache[ids.comment] = finalComment;
+        templateCache[ids.corr] = finalCorr;
+        templateCache[ids.email] = finalEmail;
+
+        setTemplateValue(els.suggestedComment, finalComment);
+        setTemplateValue(els.suggestedCorrCode, finalCorr);
+        setTemplateValue(els.suggestedEmail, finalEmail);
+      } catch(err){
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+      }
+    }
+
+    function setCopiedState(btn, originalText){
+      btn.classList.add("copied");
+      btn.textContent = "Copied";
+      clearTimeout(btn._copiedTimer);
+      btn._copiedTimer = setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.textContent = originalText;
+      }, 1400);
+    }
+
+    async function copyTemplateText(targetId, btn){
+      const target = document.getElementById(targetId);
+      const value = target?.innerText.trim();
+      if(!value || target.classList.contains("empty")) return;
+
+      try{
+        await navigator.clipboard.writeText(value);
+        setCopiedState(btn, btn.textContent);
+      } catch {
+        alert("Unable to copy text.");
+      }
+    }
+
+    function attemptEdit(type){
+      if(!currentFinalRecommendation){
+        alert("Reach a final recommendation first before editing templates.");
+        return;
+      }
+      currentEditType = type;
+      els.adminPassword.value = "";
+      els.passwordModal.style.display = "flex";
+    }
+
+    function closePasswordModal(){
+      els.passwordModal.style.display = "none";
+    }
+
+    function closeEditModal(){
+      els.editModal.style.display = "none";
+    }
+
+    function checkPassword(){
+      if(els.adminPassword.value === "admin"){
+        closePasswordModal();
+        openEditModal();
+      } else {
+        alert("Incorrect password");
+      }
+    }
+
+    function openEditModal(){
+      const map = {
+        comment: "suggestedComment",
+        email: "suggestedEmail",
+        corr: "suggestedCorrCode"
+      };
+
+      els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+      els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+      els.editModal.style.display = "flex";
+    }
+
+    async function saveEdit(){
+      const val = els.editTextarea.value.trim();
+
+      if(!val){
+        alert("Cannot save empty text.");
+        return;
+      }
+
+      const docId = getDocId(currentFinalRecommendation, currentEditType);
+
+      try{
+        await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
+          text: val,
+          type: currentEditType,
+          recommendation: currentFinalRecommendation,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        templateCache[docId] = val;
+
+        if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
+        if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
+        if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
+
+        closeEditModal();
+        alert("Saved!");
+      } catch(err){
+        alert("Unable to save right now.");
+      }
+    }
+
+    function getPercent(isFinal){
+      if (isFinal) return 100;
+      if (path.length === 0) return 0;
+      return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
+    }
+
+    function updateMeta(isFinal){
+      const pct = getPercent(isFinal);
+      const lastAnswer = path.length ? path[path.length - 1].answer : "—";
+      const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
+
+      els.progressFill.style.width = pct + "%";
+      els.progressText.textContent = progressLabel;
+      els.metricSteps.textContent = String(path.length);
+      els.metricAnswer.textContent = lastAnswer;
+      els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
+    }
+
+    function updatePath(){
+      if(!path.length){
+        els.pathBox.className = "path-empty";
+        els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+        return;
+      }
+
+      const activePathKey = currentKey;
+
+      const html = path.map((item, index) => {
+        const isActive = item.nextKey === activePathKey;
+        return `
+          <div class="path-item">
+            <button
+              type="button"
+              class="path-jump ${isActive ? "active" : ""}"
+              data-step-index="${index}"
+            >
+              <div class="path-step">Step ${index + 1}</div>
+              <div class="path-question">${escapeHtml(item.question)}</div>
+              <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+            </button>
+          </div>
+        `;
+      }).join("");
+
+      els.pathBox.className = "path-list";
+      els.pathBox.innerHTML = html;
+
+      els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const index = Number(btn.dataset.stepIndex);
+          jumpToPathStep(index);
+        });
+      });
+    }
+
+  function jumpToPathStep(index){
+    if(index < 0 || index >= path.length) return;
+
+    const target = path[index];
+    if(!target) return;
+
+    historyStack = [];
+    for(let i = 0; i < index; i++){
+      historyStack.push({
+        key: path[i].fromKey,
+        path: path.slice(0, i)
+      });
+    }
+
+    currentFinalRecommendation = "";
+
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    if(target.nextKey === "__final__" && target.finalNode){
+      renderFinal(target.finalNode);
+      return;
+    }
+
+    updateRecommendation("", false);
+    renderNode(target.nextKey);
+  }
+
+    function updateRecommendation(text, isFinal){
+      if(!isFinal){
+        els.recommendationBox.className = "recommendation empty";
+        els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
+        return;
+      }
+
+      els.recommendationBox.className = "recommendation";
+      els.recommendationBox.textContent = text;
+    }
+
+    function openImageModal(src){
+      const modal = document.getElementById("imageModal");
+      const img = document.getElementById("imageModalImg");
+      if (!modal || !img) return;
+
+      img.src = src;
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeImageModal(e){
+      if (e) e.stopPropagation();
+
+      const modal = document.getElementById("imageModal");
+      const img = document.getElementById("imageModalImg");
+      if (!modal || !img) return;
+
+      modal.classList.remove("open");
+      img.src = "";
+      document.body.style.overflow = "";
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeImageModal();
+    });
+
+    async function renderFinal(finalNode){
+    const finalText = finalNode.action || getNodeText(finalNode) || "";
+    const finalNote = finalNode.note || "";
+    const finalImage = finalNode.image || "";
+
+    const formattedFinalText = escapeHtml(finalText)
+      .replace(/\r\n/g, "\n")
+      .replace(/\n/g, "<br>");
+
+    currentFinalRecommendation = finalText;
+    currentKey = "__final__";
+    updateMeta(true);
+    updatePath();
+    updateRecommendation(finalText, true);
+    await loadTemplatesForRecommendation(finalText);
+
     els.stageCard.innerHTML = `
       <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
       </div>
-      <div class="question-wrap">
-        <div class="question-card">
-          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-          <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-          <div class="question-help">Check the node key in your NODES object.</div>
+
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${formattedFinalText}</div>
+        ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+
+        ${finalImage ? `
+          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
+          </div>
+        ` : ""}
+
+        <div class="final-actions">
+          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart">Start Over</button>
         </div>
       </div>
     `;
-    return;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
   }
 
-  const choices = getNodeChoices(node);
-  const isFinal = isFinalNode(node);
+    async function renderNode(key){
+    currentKey = key;
+    const node = NODES[key];
 
-  if (isFinal) {
-    await renderFinal(node);
-    return;
-  }
-
-  updateMeta(false);
-  updatePath();
-  updateRecommendation("", false);
-
-  currentFinalRecommendation = "";
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-
-  const nodeText = getNodeText(node);
-  const nodeHelp = getNodeHelp(node);
-  const nodeNote = getNodeNote(node);
-  const nodeImage = getNodeImage(node);
-
-  const choicesHtml = choices.map(choice => `
-    <button class="choice"
-      data-next="${escapeHtml(choice.next || "")}"
-      data-label="${escapeHtml(choice.label || "")}"
-      data-action="${escapeHtml(choice.action || "")}"
-      data-note="${escapeHtml(choice.note || "")}">
-      <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-      <div class="choice-body">
-        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-        <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-      </div>
-    </button>
-  `).join("");
-
-  const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
-
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
-    </div>
-
-    <div class="question-wrap">
-      <div class="question-card">
-        <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-        <div class="question-text">${escapeHtml(nodeText)}</div>
-        ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
-
-        ${nodeNote ? `
-          <div class="note-card">
-            <div class="note-head">
-              <i class="fa-solid fa-bell"></i>
-              Reminder
-            </div>
-            <div class="note-body">${nodeNote}</div>
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        </div>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
           </div>
-        ` : ""}
+        </div>
+      `;
+      return;
+    }
 
-        ${nodeImage ? `
-          <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
-            <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
-          </div>
-        ` : ""}
-      </div>
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
 
-      <div class="choices">${choicesHtml}</div>
-    </div>
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
 
-    <div class="decision-footer">
-      <div class="decision-footer-left">
-        <div class="footer-label">Decision Guide</div>
-        <div class="footer-value">${footerStepText}</div>
-      </div>
-
-      <div class="decision-actions">
-        <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-      </div>
-    </div>
-  `;
-
-  const inlineBack = document.getElementById("inlineBack");
-  const inlineRestart = document.getElementById("inlineRestart");
-
-  if(inlineBack) inlineBack.onclick = goBack;
-  if(inlineRestart) inlineRestart.onclick = restart;
-
-  els.stageCard.querySelectorAll(".choice").forEach(btn => {
-    btn.addEventListener("click", () => {
-      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-      btn.classList.add("selected");
-
-      const next = btn.dataset.next;
-      const label = btn.dataset.label;
-      const action = btn.dataset.action;
-      const note = btn.dataset.note;
-
-      historyStack.push({ key: currentKey, path: [...path] });
-      path.push({ question: nodeText, answer: label });
-
-      updatePath();
-      updateMeta(false);
-
-      setTimeout(() => {
-        if (action) {
-          renderFinal({ action, note });
-        } else {
-          renderNode(next);
-        }
-      }, 120);
-    });
-  });
-}
-
-  function goBack(){
-    if(!historyStack.length) return;
-    const prev = historyStack.pop();
-    path = prev.path || [];
-    renderNode(prev.key);
-  }
-
-  function restart(){
-    path = [];
-    historyStack = [];
     currentFinalRecommendation = "";
     setTemplateValue(els.suggestedComment, "");
     setTemplateValue(els.suggestedCorrCode, "");
     setTemplateValue(els.suggestedEmail, "");
+
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
+
+    const activeStepIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    const footerStepText = activeStepIndex !== -1
+      ? `Currently on step ${activeStepIndex + 1}`
+      : (path.length ? "Currently on step 1" : "Ready to begin");
+
+    const badgeStepText = activeStepIndex !== -1
+      ? `Step ${activeStepIndex + 1}`
+      : (path.length ? "Step 1" : "Start");
+
+    const hasPreviousStep = currentKey !== "start" && (
+      activeStepIndex > 0 ||
+      activeStepIndex === 0 ||
+      currentKey === "__final__"
+    );
+
+    updateMeta(false);
     updatePath();
     updateRecommendation("", false);
-    renderNode("start");
+
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">${escapeHtml(nodeText)}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
+
+          ${nodeNote ? `
+            <div class="note-card">
+              <div class="note-head">
+                <i class="fa-solid fa-bell"></i>
+                Reminder
+              </div>
+              <div class="note-body">${nodeNote}</div>
+            </div>
+          ` : ""}
+
+          ${nodeImage ? `
+            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+            </div>
+          ` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+
+    els.stageCard.querySelectorAll(".choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        const next = btn.dataset.next;
+        const label = btn.dataset.label;
+        const action = btn.dataset.action;
+        const note = btn.dataset.note;
+
+        const currentPathIndex = path.findIndex(item => item.nextKey === currentKey);
+
+        if (currentPathIndex !== -1 && currentPathIndex < path.length - 1) {
+          path = path.slice(0, currentPathIndex + 1);
+        }
+
+        historyStack.push({
+          key: currentKey,
+          path: [...path]
+        });
+
+        path.push({
+          question: nodeText,
+          answer: label,
+          fromKey: currentKey,
+          nextKey: action ? "__final__" : next,
+          finalNode: action ? { action, note } : null
+        });
+
+        updatePath();
+        updateMeta(false);
+
+        setTimeout(() => {
+          if (action) {
+            renderFinal({ action, note });
+          } else {
+            renderNode(next);
+          }
+        }, 120);
+      });
+    });
   }
 
-  function openComment() {
-    const modal = document.getElementById("commentModal");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "none";
-      feedbackMessage.textContent = "";
-    }
-    if (modal) modal.style.display = "flex";
-  }
+  function goBack(){
+    const currentPathIndex = path.findIndex(item =>
+      item.nextKey === currentKey ||
+      (currentKey === "__final__" && item.nextKey === "__final__")
+    );
 
-  function closeComment() {
-    const modal = document.getElementById("commentModal");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "none";
-      feedbackMessage.textContent = "";
-    }
-    if (modal) modal.style.display = "none";
-  }
-
-  function openHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "flex";
-  }
-
-  function closeHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "none";
-  }
-
-  function closeAllComments() {
-    const modal = document.getElementById("allCommentsModal");
-    if (modal) modal.style.display = "none";
-    if (commentsUnsubscribe) {
-      commentsUnsubscribe();
-      commentsUnsubscribe = null;
-    }
-  }
-
-  async function sendComment() {
-    const commentName = document.getElementById("commentName");
-    const commentText = document.getElementById("commentText");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-
-    const name = commentName ? commentName.value.trim() : "";
-    const comment = commentText ? commentText.value.trim() : "";
-
-    if (!selectedRating) {
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Please select a star rating first.";
-      }
+    if(currentPathIndex === -1){
+      currentFinalRecommendation = "";
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      updateRecommendation("", false);
+      renderNode("start");
       return;
     }
 
-    try {
-      await db.collection(FEEDBACK_COLLECTION).add({
-        name: name || "Anonymous",
-        comment,
-        rating: selectedRating,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#16a34a";
-        feedbackMessage.textContent = "Feedback sent successfully.";
-      }
-
-      if (commentName) commentName.value = "";
-      if (commentText) commentText.value = "";
-      selectedRating = 0;
-      ratingStars.forEach(s => s.classList.remove("selected"));
-
-      setTimeout(() => {
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "none";
-          feedbackMessage.textContent = "";
-        }
-        closeComment();
-      }, 1200);
-    } catch (error) {
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Unable to send feedback. Please try again.";
-      }
+    if(currentPathIndex === 0){
+      currentFinalRecommendation = "";
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      updateRecommendation("", false);
+      renderNode("start");
+      return;
     }
+
+    const previousStep = path[currentPathIndex - 1];
+
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+    updateRecommendation("", false);
+
+    if(previousStep.nextKey === "__final__" && previousStep.finalNode){
+      renderFinal(previousStep.finalNode);
+      return;
+    }
+
+    renderNode(previousStep.nextKey);
   }
 
+    function restart(){
+      path = [];
+      historyStack = [];
+      currentFinalRecommendation = "";
+      currentKey = "start";
 
-  async function showAllComments() {
-    const commentsList = document.getElementById("commentsList");
-    const allCommentsModal = document.getElementById("allCommentsModal");
-    if (!commentsList || !allCommentsModal) return;
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
 
-    try {
-      commentsList.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>";
-
-      const snap = await db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").get();
-      commentsList.innerHTML = "";
-
-      if (snap.empty) {
-        commentsList.innerHTML = `<p style="color:#64748b;">No comments yet.</p>`;
-      } else {
-        snap.forEach(doc => {
-          const d = doc.data();
-          const item = document.createElement("div");
-          item.className = "comment-list-item";
-          item.innerHTML = `
-            <span class="stars">${"★".repeat(d.rating || 0)}${"☆".repeat(5 - (d.rating || 0))}</span>
-            <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(d.name || "Anonymous")}</strong>
-            <div style="color:#475569; line-height:1.7;">${escapeHtml(d.comment || "")}</div>
-          `;
-          commentsList.appendChild(item);
-        });
-      }
-
-      closeComment();
-      allCommentsModal.style.display = "flex";
-    } catch(err) {
-      alert("Unable to load comments right now.");
+      updatePath();
+      updateRecommendation("", false);
+      renderNode("start");
     }
-  }
 
-  window.addEventListener("click", function(e){
-    const helpModal = document.getElementById("helpModal");
-    const commentModal = document.getElementById("commentModal");
-    const allCommentsModal = document.getElementById("allCommentsModal");
+    window.attemptEdit = attemptEdit;
+    window.closePasswordModal = closePasswordModal;
+    window.closeEditModal = closeEditModal;
+    window.checkPassword = checkPassword;
+    window.saveEdit = saveEdit;
+    window.copyTemplateText = copyTemplateText;
+    window.goBack = goBack;
+    window.restart = restart;
+    window.openImageModal = openImageModal;
+    window.closeImageModal = closeImageModal;
 
-    if(e.target === helpModal) closeHelp();
-    if(e.target === commentModal) closeComment();
-    if(e.target === allCommentsModal) closeAllComments();
-    if(e.target === els.passwordModal) closePasswordModal();
-    if(e.target === els.editModal) closeEditModal();
+    renderNode("start");
   });
-
-  window.openComment = openComment;
-  window.closeComment = closeComment;
-  window.openHelp = openHelp;
-  window.closeHelp = closeHelp;
-  window.closeAllComments = closeAllComments;
-  window.sendComment = sendComment;
-  window.showAllComments = showAllComments;
-
-  window.attemptEdit = attemptEdit;
-  window.copyTemplateText = copyTemplateText;
-  window.closePasswordModal = closePasswordModal;
-  window.closeEditModal = closeEditModal;
-  window.checkPassword = checkPassword;
-  window.saveEdit = saveEdit;
-  window.goBack = goBack;
-  window.restart = restart;
-  window.openImageModal = openImageModal;
-  window.closeImageModal = closeImageModal;
-
-  document.addEventListener("headerLoaded", () => {
-    initRatingStars();
-  });
-
-  renderNode("start");
-});
-</script>
+  </script>
 <div id="imageModal" class="image-modal" onclick="closeImageModal()">
   <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
   <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
