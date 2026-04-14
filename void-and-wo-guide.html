@@ -2592,35 +2592,39 @@ const NODES = {
 
   /* ===== HEADER MODAL FIX ===== */
 
-  function openComment() {
-    const modal = document.getElementById("commentModal");
-    if (modal) modal.style.display = "flex";
-  }
+function openModalAnimated(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
 
-  function closeComment() {
-    const modal = document.getElementById("commentModal");
-    if (modal) modal.style.display = "none";
-  }
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
 
-  function openHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "flex";
-  }
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
 
-  function closeHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "none";
-  }
+function closeModalAnimated(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
 
-  function showAllComments() {
-    const modal = document.getElementById("allCommentsModal");
-    if (modal) modal.style.display = "flex";
-  }
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
 
-  function closeAllComments() {
-    const modal = document.getElementById("allCommentsModal");
-    if (modal) modal.style.display = "none";
-  }
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+  }, 200);
+}
+
+function openComment(){ openModalAnimated("commentModal"); }
+function closeComment(){ closeModalAnimated("commentModal"); }
+
+function openHelp(){ openModalAnimated("helpModal"); }
+function closeHelp(){ closeModalAnimated("helpModal"); }
+
+function showAllComments(){ openModalAnimated("allCommentsModal"); }
+function closeAllComments(){ closeModalAnimated("allCommentsModal"); }
 
   window.attemptEdit = attemptEdit;
   window.closePasswordModal = closePasswordModal;
