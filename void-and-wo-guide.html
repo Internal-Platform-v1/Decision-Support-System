@@ -2454,72 +2454,67 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updatePath(){
-    if(!path.length){
-      els.pathBox.className = "path-empty";
-      els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
-      return;
-    }
-
-    const activePathKey = currentKey;
-
-    const html = path.map((item, index) => {
-      const isActive = item.nextKey === activePathKey;
-      return `
-        <div class="path-item">
-          <button
-            type="button"
-            class="path-jump ${isActive ? "active" : ""}"
-            data-step-index="${index}"
-          >
-            <div class="path-step">Step ${index + 1}</div>
-            <div class="path-question">${escapeHtml(item.question)}</div>
-            <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
-          </button>
-        </div>
-      `;
-    }).join("");
-
-    els.pathBox.className = "path-list";
-    els.pathBox.innerHTML = html;
-
-    els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const index = Number(btn.dataset.stepIndex);
-        jumpToPathStep(index);
-      });
-    });
+  if(!path.length){
+    els.pathBox.className = "path-empty";
+    els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+    return;
   }
+
+  const html = path.map((item, index) => {
+    const isActive =
+      currentKey === "__final__"
+        ? (
+            item.nextKey === "__final__" ||
+            (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
+          )
+        : item.fromKey === currentKey;
+
+    return `
+      <div class="path-item">
+        <button
+          type="button"
+          class="path-jump ${isActive ? "active" : ""}"
+          data-step-index="${index}"
+        >
+          <div class="path-step">Step ${index + 1}</div>
+          <div class="path-question">${escapeHtml(item.question)}</div>
+          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+        </button>
+      </div>
+    `;
+  }).join("");
+
+  els.pathBox.className = "path-list";
+  els.pathBox.innerHTML = html;
+
+  els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.stepIndex);
+      jumpToPathStep(index);
+    });
+  });
+}
 
   function jumpToPathStep(index){
-    if(index < 0 || index >= path.length) return;
+  if(index < 0 || index >= path.length) return;
 
-    const target = path[index];
-    if(!target) return;
+  const target = path[index];
+  if(!target) return;
 
-    currentKey = target.nextKey;
+  currentFinalRecommendation = "";
 
-    historyStack = [];
-    for(let i = 0; i < index; i++){
-      historyStack.push({
-        key: path[i].fromKey,
-        path: path.slice(0, i)
-      });
-    }
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
 
-    currentFinalRecommendation = "";
-
-    setTemplateValue(els.suggestedComment, "");
-    setTemplateValue(els.suggestedCorrCode, "");
-    setTemplateValue(els.suggestedEmail, "");
-
-    if(target.nextKey === "__final__" && target.finalNode){
-      renderFinal(target.finalNode);
-      return;
-    }
-
-    updateRecommendation("", false);
-    renderNode(target.nextKey);
+  if(target.nextKey === "__final__" && target.finalNode){
+    renderFinal(target.finalNode);
+    return;
   }
+
+  renderNode(target.fromKey);
+}
 
   function updateRecommendation(text, isFinal){
     if(!isFinal){
@@ -2644,21 +2639,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const nodeNote = getNodeNote(node);
     const nodeImage = getNodeImage(node);
 
-    const activeStepIndex = path.findIndex(item => item.nextKey === currentKey);
+const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+const nextIndex = path.findIndex(item => item.nextKey === currentKey);
 
-    const footerStepText = activeStepIndex !== -1
-      ? `Currently on step ${activeStepIndex + 1}`
-      : (path.length ? "Currently on step 1" : "Ready to begin");
+let currentStepNumber = 0;
 
-    const badgeStepText = activeStepIndex !== -1
-      ? `Step ${activeStepIndex + 1}`
-      : (path.length ? "Step 1" : "Start");
+if (currentKey === "start") {
+  currentStepNumber = 0;
+} else if (fromIndex !== -1) {
+  // user is viewing a recorded step directly
+  currentStepNumber = fromIndex + 1;
+} else if (nextIndex !== -1) {
+  // user moved forward normally to the next screen
+  currentStepNumber = nextIndex + 2;
+} else {
+  // fallback for first real screen after intro
+  currentStepNumber = 1;
+}
 
-    const hasPreviousStep = currentKey !== "start" && (
-      activeStepIndex > 0 ||
-      activeStepIndex === 0 ||
-      currentKey === "__final__"
-    );
+const footerStepText = currentKey === "start"
+  ? "Ready to begin"
+  : `Currently on step ${currentStepNumber}`;
+
+const badgeStepText = currentKey === "start"
+  ? "Start"
+  : `Step ${currentStepNumber}`;
+
+const hasPreviousStep = currentKey !== "start";
 
     updateMeta(false);
     updatePath();
@@ -2729,94 +2736,110 @@ document.addEventListener("DOMContentLoaded", () => {
     if (inlineBack) inlineBack.onclick = goBack;
     if (inlineRestart) inlineRestart.onclick = restart;
 
-    els.stageCard.querySelectorAll(".choice").forEach(btn => {
-      btn.addEventListener("click", () => {
-        els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-        btn.classList.add("selected");
+   els.stageCard.querySelectorAll(".choice").forEach(btn => {
+  btn.addEventListener("click", () => {
+    els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+    btn.classList.add("selected");
 
-        const next = btn.dataset.next;
-        const label = btn.dataset.label;
-        const action = btn.dataset.action;
-        const note = btn.dataset.note;
+    const next = btn.dataset.next;
+    const label = btn.dataset.label;
+    const action = btn.dataset.action;
+    const note = btn.dataset.note;
 
-        const currentPathIndex = path.findIndex(item => item.nextKey === currentKey);
+    const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+    const nextIndex = path.findIndex(item => item.nextKey === currentKey);
 
-        if (currentPathIndex !== -1 && currentPathIndex < path.length - 1) {
-          path = path.slice(0, currentPathIndex + 1);
-        }
+    if (fromIndex !== -1) {
+      // user is re-answering an already-saved step
+      path = path.slice(0, fromIndex);
+    } else if (nextIndex !== -1) {
+      // user is continuing normally from the previous step
+      path = path.slice(0, nextIndex + 1);
+    }
 
-        historyStack.push({
-          key: currentKey,
-          path: [...path]
-        });
-
-        path.push({
-          question: nodeText,
-          answer: label,
-          fromKey: currentKey,
-          nextKey: action ? "__final__" : next,
-          finalNode: action ? { action, note } : null
-        });
-
-        updatePath();
-        updateMeta(false);
-
-        setTimeout(() => {
-          if (action) {
-            renderFinal({ action, note });
-          } else {
-            renderNode(next);
-          }
-        }, 120);
-      });
+    historyStack.push({
+      key: currentKey,
+      path: [...path]
     });
+
+    if (currentKey !== "start") {
+      path.push({
+        question: nodeText,
+        answer: label,
+        fromKey: currentKey,
+        nextKey: action ? "__final__" : next,
+        finalNode: action ? { action, note } : null
+      });
+    }
+
+    updatePath();
+    updateMeta(false);
+
+    setTimeout(() => {
+      if (action) {
+        renderFinal({ action, note });
+      } else {
+        renderNode(next);
+      }
+    }, 120);
+  });
+});
   }
 
-  function goBack(){
-    const currentPathIndex = path.findIndex(item =>
-      item.nextKey === currentKey ||
-      (currentKey === "__final__" && item.nextKey === "__final__")
-    );
+function goBack(){
+  currentFinalRecommendation = "";
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
 
-    if(currentPathIndex === -1){
-      currentFinalRecommendation = "";
+  // Case 1: currently on final recommendation
+  if (currentKey === "__final__") {
+    const finalIndex = path.findIndex(item => {
+      if (item.nextKey === "__final__") return true;
+
+      const nextNode = NODES[item.nextKey];
+      return !!nextNode && isFinalNode(nextNode);
+    });
+
+    if (finalIndex === -1) {
       currentKey = "start";
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-      updateRecommendation("", false);
       renderNode("start");
       return;
     }
 
-    if(currentPathIndex === 0){
-      currentFinalRecommendation = "";
+    // Go back to the actual last question step
+    currentKey = path[finalIndex].fromKey;
+    renderNode(path[finalIndex].fromKey);
+    return;
+  }
+
+  // Case 2: current screen matches a saved step directly (fromKey)
+  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+  if (fromIndex !== -1) {
+    if (fromIndex === 0) {
       currentKey = "start";
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-      updateRecommendation("", false);
       renderNode("start");
       return;
     }
 
-    const previousStep = path[currentPathIndex - 1];
-
-    currentFinalRecommendation = "";
-    currentKey = previousStep.nextKey;
-
-    setTemplateValue(els.suggestedComment, "");
-    setTemplateValue(els.suggestedCorrCode, "");
-    setTemplateValue(els.suggestedEmail, "");
-    updateRecommendation("", false);
-
-    if(previousStep.nextKey === "__final__" && previousStep.finalNode){
-      renderFinal(previousStep.finalNode);
-      return;
-    }
-
-    renderNode(previousStep.nextKey);
+    currentKey = path[fromIndex - 1].fromKey;
+    renderNode(path[fromIndex - 1].fromKey);
+    return;
   }
+
+  // Case 3: current screen was reached normally from a previous step (nextKey)
+  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+  if (nextIndex !== -1) {
+    currentKey = path[nextIndex].fromKey;
+    renderNode(path[nextIndex].fromKey);
+    return;
+  }
+
+  // Fallback
+  currentKey = "start";
+  renderNode("start");
+}
   
   function restart(){
     path = [];
