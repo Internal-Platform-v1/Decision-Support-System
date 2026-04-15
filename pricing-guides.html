@@ -540,168 +540,265 @@ button,input,textarea,select{font:inherit}
 }
 
 /* MODALS */
-.modal{
+/* ===== HEADER MODALS / CLOCK FIX ===== */
+
+#commentModal,
+#allCommentsModal,
+#helpModal,
+#timeSettingsModal{
   display:none;
   position:fixed;
   inset:0;
-  z-index:1000;
+  z-index:2147483647;
   justify-content:center;
   align-items:center;
-  padding:20px;
-  background:rgba(2,6,23,.55);
-  backdrop-filter:blur(6px);
+  padding:0 24px;
+  background:rgba(2,6,23,.52);
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
 }
-.modal-content{
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content,
+#timeSettingsModal .modal-content{
   width:100%;
-  max-width:560px;
   background:#fff;
-  border-radius:22px;
-  padding:24px;
-  box-shadow:0 24px 80px rgba(2,6,23,.24);
-  border:1px solid #e2e8f0;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  border:1px solid rgba(148,163,184,.16);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  margin:110px auto 32px;
 }
-.modal-header{
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content,
+#helpModal .help-modal{
+  max-width:760px;
+}
+
+#timeSettingsModal .modal-content{
+  max-width:580px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header,
+#timeSettingsModal .modal-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:14px;
   font-size:22px;
   font-weight:800;
   margin-bottom:14px;
-  letter-spacing:-.02em;
+  letter-spacing:-.03em;
+  color:#0f172a;
 }
-.modal-close{
-  font-size:24px;
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close,
+#timeSettingsModal .modal-close{
   cursor:pointer;
-  color:var(--muted);
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
 }
-.modal-close:hover{color:var(--accent)}
-.rating-container{
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover,
+#timeSettingsModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .rating-container{
   display:flex;
   justify-content:center;
   gap:14px;
-  margin-top:10px;
-  margin-bottom:8px;
+  margin:16px 0 18px;
 }
-.rating-star{
+
+#commentModal .rating-star{
   cursor:pointer;
-  font-size:34px;
-  color:#e2e8f0;
-  transition:transform .2s ease,color .25s ease;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
 }
-.rating-star:hover{transform:scale(1.25)}
-.rating-star.selected{
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
   color:#FF6600;
-  animation:starPop .3s ease;
 }
-@keyframes starPop{
-  0%{transform:scale(.6)}
-  60%{transform:scale(1.4)}
-  100%{transform:scale(1)}
-}
-.comment-list-item{
-  padding:12px 0;
-  border-bottom:1px solid #eee;
-}
-.comment-list-item:last-child{border:none}
-input,textarea{
+
+#commentModal input,
+#commentModal textarea,
+#timeSettingsModal input,
+#timeSettingsModal textarea,
+#timeSettingsModal select{
   width:100%;
-  padding:12px 14px;
-  margin-top:10px;
-  border:1px solid #cbd5e1;
-  border-radius:12px;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
   font-size:14px;
-  background:#fff;
+  transition:.18s ease;
 }
-textarea{
-  min-height:180px;
+
+#commentModal input{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+
+#commentModal textarea{
+  min-height:120px;
   resize:vertical;
+  margin-top:0;
 }
-.comment-modal-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  margin-top:12px;
-  flex-wrap:wrap;
+
+#commentModal input:focus,
+#commentModal textarea:focus,
+#timeSettingsModal select:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
 }
-.link-text{
-  color:var(--accent);
+
+#commentModal .link-text{
+  color:#4D148C;
   cursor:pointer;
-  text-decoration:underline;
+  text-decoration:none;
   font-size:14px;
+  font-weight:700;
 }
-#commentsList .stars{
+
+#commentModal .link-text:hover{
+  text-decoration:underline;
+}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{
+  border-bottom:none;
+}
+
+#allCommentsModal .stars{
   color:#FF6600;
   font-size:18px;
   margin-bottom:6px;
   display:block;
 }
 
-/* CLOCK POPUP */
+/* let shared header.js handle popup placement */
 #timeCalendarPopup{
   display:none;
-  position:absolute;
-  top:60px;
-  right:20px;
-  width:310px;
-  z-index:900;
-  padding:16px;
-  border-radius:16px;
-  background:white;
-  border:1px solid #e2e8f0;
-  box-shadow:0 20px 40px rgba(0,0,0,0.18);
+  position:fixed;
+  top:92px;
+  right:24px;
+  width:min(360px, calc(100vw - 32px));
+  z-index:2147483647;
+  padding:20px;
+  border-radius:28px;
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(148,163,184,.16);
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  backdrop-filter:blur(16px);
 }
+
 .popup-time{
   font-size:34px;
-  font-weight:600;
-  text-align:left;
+  font-weight:800;
+  color:#0f172a;
   margin-bottom:4px;
-  color:#111;
 }
+
 .popup-date{
   font-size:14px;
-  color:#555;
-  margin-bottom:14px;
-  text-align:left;
+  color:#64748b;
+  margin-bottom:16px;
 }
+
 .calendar-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+  padding:10px 12px;
+  border-radius:16px;
   background:#f8fafc;
-  padding:8px;
-  border-radius:10px;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
 }
+
 .calendar-header span{
   cursor:pointer;
-  font-weight:600;
+  color:#4D148C;
+  font-weight:800;
+  font-size:18px;
+  user-select:none;
+  width:28px;
+  text-align:center;
 }
-.calendar-title{font-weight:700}
+
+.calendar-title{
+  font-weight:800;
+  color:#0f172a;
+}
+
 .calendar-grid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
+  gap:8px;
 }
-.calendar-grid .day-name{
-  text-align:center;
-  font-size:12px;
-  font-weight:700;
-  color:var(--muted);
-}
-.calendar-grid .day{
-  text-align:center;
-  padding:8px 0;
-  font-size:14px;
-  border-radius:50%;
-}
-.calendar-grid .today{
-  background:var(--accent);
-  color:white;
-  font-weight:700;
-}
-.calendar-grid .day:hover{background:#f0f0f0}
 
+@media (max-width:720px){
+  #commentModal,
+  #allCommentsModal,
+  #helpModal,
+  #timeSettingsModal{
+    padding:0 14px;
+  }
+
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content,
+  #timeSettingsModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+
+  #timeCalendarPopup{
+    right:10px;
+    top:86px;
+  }
+}
 footer{
   background:var(--accent);
   color:white;
@@ -966,7 +1063,6 @@ footer{
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
-
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
@@ -980,137 +1076,6 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function updateClock(){
-  const now = new Date();
-
-  const headerTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupDate = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(now);
-
-  const clockText = document.getElementById("clockText");
-  if (clockText) clockText.textContent = headerTime;
-
-  const pt = document.getElementById("popupTime");
-  const pd = document.getElementById("popupDate");
-
-  if (pt) pt.textContent = popupTime;
-  if (pd) pd.textContent = popupDate;
-}
-
-let currentDate = new Date();
-
-document.addEventListener("headerLoaded", () => {
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  const clockBtn = document.getElementById("clockBtn");
-  const calendarPopup = document.getElementById("timeCalendarPopup");
-  const prevMonth = document.getElementById("prevMonth");
-  const nextMonth = document.getElementById("nextMonth");
-
-  if (clockBtn && calendarPopup) {
-    clockBtn.onclick = function(e){
-      e.stopPropagation();
-      calendarPopup.style.display =
-        calendarPopup.style.display === "block" ? "none" : "block";
-      renderCalendar(currentDate);
-    };
-  }
-
-  document.addEventListener("click", function(){
-    if (calendarPopup) calendarPopup.style.display = "none";
-  });
-
-  if (prevMonth) {
-    prevMonth.onclick = function(e){
-      e.stopPropagation();
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar(currentDate);
-    };
-  }
-
-  if (nextMonth) {
-    nextMonth.onclick = function(e){
-      e.stopPropagation();
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar(currentDate);
-    };
-  }
-
-  setupGuideFilters();
-});
-
-function renderCalendar(date){
-  const calendarGrid = document.getElementById("calendarGrid");
-  const monthYear = document.getElementById("monthYear");
-  if (!calendarGrid || !monthYear) return;
-
-  calendarGrid.innerHTML = "";
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  monthYear.textContent = date.toLocaleString("en-PH", {
-    month: "long",
-    year: "numeric"
-  });
-
-  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{
-    const el = document.createElement("div");
-    el.className = "day-name";
-    el.textContent = d;
-    calendarGrid.appendChild(el);
-  });
-
-  for(let i=0;i<firstDay;i++){
-    calendarGrid.appendChild(document.createElement("div"));
-  }
-
-  const today = new Date(new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date()));
-
-  for(let d=1; d<=daysInMonth; d++){
-    const day = document.createElement("div");
-    day.className = "day";
-    day.textContent = d;
-
-    if (
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ){
-      day.classList.add("today");
-    }
-
-    calendarGrid.appendChild(day);
-  }
-}
-
 /* GUIDE SEARCH + FILTER */
 function setupGuideFilters(){
   const searchInput = document.getElementById("guideSearch");
@@ -1123,7 +1088,6 @@ function setupGuideFilters(){
 
   function applyFilters(){
     const term = searchInput.value.trim().toLowerCase();
-    let visibleCount = 0;
 
     cards.forEach(card => {
       const category = (card.dataset.category || "").toLowerCase();
@@ -1143,10 +1107,7 @@ function setupGuideFilters(){
       const matchesFilter =
         activeFilter === "all" || category === activeFilter;
 
-      const show = matchesSearch && matchesFilter;
-      card.classList.toggle("is-hidden", !show);
-
-      if (show) visibleCount++;
+      card.classList.toggle("is-hidden", !(matchesSearch && matchesFilter));
     });
   }
 
@@ -1166,94 +1127,214 @@ function setupGuideFilters(){
   applyFilters();
 }
 
-/* FEEDBACK */
+document.addEventListener("DOMContentLoaded", setupGuideFilters);
+
+/* FEEDBACK + HELP FOR HEADER MODALS */
 let selectedRating = 0;
+let ratingStars = [];
+let commentsUnsubscribe = null;
 
-document.addEventListener("click", (e)=>{
-  if(e.target.classList.contains("rating-star")){
-    selectedRating = parseInt(e.target.dataset.value);
+function openAnimatedModal(modal) {
+  if (!modal) return;
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
 
-    document.querySelectorAll(".rating-star").forEach(s=>{
-      s.classList.toggle(
-        "selected",
-        parseInt(s.dataset.value) <= selectedRating
-      );
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
+
+function closeAnimatedModal(modal, onClosed) {
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
+
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+
+  ratingStars.forEach(star => {
+    star.addEventListener("click", () => {
+      selectedRating = Number(star.dataset.value || 0);
+      ratingStars.forEach(s => {
+        s.classList.toggle("selected", Number(s.dataset.value || 0) <= selectedRating);
+      });
     });
-  }
-});
+  });
+}
 
-function sendComment(){
-  const name = document.getElementById('commentName').value.trim();
-  const comment = document.getElementById('commentText').value.trim();
+function openComment() {
+  openAnimatedModal(document.getElementById("commentModal"));
+}
 
-  if(selectedRating===0){
-    alert("Select a rating.");
+function closeComment() {
+  closeAnimatedModal(document.getElementById("commentModal"));
+}
+
+function openHelp() {
+  openAnimatedModal(document.getElementById("helpModal"));
+}
+
+function closeHelp() {
+  closeAnimatedModal(document.getElementById("helpModal"));
+}
+
+function closeAllComments() {
+  closeAnimatedModal(document.getElementById("allCommentsModal"), () => {
+    if (commentsUnsubscribe) {
+      commentsUnsubscribe();
+      commentsUnsubscribe = null;
+    }
+  });
+}
+
+async function sendComment() {
+  const name = document.getElementById("commentName")?.value.trim() || "";
+  const comment = document.getElementById("commentText")?.value.trim() || "";
+  const feedbackMessage = document.getElementById("feedbackMessage");
+
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
+    }
     return;
   }
 
-  db.collection("feedback").add({
-    rating:selectedRating,
-    name:name||"Anonymous",
-    comment:comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>{
-    alert("Saved!");
-    clearCommentForm();
-    closeComment();
-  }).catch(()=>alert("Save failed."));
-}
-
-function clearCommentForm(){
-  selectedRating = 0;
-  document.getElementById('commentName').value = "";
-  document.getElementById('commentText').value = "";
-  document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));
-}
-
-let unsubscribeListener = null;
-
-function showAllComments(){
-  const listEl = document.getElementById('commentsList');
-  listEl.innerHTML = "Loading…";
-
-  if(unsubscribeListener) unsubscribeListener();
-
-  unsubscribeListener = db.collection("feedback")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snap=>{
-      listEl.innerHTML = "";
-
-      if(snap.empty){
-        listEl.innerHTML = "<p>No feedback yet.</p>";
-      }
-
-      snap.forEach(doc=>{
-        const d = doc.data();
-
-        const div = document.createElement('div');
-        div.className = "comment-list-item";
-
-        div.innerHTML = `
-          <div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div>
-          <strong>${d.name}</strong>
-          <p>${d.comment || ""}</p>
-        `;
-
-        listEl.appendChild(div);
-      });
-
-      document.getElementById('allCommentsModal').style.display = 'flex';
+  try {
+    await db.collection("feedback").add({
+      rating: selectedRating,
+      name: name || "Anonymous",
+      comment,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    const nameEl = document.getElementById("commentName");
+    const commentEl = document.getElementById("commentText");
+    if (nameEl) nameEl.value = "";
+    if (commentEl) commentEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
+
+    setTimeout(() => {
+      closeComment();
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
+      }
+    }, 900);
+  } catch (err) {
+    console.error(err);
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
+    }
+  }
 }
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  setupGuideFilters();
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const modal = document.getElementById("allCommentsModal");
+  const list = document.getElementById("commentsList");
+
+  if (!modal || !list) return;
+
+  list.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>";
+
+  if (commentsUnsubscribe) commentsUnsubscribe();
+
+  const loadComments = () => {
+    openAnimatedModal(modal);
+
+    commentsUnsubscribe = db.collection("feedback")
+      .orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        if (snapshot.empty) {
+          list.innerHTML = "<p style='color:#64748b;'>No comments and ratings yet.</p>";
+          return;
+        }
+
+        let html = "";
+        snapshot.forEach(doc => {
+          const data = doc.data() || {};
+          const rating = Number(data.rating || 0);
+          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+          const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+          html += `
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            </div>
+          `;
+        });
+
+        list.innerHTML = html;
+      }, error => {
+        console.error(error);
+        list.innerHTML = "<p style='color:#ef4444;'>Unable to load comments right now.</p>";
+      });
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeAnimatedModal(commentModal, loadComments);
+  } else {
+    loadComments();
+  }
+}
+
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
+
+window.addEventListener("click", (e) => {
+  const commentModal = document.getElementById("commentModal");
+  const allCommentsModal = document.getElementById("allCommentsModal");
+  const helpModal = document.getElementById("helpModal");
+
+  if (e.target === commentModal) closeComment();
+  if (e.target === allCommentsModal) closeAllComments();
+  if (e.target === helpModal) closeHelp();
 });
 
 document.addEventListener("headerLoaded", () => {
-  
+  initRatingStars();
+  setupGuideFilters();
 });
+
+setTimeout(() => {
+  initRatingStars();
+}, 300);
 </script>
 </body>
 </html>
