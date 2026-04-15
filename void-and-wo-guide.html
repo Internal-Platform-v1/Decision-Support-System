@@ -2604,115 +2604,130 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ===== PAGE MODALS + FEEDBACK ONLY ===== */
 
-  function openModalAnimated(id) {
-    const modal = document.getElementById(id);
-    if (!modal) return;
+function openModalAnimated(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
 
-    modal.style.display = "flex";
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
+
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
+
+function closeModalAnimated(id, onClosed) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
+
+  setTimeout(() => {
+    modal.style.display = "none";
     modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
 
-    requestAnimationFrame(() => {
-      modal.classList.add("is-open");
-    });
+function openComment() {
+  openModalAnimated("commentModal");
+}
+
+function closeComment() {
+  closeModalAnimated("commentModal");
+}
+
+function openHelp() {
+  openModalAnimated("helpModal");
+}
+
+function closeHelp() {
+  closeModalAnimated("helpModal");
+}
+
+function closeAllComments() {
+  closeModalAnimated("allCommentsModal");
+}
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+  if (!ratingStars.length) return;
+
+  ratingStars.forEach(star => {
+    star.onclick = function (e) {
+      e.stopPropagation();
+      selectedRating = Number(this.dataset.value || 0);
+
+      ratingStars.forEach(s => {
+        const val = Number(s.dataset.value || 0);
+        s.classList.toggle("selected", val <= selectedRating);
+      });
+    };
+  });
+}
+
+async function sendComment() {
+  const nameEl = document.getElementById("commentName");
+  const textEl = document.getElementById("commentText");
+  const feedbackMessage = document.getElementById("feedbackMessage");
+
+  const name = (nameEl?.value || "").trim();
+  const comment = (textEl?.value || "").trim();
+
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
+    }
+    return;
   }
 
-  function closeModalAnimated(id) {
-    const modal = document.getElementById(id);
-    if (!modal) return;
+  try {
+    await db.collection(FEEDBACK_COLLECTION).add({
+      name: name || "Anonymous",
+      comment,
+      rating: selectedRating,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-    modal.classList.remove("is-open");
-    modal.classList.add("is-closing");
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    if (nameEl) nameEl.value = "";
+    if (textEl) textEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
 
     setTimeout(() => {
-      modal.style.display = "none";
-      modal.classList.remove("is-closing");
-    }, 200);
-  }
-
-  function openComment(){ openModalAnimated("commentModal"); }
-  function closeComment(){ closeModalAnimated("commentModal"); }
-
-  function openHelp(){ openModalAnimated("helpModal"); }
-  function closeHelp(){ closeModalAnimated("helpModal"); }
-
-  function closeAllComments(){ closeModalAnimated("allCommentsModal"); }
-
-  function initRatingStars() {
-    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-    if (!ratingStars.length) return;
-
-    ratingStars.forEach(star => {
-      star.onclick = function (e) {
-        e.stopPropagation();
-        selectedRating = Number(this.dataset.value || 0);
-
-        ratingStars.forEach(s => {
-          const val = Number(s.dataset.value || 0);
-          s.classList.toggle("selected", val <= selectedRating);
-        });
-      };
-    });
-  }
-
-  async function sendComment() {
-    const nameEl = document.getElementById("commentName");
-    const textEl = document.getElementById("commentText");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-
-    const name = (nameEl?.value || "").trim();
-    const comment = (textEl?.value || "").trim();
-
-    if (!selectedRating) {
+      closeComment();
       if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Please select a rating first.";
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
       }
-      return;
-    }
-
-    try {
-      await db.collection(FEEDBACK_COLLECTION).add({
-        name: name || "Anonymous",
-        comment,
-        rating: selectedRating,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#16a34a";
-        feedbackMessage.textContent = "Feedback sent successfully.";
-      }
-
-      if (nameEl) nameEl.value = "";
-      if (textEl) textEl.value = "";
-
-      selectedRating = 0;
-      ratingStars.forEach(star => star.classList.remove("selected"));
-
-      setTimeout(() => {
-        closeComment();
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "none";
-          feedbackMessage.textContent = "";
-        }
-      }, 900);
-    } catch (err) {
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Unable to send feedback right now.";
-      }
+    }, 900);
+  } catch (err) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
     }
   }
+}
 
-  async function showAllComments() {
-    const commentsList = document.getElementById("commentsList");
-    if (!commentsList) return;
+async function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const commentsList = document.getElementById("commentsList");
+  if (!commentsList) return;
 
-    commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
 
+  const loadComments = async () => {
     try {
       const snap = await db
         .collection(FEEDBACK_COLLECTION)
@@ -2729,12 +2744,10 @@ document.addEventListener("DOMContentLoaded", () => {
           const empty = "☆".repeat(Math.max(0, 5 - rating));
 
           return `
-            <div style="padding:14px 0; border-bottom:1px solid #e2e8f0;">
-              <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:6px;">
-                <strong style="color:#0f172a;">${escapeHtml(data.name || "Anonymous")}</strong>
-                <span style="color:#ff6600; font-weight:800; white-space:nowrap;">${filled}${empty}</span>
-              </div>
-              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "")}</div>
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
             </div>
           `;
         }).join("");
@@ -2745,37 +2758,44 @@ document.addEventListener("DOMContentLoaded", () => {
       commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
       openModalAnimated("allCommentsModal");
     }
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeModalAnimated("commentModal", loadComments);
+  } else {
+    loadComments();
   }
+}
 
-  window.attemptEdit = attemptEdit;
-  window.closePasswordModal = closePasswordModal;
-  window.closeEditModal = closeEditModal;
-  window.checkPassword = checkPassword;
-  window.saveEdit = saveEdit;
-  window.copyTemplateText = copyTemplateText;
-  window.goBack = goBack;
-  window.restart = restart;
-  window.openImageModal = openImageModal;
-  window.closeImageModal = closeImageModal;
+window.attemptEdit = attemptEdit;
+window.closePasswordModal = closePasswordModal;
+window.closeEditModal = closeEditModal;
+window.checkPassword = checkPassword;
+window.saveEdit = saveEdit;
+window.copyTemplateText = copyTemplateText;
+window.goBack = goBack;
+window.restart = restart;
+window.openImageModal = openImageModal;
+window.closeImageModal = closeImageModal;
 
-  /* keep these for header.html buttons */
-  window.openComment = openComment;
-  window.closeComment = closeComment;
-  window.openHelp = openHelp;
-  window.closeHelp = closeHelp;
-  window.showAllComments = showAllComments;
-  window.closeAllComments = closeAllComments;
-  window.sendComment = sendComment;
+/* keep these for header.html buttons */
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
 
-  document.addEventListener("headerLoaded", () => {
-    initRatingStars();
-  });
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+});
 
-  setTimeout(() => {
-    initRatingStars();
-  }, 300);
+setTimeout(() => {
+  initRatingStars();
+}, 300);
 
-  renderNode("start");
+renderNode("start");
 });
 </script>
 <div id="imageModal" class="image-modal" onclick="closeImageModal()">
