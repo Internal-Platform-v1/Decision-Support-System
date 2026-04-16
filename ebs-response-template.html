@@ -768,23 +768,13 @@ window.scrollToBuilder = function () {
       });
     }
 
-    function formatEmailSpacing(text) {
-      if (!text) return "";
-      let t = text.replace(/
-/g, "
-");
-      t = t.replace(/
-{2,}/g, "
-
-");
-      t = t.replace(/([^
-])
-([^
-])/g, "$1
-
-$2");
-      return t;
-    }
+function formatEmailSpacing(text) {
+  if (!text) return "";
+  let t = text.replace(/\r\n/g, "\n");
+  t = t.replace(/\n{2,}/g, "\n\n");
+  t = t.replace(/([^\n])\n([^\n])/g, "$1\n\n$2");
+  return t;
+}
 
     function populateConcernOptions(list) {
       const current = concernSelect.value;
@@ -926,28 +916,6 @@ $2");
       updateEmailLinks();
       updateSnapshot();
     });
-
-    window.filterConcernOptions = function () {
-      const input = document.getElementById("templateSearch");
-      const query = input.value.trim().toLowerCase();
-      const clearBtn = document.getElementById("clearSearchBtn");
-      clearBtn.style.display = query ? "block" : "none";
-
-      if (!query) {
-        populateConcernOptions(fullConcernList);
-        return;
-      }
-
-      const filtered = fullConcernList.filter(item => item.toLowerCase().includes(query));
-      populateConcernOptions(filtered);
-    };
-
-    window.clearTemplateSearch = function () {
-      const input = document.getElementById("templateSearch");
-      input.value = "";
-      filterConcernOptions();
-      input.focus();
-    };
 
     window.focusConcernSelect = function () {
       concernSelect.focus();
