@@ -5,697 +5,1016 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BD Tools — Case Directory</title>
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- SheetJS for XLSX -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/header-footer-style.css">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
 :root{
-  --bg:#f4f7fb;
+  --bg:#07111f;
+  --bg-soft:#0c1728;
+  --panel:#0f1c31;
+  --panel-2:#12233d;
   --card:#ffffff;
-  --muted:#64748b;
-  --accent:#4d148c;
-  --accent-dark:#3a0f6b;
-  font-family: Inter, ui-sans-serif, system-ui;
+  --card-soft:#f8fafc;
+  --text:#0f172a;
+  --text-soft:#475569;
+  --muted:#94a3b8;
+  --line:rgba(148,163,184,.18);
+  --white-line:rgba(255,255,255,.08);
+  --accent:#6d28d9;
+  --accent-2:#4d148c;
+  --accent-3:#ff6600;
+  --success:#16a34a;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+  --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+  --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+  --shadow-md:0 10px 28px rgba(15,23,42,.10);
+  --shadow-card:0 16px 40px rgba(15,23,42,.06);
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --radius-md:16px;
+  --radius-sm:12px;
+  --max:1500px;
+  font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-*{box-sizing:border-box;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+a{color:inherit}
+button,input,textarea,select{font:inherit}
+
 body{
   margin:0;
-  background:linear-gradient(180deg,var(--bg),#eef6ff);
-  display:flex;
-  flex-direction:column;
   min-height:100vh;
-}
-textarea{min-height:180px;resize:vertical;}
-
-.btn{
-  background:var(--accent);
-  color:white;
-  border:none;
-  padding:10px 18px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-.btn:hover{background:var(--accent-dark);}
-
-.note-box{
-  margin-top:10px;
-  background:#f8fafc;
-  border-left:5px solid var(--accent);
-  padding:12px;
-  border-radius:6px;
-  color:#334155;
-  font-size:14px;
+  color:var(--text);
+  overflow-x:hidden;
+  background:#eef4fb;
 }
 
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-  z-index:1;
-}
-header img{height:40px; animation:logoFlyIn 1s ease-out forwards; opacity:0;}
-.nav-tabs{display:flex; gap:30px;}
-.tab{color:white; text-decoration:none; font-weight:600; font-size:16px; position:relative; padding:6px 0; transition: opacity 0.2s;}
-.tab:hover{opacity:0.8;}
-.tab.active::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:3px;background:#ff6600;border-radius:3px;}
-
-.header-icons{display:flex;align-items:center;gap:20px;}
-#clockBtn{cursor:pointer; display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; color:white; position:relative;}
-#clockBtn:hover{transform:scale(1.1);}
-.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
-.header-icon:hover{transform:scale(1.3);}
-.header-icon.active{color:var(--accent-dark);}
-
-/* ---------- HEADER ANIMATIONS ---------- */
-@keyframes logoFlyIn {0%{opacity:0;transform:translateX(-50px) scale(0.8);}100%{opacity:1;transform:translateX(0) scale(1);}}
-header::after{
+body::before{
   content:"";
-  position:absolute; top:0; left:-100%;
-  width:100%; height:100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform:skewX(-20deg);
-  animation:sweep 1s ease-out forwards;
-  z-index:0;
-  opacity:0.2;
-}
-@keyframes sweep{0%{left:-100%;}100%{left:100%;}}
-
-/* ---------- MAIN ---------- */
-.main{
-  flex:1;
-  padding:40px;
-  display:flex;
-  justify-content:center;
-}
-.message-box{
-  background:white;
-  padding:40px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
-  width:100%;
-  max-width:1800px; /* match main menu shell */
-}
-input{
-  width:100%;
-  padding:12px 14px;
-  border-radius:8px;
-  border:1px solid #e2e8f0;
-  font-size:15px;
-  margin:20px 0;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:14px;
-}
-th, td{padding:12px; vertical-align:top;}
-th{background:#f1f5f9; position:sticky; top:0;}
-table th:nth-child(1){ width:20%; }
-table th:nth-child(2){ width:25%; }
-table th:nth-child(3){ width:20%; }
-table th:nth-child(4){ width:15%; }
-table th:nth-child(5){ width:20%; }
-pre{
-  background:#f8fafc;
-  padding:10px;
-  border-radius:6px;
-  white-space:pre-wrap;
-  margin:0;
-}
-tbody td:first-child { font-weight:700; }
-tbody tr {border-bottom:2px solid #e2e8f0; opacity:0; animation:rowFadeIn 0.5s ease forwards;}
-tbody tr:nth-child(odd){background-color:#fcfcfc;}
-tbody tr:nth-child(even){background-color:#ffffff;}
-td{padding:16px 12px;}
-@keyframes rowFadeIn{0%{opacity:0;transform:translateY(10px);}100%{opacity:1;transform:translateY(0);}}
-
-footer{
-  background:var(--accent);
-  color:white;
-  padding:16px;
-  text-align:center;
-}
-
-/* MODALS */
-.modal {
-  display:none;
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  z-index:1000;
+  z-index:-1;
+  background:
+    radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+    linear-gradient(180deg, #091120 0%, #0b1525 38%, #eef4fb 38%, #f5f8fc 100%);
+  pointer-events:none;
 }
-.modal-content {
-  background:white;
-  border-radius:10px;
-  padding:24px;
-  width:100%;
-  max-width:500px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-.modal-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-.modal-close {
-  font-size:22px;
-  cursor:pointer;
-  color:var(--muted);
-}
-.modal-close:hover {color:var(--accent);}
 
-/* STAR RATING */
-.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
-.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
-.rating-star:hover{transform:scale(1.3);}
-.rating-star.selected{color:var(--accent-dark);}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:36px 36px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+}
 
-/* COMMENTS */
-.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
-.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
-.comment-list-item:last-child{border:none;}
-input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
+.page{position:relative;z-index:1}
+.container{width:min(calc(100% - 32px), var(--max));margin:0 auto}
 
-/* TIME CALENDAR */
-#timeCalendarPopup {
-  display:none;
-  position:absolute;
-  top:60px; right:20px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  padding:16px;
-  width:310px;
-  z-index:900;
+/* Hero */
+.hero-wrap{padding:28px 0 18px}
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:36px;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255,102,0,.24), transparent 18%),
+    radial-gradient(circle at 15% 18%, rgba(255,255,255,.16), transparent 20%),
+    linear-gradient(135deg, #4d148c 0%, #5b1aae 46%, #1e293b 100%);
+  box-shadow:var(--shadow-xl);
+  border:1px solid rgba(255,255,255,.12);
 }
-#timeCalendarPopup h3 {
-  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
-  margin-bottom:8px;
+.hero::before,
+.hero::after{content:"";position:absolute;border-radius:999px;pointer-events:none}
+.hero::before{
+  width:420px;height:420px;top:-220px;right:-120px;
+  background:radial-gradient(circle, rgba(255,255,255,.18), transparent 62%);
 }
-.calendar-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#f0f0f0;
-  padding:8px;
-  border-radius:6px;
+.hero::after{
+  width:280px;height:280px;bottom:-160px;left:-80px;
+  background:radial-gradient(circle, rgba(255,102,0,.18), transparent 65%);
 }
-.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
-.calendar-title{font-weight:700;}
-.calendar-grid{
+.hero-grid{
+  position:relative;z-index:1;
   display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
+  grid-template-columns:minmax(0,1.25fr) minmax(300px,.82fr);
+  gap:22px;
+  align-items:stretch;
+  padding:32px;
 }
-.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
-.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
-.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
-.calendar-grid .day:hover{background:#f0f0f0;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;
+  background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+  margin-bottom:18px;
+}
+.hero h1{
+  margin:0;color:#fff;font-size:clamp(2.1rem, 4vw, 3.65rem);line-height:.98;
+  letter-spacing:-.05em;max-width:760px;
+}
+.hero p{
+  margin:16px 0 22px;color:rgba(255,255,255,.82);font-size:16px;line-height:1.7;max-width:760px;
+}
+.hero-stats{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px;
+}
+.stat-card{
+  border-radius:20px;padding:18px 18px 16px;background:rgba(255,255,255,.10);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);backdrop-filter:blur(10px);
+}
+.stat-value{color:#fff;font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px}
+.stat-label{color:rgba(255,255,255,.7);font-size:13px;line-height:1.45}
+.hero-cta{
+  border:none;padding:14px 22px;border-radius:999px;background:#ffffff;color:#4d148c;
+  font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.15);
+  transition:all .2s ease;display:inline-flex;align-items:center;gap:8px;animation:fadeUp .6s ease;
+}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.2)}
+.hero-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.quick-panel{
+  background:rgba(255,255,255,.10);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  border-radius:28px;padding:22px;backdrop-filter:blur(12px);height:100%;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.panel-title{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;font-weight:700;font-size:18px;margin-bottom:14px;
+}
+.panel-title span:last-child{color:rgba(255,255,255,.6);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.quick-list{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.quick-item{
+  display:flex;gap:14px;align-items:flex-start;padding:14px;border-radius:18px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.quick-icon{
+  width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
+  background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));color:#fff;flex-shrink:0;
+}
+.quick-item strong{display:block;color:#fff;font-size:14px;margin-bottom:4px}
+.quick-item span{display:block;color:rgba(255,255,255,.7);font-size:13px;line-height:1.45}
+.live-strip{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;padding:14px 16px;
+  border-radius:18px;background:rgba(7,17,31,.24);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);color:#fff;
+}
+.live-strip strong{display:block;font-size:14px;margin-bottom:4px}
+.live-strip span{color:rgba(255,255,255,.68);font-size:13px}
+.pulse{width:12px;height:12px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.55);animation:pulse 1.9s infinite;flex-shrink:0}
 
-/* COMMENT LINK */
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}
+  70%{box-shadow:0 0 0 16px rgba(34,197,94,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Search strip */
+.search-wrap{margin-top:0;margin-bottom:18px}
+.search-card{
+  background:rgba(255,255,255,.82);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.8);
+  box-shadow:var(--shadow-lg);border-radius:28px;padding:18px;
+}
+.search-top{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:14px;flex-wrap:wrap;
+}
+.search-copy h2{margin:0 0 6px;font-size:24px;letter-spacing:-.03em}
+.search-copy p{margin:0;color:var(--text-soft);font-size:14px;line-height:1.6}
+.chip-row{display:flex;flex-wrap:wrap;gap:10px}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#eef2ff;
+  color:#4338ca;font-size:13px;font-weight:700;border:1px solid #e0e7ff;white-space:nowrap;
+}
+.search-bar{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.search-input-wrap{position:relative}
+.search-input-wrap i{
+  position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#64748b;font-size:16px;pointer-events:none;
+}
+#directorySearch{
+  width:100%;border:none;outline:none;border-radius:18px;background:#f8fafc;min-height:60px;padding:0 54px 0 50px;
+  font-size:16px;font-weight:600;color:#0f172a;box-shadow:inset 0 0 0 1px rgba(148,163,184,.22);transition:.2s ease;
+}
+#directorySearch:focus{background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08)}
+#directorySearch::placeholder{color:#94a3b8;font-weight:500}
+#clearSearchBtn{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:none;border-radius:999px;
+  background:#e2e8f0;color:#475569;font-size:18px;font-weight:700;cursor:pointer;display:none;transition:.2s ease;
+}
+#clearSearchBtn:hover{background:#cbd5e1;color:#0f172a}
+.search-btn{
+  border:none;min-height:60px;padding:0 22px;border-radius:18px;background:linear-gradient(135deg, #ff6600, #ff7b22);
+  color:#fff;font-weight:800;letter-spacing:.01em;cursor:pointer;box-shadow:0 16px 28px rgba(255,102,0,.22);transition:.22s ease;
+}
+.search-btn:hover{transform:translateY(-2px);box-shadow:0 20px 34px rgba(255,102,0,.28)}
+mark.search-highlight{
+  background:#fef08a;color:#0f172a;padding:0 2px;border-radius:4px;
+}
+
+/* Workspace */
+.workspace-wrap{padding:8px 0 58px;position:relative;z-index:1}
+.workspace-wrap::before{
+  content:"";position:absolute;top:22px;left:50%;width:min(1320px, calc(100% - 80px));height:92%;transform:translateX(-50%);
+  border-radius:42px;background:radial-gradient(circle at top center, rgba(109,40,217,.12), transparent 38%), linear-gradient(180deg, rgba(255,255,255,.62), rgba(248,250,252,.42));
+  filter:blur(8px);z-index:-1;
+}
+.app-frame{
+  min-height:calc(100vh - 180px);
+  background:rgba(255,255,255,.58);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.68);
+  border-radius:34px;
+  box-shadow:var(--shadow-xl);
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) 390px;
+}
+.main{padding:18px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.main-topbar{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px 18px;border-radius:24px;
+  background:rgba(255,255,255,.85);border:1px solid rgba(219,228,240,.9);box-shadow:var(--shadow-md);
+}
+.page-title-block{display:flex;flex-direction:column;gap:6px}
+.page-title-block h2{margin:0;font-size:24px;font-weight:900;letter-spacing:-.03em;color:#0f172a}
+.page-subtitle{margin:0;font-size:13px;color:#64748b;line-height:1.6;max-width:680px}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;padding:11px 14px;border-radius:999px;background:#fff;border:1px solid #dbe4f0;font-size:12px;font-weight:800;color:#0f172a;
+}
+.pill.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none}
+.tool-card,.summary-card{
+  background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);border:1px solid #dbe4f0;border-radius:28px;box-shadow:var(--shadow-card);position:relative;overflow:hidden;
+}
+.tool-card::before,.summary-card::before{
+  content:"";position:absolute;left:18px;right:18px;top:0;height:4px;border-radius:0 0 999px 999px;background:linear-gradient(90deg, #4d148c, #7c3aed, #ff6600);opacity:.98;
+}
+.tool-card{padding:22px}
+.summary-card{padding:18px}
+.section-head-inline{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:linear-gradient(180deg, #f8f6ff, #f1ecff);
+  color:#5b21b6;font-size:12px;font-weight:800;letter-spacing:.02em;border:1px solid #ece5ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+}
+.guide-icon{
+  width:46px;height:46px;border-radius:16px;display:grid;place-items:center;color:#5b21b6;background:linear-gradient(180deg, rgba(91,33,182,.08), rgba(255,102,0,.08));box-shadow:inset 0 0 0 1px rgba(91,33,182,.08);font-size:17px;flex-shrink:0;
+}
+.card-title{margin:10px 0 8px;font-size:20px;font-weight:900;letter-spacing:-.03em;color:#111827}
+.card-lead{margin:0 0 18px;color:#516173;font-size:14px;line-height:1.72}
+
+#directoryWorkspace .table-wrap{
+  max-height:620px;overflow:auto;border:1px solid #e4ebf5;border-radius:22px;background:#fff;
+}
+#directoryWorkspace table{width:100%;border-collapse:separate;border-spacing:0;min-width:980px}
+#directoryWorkspace thead th{
+  position:sticky;top:0;z-index:5;background:#f8fafc;color:#475569;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;
+  padding:16px 14px;border-bottom:1px solid #e2e8f0;text-align:left;
+}
+#directoryWorkspace tbody td{
+  padding:16px 14px;vertical-align:top;border-bottom:1px solid #eef2f7;color:#0f172a;font-size:14px;line-height:1.6;
+}
+#directoryWorkspace tbody tr:nth-child(odd){background:#fcfdff}
+#directoryWorkspace tbody tr:hover{background:#f8fbff}
+#directoryWorkspace tbody td:first-child{font-weight:800}
+#directoryWorkspace pre{
+  margin:0;background:#f8fafc;border:1px solid #e7edf4;border-radius:12px;padding:10px 12px;white-space:pre-wrap;font-family:inherit;color:#334155;
+}
+#directoryWorkspace .directory-search-row{
+  margin-bottom:16px;
+}
+#directoryWorkspace input{
+  width:100%;border:none;outline:none;border-radius:16px;background:#f8fafc;box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;color:#0f172a;font-size:14px;transition:.18s ease;
+}
+#directoryWorkspace input:focus{
+  background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+#directoryWorkspace .empty-state{
+  text-align:center;padding:34px 20px;color:#64748b;
+}
+.side-panel{padding:18px 18px 18px 0;display:flex;flex-direction:column;gap:14px;min-width:0}
+.summary-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;font-weight:900}
+.summary-head i{color:#7c3aed}
+.section-note{font-size:12px;color:#64748b;line-height:1.6;margin-top:-2px}
+.quick-stat{
+  padding:14px;border-radius:18px;background:#f8fafc;border:1px solid #e7edf4;
+}
+.quick-stat + .quick-stat{margin-top:10px}
+.quick-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#64748b;font-weight:800;margin-bottom:6px}
+.quick-value{font-size:18px;font-weight:900;letter-spacing:-.03em;word-break:break-word}
+.helper-text{font-size:13px;color:#64748b;line-height:1.7}
+.helper-list{margin:0;padding-left:18px;color:#475569;line-height:1.8;font-size:14px}
+.helper-list li + li{margin-top:4px}
+.side-card.reminder-card{
+  background:linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  border:1px solid rgba(255,102,0,.25);
+}
+.side-card.reminder-card .badge{
+  background:#fff1e6;border:1px solid rgba(255,102,0,.25);color:#c2410c;
+}
+.side-card.reminder-card .work-top i{color:#ff6600}
+.side-card.reminder-card .helper-list,
+.side-card.reminder-card .helper-text{color:#0f172a}
+.side-card.reminder-card li::marker{color:#0f172a}
+
+#toast{
+  position:fixed;right:24px;bottom:24px;z-index:99999;background:#111827;color:#fff;padding:12px 16px;border-radius:14px;
+  box-shadow:0 16px 34px rgba(15,23,42,.18);opacity:0;transform:translateY(10px);pointer-events:none;transition:.22s ease;font-size:13px;font-weight:800;
+}
+
+/* Shared modal/button styling restore */
+#commentModal .btn,
+#allCommentsModal .btn,
+#helpModal .btn,
+#commentModal button:not(.modal-close),
+#allCommentsModal button:not(.modal-close),
+#helpModal button:not(.modal-close){
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 18px;border-radius:17px;text-decoration:none;font-weight:800;border:none;cursor:pointer;transition:.22s ease;width:100%;
+}
+#commentModal .btn-primary,
+#helpModal .btn-primary,
+#allCommentsModal .btn-primary,
+#commentModal button:not(.modal-close),
+#helpModal button:not(.modal-close),
+#allCommentsModal button:not(.modal-close){
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+  color:#fff;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+}
+#commentModal .btn-primary:hover,
+#helpModal .btn-primary:hover,
+#allCommentsModal .btn-primary:hover,
+#commentModal button:not(.modal-close):hover,
+#helpModal button:not(.modal-close):hover,
+#allCommentsModal button:not(.modal-close):hover{
+  transform:translateY(-2px);box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+.comment-modal-footer{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
 .link-text{
-  color:var(--accent-dark);
-  cursor:pointer;
-  text-decoration:underline;
-  font-size:14px;
-  margin-top:10px;
-  display:block;
+  color:#4d148c;cursor:pointer;text-decoration:none;font-size:14px;font-weight:700;
+}
+.link-text:hover{text-decoration:underline}
+#commentsList .stars{color:#ff6600;font-size:18px;margin-bottom:6px;display:block}
+#timeCalendarPopup .settings-btn,
+#timeCalendarPopup .time-settings-btn,
+#timeCalendarPopup button:last-of-type{
+  display:flex !important;align-items:center;justify-content:center;gap:10px;width:100% !important;min-height:50px;padding:0 18px;border:none;border-radius:17px;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;color:#fff !important;font-weight:800;text-decoration:none;cursor:pointer;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);transition:.22s ease;
+}
+#timeCalendarPopup .settings-btn:hover,
+#timeCalendarPopup .time-settings-btn:hover,
+#timeCalendarPopup button:last-of-type:hover{
+  transform:translateY(-2px);box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+#timeSettingsModal select,
+#timezoneModal select,
+#dateTimeSettingsModal select{
+  width:100%;min-height:46px;border:none;outline:none;border-radius:16px;background:#f8fafc;box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);padding:0 16px;color:#0f172a;font-size:14px;appearance:auto;
+}
+#timeSettingsModal select:focus,
+#timezoneModal select:focus,
+#dateTimeSettingsModal select:focus{
+  background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+#timeSettingsModal .btn,
+#timezoneModal .btn,
+#dateTimeSettingsModal .btn,
+#timeSettingsModal button:not(.modal-close),
+#timezoneModal button:not(.modal-close),
+#dateTimeSettingsModal button:not(.modal-close){
+  display:flex !important;align-items:center;justify-content:center;width:100% !important;min-height:50px;padding:0 18px;border:none;border-radius:17px;background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;color:#fff !important;font-weight:800;text-decoration:none;cursor:pointer;box-shadow:0 14px 24px rgba(77,20,140,.16);transition:.22s ease;margin-top:18px;
+}
+#timeSettingsModal .btn:hover,
+#timezoneModal .btn:hover,
+#dateTimeSettingsModal .btn:hover,
+#timeSettingsModal button:not(.modal-close):hover,
+#timezoneModal button:not(.modal-close):hover,
+#dateTimeSettingsModal button:not(.modal-close):hover{
+  transform:translateY(-2px);box-shadow:0 18px 30px rgba(77,20,140,.22);
 }
 
-/* STAR RATING COLORS */
-.rating-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
+@media (max-width:1220px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .app-frame{grid-template-columns:1fr}
+  .side-panel{padding:0 18px 18px}
 }
-
-.rating-star {
-  cursor: pointer;
-  font-size: 28px;
-  color: #ccc; /* default grey */
-  transition: color .2s, transform .2s;
-}
-
-.rating-star:hover {
-  transform: scale(1.3);
-}
-
-.rating-star.selected {
-  color: #FF6600; /* FedEx orange */
-}
-
-/* footer alignment */
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-/* COMMENT LIST STAR COLORS */
-#commentsList .stars {
-  color: #FF6600; /* FedEx orange */
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* ---------- FED-EX ORANGE & PURPLE BANNER ---------- */
-.welcome-section {
-  background: linear-gradient(90deg, #4D148C 0%, #330d5e 50%, #FF6600 100%);
-  background-size: 200% 200%;
-  animation: fedexShimmer 15s ease infinite; /* slow shimmer */
-  color: white;
-  padding: 15px 30px;   /* compact height */
-  text-align: left;     /* left-aligned text */
-  margin-bottom: 20px;
-  box-shadow: 0 5px 15px rgba(77, 20, 140, 0.15); /* subtle shadow */
-  border-radius: 0;     /* straight edges */
-}
-
-/* Shimmer animation */
-@keyframes fedexShimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.welcome-content h1 {
-  font-size: 2rem;  /* compact heading */
-  margin-bottom: 6px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.welcome-content p {
-  font-size: 1rem;  /* smaller subtitle */
-  max-width: 600px;
-  margin: 0;
-  opacity: 0.9;
-  line-height: 1.5;
-}
-/*pop up time style*/
-/* POPUP TIME STYLE (Windows-like) */
-.popup-time{
-  font-size:34px;
-  font-weight:600;
-  text-align:left;
-  margin-bottom:4px;
-  color:#111;
-}
-
-#timeCalendarPopup {
-  background:white;}
-
-.popup-date{
-  font-size:14px;
-  color:#555;
-  margin-bottom:14px;
-  text-align:left;
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  padding:4px 28px;   /* reduce height */
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  font-size:15px;
+@media (max-width:760px){
+  .container{width:min(calc(100% - 20px), var(--max))}
+  .hero{border-radius:28px}
+  .hero-grid{padding:24px}
+  .hero h1{font-size:2.2rem}
+  .hero-stats{grid-template-columns:1fr}
+  .search-bar{grid-template-columns:1fr}
+  .search-btn{width:100%}
+  .app-frame{min-height:100vh;border-radius:24px}
+  .main{padding:18px}
+  .main-topbar{flex-direction:column}
+  .comment-modal-footer{flex-direction:column;align-items:stretch}
+  #commentModal,#allCommentsModal,#helpModal{padding:0 14px}
+  #commentModal .modal-content,#allCommentsModal .modal-content,#helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
 }
 </style>
 </head>
-<body>
+<body data-page="case-directory">
+  <div class="page">
+    <div id="site-header"></div>
 
-<header>
-  <div style="display:flex;align-items:center;gap:40px;">
-    <a href="index.html">
-  <img src="fedex.png" alt="FedEx Logo" style="height:40px;">
-</a>
-    <nav class="nav-tabs">
-     <a href="index.html" class="tab">Home</a>
-      <a href="case-directory.html" class="tab active">Case Directory</a>
-      <a href="ebs-response-template.html" class="tab">EBS Response</a>
-       <a href="volume-application.html" class="tab">Volume Application</a> 
-    </nav>
+    <main>
+      <section class="hero-wrap reveal-up">
+        <div class="container">
+          <div class="hero">
+            <div class="hero-grid">
+              <div class="hero-copy">
+                <div class="eyebrow">
+                  <i class="fa-solid fa-folder-tree"></i>
+                  Premium routing workspace
+                </div>
+
+                <h1>Find the right queue faster and move the case with confidence.</h1>
+                <p>
+                  Search the case directory by queue, concern, action, email, or assignment to quickly identify the correct destination for each request.
+                </p>
+
+                <div class="hero-stats">
+                  <div class="stat-card">
+                    <div class="stat-value" id="heroCaseCount">—</div>
+                    <div class="stat-label">Directory rows currently available in the case routing list.</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-value" id="heroQueueCount">—</div>
+                    <div class="stat-label">Unique queues and requests available in the current workbook.</div>
+                  </div>
+                  <div class="stat-card">
+                    <div class="stat-value" id="heroMatchCount">—</div>
+                    <div class="stat-label">Search results shown for the current keyword.</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:18px;">
+                  <button class="hero-cta" onclick="scrollToDirectory()">
+                    Open Case Directory <i class="fa-solid fa-arrow-down"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="hero-side">
+                <div class="quick-panel">
+                  <div>
+                    <div class="panel-title">
+                      <span>How to use</span>
+                      <span>4 steps</span>
+                    </div>
+
+                    <ul class="quick-list">
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div>
+                          <strong>Search the request</strong>
+                          <span>Use queue, concern, action, email, or assignment keywords to narrow the directory.</span>
+                        </div>
+                      </li>
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-list-check"></i></div>
+                        <div>
+                          <strong>Review the row details</strong>
+                          <span>Compare the concern, action, and case assignment before moving the case.</span>
+                        </div>
+                      </li>
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+                        <div>
+                          <strong>Confirm the destination</strong>
+                          <span>Make sure the queue and assignment match the requested handling path.</span>
+                        </div>
+                      </li>
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-share"></i></div>
+                        <div>
+                          <strong>Move the case correctly</strong>
+                          <span>Use the directory result to route the case cleanly and avoid rework.</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="live-strip">
+                    <div>
+                      <strong>Workspace ready</strong>
+                      <span>Search, feedback, and time tools are available.</span>
+                    </div>
+                    <div class="pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="search-wrap reveal-up stagger-1">
+        <div class="container">
+          <div class="search-card">
+            <div class="search-top">
+              <div class="search-copy">
+                <h2>Search the directory</h2>
+                <p>Enter a keyword to find the right queue, routing instruction, or assignment path faster.</p>
+              </div>
+
+              <div class="chip-row">
+                <div class="chip"><i class="fa-solid fa-filter"></i> Queue lookup</div>
+                <div class="chip"><i class="fa-solid fa-envelope"></i> Email lookup</div>
+                <div class="chip"><i class="fa-solid fa-route"></i> Routing support</div>
+              </div>
+            </div>
+
+            <div class="search-bar">
+              <div class="search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="directorySearch" type="text" placeholder="Search queue, concern, action, email, or assignment.">
+                <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()">×</button>
+              </div>
+
+              <button class="search-btn" type="button" onclick="focusDirectorySearch()">
+                Focus search
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="directoryWorkspace" class="workspace-wrap reveal-up stagger-2">
+        <div class="container">
+          <div class="app-frame">
+            <main class="main">
+              <div class="main-topbar">
+                <div class="page-title-block">
+                  <h2>Case Directory</h2>
+                  <p class="page-subtitle">Search the routing directory below to identify the correct queue, concern handling, email, and case assignment path.</p>
+                </div>
+                <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
+              </div>
+
+              <section class="tool-card">
+                <div class="section-head-inline">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-table"></i> Routing table</div>
+                    <div class="card-title">Search and review the correct destination</div>
+                    <div class="card-lead">Use the live directory below to check where a case should move before routing it.</div>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-folder-open"></i></div>
+                </div>
+
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Queue / Request</th>
+                        <th>Concern</th>
+                        <th>Action</th>
+                        <th>Email Address</th>
+                        <th>Case Assignment / Email</th>
+                      </tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                  </table>
+                </div>
+
+                <div id="emptyState" class="empty-state" style="display:none;">
+                  <i class="fa-solid fa-circle-exclamation" style="font-size:28px; margin-bottom:10px; color:#94a3b8;"></i>
+                  <div>No matching results found for the current search.</div>
+                </div>
+              </section>
+            </main>
+
+            <aside class="side-panel">
+              <div class="summary-card">
+                <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+                <div class="section-note">Live context while reviewing the directory.</div>
+
+                <div class="quick-stat">
+                  <span class="quick-label">Total Rows</span>
+                  <span class="quick-value" id="totalRowsValue">—</span>
+                </div>
+
+                <div class="quick-stat">
+                  <span class="quick-label">Unique Queues</span>
+                  <span class="quick-value" id="uniqueQueuesValue">—</span>
+                </div>
+
+                <div class="quick-stat">
+                  <span class="quick-label">Visible Results</span>
+                  <span class="quick-value" id="visibleResultsValue">—</span>
+                </div>
+              </div>
+
+              <div class="summary-card reminder-card">
+                <div class="summary-head"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
+                <div class="helper-text">Before routing the case, confirm the queue name, action, and case assignment together to avoid moving the case to the wrong team.</div>
+              </div>
+
+              <div class="summary-card">
+                <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Search Tips</div>
+                <ul class="helper-list">
+                  <li>Search by exact queue name first when possible.</li>
+                  <li>Try concern or action keywords if the queue is unknown.</li>
+                  <li>Use email or assignment fields to confirm the final destination.</li>
+                  <li>Review highlighted text before moving the case.</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
   </div>
 
-  <div class="header-icons">
-    <div id="clockBtn">
-      <i class="fa-regular fa-clock"></i>
-      <span id="clockText">--:-- PM</span>
-    </div>
-    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
-    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
-  </div>
-</header>
+  <div id="toast">Copied!</div>
 
-<div id="timeCalendarPopup">
-
-  <div class="popup-time" id="popupTime"></div>
-  <div class="popup-date" id="popupDate"></div>
-
-  <div class="calendar-header">
-    <span id="prevMonth">‹</span>
-    <div id="monthYear" class="calendar-title"></div>
-    <span id="nextMonth">›</span>
-  </div>
-
-  <div class="calendar-grid" id="calendarGrid"></div>
-
-</div>
-
-
-<div class="main">
-  <div class="message-box">
-    <div class="welcome-section">
-  <div class="welcome-content">
-    <h1>Case Directory</h1>
-    <p>Search for the correct department or queue to move the case.</p>
-  </div>
-</div>
-
-
-    <input id="searchBox" placeholder="Search queue, concern, action, email, assignment...">
-
-    <div style="max-height:520px; overflow:auto; border:1px solid #eef2f7; border-radius:10px;">
-      <table>
-        <thead>
-          <tr>
-            <th>QUEUE / Request</th>
-            <th>Concern</th>
-            <th>ACTION</th>
-            <th>Email Address</th>
-            <th>Case Assignment / Email</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<footer>
-  <p><span style="font-weight:600;">© 2025 EBS Operations</span></p>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:12px;color:white;">
-      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
-    </span>
-  </div>
-</footer>
-
-<!-- HELP MODAL -->
-<div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-    <p>Use this tool to search queues, concerns, and actions. Click the clock for time/calendar and the comment icon to provide feedback.</p>
-  </div>
-</div>
-
-<!-- COMMENT MODALS -->
-<div id="commentModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
-    </div>
-    <div class="rating-container">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-    <div class="comment-modal-footer">
-      <button class="btn" onclick="sendComment()">Send</button>
-      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-    </div>
-  </div>
-</div>
-
-<div id="allCommentsModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
-    </div>
-    <div id="commentsList"></div>
-  </div>
-</div>
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer-loader.js"></script>
 
 <script>
-// FIREBASE INIT
-const firebaseConfig = {
-  apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-  authDomain: "bdgg-database.firebaseapp.com",
-  projectId: "bdgg-database",
-  storageBucket: "bdgg-database.appspot.com",
-  messagingSenderId: "43574975434",
-  appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+let caseDirectoryInitialized = false;
+let selectedRating = 0;
+let commentsUnsubscribe = null;
+let ratingStars = [];
 
-/* =========================
-   CLOCK & CALENDAR
-========================= */
-/* =========================
-   CALENDAR LOGIC
-========================= */
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
 
-function updateClock(){
-  const now = new Date();
-
-  // HEADER TIME (Hour + Minute only)
-  const headerTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).format(now);
-
-  // POPUP TIME (Hour + Minute + Second)
-  const popupTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupDate = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(now);
-
-  // Update header
-  document.getElementById("clockText").textContent = headerTime;
-
-  // Update popup
-  document.getElementById("popupTime").textContent = popupTime;
-  document.getElementById("popupDate").textContent = popupDate;
-}
-// START CLOCK
-updateClock();
-setInterval(updateClock, 1000);
-
-
-const clockBtn = document.getElementById("clockBtn");
-const calendarPopup = document.getElementById("timeCalendarPopup");
-const calendarGrid = document.getElementById("calendarGrid");
-const monthYear = document.getElementById("monthYear");
-
-let currentDate = new Date();
-
-clockBtn.onclick = function(e){
-  e.stopPropagation();
-  calendarPopup.style.display =
-    calendarPopup.style.display === "block" ? "none" : "block";
-  renderCalendar(currentDate);
-};
-
-document.addEventListener("click", function(){
-  calendarPopup.style.display = "none";
-});
-
-document.getElementById("prevMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-};
-
-document.getElementById("nextMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-};
-
-function renderCalendar(date){
-  calendarGrid.innerHTML = "";
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  monthYear.textContent =
-    date.toLocaleString("en-PH", { month: "long", year: "numeric" });
-
-  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  dayNames.forEach(d=>{
-    const el = document.createElement("div");
-    el.className="day-name";
-    el.textContent=d;
-    calendarGrid.appendChild(el);
+  ratingStars.forEach(star => {
+    star.addEventListener("click", () => {
+      selectedRating = Number(star.dataset.value);
+      ratingStars.forEach(s => {
+        s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
+      });
+    });
   });
+}
 
-  for(let i=0;i<firstDay;i++){
-    const empty=document.createElement("div");
-    calendarGrid.appendChild(empty);
+function openAnimatedModal(modal) {
+  if (!modal) return;
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
+
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
+
+function closeAnimatedModal(modal, onClosed) {
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
+
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
+
+function openComment() {
+  const modal = document.getElementById("commentModal");
+  openAnimatedModal(modal);
+}
+
+function closeComment() {
+  const modal = document.getElementById("commentModal");
+  closeAnimatedModal(modal);
+}
+
+function openHelp() {
+  const modal = document.getElementById("helpModal");
+  openAnimatedModal(modal);
+}
+
+function closeHelp() {
+  const modal = document.getElementById("helpModal");
+  closeAnimatedModal(modal);
+}
+
+function closeAllComments() {
+  const modal = document.getElementById("allCommentsModal");
+
+  closeAnimatedModal(modal, () => {
+    if (commentsUnsubscribe) {
+      commentsUnsubscribe();
+      commentsUnsubscribe = null;
+    }
+  });
+}
+
+async function sendComment() {
+  const name = document.getElementById("commentName")?.value.trim() || "";
+  const comment = document.getElementById("commentText")?.value.trim() || "";
+  const message = document.getElementById("feedbackMessage");
+
+  if (!selectedRating) {
+    if (message) {
+      message.style.display = "block";
+      message.style.color = "#ef4444";
+      message.textContent = "Please select a star rating first.";
+    } else {
+      alert("Please select a star rating first.");
+    }
+    return;
   }
 
- const today = new Date(
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date())
-);
+  try {
+    const db = firebase.firestore();
 
-  for(let d=1; d<=daysInMonth; d++){
-    const day=document.createElement("div");
-    day.className="day";
-    day.textContent=d;
+    await db.collection("feedback").add({
+      rating: selectedRating,
+      name,
+      comment,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-    if(
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ){
-      day.classList.add("today");
+    if (message) {
+      message.style.display = "block";
+      message.style.color = "#16a34a";
+      message.textContent = "Thank you. Your feedback has been submitted.";
     }
 
-    calendarGrid.appendChild(day);
+    const nameInput = document.getElementById("commentName");
+    const commentInput = document.getElementById("commentText");
+
+    if (nameInput) nameInput.value = "";
+    if (commentInput) commentInput.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(s => s.classList.remove("selected"));
+
+    setTimeout(() => {
+      if (message) message.style.display = "none";
+      closeComment();
+    }, 1200);
+  } catch (error) {
+    console.error(error);
+    if (message) {
+      message.style.display = "block";
+      message.style.color = "#ef4444";
+      message.textContent = "Something went wrong while sending feedback.";
+    } else {
+      alert("Something went wrong while sending feedback.");
+    }
   }
 }
-// HELP
-document.getElementById('helpIcon').onclick=(e)=>{document.getElementById('helpModal').style.display='flex'; e.stopPropagation();};
-function closeHelp(){document.getElementById('helpModal').style.display='none';}
 
-// FEEDBACK
-let selectedRating=0;
-document.querySelectorAll('.rating-star').forEach(star=>{star.onclick=function(ev){selectedRating=parseInt(this.dataset.value); document.querySelectorAll('.rating-star').forEach(s=>s.classList.toggle('selected',parseInt(s.dataset.value)<=selectedRating)); ev.stopPropagation();};});
-function sendComment(){const name=document.getElementById('commentName').value.trim(); const comment=document.getElementById('commentText').value.trim(); if(selectedRating===0){alert("Select a rating."); return;} db.collection("feedback").add({rating:selectedRating,name:name||"Anonymous",comment:comment,createdAt: firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{alert("Saved!"); clearCommentForm();}).catch(()=>alert("Save failed."));}
-function clearCommentForm(){selectedRating=0; document.getElementById('commentName').value=""; document.getElementById('commentText').value=""; document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));}
-let unsubscribeListener=null;
-function showAllComments(){const listEl=document.getElementById('commentsList'); listEl.innerHTML="Loading…"; if(unsubscribeListener) unsubscribeListener(); unsubscribeListener=db.collection("feedback").orderBy("createdAt","desc").onSnapshot(snap=>{ listEl.innerHTML=""; if(snap.empty){ listEl.innerHTML="<p>No feedback yet.</p>";} snap.forEach(doc=>{const d=doc.data(); const div=document.createElement('div'); div.className="comment-list-item"; div.innerHTML=`<div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div><strong>${d.name}</strong><p>${d.comment}</p>`; listEl.appendChild(div);}); document.getElementById('allCommentsModal').style.display='flex';});}
-document.getElementById('commentIcon').onclick=function(e){clearCommentForm(); document.getElementById('commentModal').style.display='flex'; e.stopPropagation();};
-function closeComment(){clearCommentForm();document.getElementById('commentModal').style.display='none';}
-function closeAllComments(){document.getElementById('allCommentsModal').style.display='none';}
+function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const modal = document.getElementById("allCommentsModal");
+  const list = document.getElementById("commentsList");
 
-// ---------- CSV TABLE ----------
-function renderTable(CASES, highlight="") {
-  const rowsEl=document.getElementById("rows");
-  const regex=new RegExp(`(${highlight.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&')})`,"gi");
-  rowsEl.innerHTML=CASES.map(r=>{
-    return `<tr>
-      <td>${highlight?r['QUEUE/ Request'].replace(regex,'<mark>$1</mark>'):r['QUEUE/ Request']}</td>
-      <td style="white-space:pre-line">${highlight?r['Concern'].replace(regex,'<mark>$1</mark>'):r['Concern']}</td>
-      <td style="white-space:pre-line">${highlight?r['ACTION'].replace(regex,'<mark>$1</mark>'):r['ACTION']}</td>
-      <td>${highlight?r['Email Address'].replace(regex,'<mark>$1</mark>'):r['Email Address']}</td>
-      <td><pre>${highlight?r['Case Assignment/Email'].replace(regex,'<mark>$1</mark>'):r['Case Assignment/Email']}</pre></td>
-    </tr>`;
-  }).join("");
+  if (!modal || !list) return;
+
+  list.innerHTML = "<p>Loading comments.</p>";
+
+  if (commentsUnsubscribe) commentsUnsubscribe();
+
+  const db = firebase.firestore();
+
+  const loadComments = () => {
+    openAnimatedModal(modal);
+
+    commentsUnsubscribe = db.collection("feedback")
+      .orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        if (snapshot.empty) {
+          list.innerHTML = "<p>No comments yet.</p>";
+          return;
+        }
+
+        let html = "";
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          const stars = "★".repeat(item.rating || 0) + "☆".repeat(5 - (item.rating || 0));
+          html += `
+            <div class="comment-list-item">
+              <span class="stars">${stars}</span>
+              <strong>${item.name || "Anonymous"}</strong>
+              <p style="margin:6px 0 0;">${item.comment || "No comment provided."}</p>
+            </div>
+          `;
+        });
+
+        list.innerHTML = html;
+      }, error => {
+        console.error(error);
+        list.innerHTML = "<p>Unable to load comments right now.</p>";
+      });
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeAnimatedModal(commentModal, loadComments);
+  } else {
+    loadComments();
+  }
 }
 
-// Load XLSX
-fetch("case-directory.xlsx")
-  .then(res => res.arrayBuffer())
-  .then(data => {
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheetName = workbook.SheetNames[0]; // first sheet
-    const sheet = workbook.Sheets[sheetName];
+window.addEventListener("click", (e) => {
+  const commentModal = document.getElementById("commentModal");
+  const allCommentsModal = document.getElementById("allCommentsModal");
+  const helpModal = document.getElementById("helpModal");
 
-    window.CASES = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+  if (e.target === commentModal) closeComment();
+  if (e.target === allCommentsModal) closeAllComments();
+  if (e.target === helpModal) closeHelp();
+});
 
-    renderTable(window.CASES);
+function initCaseDirectoryPage() {
+  if (caseDirectoryInitialized) return;
+  caseDirectoryInitialized = true;
 
-    document.getElementById("searchBox").addEventListener("input", e => {
-      const query = e.target.value.toLowerCase().trim();
-      if (!query) { 
-        renderTable(window.CASES); 
-        return; 
-      }
-
-      const startsWithQueue = [], includesQueue = [], otherMatches = [];
-
-      window.CASES.forEach(r => {
-        const queue = (r['QUEUE/ Request'] || "").toLowerCase().trim();
-        const concern = (r['Concern'] || "").toLowerCase().trim();
-        const action = (r['ACTION'] || "").toLowerCase().trim();
-        const email = (r['Email Address'] || "").toLowerCase().trim();
-        const assignment = (r['Case Assignment/Email'] || "").toLowerCase().trim();
-
-        if (queue.startsWith(query)) startsWithQueue.push(r);
-        else if (queue.includes(query)) includesQueue.push(r);
-        else if (
-          concern.includes(query) ||
-          action.includes(query) ||
-          email.includes(query) ||
-          assignment.includes(query)
-        ) {
-          otherMatches.push(r);
-        }
-      });
-
-      const filtered = [...startsWithQueue, ...includesQueue, ...otherMatches];
-      renderTable(filtered, query);
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
     });
-  })
-  .catch(err => {
-    console.error("Failed to load XLSX:", err);
-    alert("Failed to load case-directory.xlsx");
-  });
-</script>
+  }
 
+  const rowsEl = document.getElementById("rows");
+  const searchInput = document.getElementById("directorySearch");
+  const clearBtn = document.getElementById("clearSearchBtn");
+  const emptyState = document.getElementById("emptyState");
+  const heroCaseCount = document.getElementById("heroCaseCount");
+  const heroQueueCount = document.getElementById("heroQueueCount");
+  const heroMatchCount = document.getElementById("heroMatchCount");
+  const totalRowsValue = document.getElementById("totalRowsValue");
+  const uniqueQueuesValue = document.getElementById("uniqueQueuesValue");
+  const visibleResultsValue = document.getElementById("visibleResultsValue");
+  const statusPill = document.getElementById("statusPill");
+
+  let CASES = [];
+
+  function setStatus(label, icon = "fa-bolt") {
+    statusPill.innerHTML = `<i class="fa-solid ${icon}"></i> ${label}`;
+  }
+
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function updateCounts(rows) {
+    const uniqueQueues = [...new Set(CASES.map(r => (r["QUEUE/ Request"] || "").trim()).filter(Boolean))];
+    heroCaseCount.textContent = CASES.length || "0";
+    totalRowsValue.textContent = CASES.length || "0";
+    heroQueueCount.textContent = uniqueQueues.length || "0";
+    uniqueQueuesValue.textContent = uniqueQueues.length || "0";
+    heroMatchCount.textContent = rows.length || "0";
+    visibleResultsValue.textContent = rows.length || "0";
+
+    if (!CASES.length) {
+      setStatus("Waiting for Data", "fa-database");
+    } else if (!rows.length) {
+      setStatus("No Match Found", "fa-circle-exclamation");
+    } else if ((searchInput.value || "").trim()) {
+      setStatus("Filtered Results", "fa-filter");
+    } else {
+      setStatus("Directory Ready", "fa-circle-check");
+    }
+  }
+
+  function highlightText(value, query) {
+    if (!query) return value || "";
+    const regex = new RegExp(`(${escapeRegExp(query)})`, "gi");
+    return String(value || "").replace(regex, '<mark class="search-highlight">$1</mark>');
+  }
+
+  function renderTable(rows, query = "") {
+    if (!rows.length) {
+      rowsEl.innerHTML = "";
+      emptyState.style.display = "block";
+      updateCounts(rows);
+      return;
+    }
+
+    emptyState.style.display = "none";
+    rowsEl.innerHTML = rows.map(r => `
+      <tr>
+        <td>${highlightText(r["QUEUE/ Request"], query)}</td>
+        <td style="white-space:pre-line">${highlightText(r["Concern"], query)}</td>
+        <td style="white-space:pre-line">${highlightText(r["ACTION"], query)}</td>
+        <td>${highlightText(r["Email Address"], query)}</td>
+        <td><pre>${highlightText(r["Case Assignment/Email"], query)}</pre></td>
+      </tr>
+    `).join("");
+
+    updateCounts(rows);
+  }
+
+  function sortMatches(query) {
+    if (!query) return CASES;
+
+    const startsWithQueue = [];
+    const includesQueue = [];
+    const otherMatches = [];
+
+    CASES.forEach(r => {
+      const queue = (r["QUEUE/ Request"] || "").toLowerCase().trim();
+      const concern = (r["Concern"] || "").toLowerCase().trim();
+      const action = (r["ACTION"] || "").toLowerCase().trim();
+      const email = (r["Email Address"] || "").toLowerCase().trim();
+      const assignment = (r["Case Assignment/Email"] || "").toLowerCase().trim();
+
+      if (queue.startsWith(query)) {
+        startsWithQueue.push(r);
+      } else if (queue.includes(query)) {
+        includesQueue.push(r);
+      } else if (
+        concern.includes(query) ||
+        action.includes(query) ||
+        email.includes(query) ||
+        assignment.includes(query)
+      ) {
+        otherMatches.push(r);
+      }
+    });
+
+    return [...startsWithQueue, ...includesQueue, ...otherMatches];
+  }
+
+  window.scrollToDirectory = function () {
+    const target = document.getElementById("directoryWorkspace");
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.scrollY - 20;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  };
+
+  window.clearDirectorySearch = function () {
+    searchInput.value = "";
+    clearBtn.style.display = "none";
+    renderTable(CASES);
+    searchInput.focus();
+  };
+
+  window.focusDirectorySearch = function () {
+    searchInput.focus();
+    searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  fetch("case-directory.xlsx")
+    .then(res => res.arrayBuffer())
+    .then(data => {
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+
+      CASES = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+      renderTable(CASES);
+    })
+    .catch(err => {
+      console.error("Failed to load XLSX:", err);
+      rowsEl.innerHTML = "";
+      emptyState.style.display = "block";
+      emptyState.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation" style="font-size:28px; margin-bottom:10px; color:#ef4444;"></i>
+        <div>Failed to load case-directory.xlsx</div>
+      `;
+      updateCounts([]);
+    });
+
+  searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    clearBtn.style.display = query ? "block" : "none";
+
+    if (!query) {
+      renderTable(CASES);
+      return;
+    }
+
+    renderTable(sortMatches(query), query);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", initCaseDirectoryPage);
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+  initCaseDirectoryPage();
+});
+</script>
 </body>
 </html>
