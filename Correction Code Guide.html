@@ -1833,7 +1833,7 @@ const NODES = {
       },
       {
         label: "Change Service Type",
-        next: "change_service_type",
+        action: "EPDC",
         icon: "fa-solid fa-truck-fast",
         desc: "Update shipment service type."
       },
@@ -2400,7 +2400,6 @@ const NODES = {
   change_class_root: {
     text: "Change of Class/NMFC/Description/Handling Unit per BOL",
     help: "Determine who entered the incorrect class information.",
-    next: "change_class_who",
     choices: [
       {
         label: "Continue",
@@ -2502,23 +2501,6 @@ const NODES = {
         action: "OPSD",
         icon: "fa-solid fa-location-dot",
         desc: "Destination service center caused the error."
-      }
-    ]
-  },
-
-  /* =========================
-     CHANGE SERVICE TYPE
-  ========================= */
-
-  change_service_type: {
-    text: "Change Service Type",
-    help: "Use the service-type correction code shown in the flow.",
-    choices: [
-      {
-        label: "Continue",
-        action: "EPDC",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Apply service-type correction."
       }
     ]
   },
@@ -2651,151 +2633,60 @@ const NODES = {
     ]
   },
 
-/* =========================
-   PRICING RELATED UPDATE
-========================= */
+  /* =========================
+     PRICING RELATED UPDATE
+  ========================= */
 
-pricing_related_update: {
-  text: "Pricing Related Update",
-  help: "Select the pricing-related correction that matches the update being requested.",
-  choices: [
-    {
-      label: "Autorating or Manual Agreement Exception",
-      next: "pricing_sysm",
-      icon: "fa-solid fa-robot",
-      desc: "Autorate the PRO or apply a manual agreement exception."
-    },
-    {
-      label: "Expired Freight Pricing or Surcharge Exception",
-      next: "pricing_expr",
-      icon: "fa-solid fa-clock-rotate-left",
-      desc: "Use when freight pricing or surcharge pricing has expired."
-    },
-    {
-      label: "Rating correction error by Revenue Services",
-      next: "pricing_prce",
-      icon: "fa-solid fa-calculator",
-      desc: "Use when a Revenue Services employee made a rating correction error."
-    },
-    {
-      label: "General protection of invoice",
-      next: "pricing_prot",
-      icon: "fa-solid fa-shield-halved",
-      desc: "Protect the invoice under general protection handling."
-    },
-    {
-      label: "PRO protected per CHT Hierarchy Update",
-      next: "pricing_prha",
-      icon: "fa-solid fa-sitemap",
-      desc: "Use when the PRO is protected because of a CHT hierarchy update."
-    },
-    {
-      label: "Brand new pricing within 10 days from Ship Date",
-      next: "pricing_ssdy",
-      icon: "fa-solid fa-calendar-days",
-      desc: "Use when new pricing is applied within 10 days from ship date."
-    },
-    {
-      label: "Brand new pricing after 10 days from Ship Date",
-      next: "pricing_year",
-      icon: "fa-solid fa-calendar-plus",
-      desc: "Use when new pricing is applied after 10 days from ship date."
-    }
-  ]
-},
-
-pricing_sysm: {
-  text: "CORR SYSM",
-  help: "Use this correction code when autorating the PRO or applying a manual agreement exception.",
-  choices: [
-    {
-      label: "Continue",
-      action: "CORR SYSM – Autorating the PRO or applying agreement exception.",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Apply SYSM pricing correction."
-    }
-  ]
-},
-
-pricing_expr: {
-  text: "CORR EXPR",
-  help: "Use this correction code for expired freight pricing or surcharge exception.",
-  choices: [
-    {
-      label: "Continue",
-      action: "CORR EXPR – Expired freight pricing or surcharge exception.",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Apply EXPR pricing correction."
-    }
-  ]
-},
-
-pricing_prce: {
-  text: "CORR PRCE",
-  help: "Use this correction code when the rating correction error was made by a Revenue Services employee.",
-  choices: [
-    {
-      label: "Continue",
-      action: "CORR PRCE – Rating correction error by Revenue Services employee.",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Apply PRCE pricing correction."
-    }
-  ]
-},
-
-pricing_prot: {
-  text: "CORR PROT",
-  help: "Use this correction code for general protection of invoice.",
-  choices: [
-    {
-      label: "Continue",
-      action: "CORR PROT – General protection of invoice.",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Apply PROT pricing correction."
-    }
-  ]
-},
-
-pricing_prha: {
-  text: "CORR PRHA",
-  help: "Use this correction code when the PRO is protected per CHT hierarchy update.",
-  choices: [
-    {
-      label: "Continue",
-      action: "CORR PRHA – PRO protected per CHT hierarchy update.",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Apply PRHA pricing correction."
-    }
-  ]
-},
-
-pricing_ssdy: {
-  text: "CORR SSDY",
-  help: "Use this correction code when brand new pricing is applied and the PRO is rerated within 10 days from Ship Date.",
-  choices: [
-    {
-      label: "Continue",
-      action: "CORR SSDY – Brand new pricing and PRO rerated within 10 days from Ship Date.",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Apply SSDY pricing correction."
-    }
-  ]
-},
-
-pricing_year: {
-  text: "CORR YEAR",
-  help: "Use this correction code when brand new pricing is applied and the PRO is rerated after 10 days from Ship Date.",
-  choices: [
-    {
-      label: "Continue",
-      action: "CORR YEAR – Brand new pricing and PRO rerated after 10 days from Ship Date.",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Apply YEAR pricing correction."
-    }
-  ]
-}
+  pricing_related_update: {
+    text: "Pricing Related Update",
+    help: "Select the pricing-related correction that matches the update being requested.",
+    choices: [
+      {
+        label: "Autorating or Manual Agreement Exception",
+        action: "CORR SYSM – Autorating the PRO or applying agreement exception.",
+        icon: "fa-solid fa-robot",
+        desc: "Autorate the PRO or apply a manual agreement exception."
+      },
+      {
+        label: "Expired Freight Pricing or Surcharge Exception",
+        action: "CORR EXPR – Expired freight pricing or surcharge exception.",
+        icon: "fa-solid fa-clock-rotate-left",
+        desc: "Use when freight pricing or surcharge pricing has expired."
+      },
+      {
+        label: "Rating correction error by Revenue Services",
+        action: "CORR PRCE – Rating correction error by Revenue Services employee.",
+        icon: "fa-solid fa-calculator",
+        desc: "Use when a Revenue Services employee made a rating correction error."
+      },
+      {
+        label: "General protection of invoice",
+        action: "CORR PROT – General protection of invoice.",
+        icon: "fa-solid fa-shield-halved",
+        desc: "Protect the invoice under general protection handling."
+      },
+      {
+        label: "PRO protected per CHT Hierarchy Update",
+        action: "CORR PRHA – PRO protected per CHT hierarchy update.",
+        icon: "fa-solid fa-sitemap",
+        desc: "Use when the PRO is protected because of a CHT hierarchy update."
+      },
+      {
+        label: "Brand new pricing within 10 days from Ship Date",
+        action: "CORR SSDY – Brand new pricing and PRO rerated within 10 days from Ship Date.",
+        icon: "fa-solid fa-calendar-days",
+        desc: "Use when new pricing is applied within 10 days from ship date."
+      },
+      {
+        label: "Brand new pricing after 10 days from Ship Date",
+        action: "CORR YEAR – Brand new pricing and PRO rerated after 10 days from Ship Date.",
+        icon: "fa-solid fa-calendar-plus",
+        desc: "Use when new pricing is applied after 10 days from ship date."
+      }
+    ]
+  }
 };
-
+  
   function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
