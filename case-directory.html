@@ -180,23 +180,11 @@ body::after{
   to{opacity:1;transform:translateY(0)}
 }
 
-/* Search strip */
-.search-wrap{margin-top:0;margin-bottom:18px}
+/* Search */
 .search-card{
-  background:rgba(255,255,255,.82);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.8);
+  background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.8);
   box-shadow:var(--shadow-lg);border-radius:28px;padding:18px;
 }
-.search-top{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:14px;flex-wrap:wrap;
-}
-.search-copy h2{margin:0 0 6px;font-size:24px;letter-spacing:-.03em}
-.search-copy p{margin:0;color:var(--text-soft);font-size:14px;line-height:1.6}
-.chip-row{display:flex;flex-wrap:wrap;gap:10px}
-.chip{
-  display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#eef2ff;
-  color:#4338ca;font-size:13px;font-weight:700;border:1px solid #e0e7ff;white-space:nowrap;
-}
-.search-bar{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
 .search-input-wrap{position:relative}
 .search-input-wrap i{
   position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#64748b;font-size:16px;pointer-events:none;
@@ -241,8 +229,20 @@ mark.search-highlight{
 }
 .main{padding:18px;display:flex;flex-direction:column;gap:16px;min-width:0}
 .main-topbar{
-  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px 18px;border-radius:24px;
-  background:rgba(255,255,255,.85);border:1px solid rgba(219,228,240,.9);box-shadow:var(--shadow-md);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  padding:16px 18px;
+  border-radius:24px;
+  background:rgba(255,255,255,.85);
+  border:1px solid rgba(219,228,240,.9);
+  box-shadow:var(--shadow-md);
+}
+.topbar-header-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
 }
 .page-title-block{display:flex;flex-direction:column;gap:6px}
 .page-title-block h2{margin:0;font-size:24px;font-weight:900;letter-spacing:-.03em;color:#0f172a}
@@ -251,6 +251,14 @@ mark.search-highlight{
   display:inline-flex;align-items:center;gap:8px;padding:11px 14px;border-radius:999px;background:#fff;border:1px solid #dbe4f0;font-size:12px;font-weight:800;color:#0f172a;
 }
 .pill.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none}
+
+.directory-inline-search{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  align-items:center;
+}
+
 .tool-card,.summary-card{
   background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);border:1px solid #dbe4f0;border-radius:28px;box-shadow:var(--shadow-card);position:relative;overflow:hidden;
 }
@@ -286,16 +294,6 @@ mark.search-highlight{
 #directoryWorkspace tbody td:first-child{font-weight:800}
 #directoryWorkspace pre{
   margin:0;background:#f8fafc;border:1px solid #e7edf4;border-radius:12px;padding:10px 12px;white-space:pre-wrap;font-family:inherit;color:#334155;
-}
-#directoryWorkspace .directory-search-row{
-  margin-bottom:16px;
-}
-#directoryWorkspace input{
-  width:100%;border:none;outline:none;border-radius:16px;background:#f8fafc;box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  padding:14px 16px;color:#0f172a;font-size:14px;transition:.18s ease;
-}
-#directoryWorkspace input:focus{
-  background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
 }
 #directoryWorkspace .empty-state{
   text-align:center;padding:34px 20px;color:#64748b;
@@ -404,28 +402,6 @@ mark.search-highlight{
   transform:translateY(-2px);box-shadow:0 18px 30px rgba(77,20,140,.22);
 }
 
-@media (max-width:1220px){
-  .hero-grid{grid-template-columns:1fr}
-  .hero-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .app-frame{grid-template-columns:1fr}
-  .side-panel{padding:0 18px 18px}
-}
-@media (max-width:760px){
-  .container{width:min(calc(100% - 20px), var(--max))}
-  .hero{border-radius:28px}
-  .hero-grid{padding:24px}
-  .hero h1{font-size:2.2rem}
-  .hero-stats{grid-template-columns:1fr}
-  .search-bar{grid-template-columns:1fr}
-  .search-btn{width:100%}
-  .app-frame{min-height:100vh;border-radius:24px}
-  .main{padding:18px}
-  .main-topbar{flex-direction:column}
-  .comment-modal-footer{flex-direction:column;align-items:stretch}
-  #commentModal,#allCommentsModal,#helpModal{padding:0 14px}
-  #commentModal .modal-content,#allCommentsModal .modal-content,#helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
-}
-
 /* Queue / Request clickable */
 .queue-link{
   color:#0f172a;
@@ -434,40 +410,16 @@ mark.search-highlight{
   text-decoration:none;
   transition:.18s ease;
 }
-
 .queue-link:hover{
   color:#2563eb;
   text-decoration:underline;
 }
-
 .queue-link i{
   font-size:12px;
   opacity:.8;
 }
 
-
-/* Queue / Request clickable */
-.queue-link{
-  color:#0f172a;
-  font-weight:800;
-  cursor:pointer;
-  text-decoration:none;
-  transition:.18s ease;
-}
-
-.queue-link:hover{
-  color:#2563eb;
-  text-decoration:underline;
-}
-
-.queue-link i{
-  font-size:12px;
-  opacity:.8;
-}
-
-
-/* ===== PREMIUM DETAIL MODAL (WIDER + IMPROVED) ===== */
-
+/* Premium detail modal */
 .detail-modal{
   display:none;
   position:fixed;
@@ -479,11 +431,9 @@ mark.search-highlight{
   z-index:2147483647;
   backdrop-filter:blur(8px);
 }
-
-/* 🔥 WIDER */
 .detail-modal-content{
   width:100%;
-  max-width:1600px; /* 🔥 increased */
+  max-width:1600px;
   background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
   border:1px solid #dbe4f0;
   border-radius:30px;
@@ -491,24 +441,18 @@ mark.search-highlight{
   box-shadow:0 30px 80px rgba(2,6,23,.18);
   position:relative;
   overflow:hidden;
-
   opacity:0;
   transform:translateY(10px) scale(.985);
   transition:opacity .22s ease, transform .22s ease;
 }
-
-/* animation */
 .detail-modal.is-open .detail-modal-content{
   opacity:1;
   transform:translateY(0) scale(1);
 }
-
 .detail-modal.is-closing .detail-modal-content{
   opacity:0;
   transform:translateY(10px) scale(.985);
 }
-
-/* top gradient line */
 .detail-modal-content::before{
   content:"";
   position:absolute;
@@ -519,9 +463,6 @@ mark.search-highlight{
   border-radius:0 0 999px 999px;
   background:linear-gradient(90deg, #4d148c, #7c3aed, #ff6600);
 }
-
-
-/* 🔥 STRONGER TITLE */
 .detail-modal-header{
   font-size:26px;
   font-weight:900;
@@ -529,21 +470,11 @@ mark.search-highlight{
   color:#0f172a;
   margin-bottom:20px;
 }
-
-
-/* ===== 5 COLUMN GRID ===== */
-
 .detail-table{
   display:grid;
-  grid-template-columns:
-    1.2fr
-    1.5fr
-    1.5fr
-    1.2fr
-    2fr;
+  grid-template-columns:1.2fr 1.5fr 1.5fr 1.2fr 2fr;
   gap:14px;
 }
-
 .detail-col{
   background:#f8fafc;
   border:1px solid #e5edf6;
@@ -553,8 +484,6 @@ mark.search-highlight{
   flex-direction:column;
   min-width:0;
 }
-
-/* 🔥 LABEL */
 .detail-label{
   font-size:11px;
   font-weight:900;
@@ -563,8 +492,6 @@ mark.search-highlight{
   text-transform:uppercase;
   margin-bottom:8px;
 }
-
-/* 🔥 SCROLLABLE CONTENT */
 .detail-col div{
   font-size:14px;
   color:#0f172a;
@@ -572,24 +499,15 @@ mark.search-highlight{
   white-space:pre-wrap;
   word-break:break-word;
   overflow-wrap:anywhere;
-
-  max-height:260px;        /* 🔥 limit height */
-  overflow-y:auto;         /* 🔥 enable scroll */
+  max-height:260px;
+  overflow-y:auto;
   padding-right:6px;
 }
-
-/* nice scrollbar */
-.detail-col div::-webkit-scrollbar{
-  width:6px;
-}
-
+.detail-col div::-webkit-scrollbar{width:6px}
 .detail-col div::-webkit-scrollbar-thumb{
   background:#cbd5f5;
   border-radius:10px;
 }
-
-
-/* ===== RESPONSIVE ===== */
 
 @media (max-width:1400px){
   .detail-modal-content{
@@ -597,25 +515,37 @@ mark.search-highlight{
   }
 }
 
+@media (max-width:1220px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .app-frame{grid-template-columns:1fr}
+  .side-panel{padding:0 18px 18px}
+}
 @media (max-width:1000px){
-  .detail-table{
+  .detail-table{grid-template-columns:1fr}
+  .detail-col div{max-height:none}
+}
+@media (max-width:760px){
+  .container{width:min(calc(100% - 20px), var(--max))}
+  .hero{border-radius:28px}
+  .hero-grid{padding:24px}
+  .hero h1{font-size:2.2rem}
+  .hero-stats{grid-template-columns:1fr}
+  .search-btn{width:100%}
+  .app-frame{min-height:100vh;border-radius:24px}
+  .main{padding:18px}
+  .topbar-header-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .directory-inline-search{
     grid-template-columns:1fr;
   }
-
-  .detail-col div{
-    max-height:none;
-  }
-}
-
-@media (max-width:760px){
-  .detail-modal{
-    padding:12px;
-  }
-
-  .detail-modal-content{
-    padding:20px;
-    border-radius:24px;
-  }
+  .comment-modal-footer{flex-direction:column;align-items:stretch}
+  #commentModal,#allCommentsModal,#helpModal{padding:0 14px}
+  #commentModal .modal-content,#allCommentsModal .modal-content,#helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
+  .detail-modal{padding:12px}
+  .detail-modal-content{padding:20px;border-radius:24px}
 }
 </style>
 </head>
@@ -715,120 +645,106 @@ mark.search-highlight{
         </div>
       </section>
 
-      <section class="search-wrap reveal-up stagger-1">
-        <div class="container">
-          <div class="search-card">
-            <div class="search-top">
-              <div class="search-copy">
-                <h2>Search the directory</h2>
-                <p>Enter a keyword to find the right queue, routing instruction, or assignment path faster.</p>
-              </div>
-
-              <div class="chip-row">
-                <div class="chip"><i class="fa-solid fa-filter"></i> Queue lookup</div>
-                <div class="chip"><i class="fa-solid fa-envelope"></i> Email lookup</div>
-                <div class="chip"><i class="fa-solid fa-route"></i> Routing support</div>
-              </div>
-            </div>
-
-            <div class="search-bar">
-              <div class="search-input-wrap">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input id="directorySearch" type="text" placeholder="Search queue, concern, action, email, or assignment.">
-                <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()">×</button>
-              </div>
-
-              <button class="search-btn" type="button" onclick="focusDirectorySearch()">
-                Focus search
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section id="directoryWorkspace" class="workspace-wrap reveal-up stagger-2">
-        <div class="container">
-          <div class="app-frame">
-            <main class="main">
-              <div class="main-topbar">
-                <div class="page-title-block">
-                  <h2>Case Directory</h2>
-                  <p class="page-subtitle">Search the routing directory below to identify the correct queue, concern handling, email, and case assignment path.</p>
-                </div>
-                <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
-              </div>
+  <div class="container">
+    <div class="app-frame">
+      <main class="main">
+        <div class="main-topbar">
+          <div class="topbar-header-row">
+            <div class="page-title-block">
+              <h2>Case Directory</h2>
+              <p class="page-subtitle">Search the routing directory below to identify the correct queue, concern handling, email, and case assignment path.</p>
+            </div>
 
-              <section class="tool-card">
-                <div class="section-head-inline">
-                  <div>
-                    <div class="badge"><i class="fa-solid fa-table"></i> Routing table</div>
-                    <div class="card-title">Search and review the correct destination</div>
-                    <div class="card-lead">Use the live directory below to check where a case should move before routing it.</div>
-                  </div>
-                  <div class="guide-icon"><i class="fa-solid fa-folder-open"></i></div>
-                </div>
+            <div class="pill primary" id="statusPill">
+              <i class="fa-solid fa-database"></i> Waiting for Data
+            </div>
+          </div>
 
-                <div class="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Queue / Request</th>
-                        <th>Concern</th>
-                        <th>Action</th>
-                        <th>Email Address</th>
-                        <th>Case Assignment / Email</th>
-                      </tr>
-                    </thead>
-                    <tbody id="rows"></tbody>
-                  </table>
-                </div>
+          <div class="directory-inline-search">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input id="directorySearch" type="text" placeholder="Search queue, concern, action, email, or assignment.">
+              <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()">×</button>
+            </div>
 
-                <div id="emptyState" class="empty-state" style="display:none;">
-                  <i class="fa-solid fa-circle-exclamation" style="font-size:28px; margin-bottom:10px; color:#94a3b8;"></i>
-                  <div>No matching results found for the current search.</div>
-                </div>
-              </section>
-            </main>
-
-            <aside class="side-panel">
-              <div class="summary-card">
-                <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
-                <div class="section-note">Live context while reviewing the directory.</div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Total Rows</span>
-                  <span class="quick-value" id="totalRowsValue">—</span>
-                </div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Unique Queues</span>
-                  <span class="quick-value" id="uniqueQueuesValue">—</span>
-                </div>
-
-                <div class="quick-stat">
-                  <span class="quick-label">Visible Results</span>
-                  <span class="quick-value" id="visibleResultsValue">—</span>
-                </div>
-              </div>
-
-              <div class="summary-card reminder-card">
-                <div class="summary-head"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
-                <div class="helper-text">Before routing the case, confirm the queue name, action, and case assignment together to avoid moving the case to the wrong team.</div>
-              </div>
-
-              <div class="summary-card">
-                <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Search Tips</div>
-                <ul class="helper-list">
-                  <li>Search by exact queue name first when possible.</li>
-                  <li>Try concern or action keywords if the queue is unknown.</li>
-                  <li>Use email or assignment fields to confirm the final destination.</li>
-                  <li>Review highlighted text before moving the case.</li>
-                </ul>
-              </div>
-            </aside>
+            <button class="search-btn" type="button" onclick="focusDirectorySearch()">
+              Focus search
+            </button>
           </div>
         </div>
-      </section>
+
+        <section class="tool-card">
+          <div class="section-head-inline">
+            <div>
+              <div class="badge"><i class="fa-solid fa-table"></i> Routing table</div>
+              <div class="card-title">Search and review the correct destination</div>
+              <div class="card-lead">Use the live directory below to check where a case should move before routing it.</div>
+            </div>
+            <div class="guide-icon"><i class="fa-solid fa-folder-open"></i></div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Queue / Request</th>
+                  <th>Concern</th>
+                  <th>Action</th>
+                  <th>Email Address</th>
+                  <th>Case Assignment / Email</th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+
+          <div id="emptyState" class="empty-state" style="display:none;">
+            <i class="fa-solid fa-circle-exclamation" style="font-size:28px; margin-bottom:10px; color:#94a3b8;"></i>
+            <div>No matching results found for the current search.</div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="side-panel">
+        <div class="summary-card">
+          <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+          <div class="section-note">Live context while reviewing the directory.</div>
+
+          <div class="quick-stat">
+            <span class="quick-label">Total Rows</span>
+            <span class="quick-value" id="totalRowsValue">—</span>
+          </div>
+
+          <div class="quick-stat">
+            <span class="quick-label">Unique Queues</span>
+            <span class="quick-value" id="uniqueQueuesValue">—</span>
+          </div>
+
+          <div class="quick-stat">
+            <span class="quick-label">Visible Results</span>
+            <span class="quick-value" id="visibleResultsValue">—</span>
+          </div>
+        </div>
+
+        <div class="summary-card reminder-card">
+          <div class="summary-head"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
+          <div class="helper-text">Before routing the case, confirm the queue name, action, and case assignment together to avoid moving the case to the wrong team.</div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Search Tips</div>
+          <ul class="helper-list">
+            <li>Search by exact queue name first when possible.</li>
+            <li>Try concern or action keywords if the queue is unknown.</li>
+            <li>Use email or assignment fields to confirm the final destination.</li>
+            <li>Review highlighted text before moving the case.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
     </main>
 
     <div id="site-footer"></div>
