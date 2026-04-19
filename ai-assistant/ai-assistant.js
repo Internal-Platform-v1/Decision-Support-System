@@ -105,33 +105,32 @@
     return registry.find((g) => g.id === state.lastMatchedGuideId) || null;
   }
 
-  function addMessage(role, content, allowHTML = false) {
-    const els = getEls();
-    if (!els.messages) return;
+ function addMessage(role, content, allowHTML = false) {
+  const els = getEls();
+  if (!els.messages) return;
 
-    const row = document.createElement("div");
-    row.className = `fx-ai-message ${role}`;
+  const row = document.createElement("div");
+  row.className = `fx-ai-message ${role}`;
 
-    if (role === "assistant") {
-      const avatar = document.createElement("div");
-      avatar.className = "fx-ai-avatar";
-      avatar.innerHTML = '<i class="fa-solid fa-robot"></i>';
-      row.appendChild(avatar);
-    }
-
-    const bubble = document.createElement("div");
-    bubble.className = "fx-ai-bubble";
-
-    if (allowHTML) {
-      bubble.innerHTML = content;
-    } else {
-      bubble.textContent = content;
-    }
-
-    row.appendChild(bubble);
-    els.messages.appendChild(row);
-    scrollToBottom();
+  if (role === "assistant") {
+    const avatar = document.createElement("div");
+    avatar.className = "fx-ai-avatar";
+    row.appendChild(avatar);
   }
+
+  const bubble = document.createElement("div");
+  bubble.className = "fx-ai-bubble";
+
+  if (allowHTML) {
+    bubble.innerHTML = content;
+  } else {
+    bubble.textContent = content;
+  }
+
+  row.appendChild(bubble);
+  els.messages.appendChild(row);
+  scrollToBottom();
+}
 
   function scrollToBottom() {
     const els = getEls();
