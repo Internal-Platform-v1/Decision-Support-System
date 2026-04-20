@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decision Guide Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#07111f;
+      --panel:rgba(255,255,255,.92);
+      --panel-2:#ffffff;
+      --text:#0f172a;
+      --text-soft:#64748b;
+      --line:rgba(148,163,184,.22);
+      --accent:#4d148c;
+      --accent-2:#6d28d9;
+      --orange:#ff6600;
+      --danger:#ef4444;
+      --success:#16a34a;
+      --radius-xl:30px;
+      --radius-lg:20px;
+      --radius-md:16px;
+      --shadow:0 24px 80px rgba(2,6,23,.22);
+      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.15), transparent 22%),
+        linear-gradient(180deg, #091120 0%, #0b1525 100%);
+    }
+
+    .login-shell{
+      width:min(100%, 1100px);
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:22px;
+      align-items:stretch;
+    }
+
+    .hero{
+      border-radius:36px;
+      padding:34px;
+      color:#fff;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(255,102,0,.22), transparent 18%),
+        radial-gradient(circle at 15% 18%, rgba(255,255,255,.18), transparent 20%),
+        linear-gradient(135deg, #4d148c 0%, #5b1aae 48%, #1e293b 100%);
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.12);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      width:340px;
+      height:340px;
+      top:-160px;
+      right:-80px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.18), transparent 62%);
+    }
+
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:18px;
+    }
+
+    .hero h1{
+      margin:0 0 12px;
+      font-size:clamp(2rem, 4vw, 3.2rem);
+      line-height:1;
+      letter-spacing:-.05em;
+    }
+
+    .hero p{
+      margin:0 0 24px;
+      color:rgba(255,255,255,.82);
+      line-height:1.7;
+      font-size:15px;
+    }
+
+    .hero-list{
+      display:grid;
+      gap:12px;
+      padding:0;
+      margin:0;
+      list-style:none;
+    }
+
+    .hero-list li{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.10);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+
+    .hero-list i{
+      margin-top:2px;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.98));
+      border:1px solid rgba(255,255,255,.8);
+      box-shadow:var(--shadow);
+      border-radius:36px;
+      padding:30px;
+    }
+
+    .card h2{
+      margin:0 0 8px;
+      font-size:30px;
+      letter-spacing:-.04em;
+    }
+
+    .sub{
+      margin:0 0 24px;
+      color:var(--text-soft);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .field{
+      margin-bottom:16px;
+    }
+
+    .label{
+      display:block;
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:8px;
+      color:#334155;
+    }
+
+    .input-wrap{
+      position:relative;
+    }
+
+    .input-wrap i{
+      position:absolute;
+      left:16px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#64748b;
+    }
+
+    input{
+      width:100%;
+      min-height:56px;
+      border:none;
+      outline:none;
+      border-radius:18px;
+      background:#f8fafc;
+      padding:0 16px 0 46px;
+      font-size:15px;
+      font-weight:600;
+      color:#0f172a;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.22);
+      transition:.2s ease;
+    }
+
+    input:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08);
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+
+    .btn{
+      width:100%;
+      min-height:56px;
+      border:none;
+      border-radius:18px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s ease;
+      font-size:15px;
+    }
+
+    .btn-primary{
+      color:#fff;
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      box-shadow:0 16px 28px rgba(77,20,140,.18);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-2px);
+    }
+
+    .btn-secondary{
+      color:#4d148c;
+      background:#f5f3ff;
+      box-shadow:inset 0 0 0 1px #e9ddff;
+    }
+
+    .btn-orange{
+      color:#fff;
+      background:linear-gradient(135deg, #ff6600, #ff7b22);
+      box-shadow:0 16px 28px rgba(255,102,0,.22);
+    }
+
+    .message{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:16px;
+      font-size:14px;
+      display:none;
+      line-height:1.6;
+    }
+
+    .message.error{
+      display:block;
+      background:#fef2f2;
+      color:#991b1b;
+      border:1px solid #fecaca;
+    }
+
+    .message.success{
+      display:block;
+      background:#f0fdf4;
+      color:#166534;
+      border:1px solid #bbf7d0;
+    }
+
+    .small-note{
+      margin-top:18px;
+      font-size:13px;
+      color:#64748b;
+      line-height:1.7;
+    }
+
+    @media (max-width: 920px){
+      .login-shell{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 640px){
+      .card, .hero{
+        border-radius:28px;
+        padding:22px;
+      }
+      .row{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-shell">
+    <section class="hero">
+      <div class="hero-badge">
+        <i class="fa-solid fa-shield-halved"></i>
+        Protected access
+      </div>
+
+      <h1>Decision Guide Access</h1>
+      <p>
+        Sign in first before opening the decision guide system. This helps protect internal workflows, guide content, and user access.
+      </p>
+
+      <ul class="hero-list">
+        <li><i class="fa-solid fa-lock"></i><span>Email/password sign-in using Firebase Authentication</span></li>
+        <li><i class="fa-solid fa-envelope-circle-check"></i><span>Email verification can be required before access</span></li>
+        <li><i class="fa-solid fa-mobile-screen-button"></i><span>2-step verification can be added later if Identity Platform is enabled</span></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Sign in</h2>
+      <p class="sub">Use your approved account to continue to the guide library.</p>
+
+      <div class="field">
+        <label class="label" for="email">Email</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-envelope"></i>
+          <input id="email" type="email" placeholder="name@company.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="password">Password</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-lock"></i>
+          <input id="password" type="password" placeholder="Enter password" autocomplete="current-password">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="loginBtn">Sign in</button>
+
+      <div class="row">
+        <button class="btn btn-secondary" id="resetBtn" type="button">Forgot password</button>
+        <button class="btn btn-orange" id="logoutBtn" type="button" style="display:none;">Sign out</button>
+      </div>
+
+      <div id="message" class="message"></div>
+
+      <div class="small-note">
+        After sign-in, verified users will be redirected to your main guide page.
+      </div>
+    </section>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    const emailEl = document.getElementById("email");
+    const passwordEl = document.getElementById("password");
+    const loginBtn = document.getElementById("loginBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const messageEl = document.getElementById("message");
+
+    function showMessage(text, type = "error"){
+      messageEl.className = "message " + type;
+      messageEl.textContent = text;
+    }
+
+    function clearMessage(){
+      messageEl.className = "message";
+      messageEl.textContent = "";
+      messageEl.style.display = "";
+    }
+
+    loginBtn.addEventListener("click", async () => {
+      clearMessage();
+
+      const email = emailEl.value.trim().toLowerCase();
+      const password = passwordEl.value;
+
+      if (!email || !password) {
+        showMessage("Please enter your email and password.");
+        return;
+      }
+
+      try {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+
+        const result = await auth.signInWithEmailAndPassword(email, password);
+        const user = result.user;
+
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+          await auth.signOut();
+          showMessage("Your email is not verified yet. We sent a verification email. Please verify first, then sign in again.", "success");
+          return;
+        }
+
+        window.location.href = "index.html";
+      } catch (error) {
+        showMessage(error.message || "Unable to sign in right now.");
+      }
+    });
+
+    resetBtn.addEventListener("click", async () => {
+      clearMessage();
+      const email = emailEl.value.trim().toLowerCase();
+
+      if (!email) {
+        showMessage("Enter your email first so we can send a reset link.");
+        return;
+      }
+
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showMessage("Password reset email sent successfully.", "success");
+      } catch (error) {
+        showMessage(error.message || "Unable to send password reset email.");
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await auth.signOut();
+      showMessage("You have been signed out.", "success");
+    });
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        logoutBtn.style.display = "block";
+      } else {
+        logoutBtn.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
