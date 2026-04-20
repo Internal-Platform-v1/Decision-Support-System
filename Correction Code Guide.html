@@ -1804,60 +1804,113 @@ const NODES = {
   },
 
   correction_type: {
-    text: "What is the Correction that you are trying to do?",
-    help: "Select the type of correction based on the request.",
-    choices: [
-      {
-        label: "Change Terms",
-        next: "change_terms_root",
-        icon: "fa-solid fa-file-invoice",
-        desc: "Update shipment billing terms."
-      },
-      {
-        label: "Change Account Code",
-        next: "change_account_root",
-        icon: "fa-solid fa-id-card",
-        desc: "Update billing account or debtor information."
-      },
-      {
-        label: "Change Class / NMFC / Description / Handling Unit",
-        next: "change_class_root",
-        icon: "fa-solid fa-boxes-stacked",
-        desc: "Update freight class, NMFC, description, or handling unit."
-      },
-      {
-        label: "Change Weight",
-        next: "change_weight_root",
-        icon: "fa-solid fa-weight-scale",
-        desc: "Update shipment weight per BOL."
-      },
-      {
-        label: "Change Service Type",
-        action: "EPDC",
-        icon: "fa-solid fa-truck-fast",
-        desc: "Update shipment service type."
-      },
-      {
-        label: "Reference no Edit",
-        next: "reference_edit_root",
-        icon: "fa-solid fa-hashtag",
-        desc: "Edit shipment reference number."
-      },
-      {
-        label: "Accessorial Update",
-        next: "accessorial_update_root",
-        icon: "fa-solid fa-screwdriver-wrench",
-        desc: "Add, remove, or update an accessorial."
-      },
-      {
-        label: "Pricing Related Update",
-        next: "pricing_related_update",
-        icon: "fa-solid fa-tags",
-        desc: "Pricing-related correction."
-      }
-    ]
-  },
+  text: "What is the Correction that you are trying to do?",
+  help: "Select the type of correction based on the request.",
+  choices: [
+    {
+      label: "Change Terms",
+      next: "change_terms_root",
+      icon: "fa-solid fa-file-invoice",
+      desc: "Update shipment billing terms."
+    },
+    {
+      label: "Change Account Code",
+      next: "change_account_root",
+      icon: "fa-solid fa-id-card",
+      desc: "Update billing account or debtor information."
+    },
+    {
+      label: "Change Class / NMFC / Description / Handling Unit",
+      next: "change_class_root",
+      icon: "fa-solid fa-boxes-stacked",
+      desc: "Update freight class, NMFC, description, or handling unit."
+    },
+    {
+      label: "Change Weight",
+      next: "change_weight_root",
+      icon: "fa-solid fa-weight-scale",
+      desc: "Update shipment weight per BOL."
+    },
+    {
+      label: "Change Service Type",
+      action: "EPDC",
+      icon: "fa-solid fa-truck-fast",
+      desc: "Update shipment service type."
+    },
+    {
+      label: "Reference no Edit",
+      next: "reference_edit_root",
+      icon: "fa-solid fa-hashtag",
+      desc: "Edit shipment reference number."
+    },
+    {
+      label: "Accessorial Update",
+      next: "accessorial_update_root",
+      icon: "fa-solid fa-screwdriver-wrench",
+      desc: "Add, remove, or update an accessorial."
+    },
+    {
+      label: "Pricing Related Update",
+      next: "pricing_related_update",
+      icon: "fa-solid fa-tags",
+      desc: "Pricing-related correction."
+    },
+    {
+      label: "Refreshed terms to pull ABT",
+      next: "refresh_terms_pull_abt_intro",
+      icon: "fa-solid fa-arrows-rotate",
+      desc: "Use this when terms were refreshed so the system can pull the ABT account."
+    }
+  ]
+},
+  /* =========================
+     refreshed TERMS
+  ========================= */
+refresh_terms_pull_abt_intro: {
+  text: "Refreshed terms to pull ABT",
+  help: "Use this when FBC terms are prepaid/collect and the customer is requesting to pull the shipper's or consignee's ABT, but the system did not pull it so the terms need to be refreshed.",
+  note: "FBC terms is prepaid/collect and customer is requesting to pull the shipper's/consignee's ABT. However, the system did not pull it, so you need to refresh the terms to pull the ABT account.\n\nNote: Check shipping's account comment to see when was ABT added.",
+  choices: [
+    {
+      label: "ABT was added after correction",
+      next: "refresh_terms_pull_abt_after_correction_bol",
+      icon: "fa-solid fa-clock-rotate-left",
+      desc: "ABT was added after the correction was already made."
+    },
+    {
+      label: "ABT was added before correction",
+      action: "SYSM - because system failed to pull the ABT",
+      icon: "fa-solid fa-microchip",
+      desc: "System failed to pull the ABT even though it was already available."
+    },
+    {
+      label: "No comment when was ABT added",
+      action: "SYSM - Due to system issue",
+      icon: "fa-solid fa-circle-question",
+      desc: "There is no account comment showing when the ABT was added."
+    }
+  ]
+},
 
+refresh_terms_pull_abt_after_correction_bol: {
+  text: "Is ABT account or information noted on the BOL?",
+  help: "Use this when the ABT was added after the correction and you need to determine whether it was noted on the BOL.",
+  choices: [
+    {
+      label: "Yes",
+      action: "ACCR - Since this is not a biller's error and ABT is noted on the BOL",
+      icon: "fa-solid fa-circle-check",
+      desc: "ABT is noted on the BOL."
+    },
+    {
+      label: "No",
+      action: "CUSI - Since this is not a biller's error and ABT is not noted on the BOL",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "ABT is not noted on the BOL."
+    }
+  ]
+},
+  
   /* =========================
      CHANGE TERMS
   ========================= */
