@@ -435,3 +435,137 @@ function initHeaderUI() {
 }
 
 document.addEventListener("headerLoaded", initHeaderUI);
+
+// login logout script
+function getInitials(name, email) {
+  const source = (name || "").trim();
+
+  if (source) {
+    const parts = source.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) {
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  if (email) {
+    return email.slice(0, 2).toUpperCase();
+  }
+
+  return "US";
+}
+
+function formatDisplayName(user) {
+  if (user?.displayName && user.displayName.trim()) return user.displayName.trim();
+
+  if (user?.email) {
+    const local = user.email.split("@")[0];
+    return local
+      .replace(/[._-]+/g, " ")
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  return "User";
+}
+
+async function loadHeaderUserProfile(user) {
+  const avatar = document.getElementById("userAvatar");
+  const avatarLarge = document.getElementById("userAvatarLarge");
+  const nameEl = document.getElementById("userDisplayName");
+  const roleEl = document.getElementById("userDisplayRole");
+  const userMenu = document.getElementById("userMenu");
+
+  if (!avatar || !avatarLarge || !nameEl || !roleEl || !userMenu) return;
+
+  if (!user) {
+    userMenu.style.display = "none";
+    return;
+  }
+
+  userMenu.style.display = "flex";
+
+  let displayName = formatDisplayName(user);
+  let role = "Authenticated User";
+
+  try {
+    if (window.firebase && firebase.firestore) {
+      const db = firebase.firestore();
+      const email = (user.email || "").toLowerCase();
+
+      const snap = await db.collection("users")
+        .where("email", "==", email)
+        .limit(1)
+        .get();
+
+      if (!snap.empty) {
+        const data = snap.docs[0].data();
+        if (data.name) displayName = data.name;
+        if (data.role) role = data.role;
+      }
+    }
+  } catch (error) {
+    console.error("Unable to load user profile from Firestore:", error);
+  }
+
+  const initials = getInitials(displayName, user.email);
+
+  avatar.textContent = initials;
+  avatarLarge.textContent = initials;
+  nameEl.textContent = displayName;
+  roleEl.textContent = role;
+}
+
+function setupUserMenuDropdown() {
+  const userMenu = document.getElementById("userMenu");
+  const userBtn = document.getElementById("userMenuBtn");
+
+  if (!userMenu || !userBtn) return;
+
+  userBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isOpen = userMenu.classList.toggle("open");
+    userBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!userMenu.contains(e.target)) {
+      userMenu.classList.remove("open");
+      userBtn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      userMenu.classList.remove("open");
+      userBtn.setAttribute("aria-expanded", "false");
+    }
+  });
+}
+
+function logoutUser() {
+  if (!window.firebase || !firebase.auth) {
+    console.error("Firebase auth is not available.");
+    return;
+  }
+
+  firebase.auth().signOut()
+    .then(() => {
+      window.location.href = (window.SITE_BASE || "") + "login.html";
+    })
+    .catch((error) => {
+      console.error("Logout error:", error);
+    });
+}
+
+document.addEventListener("headerLoaded", () => {
+  setupUserMenuDropdown();
+
+  const userMenu = document.getElementById("userMenu");
+  if (userMenu) userMenu.style.display = "none";
+
+  if (window.firebase && firebase.auth) {
+    firebase.auth().onAuthStateChanged(async (user) => {
+      await loadHeaderUserProfile(user);
+    });
+  }
+});
