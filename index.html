@@ -164,12 +164,35 @@
       position:relative;
     }
 
-    .input-wrap i{
+    .input-wrap .left-icon{
       position:absolute;
       left:16px;
       top:50%;
       transform:translateY(-50%);
       color:#64748b;
+      pointer-events:none;
+    }
+
+    .toggle-password{
+      position:absolute;
+      right:14px;
+      top:50%;
+      transform:translateY(-50%);
+      border:none;
+      background:transparent;
+      color:#64748b;
+      cursor:pointer;
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      transition:.2s ease;
+    }
+
+    .toggle-password:hover{
+      background:rgba(77,20,140,.08);
+      color:var(--accent);
     }
 
     input{
@@ -185,6 +208,10 @@
       color:#0f172a;
       box-shadow:inset 0 0 0 1px rgba(148,163,184,.22);
       transition:.2s ease;
+    }
+
+    #password{
+      padding-right:52px;
     }
 
     input:focus{
@@ -284,17 +311,17 @@
     <section class="hero">
       <div class="hero-badge">
         <i class="fa-solid fa-shield-halved"></i>
-        Protected access
+        Secure access
       </div>
 
       <h1>Decision Guide Access</h1>
       <p>
-        Sign in first before opening the decision guide system. This helps protect internal workflows, guide content, and user access.
+        Sign in to access the decision guide system securely. This helps protect internal workflows, guide content, and approved user access.
       </p>
 
       <ul class="hero-list">
-        <li><i class="fa-solid fa-lock"></i><span>Email/password sign-in using Firebase Authentication</span></li>
-        <li><i class="fa-solid fa-envelope-circle-check"></i><span>Email verification can be required before access</span></li>
+        <li><i class="fa-solid fa-lock"></i><span>Sign in securely using your approved email and password</span></li>
+        <li><i class="fa-solid fa-envelope-circle-check"></i><span>You may be asked to verify your email before access is granted</span></li>
         <li><i class="fa-solid fa-mobile-screen-button"></i><span>2-step verification can be added later if Identity Platform is enabled</span></li>
       </ul>
     </section>
@@ -306,7 +333,7 @@
       <div class="field">
         <label class="label" for="email">Email</label>
         <div class="input-wrap">
-          <i class="fa-solid fa-envelope"></i>
+          <i class="fa-solid fa-envelope left-icon"></i>
           <input id="email" type="email" placeholder="name@company.com" autocomplete="email">
         </div>
       </div>
@@ -314,8 +341,11 @@
       <div class="field">
         <label class="label" for="password">Password</label>
         <div class="input-wrap">
-          <i class="fa-solid fa-lock"></i>
-          <input id="password" type="password" placeholder="Enter password" autocomplete="current-password">
+          <i class="fa-solid fa-lock left-icon"></i>
+          <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+          <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
+            <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
+          </button>
         </div>
       </div>
 
@@ -329,7 +359,7 @@
       <div id="message" class="message"></div>
 
       <div class="small-note">
-        After sign-in, verified users will be redirected to your main guide page.
+        After signing in, verified users will be redirected to the main guide page.
       </div>
     </section>
   </div>
@@ -359,6 +389,8 @@
   const resetBtn = document.getElementById("resetBtn");
   const logoutBtn = document.getElementById("logoutBtn");
   const messageEl = document.getElementById("message");
+  const togglePasswordBtn = document.getElementById("togglePassword");
+  const togglePasswordIcon = document.getElementById("togglePasswordIcon");
 
   function showMessage(text, type = "error") {
     messageEl.className = "message " + type;
@@ -370,6 +402,13 @@
     messageEl.textContent = "";
     messageEl.style.display = "";
   }
+
+  togglePasswordBtn.addEventListener("click", () => {
+    const isHidden = passwordEl.type === "password";
+    passwordEl.type = isHidden ? "text" : "password";
+    togglePasswordIcon.className = isHidden ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+    togglePasswordBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+  });
 
   loginBtn.addEventListener("click", async () => {
     clearMessage();
@@ -391,7 +430,7 @@
       if (!user.emailVerified) {
         await user.sendEmailVerification();
         await auth.signOut();
-        showMessage("Your email is not verified yet. We sent a verification email. Please verify first, then sign in again.", "success");
+        showMessage("Your email is not verified yet. A verification email has been sent to you. Please verify your email first, then sign in again.", "success");
         return;
       }
 
@@ -407,22 +446,22 @@
     const email = emailEl.value.trim().toLowerCase();
 
     if (!email) {
-      showMessage("Enter your email first so we can send a reset link.");
+      showMessage("Enter your email first so a password reset link can be sent to you.");
       return;
     }
 
     try {
       await auth.sendPasswordResetEmail(email);
-      showMessage("Password reset email sent successfully.", "success");
+      showMessage("A password reset email has been sent successfully.", "success");
     } catch (error) {
-      showMessage(error.message || "Unable to send password reset email.");
+      showMessage(error.message || "Unable to send the password reset email.");
     }
   });
 
   logoutBtn.addEventListener("click", async () => {
     try {
       await auth.signOut();
-      showMessage("You have been signed out.", "success");
+      showMessage("You have been signed out successfully.", "success");
     } catch (error) {
       showMessage(error.message || "Unable to sign out right now.");
     }
