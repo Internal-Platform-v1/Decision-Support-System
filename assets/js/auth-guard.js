@@ -1,33 +1,39 @@
 (function () {
-  const firebaseConfig = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-    authDomain: "bdgg-database.firebaseapp.com",
-    projectId: "bdgg-database",
-    storageBucket: "bdgg-database.appspot.com",
-    messagingSenderId: "43574975434",
-    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-  };
+  function waitForFirebase() {
+    if (!window.firebase || !firebase.apps || !firebase.apps.length) {
+      setTimeout(waitForFirebase, 50);
+      return;
+    }
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged((user) => {
+      const currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+      // login page
+      if (currentPage === "index.html") {
+        if (user && user.emailVerified) {
+          window.location.replace("index-main.html");
+        }
+        return;
+      }
+
+      // protected pages
+      if (!user) {
+        window.location.replace("index.html");
+        return;
+      }
+
+      if (!user.emailVerified) {
+        auth.signOut().then(() => {
+          window.location.replace("index.html");
+        });
+        return;
+      }
+
+      document.documentElement.style.visibility = "visible";
+    });
   }
 
-  firebase.auth().onAuthStateChanged((user) => {
-    const currentPage = window.location.pathname.split("/").pop() || "index.html";
-    const publicPages = ["login.html"];
-
-    if (!user && !publicPages.includes(currentPage)) {
-      window.location.replace("login.html");
-      return;
-    }
-
-    if (user && !user.emailVerified && !publicPages.includes(currentPage)) {
-      firebase.auth().signOut().then(() => {
-        window.location.replace("login.html");
-      });
-      return;
-    }
-
-    document.documentElement.style.visibility = "visible";
-  });
+  waitForFirebase();
 })();
