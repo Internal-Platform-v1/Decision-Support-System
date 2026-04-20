@@ -550,7 +550,7 @@ function logoutUser() {
 
   firebase.auth().signOut()
     .then(() => {
-      window.location.href = (window.SITE_BASE || "") + "login.html";
+      window.location.href = (window.SITE_BASE || "") + "index.html";
     })
     .catch((error) => {
       console.error("Logout error:", error);
