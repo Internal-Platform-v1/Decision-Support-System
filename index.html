@@ -1440,7 +1440,11 @@
     appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
   };
 
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  const auth = firebase.auth();
   const db = firebase.firestore();
 
   let selectedRating = 0;
