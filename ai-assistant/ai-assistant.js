@@ -105,33 +105,6 @@
     return registry.find((g) => g.id === state.lastMatchedGuideId) || null;
   }
 
- function addMessage(role, content, allowHTML = false) {
-  const els = getEls();
-  if (!els.messages) return;
-
-  const row = document.createElement("div");
-  row.className = `fx-ai-message ${role}`;
-
-  if (role === "assistant") {
-    const avatar = document.createElement("div");
-    avatar.className = "fx-ai-avatar";
-    row.appendChild(avatar);
-  }
-
-  const bubble = document.createElement("div");
-  bubble.className = "fx-ai-bubble";
-
-  if (allowHTML) {
-    bubble.innerHTML = content;
-  } else {
-    bubble.textContent = content;
-  }
-
-  row.appendChild(bubble);
-  els.messages.appendChild(row);
-  scrollToBottom();
-}
-
   function scrollToBottom() {
     const els = getEls();
     requestAnimationFrame(() => {
@@ -139,6 +112,62 @@
         els.messages.scrollTop = els.messages.scrollHeight;
       }
     });
+  }
+
+  function addMessage(role, content, allowHTML = false) {
+    const els = getEls();
+    if (!els.messages) return null;
+
+    const row = document.createElement("div");
+    row.className = `fx-ai-message ${role}`;
+
+    if (role === "assistant") {
+      const avatar = document.createElement("div");
+      avatar.className = "fx-ai-avatar";
+      row.appendChild(avatar);
+    }
+
+    const bubble = document.createElement("div");
+    bubble.className = "fx-ai-bubble";
+
+    if (allowHTML) {
+      bubble.innerHTML = content;
+    } else {
+      bubble.textContent = content;
+    }
+
+    row.appendChild(bubble);
+    els.messages.appendChild(row);
+    scrollToBottom();
+
+    return row;
+  }
+
+  function addThinkingMessage() {
+    const thinkingHtml = `
+      <div class="fx-ai-thinking">
+        <div>
+          <div class="fx-ai-thinking-text">AI is thinking...</div>
+          <div class="fx-ai-thinking-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return addMessage("assistant", thinkingHtml, true);
+  }
+
+  function removeThinkingMessage(thinkingRow) {
+    if (thinkingRow && thinkingRow.parentNode) {
+      thinkingRow.parentNode.removeChild(thinkingRow);
+    }
+  }
+
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   function clearSuggestions() {
@@ -178,11 +207,11 @@
         <div class="fx-ai-guide-actions">
           <a class="fx-ai-link primary" href="${safeUrl}">
             <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            Open Guide
+            <span>Open Guide</span>
           </a>
           <button class="fx-ai-btn secondary" type="button" data-guide-id="${escapeHtml(guide.id)}" data-role="show-related">
-            <i class="fa-solid fa-list"></i>
-            Similar Guides
+            <i class="fa-solid fa-list-ul"></i>
+            <span>Similar Guides</span>
           </button>
         </div>
       </div>
@@ -260,7 +289,7 @@ Try using terms like:
     );
   }
 
-  function handleConcern(text) {
+  async function handleConcern(text) {
     const trimmed = String(text || "").trim();
     if (!trimmed) return;
 
@@ -270,7 +299,12 @@ Try using terms like:
     addMessage("user", trimmed);
     clearSuggestions();
 
+    const thinkingRow = addThinkingMessage();
+    await wait(900);
+
     const bestGuide = findBestGuide(trimmed);
+
+    removeThinkingMessage(thinkingRow);
 
     if (!bestGuide) {
       showNoMatch();
@@ -401,7 +435,7 @@ Try using terms like:
     els.input.style.height = Math.min(els.input.scrollHeight, 120) + "px";
   }
 
-  function sendInput() {
+  async function sendInput() {
     const els = getEls();
     if (!els.input) return;
 
@@ -410,7 +444,7 @@ Try using terms like:
 
     els.input.value = "";
     autoresizeInput();
-    handleConcern(text);
+    await handleConcern(text);
   }
 
   function bindEvents() {
@@ -424,10 +458,10 @@ Try using terms like:
     els.send?.addEventListener("click", sendInput);
 
     els.input?.addEventListener("input", autoresizeInput);
-    els.input?.addEventListener("keydown", (event) => {
+    els.input?.addEventListener("keydown", async (event) => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
-        sendInput();
+        await sendInput();
       }
     });
 
