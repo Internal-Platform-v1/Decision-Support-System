@@ -1365,7 +1365,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const templateCache = {};
 
 const NODES = {
-
   start: {
     text: "Sort and Segregate Dispute",
     help: "Start by checking if sort and segregate is noted or requested on the BOL.",
@@ -1380,199 +1379,159 @@ const NODES = {
   },
 
   bol_check: {
-    text: "Is sort and segregate noted or requested on BOL?",
+    text: "Is sort and seg noted or requested on BOL?",
     choices: [
       {
         label: "Yes",
-        next: "dr_signed_check",
+        next: "bol_keyword_ssgo_check",
         icon: "fa-solid fa-circle-check",
-        desc: "Sort and segregate is noted on BOL."
+        desc: "Sort and segregate is noted or requested on the BOL."
       },
       {
         label: "No",
-        next: "dr_marked_check_no_bol",
+        next: "dr_marked_check",
         icon: "fa-solid fa-circle-xmark",
-        desc: "No instruction on BOL."
+        desc: "No sort and segregate instruction is noted on the BOL."
       }
     ]
   },
 
-  dr_marked_check_no_bol: {
-    text: "Is the sort and segregate marked and signed on DR?",
+  /* =========================
+     BOL = YES
+  ========================= */
+
+  bol_keyword_ssgo_check: {
+    text: "Is the keyword is SSGO?",
     choices: [
       {
         label: "Yes",
-        next: "keyword_check_prepaid",
+        action: "Advise customer that sort and seg is valid as requested on BOL",
         icon: "fa-solid fa-circle-check",
-        desc: "Marked and signed on DR."
+        desc: "The keyword is already SSGO."
       },
       {
         label: "No",
-        next: "remove_fee_nacc",
+        action: "If disputing keyword is SSGD, SSGP or SSGC, update it to SSGO and advise the customer that fee were rebilled to the correct debtor per BOL. CORR EACC must be use.",
         icon: "fa-solid fa-circle-xmark",
-        desc: "Not marked on DR."
+        desc: "Update the keyword to SSGO and rebill to the correct debtor per BOL."
       }
     ]
   },
 
-  dr_signed_check: {
-    text: "Is the sort and segregate marked and signed on DR?",
+  /* =========================
+     BOL = NO
+  ========================= */
+
+  dr_marked_check: {
+    text: "Is the sort and seg marked and signed on DR?",
     choices: [
       {
         label: "Yes",
-        next: "keyword_check_collect",
+        next: "dr_keyword_ssgd_or_ssgc",
         icon: "fa-solid fa-circle-check",
-        desc: "Marked and signed on DR."
+        desc: "Sort and segregate is marked and signed on the DR."
       },
       {
-        label: "No",
-        next: "remove_fee_nacc",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Not marked on DR."
+        label: "No, It was marked but not sign",
+        next: "unsigned_dr_dispute_check",
+        icon: "fa-solid fa-file-circle-question",
+        desc: "It was marked but not signed on the DR."
       }
     ]
   },
 
-  remove_fee_nacc: {
-    text: "Remove the fee and use CORR NACC.",
-    help: "Use NACC when no supporting documentation is present.",
-    choices: []
-  },
-
-  /* ================= LEFT SIDE (COLLECT FLOW) ================= */
-
-  keyword_check_collect: {
-    text: "Is the key word for sort and seg fee is SSGO or SSGP?",
+  unsigned_dr_dispute_check: {
+    text: "Unsigned DR",
+    help: "Use this path when sort and segregate was marked but not signed on the DR.",
     choices: [
       {
-        label: "Yes",
-        next: "valid_fee_dr",
-        icon: "fa-solid fa-circle-check",
-        desc: "Keyword matches SSGO or SSGP."
+        label: "Dispute is rebill per LOA",
+        action: "If the dispute is rebill per LOA, Please proceed.",
+        icon: "fa-solid fa-file-signature",
+        desc: "Proceed if the dispute is supported by LOA."
       },
       {
-        label: "No",
-        next: "billing_mask_collect",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Keyword is SSGD or SSGC."
-      }
-    ]
-  },
-
-  valid_fee_dr: {
-    text: "Advise customer that fee is valid per DR.",
-    choices: []
-  },
-
-  billing_mask_collect: {
-    text: "If keyword is SSGD or SSGC, check the billing mask of consignee's account.",
-    choices: [
-      {
-        label: "Continue",
-        next: "comment_check_collect",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to validation."
-      }
-    ]
-  },
-
-  comment_check_collect: {
-    text: "Is there a comment stated 'all accessorial or specifically for sort and seg must be bill to their account/consignee?'",
-    choices: [
-      {
-        label: "Yes",
-        next: "valid_collect_collected",
-        icon: "fa-solid fa-circle-check",
-        desc: "Comment supports billing."
+        label: "Consignee disputes prepaid/3PL billing",
+        action: "If the disputing party is the consignee and stating that fee must be bill to prepaid/3PL, Please advise customer the fee is billing correctly to consignee per DR and LOA is needed from acceptance party.",
+        icon: "fa-solid fa-building-user",
+        desc: "Fee is billing correctly to consignee per DR."
       },
       {
-        label: "No",
-        next: "correct_keyword_collect",
+        label: "Dispute is validity of the surcharge",
+        action: "If the dispute is validity of the surcharge, Remove the fee and use CORR NACC",
         icon: "fa-solid fa-circle-xmark",
-        desc: "No supporting comment."
+        desc: "Remove the fee using NACC."
       }
     ]
   },
 
-  valid_collect_collected: {
-    text: "Advise customer that fee is valid per DR and billing correctly to COLLECT per consignee billing mask.",
-    choices: []
-  },
-
-  correct_keyword_collect: {
-    text: "- If fee keyword is SSGD change it to SSGO.\n- If fee keyword is SSGC change it to SSGP.\n- use CORR EACC.",
-    help: "Apply proper correction code and keyword alignment.",
-    choices: []
-  },
-
-  /* ================= RIGHT SIDE (PREPAID FLOW) ================= */
-
-  keyword_check_prepaid: {
+  dr_keyword_ssgd_or_ssgc: {
     text: "Is the key word for sort and seg fee is SSGD or SSGC?",
     choices: [
       {
         label: "Yes",
-        next: "valid_prepaid",
+        action: "Advise customer that fee is valid per DR.",
         icon: "fa-solid fa-circle-check",
-        desc: "Keyword matches SSGD or SSGC."
+        desc: "The DR supports the current keyword."
       },
       {
-        label: "No",
-        next: "billing_mask_prepaid",
+        label: "No, Its SSGP",
+        next: "shipper_billing_mask_check",
         icon: "fa-solid fa-circle-xmark",
-        desc: "Keyword is SSGO or SSGP."
+        desc: "The keyword is SSGP."
       }
     ]
   },
 
-  valid_prepaid: {
-    text: "Advise customer that fee is valid per DR.",
-    choices: []
-  },
-
-  billing_mask_prepaid: {
-    text: "If keyword is SSGO or SSGP, check the billing mask of the shipper's account.",
+  shipper_billing_mask_check: {
+    text: "Check the billing mask of the shipper's",
+    help: "Review the shipper billing mask before deciding whether the current keyword is valid.",
     choices: [
       {
         label: "Continue",
-        next: "comment_check_prepaid",
+        next: "shipper_comment_check",
         icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to validation."
+        desc: "Proceed to billing mask validation."
       }
     ]
   },
 
-  comment_check_prepaid: {
-    text: "Is there a comment stated 'all accessorial or specifically for sort and seg must be bill to their account/shipper?'",
+  shipper_comment_check: {
+    text: "Is there a comment stated \"all accessorial or specifically for sort and seg must be bill to their account/shipper?\"",
     choices: [
       {
         label: "Yes",
-        next: "valid_prepaid_billing",
+        action: "Advised customer that fee is valid per DR and billing correctly to PREPAID per shipper billing mask",
         icon: "fa-solid fa-circle-check",
-        desc: "Comment supports billing."
+        desc: "Billing mask supports prepaid billing to the shipper."
       },
       {
         label: "No",
-        next: "correct_keyword_prepaid",
+        action: "Change SSGP to SSGC per DR. CORR EACC must be use.",
         icon: "fa-solid fa-circle-xmark",
-        desc: "No supporting comment."
+        desc: "Update the keyword to SSGC and use EACC."
       }
     ]
   },
 
-  valid_prepaid_billing: {
-    text: "Advise customer that fee is valid per DR and billing correctly to PREPAID per shipper billing mask.",
-    choices: []
-  },
+  /* =========================
+     REOPENED CASE / REVIEW
+  ========================= */
 
-  correct_keyword_prepaid: {
-    text: "- If fee keyword is SSGO change it to SSGD.\n- If fee keyword is SSGP change it to SSGC.\n- use CORR EACC.",
-    help: "Apply proper correction code and keyword alignment.",
-    choices: []
+  reopened_case_review: {
+    text: "Reopened Case Review",
+    help: "Use this when the case was reopened and the customer insists that sort and seg was not performed.",
+    choices: [
+      {
+        label: "Continue",
+        action: "If the case reopened and customer is insisted that sort and seg wasnt performed. Send an email to the service center to do a further review.",
+        icon: "fa-solid fa-envelope",
+        desc: "Request further review from the service center."
+      }
+    ]
   }
-
 };
-
+  
   function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
