@@ -223,7 +223,9 @@
       margin-top:14px;
       display:flex;
       align-items:center;
-      justify-content:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
     }
 
     .forgot-link{
@@ -372,8 +374,30 @@
         </div>
       </div>
 
+      <div class="field" id="otpSection" style="display:none;">
+        <div class="label-row">
+          <label class="label" for="otp">OTP Code</label>
+          <span class="label-hint">Enter 6-digit code</span>
+        </div>
+        <div class="input-wrap">
+          <i class="fa-solid fa-shield-halved left-icon"></i>
+          <input
+            id="otp"
+            type="text"
+            maxlength="6"
+            inputmode="numeric"
+            placeholder="Enter OTP"
+            autocomplete="one-time-code"
+          >
+        </div>
+      </div>
+
       <button class="primary-btn" id="loginBtn" type="button">
         Sign in securely
+      </button>
+
+      <button class="primary-btn" id="verifyOtpBtn" type="button" style="display:none; margin-top:12px;">
+        Verify OTP
       </button>
 
       <div class="forgot-row">
@@ -409,6 +433,7 @@
     const ALLOWED_DOMAIN = "@fedexfreight.com";
     const APPROVED_USERS_COLLECTION = "approved_users";
     const REDIRECT_AFTER_LOGIN = "index-main.html";
+    const OTP_API = "http://localhost:3000";
 
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
@@ -419,7 +444,10 @@
 
     const emailEl = document.getElementById("email");
     const passwordEl = document.getElementById("password");
+    const otpEl = document.getElementById("otp");
+    const otpSection = document.getElementById("otpSection");
     const loginBtn = document.getElementById("loginBtn");
+    const verifyOtpBtn = document.getElementById("verifyOtpBtn");
     const resetBtn = document.getElementById("resetBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const messageEl = document.getElementById("message");
@@ -453,6 +481,24 @@
       loginBtn.textContent = isLoading ? "Checking access..." : "Sign in securely";
     }
 
+    function setOtpState(isLoading) {
+      verifyOtpBtn.disabled = isLoading;
+      otpEl.disabled = isLoading;
+      verifyOtpBtn.textContent = isLoading ? "Verifying..." : "Verify OTP";
+    }
+
+    function showOtpStep() {
+      otpSection.style.display = "grid";
+      verifyOtpBtn.style.display = "block";
+      otpEl.focus();
+    }
+
+    function hideOtpStep() {
+      otpSection.style.display = "none";
+      verifyOtpBtn.style.display = "none";
+      otpEl.value = "";
+    }
+
     async function checkApprovedUser(email) {
       const emailKey = normalizeEmail(email);
       const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(emailKey);
@@ -480,6 +526,53 @@
       };
     }
 
+    async function getFreshIdToken() {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("No signed-in user was found.");
+      }
+      return await user.getIdToken(true);
+    }
+
+    async function sendOtpRequest() {
+      const idToken = await getFreshIdToken();
+
+      const response = await fetch(`${OTP_API}/api/send-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${idToken}`
+        }
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to send OTP right now.");
+      }
+
+      return data;
+    }
+
+    async function verifyOtpRequest(otp) {
+      const idToken = await getFreshIdToken();
+
+      const response = await fetch(`${OTP_API}/api/verify-otp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${idToken}`
+        },
+        body: JSON.stringify({ otp })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to verify OTP right now.");
+      }
+
+      return data;
+    }
+
     togglePasswordBtn.addEventListener("click", () => {
       const isHidden = passwordEl.type === "password";
       passwordEl.type = isHidden ? "text" : "password";
@@ -494,8 +587,15 @@
       }
     });
 
+    otpEl.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        verifyOtpBtn.click();
+      }
+    });
+
     loginBtn.addEventListener("click", async () => {
       clearMessage();
+      hideOtpStep();
 
       const email = normalizeEmail(emailEl.value);
       const password = passwordEl.value;
@@ -541,7 +641,9 @@
           return;
         }
 
-        window.location.href = REDIRECT_AFTER_LOGIN;
+        await sendOtpRequest();
+        showOtpStep();
+        showMessage("An OTP has been sent to your approved email. Enter the code below to continue.", "success");
       } catch (error) {
         let friendlyMessage = error.message || "Unable to sign in right now.";
 
@@ -560,6 +662,35 @@
         showMessage(friendlyMessage);
       } finally {
         setLoadingState(false);
+      }
+    });
+
+    verifyOtpBtn.addEventListener("click", async () => {
+      clearMessage();
+
+      const otp = String(otpEl.value || "").trim();
+
+      if (!otp) {
+        showMessage("Please enter the OTP sent to your email.");
+        return;
+      }
+
+      if (!/^\d{6}$/.test(otp)) {
+        showMessage("Please enter a valid 6-digit OTP.");
+        return;
+      }
+
+      try {
+        setOtpState(true);
+
+        await verifyOtpRequest(otp);
+
+        showMessage("OTP verified successfully. Redirecting now...", "success");
+        window.location.href = REDIRECT_AFTER_LOGIN;
+      } catch (error) {
+        showMessage(error.message || "Unable to verify OTP right now.");
+      } finally {
+        setOtpState(false);
       }
     });
 
@@ -597,6 +728,7 @@
     logoutBtn.addEventListener("click", async () => {
       try {
         await auth.signOut();
+        hideOtpStep();
         showMessage("You have been signed out successfully.", "success");
       } catch (error) {
         showMessage(error.message || "Unable to sign out right now.");
@@ -606,7 +738,10 @@
     auth.onAuthStateChanged(async (user) => {
       logoutBtn.style.display = user ? "inline-flex" : "none";
 
-      if (!user) return;
+      if (!user) {
+        hideOtpStep();
+        return;
+      }
 
       if (!isAllowedFedExEmail(user.email)) {
         await auth.signOut();
@@ -624,16 +759,6 @@
         if (!approvalCheck.allowed) {
           await auth.signOut();
           showMessage(approvalCheck.reason || "You are not authorized to access this system.");
-          return;
-        }
-
-        const currentPath = window.location.pathname.toLowerCase();
-        if (
-          currentPath.endsWith("/index.html") ||
-          currentPath === "/" ||
-          currentPath.endsWith("index.html")
-        ) {
-          window.location.replace(REDIRECT_AFTER_LOGIN);
         }
       } catch (error) {
         console.error("Approval check failed:", error);
