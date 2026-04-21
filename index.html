@@ -31,6 +31,7 @@
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       min-height:100vh;
@@ -173,28 +174,6 @@
       pointer-events:none;
     }
 
-    .toggle-password{
-      position:absolute;
-      right:14px;
-      top:50%;
-      transform:translateY(-50%);
-      border:none;
-      background:transparent;
-      color:#64748b;
-      cursor:pointer;
-      width:34px;
-      height:34px;
-      border-radius:10px;
-      display:grid;
-      place-items:center;
-      transition:.2s ease;
-    }
-
-    .toggle-password:hover{
-      background:rgba(77,20,140,.08);
-      color:var(--accent);
-    }
-
     input{
       width:100%;
       min-height:56px;
@@ -211,12 +190,45 @@
     }
 
     #password{
-      padding-right:52px;
+      padding-right:60px;
     }
 
     input:focus{
       background:#fff;
       box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08);
+    }
+
+    .toggle-password{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      border:none;
+      background:transparent;
+      cursor:pointer;
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      color:#64748b;
+      transition:all .25s ease;
+    }
+
+    .toggle-password:hover{
+      background:rgba(77,20,140,.10);
+      color:#4d148c;
+      transform:translateY(-50%) scale(1.05);
+    }
+
+    .toggle-password:active{
+      transform:translateY(-50%) scale(0.92);
+    }
+
+    .toggle-password.active{
+      background:rgba(255,102,0,.12);
+      color:#ff6600;
+      box-shadow:0 0 0 2px rgba(255,102,0,.15);
     }
 
     .row{
@@ -300,6 +312,7 @@
         border-radius:28px;
         padding:22px;
       }
+
       .row{
         grid-template-columns:1fr;
       }
@@ -367,114 +380,132 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-    authDomain: "bdgg-database.firebaseapp.com",
-    projectId: "bdgg-database",
-    storageBucket: "bdgg-database.appspot.com",
-    messagingSenderId: "43574975434",
-    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-
-  const auth = firebase.auth();
-
-  const emailEl = document.getElementById("email");
-  const passwordEl = document.getElementById("password");
-  const loginBtn = document.getElementById("loginBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const messageEl = document.getElementById("message");
-  const togglePasswordBtn = document.getElementById("togglePassword");
-  const togglePasswordIcon = document.getElementById("togglePasswordIcon");
-
-  function showMessage(text, type = "error") {
-    messageEl.className = "message " + type;
-    messageEl.textContent = text;
-  }
-
-  function clearMessage() {
-    messageEl.className = "message";
-    messageEl.textContent = "";
-    messageEl.style.display = "";
-  }
-
-  togglePasswordBtn.addEventListener("click", () => {
-    const isHidden = passwordEl.type === "password";
-    passwordEl.type = isHidden ? "text" : "password";
-    togglePasswordIcon.className = isHidden ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
-    togglePasswordBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
-  });
-
-  loginBtn.addEventListener("click", async () => {
-    clearMessage();
-
-    const email = emailEl.value.trim().toLowerCase();
-    const password = passwordEl.value;
-
-    if (!email || !password) {
-      showMessage("Please enter your email and password.");
-      return;
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
     }
 
-    try {
-      await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    const auth = firebase.auth();
 
-      const result = await auth.signInWithEmailAndPassword(email, password);
-      const user = result.user;
+    const emailEl = document.getElementById("email");
+    const passwordEl = document.getElementById("password");
+    const loginBtn = document.getElementById("loginBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const messageEl = document.getElementById("message");
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const togglePasswordIcon = document.getElementById("togglePasswordIcon");
 
-      if (!user.emailVerified) {
-        await user.sendEmailVerification();
-        await auth.signOut();
-        showMessage("Your email is not verified yet. A verification email has been sent to you. Please verify your email first, then sign in again.", "success");
+    function showMessage(text, type = "error") {
+      messageEl.className = "message " + type;
+      messageEl.textContent = text;
+    }
+
+    function clearMessage() {
+      messageEl.className = "message";
+      messageEl.textContent = "";
+      messageEl.style.display = "";
+    }
+
+    togglePasswordBtn.addEventListener("click", () => {
+      const isHidden = passwordEl.type === "password";
+
+      passwordEl.type = isHidden ? "text" : "password";
+
+      togglePasswordIcon.classList.remove("fa-eye", "fa-eye-slash");
+      togglePasswordIcon.classList.add(isHidden ? "fa-eye-slash" : "fa-eye");
+
+      togglePasswordBtn.classList.toggle("active", isHidden);
+
+      togglePasswordBtn.setAttribute(
+        "aria-label",
+        isHidden ? "Hide password" : "Show password"
+      );
+    });
+
+    passwordEl.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        loginBtn.click();
+      }
+    });
+
+    loginBtn.addEventListener("click", async () => {
+      clearMessage();
+
+      const email = emailEl.value.trim().toLowerCase();
+      const password = passwordEl.value;
+
+      if (!email || !password) {
+        showMessage("Please enter your email and password.");
         return;
       }
 
-      window.location.href = "index-main.html";
-    } catch (error) {
-      showMessage(error.message || "Unable to sign in right now.");
-    }
-  });
+      try {
+        await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
 
-  resetBtn.addEventListener("click", async () => {
-    clearMessage();
+        const result = await auth.signInWithEmailAndPassword(email, password);
+        const user = result.user;
 
-    const email = emailEl.value.trim().toLowerCase();
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+          await auth.signOut();
+          showMessage(
+            "Your email is not verified yet. A verification email has been sent to you. Please verify your email first, then sign in again.",
+            "success"
+          );
+          return;
+        }
 
-    if (!email) {
-      showMessage("Enter your email first so a password reset link can be sent to you.");
-      return;
-    }
+        window.location.href = "index-main.html";
+      } catch (error) {
+        showMessage(error.message || "Unable to sign in right now.");
+      }
+    });
 
-    try {
-      await auth.sendPasswordResetEmail(email);
-      showMessage("A password reset email has been sent successfully.", "success");
-    } catch (error) {
-      showMessage(error.message || "Unable to send the password reset email.");
-    }
-  });
+    resetBtn.addEventListener("click", async () => {
+      clearMessage();
 
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await auth.signOut();
-      showMessage("You have been signed out successfully.", "success");
-    } catch (error) {
-      showMessage(error.message || "Unable to sign out right now.");
-    }
-  });
+      const email = emailEl.value.trim().toLowerCase();
 
-  auth.onAuthStateChanged((user) => {
-    if (user && user.emailVerified) {
-      window.location.replace("index-main.html");
-      return;
-    }
+      if (!email) {
+        showMessage("Enter your email first so a password reset link can be sent to you.");
+        return;
+      }
 
-    logoutBtn.style.display = user ? "block" : "none";
-  });
-</script>
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showMessage("A password reset email has been sent successfully.", "success");
+      } catch (error) {
+        showMessage(error.message || "Unable to send the password reset email.");
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await auth.signOut();
+        showMessage("You have been signed out successfully.", "success");
+      } catch (error) {
+        showMessage(error.message || "Unable to sign out right now.");
+      }
+    });
+
+    auth.onAuthStateChanged((user) => {
+      if (user && user.emailVerified) {
+        window.location.replace("index-main.html");
+        return;
+      }
+
+      logoutBtn.style.display = user ? "block" : "none";
+    });
+  </script>
 </body>
 </html>
