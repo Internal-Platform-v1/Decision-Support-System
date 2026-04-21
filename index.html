@@ -197,46 +197,9 @@
       transition:.2s ease;
     }
 
-    #password{
-      padding-right:60px;
-    }
-
     input:focus{
       background:#fff;
       box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08);
-    }
-
-    .toggle-password{
-      position:absolute;
-      right:10px;
-      top:50%;
-      transform:translateY(-50%);
-      border:none;
-      background:transparent;
-      cursor:pointer;
-      width:40px;
-      height:40px;
-      border-radius:12px;
-      display:grid;
-      place-items:center;
-      color:#64748b;
-      transition:all .25s ease;
-    }
-
-    .toggle-password:hover{
-      background:rgba(77,20,140,.10);
-      color:#4d148c;
-      transform:translateY(-50%) scale(1.05);
-    }
-
-    .toggle-password:active{
-      transform:translateY(-50%) scale(0.92);
-    }
-
-    .toggle-password.active{
-      background:rgba(255,102,0,.12);
-      color:#ff6600;
-      box-shadow:0 0 0 2px rgba(255,102,0,.15);
     }
 
     .row{
@@ -318,6 +281,21 @@
       line-height:1.7;
     }
 
+    .helper{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:#fff7ed;
+      color:#9a3412;
+      border:1px solid #fed7aa;
+      font-size:13px;
+      line-height:1.65;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
     @media (max-width: 920px){
       .login-shell{
         grid-template-columns:1fr;
@@ -346,50 +324,43 @@
 
       <h1>Decision Guide Access</h1>
       <p>
-        Sign in to securely access the decision guide system. This helps protect internal workflows, guide content, and approved user access.
+        Sign in securely using a one-time email link. This helps protect access without requiring a password.
       </p>
 
       <ul class="hero-list">
-        <li><i class="fa-solid fa-lock"></i><span>Use your approved email and password to sign in securely</span></li>
-        <li><i class="fa-solid fa-envelope-circle-check"></i><span>You may be asked to verify your email before access is granted</span></li>
-        <li><i class="fa-solid fa-mobile-screen-button"></i><span>2-step verification can be added later if Identity Platform is enabled</span></li>
+        <li><i class="fa-solid fa-envelope-open-text"></i><span>Enter your approved work email to receive a one-time sign-in link</span></li>
+        <li><i class="fa-solid fa-shield-check"></i><span>Your email is verified as part of the sign-in process</span></li>
+        <li><i class="fa-solid fa-link"></i><span>Open the link from your inbox to complete secure access</span></li>
       </ul>
     </section>
 
     <section class="card">
-      <h2>Sign in</h2>
-      <p class="sub">Use your approved account to continue to the guide library.</p>
+      <h2>Sign in with email link</h2>
+      <p class="sub">Enter your approved email address and a secure sign-in link will be sent to your inbox.</p>
 
       <div class="field">
-        <label class="label" for="email">Email</label>
+        <label class="label" for="email">Work email</label>
         <div class="input-wrap">
           <i class="fa-solid fa-envelope left-icon"></i>
           <input id="email" type="email" placeholder="name@company.com" autocomplete="email">
         </div>
       </div>
 
-      <div class="field">
-        <label class="label" for="password">Password</label>
-        <div class="input-wrap">
-          <i class="fa-solid fa-lock left-icon"></i>
-          <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
-          <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
-            <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
-          </button>
-        </div>
-      </div>
-
-      <button class="btn btn-primary" id="loginBtn">Sign in</button>
+      <button class="btn btn-primary" id="sendLinkBtn" type="button">Send sign-in link</button>
 
       <div class="row">
-        <button class="btn btn-secondary" id="resetBtn" type="button">Forgot password</button>
-        <button class="btn btn-orange" id="logoutBtn" type="button" style="display:none;">Sign out</button>
+        <button class="btn btn-secondary hidden" id="resendBtn" type="button">Resend link</button>
+        <button class="btn btn-orange hidden" id="logoutBtn" type="button">Sign out</button>
       </div>
 
       <div id="message" class="message"></div>
 
+      <div class="helper" id="helperBox">
+        Use the same browser on the same device for the smoothest sign-in experience.
+      </div>
+
       <div class="small-note">
-        After signing in, verified users will be redirected to the main guide page.
+        After you click the email link, you will be redirected to the main guide page automatically.
       </div>
     </section>
   </div>
@@ -414,13 +385,16 @@
     const auth = firebase.auth();
 
     const emailEl = document.getElementById("email");
-    const passwordEl = document.getElementById("password");
-    const loginBtn = document.getElementById("loginBtn");
-    const resetBtn = document.getElementById("resetBtn");
+    const sendLinkBtn = document.getElementById("sendLinkBtn");
+    const resendBtn = document.getElementById("resendBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const messageEl = document.getElementById("message");
-    const togglePasswordBtn = document.getElementById("togglePassword");
-    const togglePasswordIcon = document.getElementById("togglePasswordIcon");
+    const helperBox = document.getElementById("helperBox");
+
+    const REDIRECT_AFTER_LOGIN = "index-main.html";
+    const STORAGE_KEY = "emailForSignIn";
+    const LAST_SENT_KEY = "lastEmailLinkSentAt";
+    const RESEND_COOLDOWN_MS = 30000;
 
     function showMessage(text, type = "error") {
       messageEl.className = "message " + type;
@@ -433,76 +407,71 @@
       messageEl.style.display = "";
     }
 
-    togglePasswordBtn.addEventListener("click", () => {
-      const isHidden = passwordEl.type === "password";
+    function normalizeEmail(email) {
+      return email.trim().toLowerCase();
+    }
 
-      passwordEl.type = isHidden ? "text" : "password";
+    function getActionCodeSettings() {
+      return {
+        url: window.location.origin + window.location.pathname,
+        handleCodeInApp: true
+      };
+    }
 
-      togglePasswordIcon.classList.remove("fa-eye", "fa-eye-slash");
-      togglePasswordIcon.classList.add(isHidden ? "fa-eye-slash" : "fa-eye");
+    function setSendingState(isSending) {
+      sendLinkBtn.disabled = isSending;
+      resendBtn.disabled = isSending;
+      sendLinkBtn.textContent = isSending ? "Sending link..." : "Send sign-in link";
+    }
 
-      togglePasswordBtn.classList.toggle("active", isHidden);
-
-      togglePasswordBtn.setAttribute(
-        "aria-label",
-        isHidden ? "Hide password" : "Show password"
-      );
-    });
-
-    passwordEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        loginBtn.click();
-      }
-    });
-
-    loginBtn.addEventListener("click", async () => {
+    async function sendLoginLink(isResend = false) {
       clearMessage();
 
-      const email = emailEl.value.trim().toLowerCase();
-      const password = passwordEl.value;
-
-      if (!email || !password) {
-        showMessage("Please enter your email and password.");
-        return;
-      }
-
-      try {
-        await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-
-        const result = await auth.signInWithEmailAndPassword(email, password);
-        const user = result.user;
-
-        if (!user.emailVerified) {
-          await user.sendEmailVerification();
-          await auth.signOut();
-          showMessage(
-            "Your email is not verified yet. A verification email has been sent to you. Please verify your email first, then sign in again.",
-            "success"
-          );
-          return;
-        }
-
-        window.location.href = "index-main.html";
-      } catch (error) {
-        showMessage(error.message || "Unable to sign in right now.");
-      }
-    });
-
-    resetBtn.addEventListener("click", async () => {
-      clearMessage();
-
-      const email = emailEl.value.trim().toLowerCase();
+      const email = normalizeEmail(emailEl.value);
 
       if (!email) {
-        showMessage("Enter your email first so a password reset link can be sent to you.");
+        showMessage("Please enter your email address.");
+        return;
+      }
+
+      const lastSentAt = Number(localStorage.getItem(LAST_SENT_KEY) || 0);
+      const now = Date.now();
+
+      if (isResend && now - lastSentAt < RESEND_COOLDOWN_MS) {
+        const secondsLeft = Math.ceil((RESEND_COOLDOWN_MS - (now - lastSentAt)) / 1000);
+        showMessage("Please wait " + secondsLeft + " more seconds before requesting another link.");
         return;
       }
 
       try {
-        await auth.sendPasswordResetEmail(email);
-        showMessage("A password reset email has been sent successfully.", "success");
+        setSendingState(true);
+
+        await auth.sendSignInLinkToEmail(email, getActionCodeSettings());
+
+        localStorage.setItem(STORAGE_KEY, email);
+        localStorage.setItem(LAST_SENT_KEY, String(now));
+
+        resendBtn.classList.remove("hidden");
+
+        showMessage(
+          "A secure sign-in link has been sent to " + email + ". Open the link from your inbox to continue.",
+          "success"
+        );
+
+        helperBox.textContent = "Check your inbox and spam folder. Open the sign-in link in this browser to complete access.";
       } catch (error) {
-        showMessage(error.message || "Unable to send the password reset email.");
+        showMessage(error.message || "Unable to send the sign-in link right now.");
+      } finally {
+        setSendingState(false);
+      }
+    }
+
+    sendLinkBtn.addEventListener("click", () => sendLoginLink(false));
+    resendBtn.addEventListener("click", () => sendLoginLink(true));
+
+    emailEl.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        sendLinkBtn.click();
       }
     });
 
@@ -510,19 +479,64 @@
       try {
         await auth.signOut();
         showMessage("You have been signed out successfully.", "success");
+        logoutBtn.classList.add("hidden");
       } catch (error) {
         showMessage(error.message || "Unable to sign out right now.");
       }
     });
 
-    auth.onAuthStateChanged((user) => {
-      if (user && user.emailVerified) {
-        window.location.replace("index-main.html");
+    async function completeEmailLinkSignIn() {
+      if (!auth.isSignInWithEmailLink(window.location.href)) {
         return;
       }
 
-      logoutBtn.style.display = user ? "block" : "none";
+      clearMessage();
+
+      let email = localStorage.getItem(STORAGE_KEY);
+
+      if (!email) {
+        email = window.prompt("Please enter the email address that received the sign-in link:");
+      }
+
+      email = email ? normalizeEmail(email) : "";
+
+      if (!email) {
+        showMessage("An email address is required to complete sign-in.");
+        return;
+      }
+
+      try {
+        sendLinkBtn.disabled = true;
+        sendLinkBtn.textContent = "Signing you in...";
+
+        await auth.signInWithEmailLink(email, window.location.href);
+
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(LAST_SENT_KEY);
+
+        showMessage("Sign-in completed successfully. Redirecting now...", "success");
+
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        window.location.replace(REDIRECT_AFTER_LOGIN);
+      } catch (error) {
+        showMessage(error.message || "Unable to complete sign-in from this link.");
+      } finally {
+        sendLinkBtn.disabled = false;
+        sendLinkBtn.textContent = "Send sign-in link";
+      }
+    }
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        logoutBtn.classList.remove("hidden");
+      } else {
+        logoutBtn.classList.add("hidden");
+      }
     });
+
+    completeEmailLinkSignIn();
   </script>
 </body>
 </html>
