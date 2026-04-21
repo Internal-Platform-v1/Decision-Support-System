@@ -24,6 +24,8 @@
       --text:#ffffff;
       --text-soft:rgba(255,255,255,.76);
       --text-muted:rgba(255,255,255,.58);
+      --icon-color:rgba(255,255,255,.88);
+      --icon-color-soft:rgba(255,255,255,.78);
       --success-bg:rgba(20,83,45,.42);
       --success-border:rgba(187,247,208,.28);
       --error-bg:rgba(127,29,29,.42);
@@ -128,10 +130,11 @@
       left:16px;
       top:50%;
       transform:translateY(-50%);
-      color:rgba(255,255,255,.62);
-      font-size:15px;
+      color:var(--icon-color);
+      font-size:16px;
       pointer-events:none;
       z-index:2;
+      text-shadow:0 1px 6px rgba(0,0,0,.18);
     }
 
     .input-wrap input{
@@ -142,7 +145,7 @@
       border-radius:20px;
       background:var(--input-bg);
       color:#fff;
-      padding:0 18px 0 48px;
+      padding:0 18px 0 50px;
       font-size:15px;
       font-weight:700;
       box-shadow:inset 0 0 0 1px var(--input-border);
@@ -175,11 +178,12 @@
       border:none;
       border-radius:12px;
       background:transparent;
-      color:rgba(255,255,255,.64);
+      color:var(--icon-color-soft);
       cursor:pointer;
       display:grid;
       place-items:center;
       transition:.2s ease;
+      font-size:15px;
     }
 
     .toggle-password:hover{
@@ -230,7 +234,7 @@
 
     .forgot-link{
       display:inline-block;
-      color:#9b7bff;
+      color:#b89cff;
       font-size:14px;
       font-weight:700;
       text-decoration:underline;
@@ -244,7 +248,7 @@
     }
 
     .forgot-link:hover{
-      color:#b79cff;
+      color:#d0bcff;
     }
 
     .message{
@@ -684,6 +688,9 @@
         setOtpState(true);
 
         await verifyOtpRequest(otp);
+
+        // Refresh token so the new custom claim is available immediately
+        await auth.currentUser.getIdToken(true);
 
         showMessage("OTP verified successfully. Redirecting now...", "success");
         window.location.href = REDIRECT_AFTER_LOGIN;
