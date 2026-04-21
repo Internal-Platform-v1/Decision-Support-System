@@ -7,30 +7,40 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
   <style>
     :root{
-      --bg:#07111f;
-      --panel:rgba(255,255,255,.92);
-      --panel-2:#ffffff;
-      --text:#0f172a;
-      --text-soft:#64748b;
-      --line:rgba(148,163,184,.22);
-      --accent:#4d148c;
-      --accent-2:#6d28d9;
-      --orange:#ff6600;
-      --danger:#ef4444;
-      --success:#16a34a;
-      --radius-xl:30px;
-      --radius-lg:20px;
-      --radius-md:16px;
-      --shadow:0 24px 80px rgba(2,6,23,.22);
+      --fedex-purple:#4D148C;
+      --fedex-purple-2:#6D28D9;
+      --fedex-orange:#FF6600;
+      --bg-1:#1b0f46;
+      --bg-2:#120b34;
+      --card-bg:rgba(20, 16, 58, 0.72);
+      --card-border:rgba(255,255,255,.12);
+      --input-bg:rgba(255,255,255,.10);
+      --input-border:rgba(255,255,255,.12);
+      --text:#ffffff;
+      --text-soft:rgba(255,255,255,.76);
+      --text-muted:rgba(255,255,255,.58);
+      --success-bg:rgba(20,83,45,.42);
+      --success-border:rgba(187,247,208,.28);
+      --error-bg:rgba(127,29,29,.42);
+      --error-border:rgba(254,202,202,.28);
+      --shadow-xl:0 30px 80px rgba(2,6,23,.42);
+      --radius-xl:34px;
+      --radius-lg:22px;
+      --radius-md:18px;
       font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     *{box-sizing:border-box}
+
+    html, body{
+      min-height:100%;
+    }
+
     body{
       margin:0;
       min-height:100vh;
@@ -39,224 +49,200 @@
       padding:24px;
       color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
-        radial-gradient(circle at top right, rgba(255,102,0,.15), transparent 22%),
-        linear-gradient(180deg, #091120 0%, #0b1525 100%);
+        radial-gradient(circle at top left, rgba(130,77,255,.22), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(255,102,0,.10), transparent 18%),
+        linear-gradient(180deg, #2b0d68 0%, #190d45 45%, #120b34 100%);
+      overflow-x:hidden;
     }
 
     .login-shell{
-      width:min(100%, 1100px);
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:22px;
-      align-items:stretch;
+      width:min(100%, 620px);
+      position:relative;
     }
 
-    .hero{
-      border-radius:36px;
-      padding:34px;
-      color:#fff;
-      background:
-        radial-gradient(circle at 85% 20%, rgba(255,102,0,.22), transparent 18%),
-        radial-gradient(circle at 15% 18%, rgba(255,255,255,.18), transparent 20%),
-        linear-gradient(135deg, #4d148c 0%, #5b1aae 48%, #1e293b 100%);
-      box-shadow:var(--shadow);
-      border:1px solid rgba(255,255,255,.12);
+    .login-card{
       position:relative;
       overflow:hidden;
+      border-radius:40px;
+      padding:28px;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(255,255,255,.08), transparent 24%),
+        radial-gradient(circle at 0% 100%, rgba(255,102,0,.08), transparent 24%),
+        linear-gradient(180deg, rgba(52,22,115,.82), rgba(18,18,58,.76));
+      border:1px solid var(--card-border);
+      box-shadow:var(--shadow-xl);
+      backdrop-filter:blur(16px);
     }
 
-    .hero::before{
-      content:"";
-      position:absolute;
-      width:340px;
-      height:340px;
-      top:-160px;
-      right:-80px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.18), transparent 62%);
+    .signin-head{
+      margin-bottom:20px;
     }
 
-    .hero-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.12);
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      margin-bottom:18px;
+    .signin-head h1{
+      margin:0 0 10px;
+      font-size:clamp(2.1rem, 5vw, 3rem);
+      line-height:.95;
+      letter-spacing:-.06em;
+      font-weight:900;
     }
 
-    .hero h1{
-      margin:0 0 12px;
-      font-size:clamp(2rem, 4vw, 3.2rem);
-      line-height:1;
-      letter-spacing:-.05em;
-    }
-
-    .hero p{
-      margin:0 0 24px;
-      color:rgba(255,255,255,.82);
-      line-height:1.7;
-      font-size:15px;
-    }
-
-    .hero-list{
-      display:grid;
-      gap:12px;
-      padding:0;
+    .signin-head p{
       margin:0;
-      list-style:none;
-    }
-
-    .hero-list li{
-      display:flex;
-      gap:12px;
-      align-items:flex-start;
-      padding:14px;
-      border-radius:18px;
-      background:rgba(255,255,255,.10);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-    }
-
-    .hero-list i{
-      margin-top:2px;
-    }
-
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.98));
-      border:1px solid rgba(255,255,255,.8);
-      box-shadow:var(--shadow);
-      border-radius:36px;
-      padding:30px;
-    }
-
-    .card h2{
-      margin:0 0 8px;
-      font-size:30px;
-      letter-spacing:-.04em;
-    }
-
-    .sub{
-      margin:0 0 24px;
       color:var(--text-soft);
-      line-height:1.7;
-      font-size:14px;
+      font-size:15px;
+      line-height:1.65;
     }
 
     .field{
+      display:grid;
+      gap:8px;
       margin-bottom:16px;
     }
 
+    .label-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
     .label{
-      display:block;
       font-size:13px;
-      font-weight:700;
-      margin-bottom:8px;
-      color:#334155;
+      font-weight:800;
+      color:#fff;
+      letter-spacing:-.01em;
+    }
+
+    .label-hint{
+      font-size:12px;
+      color:var(--text-muted);
+      font-weight:600;
     }
 
     .input-wrap{
       position:relative;
     }
 
-    .input-wrap .left-icon{
+    .left-icon{
       position:absolute;
       left:16px;
       top:50%;
       transform:translateY(-50%);
-      color:#64748b;
+      color:rgba(255,255,255,.62);
+      font-size:15px;
       pointer-events:none;
+      z-index:2;
+    }
+
+    .input-wrap input{
+      width:100%;
+      min-height:60px;
+      border:none;
+      outline:none;
+      border-radius:20px;
+      background:var(--input-bg);
+      color:#fff;
+      padding:0 18px 0 48px;
+      font-size:15px;
+      font-weight:700;
+      box-shadow:inset 0 0 0 1px var(--input-border);
+      transition:.22s ease;
+    }
+
+    .input-wrap input::placeholder{
+      color:rgba(255,255,255,.42);
+      font-weight:600;
+    }
+
+    .input-wrap input:focus{
+      background:rgba(255,255,255,.13);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.18),
+        0 0 0 4px rgba(255,255,255,.04);
+    }
+
+    #password{
+      padding-right:58px;
     }
 
     .toggle-password{
       position:absolute;
-      right:14px;
+      right:12px;
       top:50%;
       transform:translateY(-50%);
+      width:36px;
+      height:36px;
       border:none;
+      border-radius:12px;
       background:transparent;
-      color:#64748b;
+      color:rgba(255,255,255,.64);
       cursor:pointer;
-      width:34px;
-      height:34px;
-      border-radius:10px;
       display:grid;
       place-items:center;
       transition:.2s ease;
     }
 
     .toggle-password:hover{
-      background:rgba(77,20,140,.08);
-      color:var(--accent);
+      background:rgba(255,255,255,.08);
+      color:#fff;
     }
 
-    input{
+    .toggle-password.active{
+      background:rgba(255,255,255,.10);
+      color:#fff;
+    }
+
+    .primary-btn{
       width:100%;
-      min-height:56px;
+      min-height:60px;
+      margin-top:4px;
       border:none;
-      outline:none;
-      border-radius:18px;
-      background:#f8fafc;
-      padding:0 16px 0 46px;
+      border-radius:20px;
+      background:linear-gradient(135deg, var(--fedex-orange), #ff7a00);
+      color:#fff;
       font-size:15px;
-      font-weight:600;
-      color:#0f172a;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.22);
-      transition:.2s ease;
+      font-weight:900;
+      letter-spacing:-.01em;
+      cursor:pointer;
+      box-shadow:0 18px 34px rgba(255,102,0,.28);
+      transition:.22s ease;
     }
 
-    #password{
-      padding-right:52px;
+    .primary-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 38px rgba(255,102,0,.34);
     }
 
-    input:focus{
-      background:#fff;
-      box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08);
+    .primary-btn:disabled{
+      opacity:.75;
+      cursor:not-allowed;
+      transform:none;
     }
 
-    .row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-      margin-top:10px;
+    .forgot-row{
+      margin-top:14px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
     }
 
-    .btn{
-      width:100%;
-      min-height:56px;
+    .forgot-link{
+      display:inline-block;
+      color:#9b7bff;
+      font-size:14px;
+      font-weight:700;
+      text-decoration:underline;
+      text-decoration-thickness:2px;
+      text-underline-offset:4px;
+      background:none;
       border:none;
-      border-radius:18px;
-      font-weight:800;
+      padding:0;
       cursor:pointer;
       transition:.2s ease;
-      font-size:15px;
     }
 
-    .btn-primary{
-      color:#fff;
-      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-      box-shadow:0 16px 28px rgba(77,20,140,.18);
-    }
-
-    .btn-primary:hover{
-      transform:translateY(-2px);
-    }
-
-    .btn-secondary{
-      color:#4d148c;
-      background:#f5f3ff;
-      box-shadow:inset 0 0 0 1px #e9ddff;
-    }
-
-    .btn-orange{
-      color:#fff;
-      background:linear-gradient(135deg, #ff6600, #ff7b22);
-      box-shadow:0 16px 28px rgba(255,102,0,.22);
+    .forgot-link:hover{
+      color:#b79cff;
     }
 
     .message{
@@ -264,217 +250,395 @@
       padding:14px 16px;
       border-radius:16px;
       font-size:14px;
+      line-height:1.65;
       display:none;
-      line-height:1.6;
     }
 
     .message.error{
       display:block;
-      background:#fef2f2;
-      color:#991b1b;
-      border:1px solid #fecaca;
+      background:var(--error-bg);
+      color:#fff;
+      border:1px solid var(--error-border);
     }
 
     .message.success{
       display:block;
-      background:#f0fdf4;
-      color:#166534;
-      border:1px solid #bbf7d0;
+      background:var(--success-bg);
+      color:#fff;
+      border:1px solid var(--success-border);
     }
 
-    .small-note{
-      margin-top:18px;
+    .foot-note{
+      margin-top:20px;
+      color:var(--text-soft);
       font-size:13px;
-      color:#64748b;
       line-height:1.7;
     }
 
-    @media (max-width: 920px){
-      .login-shell{
-        grid-template-columns:1fr;
-      }
+    .logout-wrap{
+      margin-top:14px;
+    }
+
+    .logout-btn{
+      min-height:46px;
+      padding:0 16px;
+      border:none;
+      border-radius:14px;
+      background:rgba(255,255,255,.10);
+      color:#fff;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .logout-btn:hover{
+      background:rgba(255,255,255,.16);
     }
 
     @media (max-width: 640px){
-      .card, .hero{
-        border-radius:28px;
-        padding:22px;
+      body{
+        padding:10px;
       }
-      .row{
-        grid-template-columns:1fr;
+
+      .login-card{
+        padding:18px;
+        border-radius:28px;
+      }
+
+      .signin-head h1{
+        font-size:2.4rem;
+      }
+
+      .signin-head p{
+        font-size:14px;
+      }
+
+      .input-wrap input{
+        min-height:56px;
+      }
+
+      .primary-btn{
+        min-height:56px;
       }
     }
   </style>
 </head>
 <body>
   <div class="login-shell">
-    <section class="hero">
-      <div class="hero-badge">
-        <i class="fa-solid fa-shield-halved"></i>
-        Secure access
+    <section class="login-card">
+      <div class="signin-head">
+        <h1>Sign in</h1>
+        <p>Use your approved FedEx Freight account to continue.</p>
       </div>
 
-      <h1>Decision Guide Access</h1>
-      <p>
-        Sign in to access the decision guide system securely. This helps protect internal workflows, guide content, and approved user access.
-      </p>
-
-      <ul class="hero-list">
-        <li><i class="fa-solid fa-lock"></i><span>Sign in securely using your approved email and password</span></li>
-        <li><i class="fa-solid fa-envelope-circle-check"></i><span>You may be asked to verify your email before access is granted</span></li>
-        <li><i class="fa-solid fa-mobile-screen-button"></i><span>2-step verification can be added later if Identity Platform is enabled</span></li>
-      </ul>
-    </section>
-
-    <section class="card">
-      <h2>Sign in</h2>
-      <p class="sub">Use your approved account to continue to the guide library.</p>
-
       <div class="field">
-        <label class="label" for="email">Email</label>
+        <div class="label-row">
+          <label class="label" for="email">FedEx Freight Email</label>
+          <span class="label-hint">Company email only</span>
+        </div>
         <div class="input-wrap">
-          <i class="fa-solid fa-envelope left-icon"></i>
-          <input id="email" type="email" placeholder="name@company.com" autocomplete="email">
+          <i class="fa-regular fa-envelope left-icon"></i>
+          <input
+            id="email"
+            type="email"
+            placeholder="name@fedexfreight.com"
+            autocomplete="email"
+          >
         </div>
       </div>
 
       <div class="field">
-        <label class="label" for="password">Password</label>
+        <div class="label-row">
+          <label class="label" for="password">Password</label>
+          <span class="label-hint">Required to continue</span>
+        </div>
         <div class="input-wrap">
           <i class="fa-solid fa-lock left-icon"></i>
-          <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
-          <button type="button" class="toggle-password" id="togglePassword" aria-label="Show password">
-            <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+          >
+          <button
+            type="button"
+            class="toggle-password"
+            id="togglePassword"
+            aria-label="Show password"
+          >
+            <i class="fa-regular fa-eye" id="togglePasswordIcon"></i>
           </button>
         </div>
       </div>
 
-      <button class="btn btn-primary" id="loginBtn">Sign in</button>
+      <button class="primary-btn" id="loginBtn" type="button">
+        Sign in securely
+      </button>
 
-      <div class="row">
-        <button class="btn btn-secondary" id="resetBtn" type="button">Forgot password</button>
-        <button class="btn btn-orange" id="logoutBtn" type="button" style="display:none;">Sign out</button>
+      <div class="forgot-row">
+        <button class="forgot-link" id="resetBtn" type="button">Forgot password?</button>
       </div>
 
       <div id="message" class="message"></div>
 
-      <div class="small-note">
-        After signing in, verified users will be redirected to the main guide page.
+      <div class="logout-wrap">
+        <button class="logout-btn" id="logoutBtn" type="button" style="display:none;">Sign out</button>
+      </div>
+
+      <div class="foot-note">
+        After successful sign-in, only verified and approved users will be redirected to the main guide page.
       </div>
     </section>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-    authDomain: "bdgg-database.firebaseapp.com",
-    projectId: "bdgg-database",
-    storageBucket: "bdgg-database.appspot.com",
-    messagingSenderId: "43574975434",
-    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+    const ALLOWED_DOMAIN = "@fedexfreight.com";
+    const APPROVED_USERS_COLLECTION = "approved_users";
+    const REDIRECT_AFTER_LOGIN = "index-main.html";
 
-  const auth = firebase.auth();
-
-  const emailEl = document.getElementById("email");
-  const passwordEl = document.getElementById("password");
-  const loginBtn = document.getElementById("loginBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const messageEl = document.getElementById("message");
-  const togglePasswordBtn = document.getElementById("togglePassword");
-  const togglePasswordIcon = document.getElementById("togglePasswordIcon");
-
-  function showMessage(text, type = "error") {
-    messageEl.className = "message " + type;
-    messageEl.textContent = text;
-  }
-
-  function clearMessage() {
-    messageEl.className = "message";
-    messageEl.textContent = "";
-    messageEl.style.display = "";
-  }
-
-  togglePasswordBtn.addEventListener("click", () => {
-    const isHidden = passwordEl.type === "password";
-    passwordEl.type = isHidden ? "text" : "password";
-    togglePasswordIcon.className = isHidden ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
-    togglePasswordBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
-  });
-
-  loginBtn.addEventListener("click", async () => {
-    clearMessage();
-
-    const email = emailEl.value.trim().toLowerCase();
-    const password = passwordEl.value;
-
-    if (!email || !password) {
-      showMessage("Please enter your email and password.");
-      return;
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
     }
 
-    try {
-      await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-      const result = await auth.signInWithEmailAndPassword(email, password);
-      const user = result.user;
+    const emailEl = document.getElementById("email");
+    const passwordEl = document.getElementById("password");
+    const loginBtn = document.getElementById("loginBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const messageEl = document.getElementById("message");
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const togglePasswordIcon = document.getElementById("togglePasswordIcon");
 
-      if (!user.emailVerified) {
-        await user.sendEmailVerification();
-        await auth.signOut();
-        showMessage("Your email is not verified yet. A verification email has been sent to you. Please verify your email first, then sign in again.", "success");
+    function showMessage(text, type = "error") {
+      messageEl.className = "message " + type;
+      messageEl.textContent = text;
+    }
+
+    function clearMessage() {
+      messageEl.className = "message";
+      messageEl.textContent = "";
+      messageEl.style.display = "";
+    }
+
+    function normalizeEmail(email) {
+      return String(email || "").trim().toLowerCase();
+    }
+
+    function isAllowedFedExEmail(email) {
+      return normalizeEmail(email).endsWith(ALLOWED_DOMAIN);
+    }
+
+    function setLoadingState(isLoading) {
+      loginBtn.disabled = isLoading;
+      resetBtn.disabled = isLoading;
+      emailEl.disabled = isLoading;
+      passwordEl.disabled = isLoading;
+      loginBtn.textContent = isLoading ? "Checking access..." : "Sign in securely";
+    }
+
+    async function checkApprovedUser(email) {
+      const emailKey = normalizeEmail(email);
+      const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(emailKey);
+      const docSnap = await docRef.get();
+
+      if (!docSnap.exists) {
+        return {
+          allowed: false,
+          reason: "Your account is not authorized to access this system."
+        };
+      }
+
+      const data = docSnap.data() || {};
+
+      if (data.active === false) {
+        return {
+          allowed: false,
+          reason: "Your account has been disabled. Please contact your administrator."
+        };
+      }
+
+      return {
+        allowed: true,
+        data
+      };
+    }
+
+    togglePasswordBtn.addEventListener("click", () => {
+      const isHidden = passwordEl.type === "password";
+      passwordEl.type = isHidden ? "text" : "password";
+      togglePasswordIcon.className = isHidden ? "fa-regular fa-eye-slash" : "fa-regular fa-eye";
+      togglePasswordBtn.classList.toggle("active", isHidden);
+      togglePasswordBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+    });
+
+    passwordEl.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        loginBtn.click();
+      }
+    });
+
+    loginBtn.addEventListener("click", async () => {
+      clearMessage();
+
+      const email = normalizeEmail(emailEl.value);
+      const password = passwordEl.value;
+
+      if (!email || !password) {
+        showMessage("Please enter your email and password.");
         return;
       }
 
-      window.location.href = "index-main.html";
-    } catch (error) {
-      showMessage(error.message || "Unable to sign in right now.");
-    }
-  });
+      if (!isAllowedFedExEmail(email)) {
+        showMessage("Only @fedexfreight.com email addresses are allowed to sign in.");
+        return;
+      }
 
-  resetBtn.addEventListener("click", async () => {
-    clearMessage();
+      try {
+        setLoadingState(true);
 
-    const email = emailEl.value.trim().toLowerCase();
+        await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
 
-    if (!email) {
-      showMessage("Enter your email first so a password reset link can be sent to you.");
-      return;
-    }
+        const result = await auth.signInWithEmailAndPassword(email, password);
+        const user = result.user;
 
-    try {
-      await auth.sendPasswordResetEmail(email);
-      showMessage("A password reset email has been sent successfully.", "success");
-    } catch (error) {
-      showMessage(error.message || "Unable to send the password reset email.");
-    }
-  });
+        if (!user) {
+          showMessage("Unable to sign in right now.");
+          return;
+        }
 
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await auth.signOut();
-      showMessage("You have been signed out successfully.", "success");
-    } catch (error) {
-      showMessage(error.message || "Unable to sign out right now.");
-    }
-  });
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+          await auth.signOut();
+          showMessage(
+            "Your email is not verified yet. A verification email has been sent to your FedEx Freight inbox. Please verify your email first, then sign in again.",
+            "success"
+          );
+          return;
+        }
 
-  auth.onAuthStateChanged((user) => {
-    if (user && user.emailVerified) {
-      window.location.replace("index-main.html");
-      return;
-    }
+        const approvalCheck = await checkApprovedUser(user.email);
 
-    logoutBtn.style.display = user ? "block" : "none";
-  });
-</script>
+        if (!approvalCheck.allowed) {
+          await auth.signOut();
+          showMessage(approvalCheck.reason || "You are not authorized to access this system.");
+          return;
+        }
+
+        window.location.href = REDIRECT_AFTER_LOGIN;
+      } catch (error) {
+        let friendlyMessage = error.message || "Unable to sign in right now.";
+
+        if (
+          error.code === "auth/user-not-found" ||
+          error.code === "auth/wrong-password" ||
+          error.code === "auth/invalid-login-credentials"
+        ) {
+          friendlyMessage = "Invalid email or password.";
+        } else if (error.code === "auth/too-many-requests") {
+          friendlyMessage = "Too many failed attempts. Please try again later or reset your password.";
+        } else if (error.code === "auth/invalid-email") {
+          friendlyMessage = "Please enter a valid email address.";
+        }
+
+        showMessage(friendlyMessage);
+      } finally {
+        setLoadingState(false);
+      }
+    });
+
+    resetBtn.addEventListener("click", async () => {
+      clearMessage();
+
+      const email = normalizeEmail(emailEl.value);
+
+      if (!email) {
+        showMessage("Enter your email first so a password reset link can be sent to you.");
+        return;
+      }
+
+      if (!isAllowedFedExEmail(email)) {
+        showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
+        return;
+      }
+
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showMessage("A password reset email has been sent successfully.", "success");
+      } catch (error) {
+        let friendlyMessage = error.message || "Unable to send the password reset email.";
+
+        if (error.code === "auth/user-not-found") {
+          friendlyMessage = "No account was found for that email address.";
+        } else if (error.code === "auth/invalid-email") {
+          friendlyMessage = "Please enter a valid email address.";
+        }
+
+        showMessage(friendlyMessage);
+      }
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await auth.signOut();
+        showMessage("You have been signed out successfully.", "success");
+      } catch (error) {
+        showMessage(error.message || "Unable to sign out right now.");
+      }
+    });
+
+    auth.onAuthStateChanged(async (user) => {
+      logoutBtn.style.display = user ? "inline-flex" : "none";
+
+      if (!user) return;
+
+      if (!isAllowedFedExEmail(user.email)) {
+        await auth.signOut();
+        showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
+        return;
+      }
+
+      if (!user.emailVerified) {
+        return;
+      }
+
+      try {
+        const approvalCheck = await checkApprovedUser(user.email);
+
+        if (!approvalCheck.allowed) {
+          await auth.signOut();
+          showMessage(approvalCheck.reason || "You are not authorized to access this system.");
+          return;
+        }
+
+        const currentPath = window.location.pathname.toLowerCase();
+        if (
+          currentPath.endsWith("/index.html") ||
+          currentPath === "/" ||
+          currentPath.endsWith("index.html")
+        ) {
+          window.location.replace(REDIRECT_AFTER_LOGIN);
+        }
+      } catch (error) {
+        console.error("Approval check failed:", error);
+      }
+    });
+  </script>
 </body>
 </html>
