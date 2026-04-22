@@ -201,7 +201,6 @@
       color:#fff;
     }
 
-    /* Autofill / remembered credentials readability fix */
     .input-wrap input:-webkit-autofill,
     .input-wrap input:-webkit-autofill:hover,
     .input-wrap input:-webkit-autofill:focus,
@@ -253,6 +252,14 @@
       opacity:.75;
       cursor:not-allowed;
       transform:none;
+    }
+
+    .primary-btn.is-loading{
+      cursor:wait;
+      box-shadow:
+        0 18px 34px rgba(255,102,0,.28),
+        0 0 0 6px rgba(255,102,0,.10);
+      animation:loadingGlow 1.2s ease-in-out infinite alternate;
     }
 
     .forgot-row{
@@ -313,6 +320,106 @@
       line-height:1.7;
     }
 
+    .btn-spinner{
+      width:16px;
+      height:16px;
+      border:2px solid rgba(255,255,255,.32);
+      border-top-color:#fff;
+      border-radius:50%;
+      display:inline-block;
+      animation:btnSpin .7s linear infinite;
+      flex-shrink:0;
+    }
+
+    .btn-loading-content{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+
+    .login-card.state-transition .field,
+    .login-card.state-transition .forgot-row,
+    .login-card.state-transition .primary-btn,
+    .login-card.state-transition .foot-note,
+    .login-card.state-transition .message{
+      transition:opacity .22s ease, transform .22s ease;
+    }
+
+    .fade-in{
+      animation:fadeInUp .24s ease;
+    }
+
+    .resend-row{
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    .resend-info{
+      font-size:13px;
+      color:var(--text-soft);
+      line-height:1.5;
+    }
+
+    .resend-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:#b89cff;
+      font-size:14px;
+      font-weight:700;
+      text-decoration:underline;
+      text-decoration-thickness:2px;
+      text-underline-offset:4px;
+      background:none;
+      border:none;
+      padding:0;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .resend-link:hover{
+      color:#d0bcff;
+    }
+
+    .resend-link:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      text-decoration:none;
+    }
+
+    @keyframes btnSpin{
+      to{ transform:rotate(360deg); }
+    }
+
+    @keyframes loadingGlow{
+      from{
+        box-shadow:
+          0 18px 34px rgba(255,102,0,.22),
+          0 0 0 0 rgba(255,102,0,.08);
+      }
+      to{
+        box-shadow:
+          0 18px 34px rgba(255,102,0,.34),
+          0 0 0 8px rgba(255,102,0,.12);
+      }
+    }
+
+    @keyframes fadeInUp{
+      from{
+        opacity:0;
+        transform:translateY(6px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
     @media (max-width: 640px){
       body{
         padding:10px;
@@ -339,29 +446,6 @@
         min-height:56px;
       }
     }
-
-    /*loading style animcation*/
-    .btn-spinner{
-  width:16px;
-  height:16px;
-  border:2px solid rgba(255,255,255,.32);
-  border-top-color:#fff;
-  border-radius:50%;
-  display:inline-block;
-  animation:btnSpin .7s linear infinite;
-  flex-shrink:0;
-}
-
-.btn-loading-content{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-}
-
-@keyframes btnSpin{
-  to{ transform:rotate(360deg); }
-}
   </style>
 </head>
 <body>
@@ -438,6 +522,11 @@
         Verify OTP
       </button>
 
+      <div class="resend-row" id="resendRow">
+        <div class="resend-info" id="resendInfo">You can request a new code in 60s.</div>
+        <button class="resend-link" id="resendOtpBtn" type="button" disabled>Resend OTP</button>
+      </div>
+
       <div class="forgot-row" id="forgotRow">
         <button class="forgot-link" id="resetBtn" type="button">Forgot password?</button>
       </div>
@@ -476,6 +565,7 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    const loginCard = document.querySelector(".login-card");
     const emailEl = document.getElementById("email");
     const passwordEl = document.getElementById("password");
     const otpEl = document.getElementById("otp");
@@ -484,9 +574,15 @@
     const verifyOtpBtn = document.getElementById("verifyOtpBtn");
     const resetBtn = document.getElementById("resetBtn");
     const forgotRow = document.getElementById("forgotRow");
+    const resendRow = document.getElementById("resendRow");
+    const resendInfo = document.getElementById("resendInfo");
+    const resendOtpBtn = document.getElementById("resendOtpBtn");
     const messageEl = document.getElementById("message");
     const togglePasswordBtn = document.getElementById("togglePassword");
     const togglePasswordIcon = document.getElementById("togglePasswordIcon");
+
+    let resendCooldown = null;
+    let resendSecondsLeft = 60;
 
     function showMessage(text, type = "error") {
       messageEl.className = "message " + type;
@@ -507,37 +603,95 @@
       return normalizeEmail(email).endsWith(ALLOWED_DOMAIN);
     }
 
-function setLoadingState(isLoading) {
-  loginBtn.disabled = isLoading;
-  resetBtn.disabled = isLoading;
-  emailEl.disabled = isLoading;
-  passwordEl.disabled = isLoading;
+    function setLoadingState(isLoading, stage = "checking") {
+      loginBtn.disabled = isLoading;
+      resetBtn.disabled = isLoading;
+      emailEl.disabled = isLoading;
+      passwordEl.disabled = isLoading;
+      loginBtn.classList.toggle("is-loading", isLoading);
 
-  loginBtn.innerHTML = isLoading
-    ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Checking Access...</span></span>`
-    : `Sign in securely`;
-}
+      let text = "Sign In";
 
-function setOtpState(isLoading) {
-  verifyOtpBtn.disabled = isLoading;
-  otpEl.disabled = isLoading;
+      if (isLoading) {
+        if (stage === "checking") {
+          text = "Checking account access...";
+        } else if (stage === "sending") {
+          text = "Sending security code...";
+        }
+      }
 
-  verifyOtpBtn.innerHTML = isLoading
-    ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Verifying...</span></span>`
-    : `Verify OTP`;
-}
+      loginBtn.innerHTML = isLoading
+        ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>${text}</span></span>`
+        : `Sign In`;
+    }
+
+    function setOtpState(isLoading) {
+      verifyOtpBtn.disabled = isLoading;
+      otpEl.disabled = isLoading;
+      verifyOtpBtn.classList.toggle("is-loading", isLoading);
+
+      verifyOtpBtn.innerHTML = isLoading
+        ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Verifying code...</span></span>`
+        : `Verify OTP`;
+    }
+
+    function startResendCooldown(seconds = 60) {
+      clearInterval(resendCooldown);
+      resendSecondsLeft = seconds;
+
+      resendRow.style.display = "flex";
+      resendOtpBtn.disabled = true;
+      resendInfo.textContent = `You can request a new code in ${resendSecondsLeft}s.`;
+
+      resendCooldown = setInterval(() => {
+        resendSecondsLeft -= 1;
+
+        if (resendSecondsLeft <= 0) {
+          clearInterval(resendCooldown);
+          resendOtpBtn.disabled = false;
+          resendInfo.textContent = "Did not receive the code?";
+          return;
+        }
+
+        resendInfo.textContent = `You can request a new code in ${resendSecondsLeft}s.`;
+      }, 1000);
+    }
+
+    function stopResendCooldown() {
+      clearInterval(resendCooldown);
+      resendCooldown = null;
+      resendSecondsLeft = 60;
+      resendRow.style.display = "none";
+      resendOtpBtn.disabled = true;
+      resendOtpBtn.innerHTML = "Resend OTP";
+      resendInfo.textContent = "You can request a new code in 60s.";
+    }
+
+    function triggerStateTransition() {
+      loginCard.classList.add("state-transition");
+      setTimeout(() => {
+        loginCard.classList.remove("state-transition");
+      }, 260);
+    }
 
     function showOtpStep() {
+      triggerStateTransition();
       otpSection.style.display = "grid";
+      otpSection.classList.add("fade-in");
       verifyOtpBtn.style.display = "block";
+      verifyOtpBtn.classList.add("fade-in");
+      resendRow.style.display = "flex";
+      resendRow.classList.add("fade-in");
       loginBtn.style.display = "none";
       forgotRow.style.display = "none";
       emailEl.readOnly = true;
       passwordEl.readOnly = true;
       otpEl.focus();
+      startResendCooldown(60);
     }
 
     function hideOtpStep() {
+      triggerStateTransition();
       otpSection.style.display = "none";
       verifyOtpBtn.style.display = "none";
       loginBtn.style.display = "block";
@@ -545,6 +699,7 @@ function setOtpState(isLoading) {
       emailEl.readOnly = false;
       passwordEl.readOnly = false;
       otpEl.value = "";
+      stopResendCooldown();
     }
 
     async function checkApprovedUser(email) {
@@ -669,7 +824,7 @@ function setOtpState(isLoading) {
       }
 
       try {
-        setLoadingState(true);
+        setLoadingState(true, "checking");
 
         await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
 
@@ -699,6 +854,7 @@ function setOtpState(isLoading) {
           return;
         }
 
+        setLoadingState(true, "sending");
         await sendOtpRequest();
         showOtpStep();
         showMessage("An OTP has been sent to your approved email. Enter the code below to continue.", "success");
@@ -753,6 +909,24 @@ function setOtpState(isLoading) {
         showMessage(error.message || "Unable to verify OTP right now.");
       } finally {
         setOtpState(false);
+      }
+    });
+
+    resendOtpBtn.addEventListener("click", async () => {
+      clearMessage();
+
+      try {
+        resendOtpBtn.disabled = true;
+        resendOtpBtn.innerHTML = `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Sending...</span></span>`;
+
+        await sendOtpRequest();
+        showMessage("A new OTP has been sent to your approved email.", "success");
+        resendOtpBtn.innerHTML = `Resend OTP`;
+        startResendCooldown(60);
+      } catch (error) {
+        resendOtpBtn.innerHTML = `Resend OTP`;
+        resendOtpBtn.disabled = false;
+        showMessage(error.message || "Unable to resend OTP right now.");
       }
     });
 
