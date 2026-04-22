@@ -1504,6 +1504,28 @@
     window.location.replace(LOGIN_PAGE);
   }
 
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function getFreshTokenWithRetry(user, retries = 5, delay = 1200) {
+    let tokenResult = null;
+
+    for (let i = 0; i < retries; i++) {
+      tokenResult = await user.getIdTokenResult(true);
+
+      if (tokenResult?.claims?.otp_verified === true) {
+        return tokenResult;
+      }
+
+      if (i < retries - 1) {
+        await wait(delay);
+      }
+    }
+
+    return tokenResult;
+  }
+
   async function guardProtectedPage() {
     return new Promise((resolve) => {
       auth.onAuthStateChanged(async (user) => {
@@ -1523,16 +1545,16 @@
             return;
           }
 
-          const tokenResult = await user.getIdTokenResult(true);
+          const approvalCheck = await checkApprovedUser(user.email);
 
-          if (!tokenResult.claims.otp_verified) {
+          if (!approvalCheck.allowed) {
             await denyAccessAndRedirect();
             return;
           }
 
-          const approvalCheck = await checkApprovedUser(user.email);
+          const tokenResult = await getFreshTokenWithRetry(user, 5, 1200);
 
-          if (!approvalCheck.allowed) {
+          if (!tokenResult?.claims?.otp_verified) {
             await denyAccessAndRedirect();
             return;
           }
