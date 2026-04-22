@@ -339,6 +339,29 @@
         min-height:56px;
       }
     }
+
+    /*loading style animcation*/
+    .btn-spinner{
+  width:16px;
+  height:16px;
+  border:2px solid rgba(255,255,255,.32);
+  border-top-color:#fff;
+  border-radius:50%;
+  display:inline-block;
+  animation:btnSpin .7s linear infinite;
+  flex-shrink:0;
+}
+
+.btn-loading-content{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+
+@keyframes btnSpin{
+  to{ transform:rotate(360deg); }
+}
   </style>
 </head>
 <body>
@@ -408,7 +431,7 @@
       </div>
 
       <button class="primary-btn" id="loginBtn" type="button">
-        Sign in securely
+        Sign In
       </button>
 
       <button class="primary-btn" id="verifyOtpBtn" type="button" style="display:none; margin-top:12px;">
@@ -484,19 +507,25 @@
       return normalizeEmail(email).endsWith(ALLOWED_DOMAIN);
     }
 
-    function setLoadingState(isLoading) {
-      loginBtn.disabled = isLoading;
-      resetBtn.disabled = isLoading;
-      emailEl.disabled = isLoading;
-      passwordEl.disabled = isLoading;
-      loginBtn.textContent = isLoading ? "Checking access..." : "Sign in securely";
-    }
+function setLoadingState(isLoading) {
+  loginBtn.disabled = isLoading;
+  resetBtn.disabled = isLoading;
+  emailEl.disabled = isLoading;
+  passwordEl.disabled = isLoading;
 
-    function setOtpState(isLoading) {
-      verifyOtpBtn.disabled = isLoading;
-      otpEl.disabled = isLoading;
-      verifyOtpBtn.textContent = isLoading ? "Verifying..." : "Verify OTP";
-    }
+  loginBtn.innerHTML = isLoading
+    ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Checking Access...</span></span>`
+    : `Sign in securely`;
+}
+
+function setOtpState(isLoading) {
+  verifyOtpBtn.disabled = isLoading;
+  otpEl.disabled = isLoading;
+
+  verifyOtpBtn.innerHTML = isLoading
+    ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Verifying...</span></span>`
+    : `Verify OTP`;
+}
 
     function showOtpStep() {
       otpSection.style.display = "grid";
