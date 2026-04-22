@@ -538,44 +538,54 @@
       return await user.getIdToken(true);
     }
 
-    async function sendOtpRequest() {
-      const idToken = await getFreshIdToken();
+async function sendOtpRequest() {
+  const idToken = await getFreshIdToken();
 
-      const response = await fetch(`${OTP_API}/api/send-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${idToken}`
-        }
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Unable to send OTP right now.");
+  let response;
+  try {
+    response = await fetch(`${OTP_API}/api/send-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${idToken}`
       }
+    });
+  } catch (error) {
+    throw new Error("Unable to connect to the OTP server right now. Please try again in a moment.");
+  }
 
-      return data;
-    }
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to send OTP right now.");
+  }
 
-    async function verifyOtpRequest(otp) {
-      const idToken = await getFreshIdToken();
+  return data;
+}
 
-      const response = await fetch(`${OTP_API}/api/verify-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${idToken}`
-        },
-        body: JSON.stringify({ otp })
-      });
+async function verifyOtpRequest(otp) {
+  const idToken = await getFreshIdToken();
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Unable to verify OTP right now.");
-      }
+  let response;
+  try {
+    response = await fetch(`${OTP_API}/api/verify-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${idToken}`
+      },
+      body: JSON.stringify({ otp })
+    });
+  } catch (error) {
+    throw new Error("Unable to connect to the OTP server right now. Please try again in a moment.");
+  }
 
-      return data;
-    }
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Unable to verify OTP right now.");
+  }
+
+  return data;
+}
 
     togglePasswordBtn.addEventListener("click", () => {
       const isHidden = passwordEl.type === "password";
