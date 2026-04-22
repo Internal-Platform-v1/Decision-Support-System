@@ -424,363 +424,451 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-      authDomain: "bdgg-database.firebaseapp.com",
-      projectId: "bdgg-database",
-      storageBucket: "bdgg-database.appspot.com",
-      messagingSenderId: "43574975434",
-      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    };
+<script>
+  document.documentElement.classList.add("page-protected");
 
-    const ALLOWED_DOMAIN = "@fedexfreight.com";
-    const APPROVED_USERS_COLLECTION = "approved_users";
-    const REDIRECT_AFTER_LOGIN = "index-main.html";
-    const OTP_API = "https://otp-server-1-8xfn.onrender.com";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+  const ALLOWED_DOMAIN = "@fedexfreight.com";
+  const APPROVED_USERS_COLLECTION = "approved_users";
+  const LOGIN_PAGE = "index.html";
 
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
 
-    const emailEl = document.getElementById("email");
-    const passwordEl = document.getElementById("password");
-    const otpEl = document.getElementById("otp");
-    const otpSection = document.getElementById("otpSection");
-    const loginBtn = document.getElementById("loginBtn");
-    const verifyOtpBtn = document.getElementById("verifyOtpBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const messageEl = document.getElementById("message");
-    const togglePasswordBtn = document.getElementById("togglePassword");
-    const togglePasswordIcon = document.getElementById("togglePasswordIcon");
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    function showMessage(text, type = "error") {
-      messageEl.className = "message " + type;
-      messageEl.textContent = text;
-    }
+  let selectedRating = 0;
+  let commentsUnsubscribe = null;
+  let activeCategory = "all";
+  let ratingStars = [];
 
-    function clearMessage() {
-      messageEl.className = "message";
-      messageEl.textContent = "";
-      messageEl.style.display = "";
-    }
+  const container = document.getElementById("guideContainer");
+  const cards = Array.from(container.querySelectorAll(".card"));
+  const originalOrder = [...cards];
 
-    function normalizeEmail(email) {
-      return String(email || "").trim().toLowerCase();
-    }
+  cards.forEach(card => {
+    card.dataset.originalHtml = card.innerHTML;
+  });
 
-    function isAllowedFedExEmail(email) {
-      return normalizeEmail(email).endsWith(ALLOWED_DOMAIN);
-    }
+  function normalizeEmail(email) {
+    return String(email || "").trim().toLowerCase();
+  }
 
-    function setLoadingState(isLoading) {
-      loginBtn.disabled = isLoading;
-      resetBtn.disabled = isLoading;
-      emailEl.disabled = isLoading;
-      passwordEl.disabled = isLoading;
-      loginBtn.textContent = isLoading ? "Checking access..." : "Sign in securely";
-    }
+  function isAllowedFedExEmail(email) {
+    return normalizeEmail(email).endsWith(ALLOWED_DOMAIN);
+  }
 
-    function setOtpState(isLoading) {
-      verifyOtpBtn.disabled = isLoading;
-      otpEl.disabled = isLoading;
-      verifyOtpBtn.textContent = isLoading ? "Verifying..." : "Verify OTP";
-    }
+  async function checkApprovedUser(email) {
+    const emailKey = normalizeEmail(email);
+    const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(emailKey);
+    const docSnap = await docRef.get();
 
-    function showOtpStep() {
-      otpSection.style.display = "grid";
-      verifyOtpBtn.style.display = "block";
-      otpEl.focus();
-    }
-
-    function hideOtpStep() {
-      otpSection.style.display = "none";
-      verifyOtpBtn.style.display = "none";
-      otpEl.value = "";
-    }
-
-    async function checkApprovedUser(email) {
-      const emailKey = normalizeEmail(email);
-      const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(emailKey);
-      const docSnap = await docRef.get();
-
-      if (!docSnap.exists) {
-        return {
-          allowed: false,
-          reason: "Your account is not authorized to access this system."
-        };
-      }
-
-      const data = docSnap.data() || {};
-
-      if (data.active === false) {
-        return {
-          allowed: false,
-          reason: "Your account has been disabled. Please contact your administrator."
-        };
-      }
-
+    if (!docSnap.exists) {
       return {
-        allowed: true,
-        data
+        allowed: false,
+        reason: "Your account is not authorized to access this system."
       };
     }
 
-    async function getFreshIdToken() {
-      const user = auth.currentUser;
-      if (!user) {
-        throw new Error("No signed-in user was found.");
-      }
-      return await user.getIdToken(true);
+    const data = docSnap.data() || {};
+
+    if (data.active === false) {
+      return {
+        allowed: false,
+        reason: "Your account has been disabled. Please contact your administrator."
+      };
     }
 
-async function sendOtpRequest() {
-  const idToken = await getFreshIdToken();
-
-  let response;
-  try {
-    response = await fetch(`${OTP_API}/api/send-otp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${idToken}`
-      }
-    });
-  } catch (error) {
-    throw new Error("Unable to connect to the OTP server right now. Please try again in a moment.");
+    return {
+      allowed: true,
+      data
+    };
   }
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || "Unable to send OTP right now.");
+  async function denyAccessAndRedirect() {
+    try {
+      await auth.signOut();
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
+    window.location.replace(LOGIN_PAGE);
   }
 
-  return data;
-}
-
-async function verifyOtpRequest(otp) {
-  const idToken = await getFreshIdToken();
-
-  let response;
-  try {
-    response = await fetch(`${OTP_API}/api/verify-otp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${idToken}`
-      },
-      body: JSON.stringify({ otp })
-    });
-  } catch (error) {
-    throw new Error("Unable to connect to the OTP server right now. Please try again in a moment.");
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || "Unable to verify OTP right now.");
+  async function getFreshTokenWithRetry(user, retries = 5, delay = 1200) {
+    let tokenResult = null;
+
+    for (let i = 0; i < retries; i++) {
+      tokenResult = await user.getIdTokenResult(true);
+
+      if (tokenResult?.claims?.otp_verified === true) {
+        return tokenResult;
+      }
+
+      if (i < retries - 1) {
+        await wait(delay);
+      }
+    }
+
+    return tokenResult;
   }
 
-  return data;
-}
-
-    togglePasswordBtn.addEventListener("click", () => {
-      const isHidden = passwordEl.type === "password";
-      passwordEl.type = isHidden ? "text" : "password";
-      togglePasswordIcon.className = isHidden ? "fa-regular fa-eye-slash" : "fa-regular fa-eye";
-      togglePasswordBtn.classList.toggle("active", isHidden);
-      togglePasswordBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
-    });
-
-    passwordEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        loginBtn.click();
-      }
-    });
-
-    otpEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        verifyOtpBtn.click();
-      }
-    });
-
-    loginBtn.addEventListener("click", async () => {
-      clearMessage();
-      hideOtpStep();
-
-      const email = normalizeEmail(emailEl.value);
-      const password = passwordEl.value;
-
-      if (!email || !password) {
-        showMessage("Please enter your email and password.");
-        return;
-      }
-
-      if (!isAllowedFedExEmail(email)) {
-        showMessage("Only @fedexfreight.com email addresses are allowed to sign in.");
-        return;
-      }
-
-      try {
-        setLoadingState(true);
-
-        await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-
-        const result = await auth.signInWithEmailAndPassword(email, password);
-        const user = result.user;
-
+  async function guardProtectedPage() {
+    return new Promise((resolve) => {
+      auth.onAuthStateChanged(async (user) => {
         if (!user) {
-          showMessage("Unable to sign in right now.");
+          await denyAccessAndRedirect();
           return;
         }
 
-        if (!user.emailVerified) {
-          await user.sendEmailVerification();
-          await auth.signOut();
-          showMessage(
-            "Your email is not verified yet. A verification email has been sent to your FedEx Freight inbox. Please verify your email first, then sign in again.",
-            "success"
-          );
-          return;
+        try {
+          if (!isAllowedFedExEmail(user.email)) {
+            await denyAccessAndRedirect();
+            return;
+          }
+
+          if (!user.emailVerified) {
+            await denyAccessAndRedirect();
+            return;
+          }
+
+          const approvalCheck = await checkApprovedUser(user.email);
+
+          if (!approvalCheck.allowed) {
+            await denyAccessAndRedirect();
+            return;
+          }
+
+          const tokenResult = await getFreshTokenWithRetry(user, 5, 1200);
+
+          if (!tokenResult?.claims?.otp_verified) {
+            await denyAccessAndRedirect();
+            return;
+          }
+
+          document.documentElement.classList.remove("page-protected");
+          resolve(true);
+        } catch (error) {
+          console.error("Page guard failed:", error);
+          await denyAccessAndRedirect();
         }
+      });
+    });
+  }
 
-        const approvalCheck = await checkApprovedUser(user.email);
+  function initRatingStars() {
+    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
 
-        if (!approvalCheck.allowed) {
-          await auth.signOut();
-          showMessage(approvalCheck.reason || "You are not authorized to access this system.");
-          return;
-        }
+    ratingStars.forEach(star => {
+      star.addEventListener("click", () => {
+        selectedRating = Number(star.dataset.value);
+        ratingStars.forEach(s => {
+          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
+        });
+      });
+    });
+  }
 
-        await sendOtpRequest();
-        showOtpStep();
-        showMessage("An OTP has been sent to your approved email. Enter the code below to continue.", "success");
-      } catch (error) {
-        let friendlyMessage = error.message || "Unable to sign in right now.";
+  function openAnimatedModal(modal) {
+    if (!modal) return;
+    modal.style.display = "flex";
+    modal.classList.remove("is-closing");
 
-        if (
-          error.code === "auth/user-not-found" ||
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/invalid-login-credentials"
-        ) {
-          friendlyMessage = "Invalid email or password.";
-        } else if (error.code === "auth/too-many-requests") {
-          friendlyMessage = "Too many failed attempts. Please try again later or reset your password.";
-        } else if (error.code === "auth/invalid-email") {
-          friendlyMessage = "Please enter a valid email address.";
-        }
+    requestAnimationFrame(() => {
+      modal.classList.add("is-open");
+    });
+  }
 
-        showMessage(friendlyMessage);
-      } finally {
-        setLoadingState(false);
+  function closeAnimatedModal(modal, onClosed) {
+    if (!modal) return;
+
+    modal.classList.remove("is-open");
+    modal.classList.add("is-closing");
+
+    setTimeout(() => {
+      modal.style.display = "none";
+      modal.classList.remove("is-closing");
+      if (typeof onClosed === "function") onClosed();
+    }, 220);
+  }
+
+  function openComment() {
+    const modal = document.getElementById("commentModal");
+    openAnimatedModal(modal);
+  }
+
+  function closeComment() {
+    const modal = document.getElementById("commentModal");
+    closeAnimatedModal(modal);
+  }
+
+  function openHelp() {
+    const modal = document.getElementById("helpModal");
+    openAnimatedModal(modal);
+  }
+
+  function closeHelp() {
+    const modal = document.getElementById("helpModal");
+    closeAnimatedModal(modal);
+  }
+
+  function closeAllComments() {
+    const modal = document.getElementById("allCommentsModal");
+
+    closeAnimatedModal(modal, () => {
+      if (commentsUnsubscribe) {
+        commentsUnsubscribe();
+        commentsUnsubscribe = null;
+      }
+    });
+  }
+
+  async function sendComment() {
+    const name = document.getElementById("commentName")?.value.trim() || "";
+    const comment = document.getElementById("commentText")?.value.trim() || "";
+    const message = document.getElementById("feedbackMessage");
+
+    if (!selectedRating) {
+      if (message) {
+        message.style.display = "block";
+        message.style.color = "#ef4444";
+        message.textContent = "Please select a star rating first.";
+      }
+      return;
+    }
+
+    try {
+      await db.collection("feedback").add({
+        rating: selectedRating,
+        name,
+        comment,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      if (message) {
+        message.style.display = "block";
+        message.style.color = "#16a34a";
+        message.textContent = "Thank you. Your feedback has been submitted.";
+      }
+
+      const nameInput = document.getElementById("commentName");
+      const commentInput = document.getElementById("commentText");
+
+      if (nameInput) nameInput.value = "";
+      if (commentInput) commentInput.value = "";
+
+      selectedRating = 0;
+      ratingStars.forEach(s => s.classList.remove("selected"));
+
+      setTimeout(() => {
+        if (message) message.style.display = "none";
+        closeComment();
+      }, 1200);
+    } catch (error) {
+      console.error(error);
+      if (message) {
+        message.style.display = "block";
+        message.style.color = "#ef4444";
+        message.textContent = "Something went wrong while sending feedback.";
+      }
+    }
+  }
+
+  function showAllComments() {
+    const commentModal = document.getElementById("commentModal");
+    const modal = document.getElementById("allCommentsModal");
+    const list = document.getElementById("commentsList");
+
+    if (!modal || !list) return;
+
+    list.innerHTML = "<p>Loading comments.</p>";
+
+    if (commentsUnsubscribe) commentsUnsubscribe();
+
+    const loadComments = () => {
+      openAnimatedModal(modal);
+
+      commentsUnsubscribe = db.collection("feedback")
+        .orderBy("createdAt", "desc")
+        .onSnapshot(snapshot => {
+          if (snapshot.empty) {
+            list.innerHTML = "<p>No comments yet.</p>";
+            return;
+          }
+
+          let html = "";
+          snapshot.forEach(doc => {
+            const item = doc.data();
+            const stars = "★".repeat(item.rating || 0) + "☆".repeat(5 - (item.rating || 0));
+            html += `
+              <div class="comment-list-item">
+                <span class="stars">${stars}</span>
+                <strong>${item.name || "Anonymous"}</strong>
+                <p style="margin:6px 0 0;">${item.comment || "No comment provided."}</p>
+              </div>
+            `;
+          });
+
+          list.innerHTML = html;
+        }, error => {
+          console.error(error);
+          list.innerHTML = "<p>Unable to load comments right now.</p>";
+        });
+    };
+
+    if (commentModal && commentModal.style.display === "flex") {
+      closeAnimatedModal(commentModal, loadComments);
+    } else {
+      loadComments();
+    }
+  }
+
+  window.addEventListener("click", (e) => {
+    const commentModal = document.getElementById("commentModal");
+    const allCommentsModal = document.getElementById("allCommentsModal");
+    const helpModal = document.getElementById("helpModal");
+
+    if (e.target === commentModal) closeComment();
+    if (e.target === allCommentsModal) closeAllComments();
+    if (e.target === helpModal) closeHelp();
+  });
+
+  function scrollToGuideResults() {
+    const searchBox = document.querySelector(".search-wrap");
+    if (!searchBox) return;
+
+    const y = searchBox.getBoundingClientRect().top + window.pageYOffset - 20;
+    window.scrollTo({
+      top: Math.max(0, y),
+      behavior: "smooth"
+    });
+  }
+
+  function highlightCard(card, keywords) {
+    const selectors = ["h1", ".lead", ".small"];
+    selectors.forEach(selector => {
+      card.querySelectorAll(selector).forEach(el => {
+        let html = el.textContent;
+        keywords.forEach(keyword => {
+          const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const regex = new RegExp(`(${escaped})`, "gi");
+          html = html.replace(regex, '<mark class="search-highlight">$1</mark>');
+        });
+        el.innerHTML = html;
+      });
+    });
+  }
+
+  function filterGuides(shouldScroll = false) {
+    const input = document.getElementById("guideSearch");
+    const query = input.value.trim().toLowerCase();
+    const keywords = query.split(/\s+/).filter(Boolean);
+    const clearBtn = document.getElementById("clearSearchBtn");
+    const noResults = document.getElementById("noResults");
+    const resultsCount = document.getElementById("resultsCount");
+
+    clearBtn.style.display = query ? "block" : "none";
+
+    container.innerHTML = "";
+
+    const matches = [];
+    const nonMatches = [];
+
+    originalOrder.forEach(card => {
+      card.innerHTML = card.dataset.originalHtml;
+
+      const cardText = card.textContent.toLowerCase();
+      const cardCategory = (card.dataset.category || "").toLowerCase();
+      const categoryPass = activeCategory === "all" || cardCategory.includes(activeCategory);
+      const textPass = !query || keywords.every(keyword => cardText.includes(keyword));
+
+      if (categoryPass && textPass) {
+        if (keywords.length) highlightCard(card, keywords);
+        matches.push(card);
+      } else {
+        nonMatches.push(card);
       }
     });
 
-    verifyOtpBtn.addEventListener("click", async () => {
-      clearMessage();
+    noResults.style.display = matches.length === 0 ? "block" : "none";
 
-      const otp = String(otpEl.value || "").trim();
+    if (matches.length > 0) {
+      resultsCount.style.display = "block";
+      const visibleCount = query ? Math.min(matches.length, 4) : matches.length;
 
-      if (!otp) {
-        showMessage("Please enter the OTP sent to your email.");
-        return;
-      }
+      resultsCount.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${visibleCount} of ${matches.length} matching guide${matches.length > 1 ? "s" : ""}</span>`;
+    } else {
+      resultsCount.style.display = "none";
+      resultsCount.innerHTML = "";
+    }
 
-      if (!/^\d{6}$/.test(otp)) {
-        showMessage("Please enter a valid 6-digit OTP.");
-        return;
-      }
-
-      try {
-        setOtpState(true);
-
-        await verifyOtpRequest(otp);
-
-        // Refresh token so the new custom claim is available immediately
-        await auth.currentUser.getIdToken(true);
-
-        showMessage("OTP verified successfully. Redirecting now...", "success");
-        window.location.href = REDIRECT_AFTER_LOGIN;
-      } catch (error) {
-        showMessage(error.message || "Unable to verify OTP right now.");
-      } finally {
-        setOtpState(false);
-      }
+    matches.forEach((card, index) => {
+      card.style.display = (!query || index < 4) ? "flex" : "none";
+      container.appendChild(card);
     });
 
-    resetBtn.addEventListener("click", async () => {
-      clearMessage();
-
-      const email = normalizeEmail(emailEl.value);
-
-      if (!email) {
-        showMessage("Enter your email first so a password reset link can be sent to you.");
-        return;
-      }
-
-      if (!isAllowedFedExEmail(email)) {
-        showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
-        return;
-      }
-
-      try {
-        await auth.sendPasswordResetEmail(email);
-        showMessage("A password reset email has been sent successfully.", "success");
-      } catch (error) {
-        let friendlyMessage = error.message || "Unable to send the password reset email.";
-
-        if (error.code === "auth/user-not-found") {
-          friendlyMessage = "No account was found for that email address.";
-        } else if (error.code === "auth/invalid-email") {
-          friendlyMessage = "Please enter a valid email address.";
-        }
-
-        showMessage(friendlyMessage);
-      }
+    nonMatches.forEach(card => {
+      card.style.display = "none";
+      container.appendChild(card);
     });
 
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await auth.signOut();
-        hideOtpStep();
-        showMessage("You have been signed out successfully.", "success");
-      } catch (error) {
-        showMessage(error.message || "Unable to sign out right now.");
-      }
+    if (shouldScroll && query) {
+      requestAnimationFrame(() => {
+        scrollToGuideResults();
+      });
+    }
+  }
+
+  function clearSearch() {
+    const input = document.getElementById("guideSearch");
+    input.value = "";
+    filterGuides(false);
+    input.focus();
+  }
+
+  function filterByCategory(category, button) {
+    activeCategory = category;
+
+    document.querySelectorAll(".filter-chip").forEach(chip => {
+      chip.classList.remove("active");
     });
 
-    auth.onAuthStateChanged(async (user) => {
-      logoutBtn.style.display = user ? "inline-flex" : "none";
+    if (button) button.classList.add("active");
+    filterGuides(true);
+  }
 
-      if (!user) {
-        hideOtpStep();
-        return;
-      }
+  function focusGuideSearch() {
+    const input = document.getElementById("guideSearch");
+    if (!input) return;
 
-      if (!isAllowedFedExEmail(user.email)) {
-        await auth.signOut();
-        showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
-        return;
-      }
-
-      if (!user.emailVerified) {
-        return;
-      }
-
-      try {
-        const approvalCheck = await checkApprovedUser(user.email);
-
-        if (!approvalCheck.allowed) {
-          await auth.signOut();
-          showMessage(approvalCheck.reason || "You are not authorized to access this system.");
-        }
-      } catch (error) {
-        console.error("Approval check failed:", error);
-      }
+    requestAnimationFrame(() => {
+      input.focus({ preventScroll: true });
+      input.setSelectionRange(input.value.length, input.value.length);
     });
-  </script>
+  }
+
+  window.addEventListener("load", async () => {
+    await guardProtectedPage();
+    focusGuideSearch();
+  });
+
+  document.addEventListener("headerLoaded", () => {
+    initRatingStars();
+    focusGuideSearch();
+  });
+</script>
 </body>
 </html>
