@@ -26,6 +26,9 @@
       --text-muted:rgba(255,255,255,.58);
       --icon-color:rgba(255,255,255,.88);
       --icon-color-soft:rgba(255,255,255,.78);
+      --autofill-bg:#d8deea;
+      --autofill-text:#1f2937;
+      --autofill-icon:#6b7280;
       --success-bg:rgba(20,83,45,.42);
       --success-border:rgba(187,247,208,.28);
       --error-bg:rgba(127,29,29,.42);
@@ -135,6 +138,7 @@
       pointer-events:none;
       z-index:2;
       text-shadow:0 1px 6px rgba(0,0,0,.18);
+      transition:.2s ease;
     }
 
     .input-wrap input{
@@ -184,6 +188,7 @@
       place-items:center;
       transition:.2s ease;
       font-size:15px;
+      z-index:3;
     }
 
     .toggle-password:hover{
@@ -194,6 +199,33 @@
     .toggle-password.active{
       background:rgba(255,255,255,.10);
       color:#fff;
+    }
+
+    /* Autofill / remembered credentials readability fix */
+    .input-wrap input:-webkit-autofill,
+    .input-wrap input:-webkit-autofill:hover,
+    .input-wrap input:-webkit-autofill:focus,
+    .input-wrap input:-webkit-autofill:active{
+      -webkit-text-fill-color:var(--autofill-text) !important;
+      caret-color:var(--autofill-text) !important;
+      box-shadow:
+        inset 0 0 0 1000px var(--autofill-bg),
+        inset 0 0 0 1px rgba(148,163,184,.28) !important;
+      transition:background-color 9999s ease-in-out 0s;
+    }
+
+    .input-wrap:has(input:-webkit-autofill) .left-icon{
+      color:var(--autofill-icon);
+      text-shadow:none;
+    }
+
+    .input-wrap:has(input:-webkit-autofill) .toggle-password{
+      color:var(--autofill-icon);
+    }
+
+    .input-wrap:has(input:-webkit-autofill) .toggle-password:hover{
+      background:rgba(15,23,42,.06);
+      color:#374151;
     }
 
     .primary-btn{
@@ -227,7 +259,7 @@
       margin-top:14px;
       display:flex;
       align-items:center;
-      justify-content:space-between;
+      justify-content:flex-start;
       gap:12px;
       flex-wrap:wrap;
     }
@@ -279,27 +311,6 @@
       color:var(--text-soft);
       font-size:13px;
       line-height:1.7;
-    }
-
-    .logout-wrap{
-      margin-top:14px;
-    }
-
-    .logout-btn{
-      min-height:46px;
-      padding:0 16px;
-      border:none;
-      border-radius:14px;
-      background:rgba(255,255,255,.10);
-      color:#fff;
-      font-size:13px;
-      font-weight:800;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-
-    .logout-btn:hover{
-      background:rgba(255,255,255,.16);
     }
 
     @media (max-width: 640px){
@@ -404,15 +415,11 @@
         Verify OTP
       </button>
 
-      <div class="forgot-row">
+      <div class="forgot-row" id="forgotRow">
         <button class="forgot-link" id="resetBtn" type="button">Forgot password?</button>
       </div>
 
       <div id="message" class="message"></div>
-
-      <div class="logout-wrap">
-        <button class="logout-btn" id="logoutBtn" type="button" style="display:none;">Sign out</button>
-      </div>
 
       <div class="foot-note">
         After successful sign-in, only verified and approved users will be redirected to the main guide page.
@@ -453,7 +460,7 @@
     const loginBtn = document.getElementById("loginBtn");
     const verifyOtpBtn = document.getElementById("verifyOtpBtn");
     const resetBtn = document.getElementById("resetBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const forgotRow = document.getElementById("forgotRow");
     const messageEl = document.getElementById("message");
     const togglePasswordBtn = document.getElementById("togglePassword");
     const togglePasswordIcon = document.getElementById("togglePasswordIcon");
@@ -494,12 +501,20 @@
     function showOtpStep() {
       otpSection.style.display = "grid";
       verifyOtpBtn.style.display = "block";
+      loginBtn.style.display = "none";
+      forgotRow.style.display = "none";
+      emailEl.readOnly = true;
+      passwordEl.readOnly = true;
       otpEl.focus();
     }
 
     function hideOtpStep() {
       otpSection.style.display = "none";
       verifyOtpBtn.style.display = "none";
+      loginBtn.style.display = "block";
+      forgotRow.style.display = "flex";
+      emailEl.readOnly = false;
+      passwordEl.readOnly = false;
       otpEl.value = "";
     }
 
@@ -596,13 +611,13 @@
     });
 
     passwordEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && loginBtn.style.display !== "none") {
         loginBtn.click();
       }
     });
 
     otpEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
+      if (e.key === "Enter" && verifyOtpBtn.style.display !== "none") {
         verifyOtpBtn.click();
       }
     });
@@ -743,19 +758,7 @@
       }
     });
 
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await auth.signOut();
-        hideOtpStep();
-        showMessage("You have been signed out successfully.", "success");
-      } catch (error) {
-        showMessage(error.message || "Unable to sign out right now.");
-      }
-    });
-
     auth.onAuthStateChanged(async (user) => {
-      logoutBtn.style.display = user ? "inline-flex" : "none";
-
       if (!user) {
         hideOtpStep();
         return;
