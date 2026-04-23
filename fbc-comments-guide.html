@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BD Tools — FBC Comments Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/header-footer-style.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#07111f;
+  --bg-soft:#0c1728;
+  --panel:#0f1c31;
+  --card:#ffffff;
+  --card-soft:#f8fafc;
+  --text:#0f172a;
+  --text-soft:#475569;
+  --muted:#94a3b8;
+  --line:rgba(148,163,184,.18);
+  --accent:#6d28d9;
+  --accent-2:#4d148c;
+  --accent-3:#ff6600;
+  --success:#16a34a;
+  --danger:#ef4444;
+  --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+  --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+  --shadow-md:0 10px 28px rgba(15,23,42,.10);
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --radius-md:16px;
+  --radius-sm:12px;
+  --max:1440px;
+  font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  overflow-x:hidden;
+  background:#eef4fb;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:
+    radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+    linear-gradient(180deg, #091120 0%, #0b1525 100%, #eef4fb 100%, #f5f8fc 100%);
+  pointer-events:none;
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:36px 36px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+}
+.page{position:relative;z-index:1;}
+.container{width:min(calc(100% - 32px), var(--max));margin:0 auto;}
+.hero-wrap{padding:28px 0 22px;}
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:36px;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255,102,0,.22), transparent 18%),
+    radial-gradient(circle at 15% 18%, rgba(255,255,255,.18), transparent 20%),
+    linear-gradient(135deg, #4d148c 0%, #5b1aae 48%, #1e293b 100%);
+  padding:34px;
+  box-shadow:var(--shadow-xl);
+  border:1px solid rgba(255,255,255,.12);
+}
+.hero::before,
+.hero::after{content:"";position:absolute;border-radius:999px;pointer-events:none;}
+.hero::before{width:420px;height:420px;top:-220px;right:-120px;background:radial-gradient(circle, rgba(255,255,255,.18), transparent 62%);}
+.hero::after{width:280px;height:280px;bottom:-160px;left:-80px;background:radial-gradient(circle, rgba(255,102,0,.18), transparent 65%);}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(320px,.9fr);gap:24px;align-items:stretch;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);margin-bottom:18px;}
+.hero h1{margin:0;color:#fff;font-size:clamp(2rem,4vw,3.5rem);line-height:.98;letter-spacing:-.05em;max-width:780px;}
+.hero p{margin:16px 0 22px;color:rgba(255,255,255,.82);font-size:16px;line-height:1.7;max-width:760px;}
+.hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px;}
+.stat-card{border-radius:20px;padding:18px 18px 16px;background:rgba(255,255,255,.10);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);backdrop-filter:blur(10px);}
+.stat-value{color:#fff;font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px;}
+.stat-label{color:rgba(255,255,255,.7);font-size:13px;line-height:1.45;}
+.hero-side{display:flex;flex-direction:column;gap:16px;min-width:0;}
+.quick-panel{background:rgba(255,255,255,.10);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);border-radius:28px;padding:22px;backdrop-filter:blur(12px);height:100%;display:flex;flex-direction:column;justify-content:space-between;}
+.panel-title{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;font-weight:700;font-size:18px;margin-bottom:14px;}
+.panel-title span:last-child{color:rgba(255,255,255,.6);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.quick-list{display:grid;gap:12px;margin:0;padding:0;list-style:none;}
+.quick-item{display:flex;gap:14px;align-items:flex-start;padding:14px;border-radius:18px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);}
+.quick-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));color:#fff;flex-shrink:0;}
+.quick-item strong{display:block;color:#fff;font-size:14px;margin-bottom:4px;}
+.quick-item span{display:block;color:rgba(255,255,255,.7);font-size:13px;line-height:1.45;}
+.live-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;padding:14px 16px;border-radius:18px;background:rgba(7,17,31,.24);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);color:#fff;}
+.live-strip strong{display:block;font-size:14px;margin-bottom:4px;}
+.live-strip span{color:rgba(255,255,255,.68);font-size:13px;}
+.pulse{width:12px;height:12px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.55);animation:pulse 1.9s infinite;flex-shrink:0;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.55);}70%{box-shadow:0 0 0 16px rgba(34,197,94,0);}100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}}
+.hero-cta{border:none;padding:14px 22px;border-radius:999px;background:#ffffff;color:#4d148c;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 10px 24px rgba(0,0,0,.15);transition:all .2s ease;display:inline-flex;align-items:center;gap:8px;}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.2);}
+.workspace-wrap{padding:8px 0 58px;position:relative;z-index:1;scroll-margin-top:120px;}
+.workspace-wrap::before{content:"";position:absolute;top:22px;left:50%;width:min(1280px, calc(100% - 80px));height:92%;transform:translateX(-50%);border-radius:42px;background:radial-gradient(circle at top center, rgba(109,40,217,.12), transparent 38%), linear-gradient(180deg, rgba(255,255,255,.62), rgba(248,250,252,.42));filter:blur(8px);z-index:-1;}
+.library-panel{background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(248,250,252,.96));border:1px solid rgba(226,232,240,.96);border-radius:36px;padding:32px;box-shadow:0 26px 60px rgba(15,23,42,.08);}
+.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:26px;flex-wrap:wrap;}
+.section-head-left{flex:1 1 700px;min-width:280px;}
+.section-overline{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,#f5f3ff,#ede9fe);border:1px solid #e9ddff;color:#5b21b6;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
+.section-head-left h3{margin:0 0 10px;font-size:38px;letter-spacing:-.055em;color:#0f172a !important;font-weight:900;line-height:1;}
+.section-head-left p{margin:0;color:#64748b !important;font-size:15px;line-height:1.75;max-width:760px;}
+.section-note{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:18px;background:linear-gradient(180deg,#ffffff,#f8fafc);border:1px solid rgba(203,213,225,.92);box-shadow:0 14px 30px rgba(15,23,42,.06);color:#334155;font-weight:800;font-size:13px;flex:0 0 auto;}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.25fr) 360px;gap:22px;align-items:start;}
+.work-card,.side-card{position:relative;background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);border:1px solid rgba(226,232,240,.96);border-radius:28px;padding:18px 18px 20px;box-shadow:0 14px 30px rgba(15,23,42,.08);overflow:hidden;}
+.work-card::before,.side-card::before{content:"";position:absolute;left:18px;right:18px;top:0;height:4px;border-radius:0 0 999px 999px;background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);opacity:.98;}
+.work-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px;}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:linear-gradient(180deg,#f8f6ff,#f1ecff);color:#5b21b6;font-size:12px;font-weight:800;letter-spacing:.02em;border:1px solid #ece5ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.85);}
+.guide-icon{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;color:#5b21b6;background:linear-gradient(180deg, rgba(91,33,182,.08), rgba(255,102,0,.08));box-shadow:inset 0 0 0 1px rgba(91,33,182,.08);font-size:17px;flex-shrink:0;}
+.work-card h4,.side-card h4{margin:0 0 10px;font-size:18px;letter-spacing:-.03em;line-height:1.25;color:#111827;}
+.lead{margin:0 0 18px;color:#516173;font-size:14px;line-height:1.72;}
+.select-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.field-label{display:block;font-size:12px;font-weight:900;color:#334155;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.select-wrap{position:relative;}
+.select-wrap i{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#64748b;pointer-events:none;}
+#fbcBuilder select,#fbcBuilder textarea,#fbcBuilder input{width:100%;border:none;outline:none;border-radius:16px;background:#f8fafc;box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);padding:14px 16px;color:#0f172a;font-size:14px;transition:.18s ease;}
+#fbcBuilder select{appearance:none;padding-right:42px;cursor:pointer;}
+#fbcBuilder select:focus,#fbcBuilder textarea:focus,#fbcBuilder input:focus{background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16),0 0 0 5px rgba(77,20,140,.06);}
+#fbcBuilder select:disabled{opacity:.65;cursor:not-allowed;}
+.info-box{padding:14px 16px;border-radius:18px;background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);border:1px solid #e4ebf5;font-size:14px;line-height:1.7;color:#334155;min-height:78px;}
+.info-box.empty{color:#94a3b8;}
+.response-box{min-height:240px;resize:vertical;white-space:pre-wrap;line-height:1.75;}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.action-row.right{justify-content:flex-end;}
+.action-row .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 18px;border-radius:17px;text-decoration:none;font-weight:800;border:none;cursor:pointer;transition:.22s ease;}
+.action-row .btn-wide{width:220px;max-width:100%;}
+.btn-primary{background:linear-gradient(135deg,#4d148c 0%,#6d28d9 100%);color:#fff;box-shadow:0 14px 24px rgba(77,20,140,.16);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 30px rgba(77,20,140,.22);}
+.btn-dark{background:#111827;color:#fff;box-shadow:0 8px 20px rgba(17,24,39,.14);}
+.btn-dark:hover{transform:translateY(-1px);}
+.note-box{margin-top:14px;background:#f8fafc;border-left:5px solid var(--accent-2);padding:14px 16px;border-radius:14px;color:#334155;font-size:14px;line-height:1.7;}
+.reminder-grid{display:grid;grid-template-columns:1fr;gap:22px;margin-bottom:22px;}
+.reminder-card{background:linear-gradient(180deg,#fff7ed 0%,#ffffff 100%);border:1px solid rgba(255,102,0,.22);}
+.reminder-card::before{background:linear-gradient(90deg,#ff6600,#fb923c,#fdba74);}
+.reminder-title{margin:0 0 12px;font-size:18px;color:#c2410c;letter-spacing:-.03em;}
+.reminder-list{margin:0;padding-left:20px;color:#0f172a;line-height:1.8;font-size:14px;}
+.reminder-list li+li{margin-top:4px;}
+.inline-link{display:inline-flex;align-items:center;gap:8px;color:#0f4c81;font-weight:800;text-decoration:none;margin:14px 0 8px;}
+.inline-link:hover{text-decoration:underline;}
+.warning-copy{margin-top:14px;padding:14px 16px;border-radius:16px;background:#fff1f2;border:1px solid #fecdd3;color:#b91c1c;font-weight:800;line-height:1.7;}
+.guide-image-wrap{display:flex;flex-direction:column;gap:14px;margin-top:16px;}
+.guide-image{width:100%;border-radius:20px;border:1px solid #e2e8f0;box-shadow:0 16px 34px rgba(15,23,42,.10);background:#f8fafc;min-height:240px;object-fit:cover;}
+.guide-image-placeholder{display:grid;place-items:center;min-height:240px;border-radius:20px;border:1px dashed #cbd5e1;background:linear-gradient(180deg,#ffffff,#f8fafc);color:#64748b;text-align:center;padding:24px;line-height:1.8;font-weight:600;}
+.side-stack{display:flex;flex-direction:column;gap:22px;}
+.quick-stat{padding:14px;border-radius:18px;background:#f8fafc;border:1px solid #e7edf4;}
+.quick-stat + .quick-stat{margin-top:10px;}
+.quick-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#64748b;font-weight:800;margin-bottom:6px;}
+.quick-value{font-size:18px;font-weight:900;letter-spacing:-.03em;word-break:break-word;}
+.helper-text{font-size:13px;color:#64748b;line-height:1.7;}
+.helper-list{margin:0;padding-left:18px;color:#475569;line-height:1.8;font-size:14px;}
+.helper-list li+li{margin-top:4px;}
+#toast{position:fixed;right:24px;bottom:24px;z-index:99999;background:#111827;color:#fff;padding:12px 16px;border-radius:14px;box-shadow:0 16px 34px rgba(15,23,42,.18);opacity:0;transform:translateY(10px);pointer-events:none;transition:.22s ease;font-size:13px;font-weight:800;}
+@media (max-width:1180px){
+  .hero-grid,.content-grid,.reminder-grid{grid-template-columns:1fr;}
+  .hero-stats{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media (max-width:720px){
+  .container{width:min(calc(100% - 20px), var(--max));}
+  .hero{padding:24px;border-radius:28px;}
+  .hero h1{font-size:2.2rem;}
+  .hero-stats{grid-template-columns:1fr;}
+  .library-panel{padding:20px;border-radius:28px;}
+  .section-head-left h3{font-size:30px;}
+  .section-note{width:100%;justify-content:center;border-radius:16px;}
+  .select-grid{grid-template-columns:1fr;}
+  .action-row{flex-direction:column;}
+  .action-row .btn,.action-row .btn-wide{width:100%;}
+}
+</style>
+</head>
+<body data-page="fbc-comments-guide">
+<div class="page">
+  <div id="site-header"></div>
+  <main>
+    <section class="hero-wrap">
+      <div class="container">
+        <div class="hero">
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <div class="eyebrow"><i class="fa-solid fa-comments"></i> Premium comment workspace</div>
+              <h1>Build the correct FBC comment faster with the right queue and action.</h1>
+              <p>Use this page to review the FBC reminder, keep the structure consistent, and generate a ready-to-copy comment based on the queue type, action taken, and case number.</p>
+              <div class="hero-stats">
+                <div class="stat-card">
+                  <div class="stat-value" id="heroQueueCount">—</div>
+                  <div class="stat-label">Queue types available from the FBC comment file.</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value" id="heroActionCount">—</div>
+                  <div class="stat-label">Available actions for the selected queue type.</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">Ready</div>
+                  <div class="stat-label">Generator, copy action, and guide preview stay available while you work.</div>
+                </div>
+              </div>
+              <div style="margin-top:18px;">
+                <button class="hero-cta" onclick="scrollToBuilder()">Open FBC Comments Builder <i class="fa-solid fa-arrow-down"></i></button>
+              </div>
+            </div>
+            <div class="hero-side">
+              <div class="quick-panel">
+                <div>
+                  <div class="panel-title">
+                    <span>How to use</span>
+                    <span>4 steps</span>
+                  </div>
+                  <ul class="quick-list">
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-layer-group"></i></div>
+                      <div><strong>Select the queue type</strong><span>Choose the matching queue first so the correct actions appear.</span></div>
+                    </li>
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-list-check"></i></div>
+                      <div><strong>Choose the action taken</strong><span>Pick the exact action that matches the handling on the PRO.</span></div>
+                    </li>
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-hashtag"></i></div>
+                      <div><strong>Enter the case number</strong><span>Use the actual case number you are working, not the clone reference.</span></div>
+                    </li>
+                    <li class="quick-item">
+                      <div class="quick-icon"><i class="fa-solid fa-copy"></i></div>
+                      <div><strong>Copy the generated comment</strong><span>Review the final format, then copy it directly into your FBC comment.</span></div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="live-strip">
+                  <div>
+                    <strong>Workspace ready</strong>
+                    <span>FBC reminders and comment generator are available.</span>
+                  </div>
+                  <div class="pulse"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace-wrap">
+      <div class="container">
+        <div class="library-panel">
+          <div class="section-head">
+            <div class="section-head-left">
+              <div class="section-overline"><i class="fa-solid fa-circle-info"></i> Reminder and guide</div>
+              <h3>FBC Comments Guide</h3>
+              <p>Review the reminder below, then use the generator to build the correct comment format based on the FBC comment workbook.</p>
+            </div>
+          </div>
+
+          <div class="reminder-grid">
+            <div class="side-card reminder-card">
+              <div class="work-top">
+                <div>
+                  <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
+                  <h4 class="reminder-title">Important FBC comment reminder</h4>
+                </div>
+                <div class="guide-icon"><i class="fa-solid fa-bell"></i></div>
+              </div>
+
+              <ol class="reminder-list">
+                <li>Always enter FBC Comment (F9) even if no corrections or updates are made on the PROs.</li>
+                <li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
+              </ol>
+
+              <a class="inline-link" href="#" onclick="return false;">
+                <i class="fa-solid fa-link"></i>
+                Click here for the steps on how to add comment in FBI
+              </a>
+
+              <div class="note-box" style="margin-top:6px;">
+                <strong>For the Case #</strong> — Enter the case number of the actual case you are working. Example: if a clone case is assigned to you, in your FBC comment, enter the case number of the actual clone case you are working.
+              </div>
+
+              <div class="warning-copy">
+                NOTE: This is just a template that serves as your guide. You can always make a revision on it to suit the resolution on the case.
+              </div>
+
+              <div class="note-box" style="margin-top:14px;">
+                Effective immediately, the structure below will guide the 2x4 comment format to help eliminate confusion on what 2x4 comment should be used whenever agents work on PROs and to remove unnecessary 2x4 comments previously used.
+              </div>
+
+              <div class="guide-image-wrap">
+                <div class="work-top" style="margin-bottom:0;">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-image"></i> Guide image</div>
+                    <h4>Reference screenshot</h4>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></div>
+                </div>
+                <img id="guidePreviewImage" class="guide-image" src="assets/images/fbc-comments-guide-reference.png" alt="FBC comments guide reference image" onerror="this.style.display='none';document.getElementById('guideImagePlaceholder').style.display='grid';">
+                <div id="guideImagePlaceholder" class="guide-image-placeholder" style="display:none;">
+                  Add your reference screenshot here.<br>
+                  Save the screenshot as <strong>assets/images/fbc-comments-guide-reference.png</strong>
+                </div>
+                <div class="helper-text">The reference screenshot is intentionally kept with the effective-immediately reminder so agents can read the instruction and view the structure in one place.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fbcBuilder" class="workspace-wrap">
+      <div class="container">
+        <div class="library-panel">
+          <div class="section-head">
+            <div class="section-head-left">
+              <div class="section-overline"><i class="fa-solid fa-wand-magic-sparkles"></i> Comment generator</div>
+              <h3>FBC Comment Builder</h3>
+              <p>Select the queue type and action taken, then enter the case number. The tool will generate the recommended FBC comment automatically.</p>
+            </div>
+            <div class="section-note"><i class="fa-solid fa-bolt"></i><span id="statusPill">Ready</span></div>
+          </div>
+
+          <div class="content-grid">
+            <div class="work-card">
+              <div class="work-top">
+                <div>
+                  <div class="badge"><i class="fa-solid fa-pen-to-square"></i> Generator</div>
+                  <h4>Build your FBC comment</h4>
+                </div>
+                <div class="guide-icon"><i class="fa-solid fa-comments"></i></div>
+              </div>
+
+              <div class="select-grid">
+                <div>
+                  <label class="field-label">Queue Type</label>
+                  <div class="select-wrap">
+                    <select id="queueTypeSelect">
+                      <option value="">Select Queue Type</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="field-label">Action Taken</label>
+                  <div class="select-wrap">
+                    <select id="actionTakenSelect" disabled>
+                      <option value="">Select Action Taken</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-bottom:14px;">
+                <label class="field-label">Case #</label>
+                <input id="caseNumberInput" type="text" placeholder="Enter Case #">
+              </div>
+
+              <div>
+                <label class="field-label">Generated FBC Comment</label>
+                <textarea id="generatedCommentBox" class="response-box" readonly placeholder="Your generated FBC comment will appear here."></textarea>
+              </div>
+
+              <div class="action-row right">
+                <button class="btn btn-primary btn-wide" type="button" onclick="generateFbcComment()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Comment</button>
+                <button class="btn btn-dark btn-wide" type="button" onclick="copyGeneratedComment()"><i class="fa-solid fa-copy"></i> Copy Comment</button>
+                <button class="btn btn-dark btn-wide" type="button" onclick="clearFbcBuilder()"><i class="fa-solid fa-rotate-left"></i> Clear</button>
+              </div>
+
+              <div id="fbcNoteBox" class="note-box">Format: <strong>2x4 Comment - Case# - Recommended Comment</strong></div>
+            </div>
+
+            <div class="side-stack">
+              <div class="side-card">
+                <div class="work-top">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-chart-simple"></i> Snapshot</div>
+                    <h4>Quick status</h4>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">Selected Queue</span>
+                  <span class="quick-value" id="selectedQueueValue">—</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">Selected Action</span>
+                  <span class="quick-value" id="selectedActionValue">—</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">2x4 Comment</span>
+                  <span class="quick-value" id="selectedCodeValue">—</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-label">Generator Status</span>
+                  <span class="quick-value" id="generatorStatusValue">Waiting</span>
+                </div>
+              </div>
+
+              <div class="side-card">
+                <div class="work-top">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-lightbulb"></i> Best practice</div>
+                    <h4>Handling tip</h4>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+                <ul class="helper-list">
+                  <li>Use the actual case number that you are actively working.</li>
+                  <li>Review the generated comment before pasting it in case wording needs a small revision.</li>
+                  <li>If the workbook row already contains a 2x4 code, the builder uses that code automatically.</li>
+                  <li>If you want to force a fixed prefix like <strong>VS-BLER</strong>, you only need to change one line in the script.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+</div>
+<div id="toast">Copied!</div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer-loader.js"></script>
+<script>
+let fbcInitialized = false;
+
+function showToast(message = 'Copied!') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateY(0)';
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+  }, 1400);
+}
+
+function scrollToBuilder() {
+  const target = document.getElementById('fbcBuilder');
+  if (!target) return;
+  const y = target.getBoundingClientRect().top + window.scrollY - 20;
+  window.scrollTo({ top: y, behavior: 'smooth' });
+}
+
+function initFbcCommentsPage() {
+  if (fbcInitialized) return;
+  fbcInitialized = true;
+
+  const queueTypeSelect = document.getElementById('queueTypeSelect');
+  const actionTakenSelect = document.getElementById('actionTakenSelect');
+  const caseNumberInput = document.getElementById('caseNumberInput');
+  const generatedCommentBox = document.getElementById('generatedCommentBox');
+  const statusPill = document.getElementById('statusPill');
+  const selectedQueueValue = document.getElementById('selectedQueueValue');
+  const selectedActionValue = document.getElementById('selectedActionValue');
+  const selectedCodeValue = document.getElementById('selectedCodeValue');
+  const generatorStatusValue = document.getElementById('generatorStatusValue');
+  const heroQueueCount = document.getElementById('heroQueueCount');
+  const heroActionCount = document.getElementById('heroActionCount');
+
+  let DATA = [];
+
+  function setStatus(label) {
+    statusPill.textContent = label;
+  }
+
+  function normalizeRows(rows) {
+    return rows
+      .map(row => ({
+        queueType: String(row['Queue Type'] || '').trim(),
+        action: String(row['Action'] || '').trim(),
+        code: String(row['2x4 Comment '] || row['2x4 Comment'] || '').trim(),
+        recommendedComment: String(row['Recommended Comment'] || '').trim()
+      }))
+      .filter(row => row.queueType && row.action);
+  }
+
+  function populateQueueTypes() {
+    const queueTypes = [...new Set(DATA.map(item => item.queueType))].sort();
+    queueTypeSelect.innerHTML = '<option value="">Select Queue Type</option>';
+    queueTypes.forEach(queue => {
+      const option = document.createElement('option');
+      option.value = queue;
+      option.textContent = queue;
+      queueTypeSelect.appendChild(option);
+    });
+    heroQueueCount.textContent = queueTypes.length || '—';
+  }
+
+  function populateActions(queueType) {
+    actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>';
+    if (!queueType) {
+      actionTakenSelect.disabled = true;
+      heroActionCount.textContent = '—';
+      return;
+    }
+
+    const actions = [...new Set(DATA.filter(item => item.queueType === queueType).map(item => item.action))].sort();
+    actions.forEach(action => {
+      const option = document.createElement('option');
+      option.value = action;
+      option.textContent = action;
+      actionTakenSelect.appendChild(option);
+    });
+
+    actionTakenSelect.disabled = false;
+    heroActionCount.textContent = actions.length || '—';
+  }
+
+  function getSelectedRow() {
+    const queueType = queueTypeSelect.value;
+    const action = actionTakenSelect.value;
+    return DATA.find(item => item.queueType === queueType && item.action === action) || null;
+  }
+
+  function updateState() {
+    const row = getSelectedRow();
+
+    selectedQueueValue.textContent = queueTypeSelect.value || '—';
+    selectedActionValue.textContent = actionTakenSelect.value || '—';
+    selectedCodeValue.textContent = row?.code || '—';
+
+    if (!queueTypeSelect.value) {
+      generatorStatusValue.textContent = 'Waiting';
+      setStatus('Ready');
+      return;
+    }
+
+    if (!actionTakenSelect.value) {
+      generatorStatusValue.textContent = 'Waiting for Action';
+      setStatus('Select Action Taken');
+      return;
+    }
+
+    if (!caseNumberInput.value.trim()) {
+      generatorStatusValue.textContent = 'Waiting for Case #';
+      setStatus('Enter Case #');
+      return;
+    }
+
+    generatorStatusValue.textContent = generatedCommentBox.value.trim() ? 'Generated' : 'Ready to Generate';
+    setStatus(generatedCommentBox.value.trim() ? 'Comment Ready' : 'Ready to Generate');
+  }
+
+  window.generateFbcComment = function () {
+    const row = getSelectedRow();
+    const caseNumber = caseNumberInput.value.trim();
+
+    if (!queueTypeSelect.value || !actionTakenSelect.value || !caseNumber) {
+      showToast('Complete Queue Type, Action Taken, and Case # first.');
+      updateState();
+      return;
+    }
+
+    if (!row) {
+      showToast('No matching comment found.');
+      generatorStatusValue.textContent = 'No Match';
+      setStatus('No Match');
+      return;
+    }
+
+    const code = row.code || 'VS-BLER';
+    const recommendedComment = row.recommendedComment || '';
+    generatedCommentBox.value = `${code}-${caseNumber}-${recommendedComment}`;
+    generatorStatusValue.textContent = 'Generated';
+    setStatus('Comment Ready');
+    showToast('FBC comment generated!');
+  };
+
+  window.copyGeneratedComment = function () {
+    const text = generatedCommentBox.value.trim();
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => showToast('FBC comment copied!'));
+  };
+
+  window.clearFbcBuilder = function () {
+    queueTypeSelect.value = '';
+    actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>';
+    actionTakenSelect.disabled = true;
+    caseNumberInput.value = '';
+    generatedCommentBox.value = '';
+    selectedQueueValue.textContent = '—';
+    selectedActionValue.textContent = '—';
+    selectedCodeValue.textContent = '—';
+    generatorStatusValue.textContent = 'Waiting';
+    heroActionCount.textContent = '—';
+    setStatus('Ready');
+  };
+
+  queueTypeSelect.addEventListener('change', () => {
+    populateActions(queueTypeSelect.value);
+    actionTakenSelect.value = '';
+    generatedCommentBox.value = '';
+    updateState();
+  });
+
+  actionTakenSelect.addEventListener('change', () => {
+    generatedCommentBox.value = '';
+    updateState();
+  });
+  caseNumberInput.addEventListener('input', () => {
+    generatedCommentBox.value = '';
+    updateState();
+  });
+
+  const workbookPaths = ['FBC-comment.xlsx', 'FBC-comment(1).xlsx'];
+
+  (async function loadWorkbook() {
+    let buffer = null;
+    for (const path of workbookPaths) {
+      try {
+        const response = await fetch(path);
+        if (response.ok) {
+          buffer = await response.arrayBuffer();
+          break;
+        }
+      } catch (error) {}
+    }
+
+    if (!buffer) {
+      setStatus('Workbook Missing');
+      generatorStatusValue.textContent = 'Workbook Missing';
+      generatedCommentBox.value = 'Unable to load FBC-comment.xlsx. Make sure the workbook is saved in the same folder as this page.';
+      return;
+    }
+
+    const workbook = XLSX.read(buffer, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    DATA = normalizeRows(rawRows);
+    populateQueueTypes();
+    generatorStatusValue.textContent = 'Ready';
+    setStatus('Ready');
+  })();
+}
+
+document.addEventListener('DOMContentLoaded', initFbcCommentsPage);
+document.addEventListener('headerLoaded', initFbcCommentsPage);
+</script>
+</body>
+</html>
