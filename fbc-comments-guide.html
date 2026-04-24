@@ -226,95 +226,386 @@ body::after{
   .action-row .btn{width:100%;}
 }
 
-/*modal animation*/
-/* MODAL */
+/* ===== Premium FBI instruction modal with progress + cursor movement ===== */
+body.modal-open{overflow:hidden;}
+
 .fbi-modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.6);
+  z-index:99999;
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:99999;
+  padding:22px;
+  background:rgba(2,6,23,.68);
+  backdrop-filter:blur(10px);
 }
 
-.fbi-modal.show{
-  display:flex;
-}
+.fbi-modal.show{display:flex;}
 
 .fbi-modal-content{
-  width:90%;
-  max-width:900px;
-  max-height:85vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:20px;
-  padding:20px;
-  animation:fadeIn .3s ease;
+  width:min(1040px, 100%);
+  max-height:88vh;
+  overflow:hidden;
+  border-radius:30px;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 30px 90px rgba(2,6,23,.38);
+  animation:fbiModalIn .28s ease both;
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:translateY(0);}
+@keyframes fbiModalIn{
+  from{opacity:0; transform:translateY(16px) scale(.98);}
+  to{opacity:1; transform:translateY(0) scale(1);}
 }
 
-/* HEADER */
 .fbi-modal-header{
   display:flex;
+  align-items:flex-start;
   justify-content:space-between;
+  gap:18px;
+  padding:22px 24px 18px;
+  border-bottom:1px solid #e2e8f0;
+  background:
+    radial-gradient(circle at top left, rgba(77,20,140,.10), transparent 34%),
+    linear-gradient(180deg,#ffffff,#fbfdff);
+}
+
+.fbi-modal-title h3{
+  margin:0 0 6px;
+  color:#0f172a;
+  font-size:22px;
+  letter-spacing:-.04em;
+  display:flex;
   align-items:center;
-  margin-bottom:15px;
+  gap:10px;
 }
 
-.fbi-modal-header button{
-  background:none;
+.fbi-modal-title p{
+  margin:0;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.fbi-close-btn{
+  width:42px;
+  height:42px;
   border:none;
-  font-size:20px;
+  border-radius:15px;
   cursor:pointer;
+  color:#334155;
+  background:#f1f5f9;
+  display:grid;
+  place-items:center;
+  transition:.2s ease;
 }
 
-/* STEPS */
+.fbi-close-btn:hover{
+  background:#e2e8f0;
+  transform:rotate(4deg) scale(1.03);
+}
+
+.fbi-progress-wrap{
+  padding:16px 24px 0;
+}
+
+.fbi-progress-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.fbi-step-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#f5f3ff;
+  border:1px solid #e9ddff;
+  color:#4d148c;
+  font-size:12px;
+  font-weight:900;
+}
+
+.fbi-progress-percent{
+  color:#64748b;
+  font-size:12px;
+  font-weight:900;
+}
+
+.fbi-progress-track{
+  height:10px;
+  width:100%;
+  border-radius:999px;
+  background:#e2e8f0;
+  overflow:hidden;
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.08);
+}
+
+.fbi-progress-fill{
+  width:25%;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
+  transition:width .32s ease;
+}
+
+.fbi-modal-body{
+  padding:18px 24px 20px;
+  max-height:calc(88vh - 190px);
+  overflow:auto;
+}
+
+.fbi-steps-shell{
+  position:relative;
+}
+
 .fbi-step{
-  margin-bottom:20px;
+  display:none;
+  animation:fbiStepIn .28s ease both;
+}
+
+.fbi-step.active{display:block;}
+
+@keyframes fbiStepIn{
+  from{opacity:0; transform:translateX(12px);}
+  to{opacity:1; transform:translateX(0);}
 }
 
 .fbi-step-text{
-  margin-bottom:8px;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:linear-gradient(180deg,#fff7ed,#ffffff);
+  border:1px solid rgba(255,102,0,.20);
+  color:#334155;
   font-size:14px;
-  font-weight:700;
+  line-height:1.65;
 }
 
-/* IMAGE */
+.fbi-step-number{
+  flex:0 0 auto;
+  width:34px;
+  height:34px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  box-shadow:0 10px 20px rgba(77,20,140,.20);
+  font-weight:900;
+}
+
 .fbi-image-wrap{
   position:relative;
-  border-radius:14px;
   overflow:hidden;
+  border-radius:22px;
+  border:1px solid #e2e8f0;
+  background:#0f172a;
+  box-shadow:0 18px 44px rgba(15,23,42,.15);
+  cursor:zoom-in;
 }
 
 .fbi-image-wrap img{
   width:100%;
   display:block;
+  transition:transform .35s ease, filter .35s ease;
 }
 
-/* 🔥 CLICK ANIMATION */
-.click-indicator{
+.fbi-image-wrap:hover img{
+  transform:scale(1.012);
+  filter:saturate(1.04) contrast(1.02);
+}
+
+.fbi-image-wrap::after{
+  content:"";
   position:absolute;
-  width:20px;
-  height:20px;
-  border-radius:50%;
-  border:3px solid #ff6600;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  animation:clickPulse 2s infinite;
+  inset:0;
+  background:radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(255,102,0,.18), transparent 16%);
+  opacity:.82;
+  pointer-events:none;
+  animation:fbiSpotlight 2.8s ease-in-out infinite;
 }
 
-@keyframes clickPulse{
-  0%{transform:translate(-50%,-50%) scale(1); opacity:1;}
-  70%{transform:translate(-50%,-50%) scale(2); opacity:0;}
-  100%{opacity:0;}
+@keyframes fbiSpotlight{
+  0%,100%{opacity:.35;}
+  50%{opacity:.9;}
 }
-  
+
+.fbi-cursor{
+  position:absolute;
+  left:var(--cursor-x, 50%);
+  top:var(--cursor-y, 50%);
+  z-index:3;
+  width:34px;
+  height:34px;
+  transform:translate(-8px,-6px);
+  color:#fff;
+  filter:drop-shadow(0 10px 12px rgba(15,23,42,.35));
+  animation:fbiCursorMove 2.8s ease-in-out infinite;
+  pointer-events:none;
+}
+
+.fbi-cursor::before{
+  content:"245";
+  font-family:"Font Awesome 6 Free";
+  font-weight:900;
+  font-size:28px;
+  -webkit-text-stroke:2px #4d148c;
+}
+
+.fbi-click-ring{
+  position:absolute;
+  left:var(--cursor-x, 50%);
+  top:var(--cursor-y, 50%);
+  z-index:2;
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  border:3px solid #ff6600;
+  transform:translate(-50%,-50%);
+  animation:fbiClickRing 2.8s ease-out infinite;
+  pointer-events:none;
+}
+
+@keyframes fbiCursorMove{
+  0%{transform:translate(-34px,-24px) scale(.94); opacity:0;}
+  18%{opacity:1;}
+  58%{transform:translate(-8px,-6px) scale(1); opacity:1;}
+  66%{transform:translate(-8px,-6px) scale(.88);}
+  74%{transform:translate(-8px,-6px) scale(1);}
+  100%{transform:translate(-8px,-6px) scale(1); opacity:1;}
+}
+
+@keyframes fbiClickRing{
+  0%,54%{opacity:0; transform:translate(-50%,-50%) scale(.5);}
+  62%{opacity:1; transform:translate(-50%,-50%) scale(.9);}
+  100%{opacity:0; transform:translate(-50%,-50%) scale(2.3);}
+}
+
+.fbi-controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 24px 22px;
+  border-top:1px solid #e2e8f0;
+  background:#fbfdff;
+}
+
+.fbi-control-group{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.fbi-control-btn{
+  min-height:44px;
+  padding:0 15px;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  font-weight:900;
+  font-size:13px;
+  transition:.2s ease;
+}
+
+.fbi-control-btn.primary{
+  color:#fff;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  box-shadow:0 12px 22px rgba(77,20,140,.18);
+}
+
+.fbi-control-btn.dark{
+  color:#fff;
+  background:#111827;
+}
+
+.fbi-control-btn.light{
+  color:#334155;
+  background:#f1f5f9;
+}
+
+.fbi-control-btn:hover{
+  transform:translateY(-2px);
+}
+
+.fbi-control-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.fbi-dots{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  flex:1;
+}
+
+.fbi-dot{
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  background:#cbd5e1;
+  transition:.22s ease;
+}
+
+.fbi-dot.active{
+  width:28px;
+  background:linear-gradient(90deg,#4d148c,#ff6600);
+}
+
+.image-zoom-modal{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(2,6,23,.86);
+  backdrop-filter:blur(8px);
+}
+
+.image-zoom-modal.show{display:flex;}
+
+.image-zoom-modal img{
+  max-width:94vw;
+  max-height:88vh;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 30px 90px rgba(0,0,0,.45);
+  animation:fbiZoomIn .2s ease both;
+}
+
+@keyframes fbiZoomIn{
+  from{opacity:0; transform:scale(.96);}
+  to{opacity:1; transform:scale(1);}
+}
+
+@media (max-width:720px){
+  .fbi-modal{padding:12px;}
+  .fbi-modal-content{border-radius:24px;max-height:92vh;}
+  .fbi-modal-header,.fbi-progress-wrap,.fbi-modal-body,.fbi-controls{padding-left:16px;padding-right:16px;}
+  .fbi-controls{flex-direction:column;align-items:stretch;}
+  .fbi-control-group{width:100%;display:grid;grid-template-columns:1fr 1fr;}
+  .fbi-control-btn{width:100%;}
+  .fbi-dots{order:-1;margin-bottom:4px;}
+}
 </style>
 </head>
 <body data-page="fbc-comments">
@@ -541,70 +832,239 @@ function initFbcCommentsPage() {
   (async function loadWorkbook(){ let buffer = null; for(const path of workbookPaths){ try{ const response = await fetch(path); if(response.ok){ buffer = await response.arrayBuffer(); break; } }catch(error){} } if(!buffer){ setStatus('Workbook Missing'); generatorStatusValue.textContent = 'Workbook Missing'; generatedCommentBox.value = 'Unable to load FBC-comment.xlsx. Make sure the workbook is saved in the same folder as this page.'; autoResizeTextarea(generatedCommentBox); updateGeneratedStatus(false); return; } const workbook = XLSX.read(buffer, { type:'array' }); const sheet = workbook.Sheets[workbook.SheetNames[0]]; const rawRows = XLSX.utils.sheet_to_json(sheet, { defval:'' }); DATA = normalizeRows(rawRows); populateQueueTypes(); renderRecentComments(); generatorStatusValue.textContent = 'Ready'; setStatus('Ready'); updateState(); })();
 }
 document.addEventListener('DOMContentLoaded', initFbcCommentsPage); document.addEventListener('headerLoaded', initFbcCommentsPage);
+let currentFbiStep = 0;
+let fbiAutoPlayTimer = null;
 
-  function openFbiModal(){
-  document.getElementById("fbiModal").classList.add("show");
+function getFbiSteps(){
+  return Array.from(document.querySelectorAll('#fbiModal .fbi-step'));
+}
+
+function updateFbiProgress(){
+  const steps = getFbiSteps();
+  const total = steps.length || 1;
+  const current = currentFbiStep + 1;
+  const percent = Math.round((current / total) * 100);
+
+  const stepText = document.getElementById('fbiStepCounter');
+  const progressText = document.getElementById('fbiProgressPercent');
+  const progressFill = document.getElementById('fbiProgressFill');
+  const prevBtn = document.getElementById('fbiPrevBtn');
+  const nextBtn = document.getElementById('fbiNextBtn');
+  const dots = Array.from(document.querySelectorAll('.fbi-dot'));
+
+  if(stepText) stepText.textContent = `Step ${current} of ${total}`;
+  if(progressText) progressText.textContent = `${percent}% Complete`;
+  if(progressFill) progressFill.style.width = `${percent}%`;
+  if(prevBtn) prevBtn.disabled = currentFbiStep === 0;
+  if(nextBtn) nextBtn.innerHTML = currentFbiStep === total - 1 ? '<i class="fa-solid fa-check"></i> Finish' : 'Next <i class="fa-solid fa-arrow-right"></i>';
+
+  dots.forEach((dot, index) => dot.classList.toggle('active', index === currentFbiStep));
+}
+
+function showFbiStep(index){
+  const steps = getFbiSteps();
+  if(!steps.length) return;
+
+  currentFbiStep = Math.max(0, Math.min(index, steps.length - 1));
+  steps.forEach((step, stepIndex) => {
+    step.classList.toggle('active', stepIndex === currentFbiStep);
+  });
+
+  updateFbiProgress();
+}
+
+function openFbiModal(){
+  const modal = document.getElementById('fbiModal');
+  if(!modal) return;
+  modal.classList.add('show');
+  document.body.classList.add('modal-open');
+  stopFbiAutoPlay();
+  showFbiStep(0);
 }
 
 function closeFbiModal(){
-  document.getElementById("fbiModal").classList.remove("show");
+  const modal = document.getElementById('fbiModal');
+  if(!modal) return;
+  modal.classList.remove('show');
+  document.body.classList.remove('modal-open');
+  stopFbiAutoPlay();
 }
+
+function nextFbiStep(){
+  const steps = getFbiSteps();
+  if(!steps.length) return;
+
+  if(currentFbiStep >= steps.length - 1){
+    closeFbiModal();
+    return;
+  }
+
+  showFbiStep(currentFbiStep + 1);
+}
+
+function prevFbiStep(){
+  showFbiStep(currentFbiStep - 1);
+}
+
+function goToFbiStep(index){
+  stopFbiAutoPlay();
+  showFbiStep(index);
+}
+
+function toggleFbiAutoPlay(){
+  const autoBtn = document.getElementById('fbiAutoBtn');
+
+  if(fbiAutoPlayTimer){
+    stopFbiAutoPlay();
+    return;
+  }
+
+  if(autoBtn) autoBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+  fbiAutoPlayTimer = setInterval(() => {
+    const steps = getFbiSteps();
+    if(currentFbiStep >= steps.length - 1){
+      stopFbiAutoPlay();
+      return;
+    }
+    showFbiStep(currentFbiStep + 1);
+  }, 3000);
+}
+
+function stopFbiAutoPlay(){
+  if(fbiAutoPlayTimer){
+    clearInterval(fbiAutoPlayTimer);
+    fbiAutoPlayTimer = null;
+  }
+  const autoBtn = document.getElementById('fbiAutoBtn');
+  if(autoBtn) autoBtn.innerHTML = '<i class="fa-solid fa-play"></i> Auto';
+}
+
+function zoomFbiImage(img){
+  const modal = document.getElementById('imageZoomModal');
+  const zoomed = document.getElementById('zoomedFbiImage');
+  if(!modal || !zoomed || !img) return;
+  zoomed.src = img.src;
+  zoomed.alt = img.alt || 'FBI instruction image';
+  modal.classList.add('show');
+}
+
+function closeFbiZoom(){
+  const modal = document.getElementById('imageZoomModal');
+  if(modal) modal.classList.remove('show');
+}
+
+document.addEventListener('keydown', (event) => {
+  const modal = document.getElementById('fbiModal');
+  const zoom = document.getElementById('imageZoomModal');
+
+  if(zoom?.classList.contains('show') && event.key === 'Escape'){
+    closeFbiZoom();
+    return;
+  }
+
+  if(!modal?.classList.contains('show')) return;
+
+  if(event.key === 'Escape') closeFbiModal();
+  if(event.key === 'ArrowRight') nextFbiStep();
+  if(event.key === 'ArrowLeft') prevFbiStep();
+});
 </script>
-<div id="fbiModal" class="fbi-modal">
-  <div class="fbi-modal-content">
-    
+<div id="fbiModal" class="fbi-modal" onclick="if(event.target === this) closeFbiModal();">
+  <div class="fbi-modal-content" onclick="event.stopPropagation();">
     <div class="fbi-modal-header">
-      <h3><i class="fa-solid fa-circle-info"></i> How to Add Comment in FBI</h3>
-      <button onclick="closeFbiModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div class="fbi-modal-title">
+        <h3><i class="fa-solid fa-circle-info"></i> How to Add Comment in FBI</h3>
+        <p>Follow the guided steps below. Use Auto for a walkthrough, or click each image to zoom.</p>
+      </div>
+      <button class="fbi-close-btn" type="button" onclick="closeFbiModal()" aria-label="Close FBI instructions">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
     </div>
 
-    <div class="fbi-steps">
-
-      <!-- STEP -->
-      <div class="fbi-step">
-        <div class="fbi-step-text">
-          <strong>Step 1:</strong> Open the PRO in FBI
-        </div>
-        <div class="fbi-image-wrap">
-          <img src="fbc-comments-guide-images/fbi-step1.png">
-          <div class="click-indicator"></div>
-        </div>
+    <div class="fbi-progress-wrap">
+      <div class="fbi-progress-top">
+        <span class="fbi-step-pill"><i class="fa-solid fa-route"></i> <span id="fbiStepCounter">Step 1 of 4</span></span>
+        <span class="fbi-progress-percent" id="fbiProgressPercent">25% Complete</span>
       </div>
-
-      <div class="fbi-step">
-        <div class="fbi-step-text">
-          <strong>Step 2:</strong> Click on the Paper and Pencil Icon.
-        </div>
-        <div class="fbi-image-wrap">
-          <img src="fbc-comments-guide-images/fbi-step2.png">
-          <div class="click-indicator"></div>
-        </div>
+      <div class="fbi-progress-track">
+        <div class="fbi-progress-fill" id="fbiProgressFill"></div>
       </div>
-
-      <div class="fbi-step">
-        <div class="fbi-step-text">
-          <strong>Step 3:</strong> This will open a new window where you can place your comment. Click on Add Comments.
-        </div>
-        <div class="fbi-image-wrap">
-          <img src="fbc-comments-guide-images/fbi-step3.png">
-          <div class="click-indicator"></div>
-        </div>
-      </div>
-
-      <div class="fbi-step">
-        <div class="fbi-step-text">
-          <strong>Step 4:</strong> Type in your Comment and Click on ADD
-        </div>
-        <div class="fbi-image-wrap">
-          <img src="fbc-comments-guide-images/fbi-step4.png">
-          <div class="click-indicator"></div>
-        </div>
-      </div>
-
     </div>
 
+    <div class="fbi-modal-body">
+      <div class="fbi-steps-shell">
+        <div class="fbi-step active">
+          <div class="fbi-step-text">
+            <span class="fbi-step-number">1</span>
+            <div><strong>Open the PRO in FBI.</strong><br>Start by opening the shipment or PRO where the FBC/FBI comment needs to be added.</div>
+          </div>
+          <div class="fbi-image-wrap" style="--cursor-x:50%;--cursor-y:50%;" onclick="zoomFbiImage(this.querySelector('img'))">
+            <img src="fbc-comments-guide-images/fbi-step1.png" alt="Step 1 - Open the PRO in FBI">
+            <span class="fbi-cursor"></span>
+            <span class="fbi-click-ring"></span>
+          </div>
+        </div>
+
+        <div class="fbi-step">
+          <div class="fbi-step-text">
+            <span class="fbi-step-number">2</span>
+            <div><strong>Click the Paper and Pencil icon.</strong><br>This opens the comment-related action area for the selected PRO.</div>
+          </div>
+          <div class="fbi-image-wrap" style="--cursor-x:82%;--cursor-y:18%;" onclick="zoomFbiImage(this.querySelector('img'))">
+            <img src="fbc-comments-guide-images/fbi-step2.png" alt="Step 2 - Click the Paper and Pencil icon">
+            <span class="fbi-cursor"></span>
+            <span class="fbi-click-ring"></span>
+          </div>
+        </div>
+
+        <div class="fbi-step">
+          <div class="fbi-step-text">
+            <span class="fbi-step-number">3</span>
+            <div><strong>Click Add Comments.</strong><br>A new window will open where you can place the generated comment.</div>
+          </div>
+          <div class="fbi-image-wrap" style="--cursor-x:72%;--cursor-y:77%;" onclick="zoomFbiImage(this.querySelector('img'))">
+            <img src="fbc-comments-guide-images/fbi-step3.png" alt="Step 3 - Click Add Comments">
+            <span class="fbi-cursor"></span>
+            <span class="fbi-click-ring"></span>
+          </div>
+        </div>
+
+        <div class="fbi-step">
+          <div class="fbi-step-text">
+            <span class="fbi-step-number">4</span>
+            <div><strong>Type or paste your comment, then click ADD.</strong><br>Review the comment first, then save it to complete the FBI/FBC comment entry.</div>
+          </div>
+          <div class="fbi-image-wrap" style="--cursor-x:84%;--cursor-y:82%;" onclick="zoomFbiImage(this.querySelector('img'))">
+            <img src="fbc-comments-guide-images/fbi-step4.png" alt="Step 4 - Type comment and click ADD">
+            <span class="fbi-cursor"></span>
+            <span class="fbi-click-ring"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fbi-controls">
+      <div class="fbi-control-group">
+        <button class="fbi-control-btn light" id="fbiPrevBtn" type="button" onclick="prevFbiStep()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button class="fbi-control-btn primary" id="fbiNextBtn" type="button" onclick="nextFbiStep()">Next <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+
+      <div class="fbi-dots" aria-label="FBI step progress">
+        <button class="fbi-dot active" type="button" onclick="goToFbiStep(0)" aria-label="Go to step 1"></button>
+        <button class="fbi-dot" type="button" onclick="goToFbiStep(1)" aria-label="Go to step 2"></button>
+        <button class="fbi-dot" type="button" onclick="goToFbiStep(2)" aria-label="Go to step 3"></button>
+        <button class="fbi-dot" type="button" onclick="goToFbiStep(3)" aria-label="Go to step 4"></button>
+      </div>
+
+      <div class="fbi-control-group">
+        <button class="fbi-control-btn dark" id="fbiAutoBtn" type="button" onclick="toggleFbiAutoPlay()"><i class="fa-solid fa-play"></i> Auto</button>
+      </div>
+    </div>
   </div>
 </div>
-  
+
+<div id="imageZoomModal" class="image-zoom-modal" onclick="closeFbiZoom()">
+  <img id="zoomedFbiImage" src="" alt="Zoomed FBI instruction image">
+</div>
 </body>
 </html>
