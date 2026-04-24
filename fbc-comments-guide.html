@@ -175,9 +175,10 @@ body::after{
 .highlight-preview{display:none;margin:12px 0 14px;padding:16px;border-radius:18px;background:linear-gradient(135deg,#f5f3ff,#fff7ed);border:1px solid #e9ddff;box-shadow:0 12px 28px rgba(77,20,140,.10);font-weight:800;font-size:15px;line-height:1.7;color:#0f172a;}
 .highlight-preview.show{display:block;}
 .highlight-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.comment-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#f1f5f9;border:1px solid #e2e8f0;color:#334155;font-weight:900;font-size:12px;}
-.case-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1px solid rgba(255,102,0,.30);color:#c2410c;font-weight:900;font-size:13px;box-shadow:0 8px 18px rgba(255,102,0,.10);}
+.comment-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;font-weight:800;font-size:11px;}
+.case-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#fff7ed;border:1px solid rgba(255,102,0,.22);color:#c2410c;font-weight:800;font-size:12px;}
 .comment-text-highlight{display:block;margin-top:10px;color:#475569;}
+.comment-text-main{display:block;width:100%;padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,#ffffff 0%,#f8fafc 45%,#fff7ed 100%);border:1px solid #e9ddff;box-shadow:0 14px 32px rgba(77,20,140,.12);color:#0f172a;font-size:18px;font-weight:950;line-height:1.7;letter-spacing:.01em;word-break:break-word;}
 .recent-actions{display:flex;justify-content:flex-end;margin-top:12px;}
 .recent-actions button{border:none;border-radius:999px;background:#f1f5f9;color:#475569;font-weight:800;font-size:12px;padding:9px 12px;cursor:pointer;transition:.18s ease;}
 .recent-actions button:hover{background:#e2e8f0;color:#0f172a;}
@@ -727,14 +728,15 @@ body.modal-open{overflow:hidden;}
                 NOTE: This is just a template that serves as your guide. You can always make a revision on it to suit the resolution on the case.
               </div>
 
-              <div class="note-box" style="margin-top:14px;">
-                Effective immediately, the structure below will guide the 2x4 comment format to help eliminate confusion on what 2x4 comment should be used whenever agents work on PROs and to remove unnecessary 2x4 comments previously used.
-              </div>
-            </div>
-
             <div class="side-card">
               <div class="work-top">
                 <div>
+
+                    <div class="note-box" style="margin-top:14px;">
+                Effective immediately, the structure below will guide the 2x4 comment format to help eliminate confusion on what 2x4 comment should be used whenever agents work on PROs and to remove unnecessary 2x4 comments previously used.
+              </div>
+            </div>
+                
                   <div class="badge"><i class="fa-solid fa-image"></i> Guide image</div>
                   <h4>Reference screenshot</h4>
                 </div>
@@ -821,7 +823,7 @@ function initFbcCommentsPage() {
   function cleanText(text){ return String(text || '').replace(/\s+/g,' ').replace(/\s+([.,;:])/g,'$1').trim(); }
   function trimEndingPeriod(text){ return cleanText(text).replace(/[.\s]+$/g,''); }
   function escapeHtml(text){ return String(text || '').replace(/[&<>\"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[char])); }
-  function updateHighlightPreview(code, caseNumber, comment){ if(!highlightPreview) return; if(!code && !caseNumber && !comment){ highlightPreview.classList.remove('show'); highlightPreview.innerHTML = ''; return; } highlightPreview.classList.add('show'); highlightPreview.innerHTML = `<div class="highlight-line"><span class="comment-chip"><i class="fa-solid fa-tag"></i> ${escapeHtml(code)}</span><span>-</span><span class="case-chip"><i class="fa-solid fa-hashtag"></i> ${escapeHtml(caseNumber)}</span><span>-</span></div><span class="comment-text-highlight">${escapeHtml(comment)}</span>`; }
+  function updateHighlightPreview(code, caseNumber, comment){ if(!highlightPreview) return; if(!code && !caseNumber && !comment){ highlightPreview.classList.remove("show"); highlightPreview.innerHTML = ""; return; } const fullGeneratedComment = `${code}-${caseNumber}-${comment}`; highlightPreview.classList.add("show"); highlightPreview.innerHTML = `<div class="highlight-line"><span class="comment-text-main">${escapeHtml(fullGeneratedComment)}</span></div>`; }
   function populateQueueTypes(){ const queueTypes = [...new Set(DATA.map(item => item.queueType))].sort(); queueTypeSelect.innerHTML = '<option value="">Select Queue Type</option>'; queueTypes.forEach(queue => { const option = document.createElement('option'); option.value = queue; option.textContent = queue; queueTypeSelect.appendChild(option); }); heroQueueCount.textContent = queueTypes.length || '—'; }
   function populateActions(queueType){ actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>'; if(!queueType){ actionTakenSelect.disabled = true; heroActionCount.textContent = '—'; return; } const actions = [...new Set(DATA.filter(item => item.queueType === queueType).map(item => item.action))].sort(); actions.forEach(action => { const option = document.createElement('option'); option.value = action; option.textContent = action; actionTakenSelect.appendChild(option); }); actionTakenSelect.disabled = false; heroActionCount.textContent = actions.length || '—'; const savedAction = localStorage.getItem('fbc_last_action_' + queueType); if(savedAction && actions.includes(savedAction)) actionTakenSelect.value = savedAction; }
   function getSelectedRow(){ const queueType = queueTypeSelect.value; const action = actionTakenSelect.value; return DATA.find(item => item.queueType === queueType && item.action === action) || null; }
