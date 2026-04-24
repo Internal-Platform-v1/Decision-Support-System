@@ -225,6 +225,96 @@ body::after{
   .action-row{flex-direction:column;}
   .action-row .btn{width:100%;}
 }
+
+/*modal animation*/
+/* MODAL */
+.fbi-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+}
+
+.fbi-modal.show{
+  display:flex;
+}
+
+.fbi-modal-content{
+  width:90%;
+  max-width:900px;
+  max-height:85vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  animation:fadeIn .3s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* HEADER */
+.fbi-modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.fbi-modal-header button{
+  background:none;
+  border:none;
+  font-size:20px;
+  cursor:pointer;
+}
+
+/* STEPS */
+.fbi-step{
+  margin-bottom:20px;
+}
+
+.fbi-step-text{
+  margin-bottom:8px;
+  font-size:14px;
+  font-weight:700;
+}
+
+/* IMAGE */
+.fbi-image-wrap{
+  position:relative;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.fbi-image-wrap img{
+  width:100%;
+  display:block;
+}
+
+/* 🔥 CLICK ANIMATION */
+.click-indicator{
+  position:absolute;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:3px solid #ff6600;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  animation:clickPulse 2s infinite;
+}
+
+@keyframes clickPulse{
+  0%{transform:translate(-50%,-50%) scale(1); opacity:1;}
+  70%{transform:translate(-50%,-50%) scale(2); opacity:0;}
+  100%{opacity:0;}
+}
+  
 </style>
 </head>
 <body data-page="fbc-comments">
@@ -323,7 +413,7 @@ body::after{
                 <li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
               </ol>
 
-              <a class="inline-link" href="#" onclick="return false;">
+              <a class="inline-link" href="#" onclick="openFbiModal(); return false;">
                 <i class="fa-solid fa-link"></i>
                 Click here for the steps on how to add comment in FBI
               </a>
@@ -451,6 +541,70 @@ function initFbcCommentsPage() {
   (async function loadWorkbook(){ let buffer = null; for(const path of workbookPaths){ try{ const response = await fetch(path); if(response.ok){ buffer = await response.arrayBuffer(); break; } }catch(error){} } if(!buffer){ setStatus('Workbook Missing'); generatorStatusValue.textContent = 'Workbook Missing'; generatedCommentBox.value = 'Unable to load FBC-comment.xlsx. Make sure the workbook is saved in the same folder as this page.'; autoResizeTextarea(generatedCommentBox); updateGeneratedStatus(false); return; } const workbook = XLSX.read(buffer, { type:'array' }); const sheet = workbook.Sheets[workbook.SheetNames[0]]; const rawRows = XLSX.utils.sheet_to_json(sheet, { defval:'' }); DATA = normalizeRows(rawRows); populateQueueTypes(); renderRecentComments(); generatorStatusValue.textContent = 'Ready'; setStatus('Ready'); updateState(); })();
 }
 document.addEventListener('DOMContentLoaded', initFbcCommentsPage); document.addEventListener('headerLoaded', initFbcCommentsPage);
+
+  function openFbiModal(){
+  document.getElementById("fbiModal").classList.add("show");
+}
+
+function closeFbiModal(){
+  document.getElementById("fbiModal").classList.remove("show");
+}
 </script>
+<div id="fbiModal" class="fbi-modal">
+  <div class="fbi-modal-content">
+    
+    <div class="fbi-modal-header">
+      <h3><i class="fa-solid fa-circle-info"></i> How to Add Comment in FBI</h3>
+      <button onclick="closeFbiModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="fbi-steps">
+
+      <!-- STEP -->
+      <div class="fbi-step">
+        <div class="fbi-step-text">
+          <strong>Step 1:</strong> Open the PRO in FBI
+        </div>
+        <div class="fbi-image-wrap">
+          <img src="assets/images/fbi-step1.png">
+          <div class="click-indicator"></div>
+        </div>
+      </div>
+
+      <div class="fbi-step">
+        <div class="fbi-step-text">
+          <strong>Step 2:</strong> Press F9 to open comment box
+        </div>
+        <div class="fbi-image-wrap">
+          <img src="assets/images/fbi-step2.png">
+          <div class="click-indicator"></div>
+        </div>
+      </div>
+
+      <div class="fbi-step">
+        <div class="fbi-step-text">
+          <strong>Step 3:</strong> Enter your FBC comment
+        </div>
+        <div class="fbi-image-wrap">
+          <img src="assets/images/fbi-step3.png">
+          <div class="click-indicator"></div>
+        </div>
+      </div>
+
+      <div class="fbi-step">
+        <div class="fbi-step-text">
+          <strong>Step 4:</strong> Save the comment
+        </div>
+        <div class="fbi-image-wrap">
+          <img src="assets/images/fbi-step4.png">
+          <div class="click-indicator"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+  
 </body>
 </html>
