@@ -137,11 +137,63 @@ body::after{
 #fbcBuilder select:disabled{opacity:.65;cursor:not-allowed;}
 .info-box{padding:14px 16px;border-radius:18px;background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);border:1px solid #e4ebf5;font-size:14px;line-height:1.7;color:#334155;min-height:78px;}
 .info-box.empty{color:#94a3b8;}
-.response-box{min-height:56px;max-height:160px;resize:none;overflow:hidden;white-space:pre-wrap;line-height:1.7;transition:height .15s ease;font-weight:900;font-size:16px;letter-spacing:.2px;background:linear-gradient(135deg,#ffffff,#f8fafc);border:2px solid #e2e8f0;color:#0f172a;padding:16px 52px 16px 18px;border-radius:16px;box-shadow:0 14px 30px rgba(15,23,42,.08);}
-.generated-output-wrap{position:relative;}
-.copied-badge{position:absolute;top:10px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#ecfdf5;color:#15803d;border:1px solid rgba(22,163,74,.18);font-size:12px;font-weight:900;box-shadow:0 10px 22px rgba(22,163,74,.12);opacity:0;transform:translateY(-6px) scale(.96);pointer-events:none;transition:.2s ease;}
-.copied-badge.show{opacity:1;transform:translateY(0) scale(1);}
-.response-box:focus{background:#ffffff;border-color:#4d148c;box-shadow:0 0 0 4px rgba(77,20,140,.10),0 18px 35px rgba(77,20,140,.15);}
+/* Final generated comment box */
+.generated-output-wrap{
+  position:relative;
+}
+
+.response-box{
+  min-height:62px;
+  max-height:170px;
+  resize:none;
+  overflow:hidden;
+  white-space:pre-wrap;
+  line-height:1.7;
+  transition:height .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+
+  font-weight:950;
+  font-size:16px;
+  letter-spacing:.01em;
+  color:#0f172a;
+
+  padding:18px 104px 18px 18px !important;
+  border-radius:18px !important;
+  background:linear-gradient(135deg,#ffffff 0%,#f8fafc 55%,#fff7ed 100%) !important;
+  border:2px solid #e9ddff !important;
+  box-shadow:0 16px 34px rgba(77,20,140,.12), inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+.response-box:focus{
+  background:#ffffff !important;
+  border-color:#4d148c !important;
+  box-shadow:0 0 0 5px rgba(77,20,140,.10), 0 18px 38px rgba(77,20,140,.16);
+}
+
+.copied-badge{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  box-shadow:0 10px 22px rgba(22,163,74,.22);
+  opacity:0;
+  transform:translateY(-4px) scale(.96);
+  pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+}
+
+.copied-badge.show{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
 .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
 .action-row .btn{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 18px;border-radius:17px;text-decoration:none;font-weight:800;border:none;cursor:pointer;transition:.22s ease;}
 .btn-primary{background:linear-gradient(135deg,#4d148c 0%,#6d28d9 100%);color:#fff;box-shadow:0 14px 24px rgba(77,20,140,.16);}
@@ -229,6 +281,10 @@ body::after{
   .action-row{flex-direction:column;}
   .action-row .btn{width:100%;}
 }
+
+
+/* Hide duplicate generated-preview box: textarea is now the final output */
+.highlight-preview{display:none !important;}
 
 /* ===== Premium FBI instruction modal with progress + cursor movement ===== */
 body.modal-open{overflow:hidden;}
@@ -790,7 +846,16 @@ body.modal-open{overflow:hidden;}
                 </div>
                 <div class="ai-toggle-row"><label class="toggle-pill"><input type="checkbox" id="autoCopyToggle" checked> Auto-copy after generate</label><label class="toggle-pill"><input type="checkbox" id="editModeToggle"> Allow editing before copy</label><label class="toggle-pill"><input type="checkbox" id="includeContextToggle" checked> Add optional context</label></div>
               </div>
-              <div><div class="generated-toolbar"><label class="field-label" style="margin-bottom:0;">Generated FBC Comment</label><span id="generatedMiniStatus" class="mini-status"><i class="fa-solid fa-circle"></i> Waiting</span></div><div class="generated-output-wrap"><span id="copiedBadge" class="copied-badge"><i class="fa-solid fa-check"></i> Copied</span><textarea id="generatedCommentBox" class="response-box" readonly placeholder="Your generated FBC comment will appear here after clicking Generate Comment."></textarea></div></div>
+              <div>
+                <div class="generated-toolbar">
+                  <label class="field-label" style="margin-bottom:0;">Generated FBC Comment</label>
+                  <span id="generatedMiniStatus" class="mini-status"><i class="fa-solid fa-circle"></i> Waiting</span>
+                </div>
+                <div class="generated-output-wrap">
+                  <span id="copiedBadge" class="copied-badge"><i class="fa-solid fa-check"></i> Copied</span>
+                  <textarea id="generatedCommentBox" class="response-box" readonly placeholder="Your generated FBC comment will appear here after clicking Generate Comment."></textarea>
+                </div>
+              </div>
               <div class="action-row right"><button class="btn btn-dark btn-wide" type="button" onclick="copyGeneratedComment()"><i class="fa-solid fa-copy"></i> Copy Comment</button><button class="btn btn-dark btn-wide" type="button" onclick="clearFbcBuilder()"><i class="fa-solid fa-rotate-left"></i> Clear</button></div>
               <div id="fbcNoteBox" class="note-box">Format: <strong>2x4 Comment - Case# - Recommended Comment</strong>. The assistant keeps the approved workbook comment as the base and highlights the case number for easier review.</div>
             </div>
@@ -817,32 +882,33 @@ function showToast(message = 'Copied!') { const toast = document.getElementById(
 function scrollToBuilder() { const target = document.getElementById('fbcBuilder'); if (!target) return; const y = target.getBoundingClientRect().top + window.scrollY - 20; window.scrollTo({ top: y, behavior: 'smooth' }); }
 function initFbcCommentsPage() {
   if (fbcInitialized) return; fbcInitialized = true;
-  const queueTypeSelect = document.getElementById('queueTypeSelect'); const actionTakenSelect = document.getElementById('actionTakenSelect'); const caseNumberInput = document.getElementById('caseNumberInput'); const aiContextInput = document.getElementById('aiContextInput'); const autoCopyToggle = document.getElementById('autoCopyToggle'); const editModeToggle = document.getElementById('editModeToggle'); const includeContextToggle = document.getElementById('includeContextToggle'); const generatedCommentBox = document.getElementById('generatedCommentBox'); const copiedBadge = document.getElementById('copiedBadge'); const statusPill = document.getElementById('statusPill'); const selectedQueueValue = document.getElementById('selectedQueueValue'); const selectedActionValue = document.getElementById('selectedActionValue'); const selectedCodeValue = document.getElementById('selectedCodeValue'); const generatorStatusValue = document.getElementById('generatorStatusValue'); const heroQueueCount = document.getElementById('heroQueueCount'); const heroActionCount = document.getElementById('heroActionCount'); const assistantChecks = document.getElementById('assistantChecks'); const aiSuggestions = document.getElementById('aiSuggestions'); const generatedMiniStatus = document.getElementById('generatedMiniStatus'); const caseWarning = document.getElementById('caseWarning'); const recentCommentsList = document.getElementById('recentCommentsList');
+  const queueTypeSelect = document.getElementById('queueTypeSelect'); const actionTakenSelect = document.getElementById('actionTakenSelect'); const caseNumberInput = document.getElementById('caseNumberInput'); const aiContextInput = document.getElementById('aiContextInput'); const autoCopyToggle = document.getElementById('autoCopyToggle'); const editModeToggle = document.getElementById('editModeToggle'); const includeContextToggle = document.getElementById('includeContextToggle'); const generatedCommentBox = document.getElementById('generatedCommentBox'); const highlightPreview = document.getElementById('highlightPreview'); const copiedBadge = document.getElementById('copiedBadge'); const statusPill = document.getElementById('statusPill'); const selectedQueueValue = document.getElementById('selectedQueueValue'); const selectedActionValue = document.getElementById('selectedActionValue'); const selectedCodeValue = document.getElementById('selectedCodeValue'); const generatorStatusValue = document.getElementById('generatorStatusValue'); const heroQueueCount = document.getElementById('heroQueueCount'); const heroActionCount = document.getElementById('heroActionCount'); const assistantChecks = document.getElementById('assistantChecks'); const aiSuggestions = document.getElementById('aiSuggestions'); const generatedMiniStatus = document.getElementById('generatedMiniStatus'); const caseWarning = document.getElementById('caseWarning'); const recentCommentsList = document.getElementById('recentCommentsList');
   let DATA = [];
   function setStatus(label){ if(statusPill) statusPill.textContent = label; }
+  function showCopiedBadge(){ if(!copiedBadge) return; copiedBadge.classList.add('show'); clearTimeout(showCopiedBadge.timer); showCopiedBadge.timer = setTimeout(() => copiedBadge.classList.remove('show'), 1600); }
   function autoResizeTextarea(el){ if(!el) return; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
   function getCell(row, possibleNames){ const keys = Object.keys(row); for(const name of possibleNames){ const exactKey = keys.find(k => k.trim().toLowerCase() === name.trim().toLowerCase()); if(exactKey) return row[exactKey]; } return ''; }
   function normalizeRows(rows){ return rows.map(row => ({ queueType:String(getCell(row,['Queue Type','Queue','QueueType'])).trim(), action:String(getCell(row,['Action','Action Taken','Type'])).trim(), code:String(getCell(row,['2x4 Comment','2x4 Comment ','2x4','Code'])).trim(), recommendedComment:String(getCell(row,['Recommended Comment','Recommended comment','Recommended Comments','Comment','Recommendation'])).trim() })).filter(row => row.queueType && row.action); }
   function cleanText(text){ return String(text || '').replace(/\s+/g,' ').replace(/\s+([.,;:])/g,'$1').trim(); }
   function trimEndingPeriod(text){ return cleanText(text).replace(/[.\s]+$/g,''); }
   function escapeHtml(text){ return String(text || '').replace(/[&<>\"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[char])); }
-  function showCopiedBadge(){ if(!copiedBadge) return; copiedBadge.classList.add('show'); setTimeout(() => copiedBadge.classList.remove('show'), 1400); }
+  function updateHighlightPreview(code, caseNumber, comment){ if(!highlightPreview) return; if(!code && !caseNumber && !comment){ highlightPreview.classList.remove("show"); highlightPreview.innerHTML = ""; return; } const fullGeneratedComment = `${code}-${caseNumber}-${comment}`; highlightPreview.classList.add("show"); highlightPreview.innerHTML = `<div class="highlight-line"><span class="comment-text-main">${escapeHtml(fullGeneratedComment)}</span></div>`; }
   function populateQueueTypes(){ const queueTypes = [...new Set(DATA.map(item => item.queueType))].sort(); queueTypeSelect.innerHTML = '<option value="">Select Queue Type</option>'; queueTypes.forEach(queue => { const option = document.createElement('option'); option.value = queue; option.textContent = queue; queueTypeSelect.appendChild(option); }); heroQueueCount.textContent = queueTypes.length || '—'; }
   function populateActions(queueType){ actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>'; if(!queueType){ actionTakenSelect.disabled = true; heroActionCount.textContent = '—'; return; } const actions = [...new Set(DATA.filter(item => item.queueType === queueType).map(item => item.action))].sort(); actions.forEach(action => { const option = document.createElement('option'); option.value = action; option.textContent = action; actionTakenSelect.appendChild(option); }); actionTakenSelect.disabled = false; heroActionCount.textContent = actions.length || '—'; const savedAction = localStorage.getItem('fbc_last_action_' + queueType); if(savedAction && actions.includes(savedAction)) actionTakenSelect.value = savedAction; }
   function getSelectedRow(){ const queueType = queueTypeSelect.value; const action = actionTakenSelect.value; return DATA.find(item => item.queueType === queueType && item.action === action) || null; }
   function getRecentComments(){ try{return JSON.parse(localStorage.getItem('fbc_recent_comments') || '[]');}catch{return [];} }
   function saveRecentComment(comment){ if(!comment) return; const row = getSelectedRow(); let list = getRecentComments().filter(item => item.comment !== comment); list.unshift({ comment, queue:queueTypeSelect.value || 'FBC', action:actionTakenSelect.value || 'Generated', code:row?.code || 'VS-BLER', caseNumber:caseNumberInput.value.trim(), recommendedComment:row?.recommendedComment || '', createdAt:new Date().toISOString() }); list = list.slice(0,5); localStorage.setItem('fbc_recent_comments', JSON.stringify(list)); renderRecentComments(); }
-  function renderRecentComments(){ const list = getRecentComments(); if(!recentCommentsList) return; if(!list.length){ recentCommentsList.innerHTML = '<div class="helper-text">Generated comments will appear here for quick reuse during this browser session.</div>'; return; } recentCommentsList.innerHTML = list.map((item,index) => `<div class="recent-item" data-index="${index}"><strong>${item.code || 'FBC'} • ${item.action || 'Generated'}</strong><span>${item.comment}</span></div>`).join(''); recentCommentsList.querySelectorAll('.recent-item').forEach(item => { item.addEventListener('click', () => { const selected = list[Number(item.dataset.index)]; if(!selected) return; if(selected.queue){ queueTypeSelect.value = selected.queue; populateActions(selected.queue); } if(selected.action){ actionTakenSelect.value = selected.action; } caseNumberInput.value = selected.caseNumber || ''; generatedCommentBox.value = selected.comment || ''; autoResizeTextarea(generatedCommentBox); updateGeneratedStatus(Boolean(selected.comment));|||||| updateState(); showToast('Previous comment loaded for editing.'); }); }); }
+  function renderRecentComments(){ const list = getRecentComments(); if(!recentCommentsList) return; if(!list.length){ recentCommentsList.innerHTML = '<div class="helper-text">Generated comments will appear here for quick reuse during this browser session.</div>'; return; } recentCommentsList.innerHTML = list.map((item,index) => `<div class="recent-item" data-index="${index}"><strong>${item.code || 'FBC'} • ${item.action || 'Generated'}</strong><span>${item.comment}</span></div>`).join(''); recentCommentsList.querySelectorAll('.recent-item').forEach(item => { item.addEventListener('click', () => { const selected = list[Number(item.dataset.index)]; if(!selected) return; if(selected.queue){ queueTypeSelect.value = selected.queue; populateActions(selected.queue); } if(selected.action){ actionTakenSelect.value = selected.action; } caseNumberInput.value = selected.caseNumber || ''; generatedCommentBox.value = selected.comment || ''; autoResizeTextarea(generatedCommentBox); updateGeneratedStatus(Boolean(selected.comment)); updateHighlightPreview(selected.code || 'FBC', selected.caseNumber || '—', selected.recommendedComment || selected.comment); updateState(); showToast('Previous comment loaded for editing.'); }); }); }
   function updateGeneratedStatus(isReady){ if(!generatedMiniStatus) return; generatedMiniStatus.classList.toggle('ready', Boolean(isReady)); generatedMiniStatus.innerHTML = isReady ? '<i class="fa-solid fa-circle-check"></i> Comment Ready' : '<i class="fa-solid fa-circle"></i> Waiting'; }
   function validateCaseNumber(showWarning = true){ const value = caseNumberInput.value.trim(); const valid = !value || /^\d+$/.test(value); if(caseWarning) caseWarning.classList.toggle('show', showWarning && !valid); return valid; }
   function updateAssistantChecks(){ const row = getSelectedRow(); const caseNumber = caseNumberInput.value.trim(); const hasValidCase = /^\d+$/.test(caseNumber); const checks = []; const suggestions = []; if(queueTypeSelect.value) checks.push('Queue type selected.'); else suggestions.push('Select the queue type first so the assistant can load the correct action list.'); if(actionTakenSelect.value) checks.push('Action taken selected.'); else suggestions.push('Choose the exact action taken before generating the comment.'); if(caseNumber && hasValidCase) checks.push('Case number format looks valid.'); else if(caseNumber && !hasValidCase) suggestions.push('Case # should be numeric only to avoid an invalid FBC comment.'); else suggestions.push('Enter the actual case number you are currently working.'); if(row?.recommendedComment) checks.push('Workbook recommendation loaded.'); if(includeContextToggle.checked && aiContextInput.value.trim()) checks.push('Optional case context ready.'); assistantChecks.innerHTML = checks.length ? checks.map(item => `<div><i class="fa-solid fa-circle-check" style="color:#16a34a;"></i> ${item}</div>`).join('') : 'Select Queue Type, Action Taken, and Case # to view smart checks.'; aiSuggestions.innerHTML = suggestions.slice(0,3).map(item => `<div class="ai-suggestion"><i class="fa-solid fa-lightbulb"></i><span>${item}</span></div>`).join(''); }
   function updateState(){ const row = getSelectedRow(); const caseNumber = caseNumberInput.value.trim(); validateCaseNumber(Boolean(caseNumber)); selectedQueueValue.textContent = queueTypeSelect.value || '—'; selectedActionValue.textContent = actionTakenSelect.value || '—'; selectedCodeValue.textContent = row?.code || '—'; if(!queueTypeSelect.value){ generatorStatusValue.textContent = 'Waiting'; setStatus('Ready'); } else if(!actionTakenSelect.value){ generatorStatusValue.textContent = 'Waiting for Action'; setStatus('Select Action Taken'); } else if(!caseNumber){ generatorStatusValue.textContent = 'Waiting for Case #'; setStatus('Enter Case #'); } else if(!validateCaseNumber(false)){ generatorStatusValue.textContent = 'Invalid Case #'; setStatus('Fix Case #'); } else { generatorStatusValue.textContent = generatedCommentBox.value.trim() ? 'Generated' : 'Ready to Generate'; setStatus(generatedCommentBox.value.trim() ? 'Comment Ready' : 'Ready to Generate'); } updateAssistantChecks(); updateGeneratedStatus(Boolean(generatedCommentBox.value.trim())); }
   function buildAssistantComment(row, caseNumber){ const code = row.code || 'VS-BLER'; const base = trimEndingPeriod(row.recommendedComment || 'NO RECOMMENDED COMMENT FOUND'); const context = cleanText(aiContextInput.value); let finalText = base; if(includeContextToggle.checked && context){ finalText = `${base}. Additional case context: ${trimEndingPeriod(context)}`; } return { code, caseNumber, finalText, fullComment:`${code}-${caseNumber}-${finalText}` }; }
-  window.generateFbcComment = function(){ const row = getSelectedRow(); const caseNumber = caseNumberInput.value.trim(); if(!queueTypeSelect.value || !actionTakenSelect.value || !caseNumber){ showToast('Complete Queue Type, Action Taken, and Case # first.'); updateState(); return; } if(!validateCaseNumber(true)){ showToast('Case # should only contain numbers.'); updateState(); return; } if(!row){ showToast('No matching comment found.'); generatorStatusValue.textContent = 'No Match'; setStatus('No Match'); return; } localStorage.setItem('fbc_last_action_' + queueTypeSelect.value, actionTakenSelect.value); setStatus('Generating...'); const result = buildAssistantComment(row, caseNumber); const finalComment = result.fullComment; generatedCommentBox.value = finalComment; autoResizeTextarea(generatedCommentBox); generatorStatusValue.textContent = 'Generated'; setStatus('Comment Ready'); updateGeneratedStatus(true); saveRecentComment(finalComment); if(autoCopyToggle.checked){ navigator.clipboard.writeText(finalComment).then(() => { showToast('Generated & copied!'); showCopiedBadge(); }); } else { showToast('FBC comment generated!'); } };
-  window.copyGeneratedComment = function(){ const text = generatedCommentBox.value.trim(); if(!text){ showToast('Generate a comment first.'); return; } navigator.clipboard.writeText(text).then(() => { showToast('FBC comment copied!'); showCopiedBadge(); }); };
+  window.generateFbcComment = function(){ const row = getSelectedRow(); const caseNumber = caseNumberInput.value.trim(); if(!queueTypeSelect.value || !actionTakenSelect.value || !caseNumber){ showToast('Complete Queue Type, Action Taken, and Case # first.'); updateState(); return; } if(!validateCaseNumber(true)){ showToast('Case # should only contain numbers.'); updateState(); return; } if(!row){ showToast('No matching comment found.'); generatorStatusValue.textContent = 'No Match'; setStatus('No Match'); return; } localStorage.setItem('fbc_last_action_' + queueTypeSelect.value, actionTakenSelect.value); setStatus('Generating...'); const result = buildAssistantComment(row, caseNumber); const finalComment = result.fullComment; generatedCommentBox.value = finalComment; autoResizeTextarea(generatedCommentBox); updateHighlightPreview(result.code, result.caseNumber, result.finalText); generatorStatusValue.textContent = 'Generated'; setStatus('Comment Ready'); updateGeneratedStatus(true); saveRecentComment(finalComment); if(autoCopyToggle.checked){ navigator.clipboard.writeText(finalComment).then(() => { showCopiedBadge(); showToast('Generated & copied!'); }); } else { showToast('FBC comment generated!'); } };
+  window.copyGeneratedComment = function(){ const text = generatedCommentBox.value.trim(); if(!text){ showToast('Generate a comment first.'); return; } navigator.clipboard.writeText(text).then(() => { showCopiedBadge(); showToast('FBC comment copied!'); }); };
   window.clearRecentComments = function(){ localStorage.removeItem('fbc_recent_comments'); renderRecentComments(); showToast('Recent comments cleared.'); };
-  window.clearFbcBuilder = function(){ queueTypeSelect.value = ''; actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>'; actionTakenSelect.disabled = true; caseNumberInput.value = ''; aiContextInput.value = ''; generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); selectedQueueValue.textContent = '—'; selectedActionValue.textContent = '—'; selectedCodeValue.textContent = '—'; generatorStatusValue.textContent = 'Waiting'; heroActionCount.textContent = '—'; setStatus('Ready'); updateState(); };
-  queueTypeSelect.addEventListener('change', () => { populateActions(queueTypeSelect.value); generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateState(); }); actionTakenSelect.addEventListener('change', () => { generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateState(); }); caseNumberInput.addEventListener('input', () => { generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateState(); }); aiContextInput.addEventListener('input', updateState); includeContextToggle.addEventListener('change', updateState); editModeToggle.addEventListener('change', () => { generatedCommentBox.readOnly = !editModeToggle.checked; showToast(editModeToggle.checked ? 'Edit mode enabled.' : 'Edit mode locked.'); });
+  window.clearFbcBuilder = function(){ queueTypeSelect.value = ''; actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>'; actionTakenSelect.disabled = true; caseNumberInput.value = ''; aiContextInput.value = ''; generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); selectedQueueValue.textContent = '—'; selectedActionValue.textContent = '—'; selectedCodeValue.textContent = '—'; generatorStatusValue.textContent = 'Waiting'; heroActionCount.textContent = '—'; setStatus('Ready'); updateState(); };
+  queueTypeSelect.addEventListener('change', () => { populateActions(queueTypeSelect.value); generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); updateState(); }); actionTakenSelect.addEventListener('change', () => { generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); updateState(); }); caseNumberInput.addEventListener('input', () => { generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); updateState(); }); aiContextInput.addEventListener('input', updateState); includeContextToggle.addEventListener('change', updateState); editModeToggle.addEventListener('change', () => { generatedCommentBox.readOnly = !editModeToggle.checked; showToast(editModeToggle.checked ? 'Edit mode enabled.' : 'Edit mode locked.'); });
   const workbookPaths = ['FBC-comment(1).xlsx', 'FBC-comment.xlsx'];
   (async function loadWorkbook(){ let buffer = null; for(const path of workbookPaths){ try{ const response = await fetch(path); if(response.ok){ buffer = await response.arrayBuffer(); break; } }catch(error){} } if(!buffer){ setStatus('Workbook Missing'); generatorStatusValue.textContent = 'Workbook Missing'; generatedCommentBox.value = 'Unable to load FBC-comment.xlsx. Make sure the workbook is saved in the same folder as this page.'; autoResizeTextarea(generatedCommentBox); updateGeneratedStatus(false); return; } const workbook = XLSX.read(buffer, { type:'array' }); const sheet = workbook.Sheets[workbook.SheetNames[0]]; const rawRows = XLSX.utils.sheet_to_json(sheet, { defval:'' }); DATA = normalizeRows(rawRows); populateQueueTypes(); renderRecentComments(); generatorStatusValue.textContent = 'Ready'; setStatus('Ready'); updateState(); })();
 }
