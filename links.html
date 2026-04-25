@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tools & Links Hub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/header-footer-style.css">
+
+<style>
+:root{
+  --purple:#4d148c;
+  --purple2:#6d28d9;
+  --orange:#ff6600;
+  --dark:#0f172a;
+  --soft:#64748b;
+  --line:#e2e8f0;
+  --bg:#eef4fb;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Inter",sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(109,40,217,.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,102,0,.12), transparent 24%),
+    #eef4fb;
+  color:var(--dark);
+}
+
+.container{
+  width:min(1380px, calc(100% - 32px));
+  margin:auto;
+}
+
+.hero{
+  margin:28px 0 22px;
+  padding:34px;
+  border-radius:34px;
+  background:
+    radial-gradient(circle at 90% 20%, rgba(255,102,0,.22), transparent 20%),
+    linear-gradient(135deg,#4d148c,#6d28d9,#1e293b);
+  color:#fff;
+  box-shadow:0 24px 70px rgba(15,23,42,.18);
+}
+
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.13);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.hero h1{
+  margin:0;
+  font-size:clamp(2rem,4vw,3.4rem);
+  letter-spacing:-.05em;
+  line-height:1;
+}
+
+.hero p{
+  margin:14px 0 0;
+  color:rgba(255,255,255,.82);
+  max-width:780px;
+  line-height:1.7;
+}
+
+.ai-panel{
+  margin-bottom:22px;
+  padding:18px;
+  border-radius:28px;
+  background:rgba(255,255,255,.88);
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:0 18px 44px rgba(15,23,42,.10);
+  backdrop-filter:blur(16px);
+}
+
+.ai-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.ai-title{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.ai-icon{
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#4d148c,#7c3aed);
+  color:#fff;
+  box-shadow:0 12px 24px rgba(77,20,140,.20);
+}
+
+.ai-title h2{
+  margin:0;
+  font-size:21px;
+  letter-spacing:-.03em;
+}
+
+.ai-title p{
+  margin:3px 0 0;
+  color:var(--soft);
+  font-size:13px;
+}
+
+.ai-status{
+  padding:10px 14px;
+  border-radius:999px;
+  background:#f5f3ff;
+  color:#5b21b6;
+  font-size:12px;
+  font-weight:900;
+}
+
+.search-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+}
+
+.search-wrap{
+  position:relative;
+}
+
+.search-wrap i{
+  position:absolute;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#64748b;
+}
+
+#search{
+  width:100%;
+  height:62px;
+  border:none;
+  outline:none;
+  border-radius:19px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.25);
+  padding:0 18px 0 50px;
+  font-size:16px;
+  font-weight:700;
+}
+
+#search:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.18),0 0 0 6px rgba(77,20,140,.07);
+}
+
+.ai-action{
+  border:none;
+  min-height:62px;
+  padding:0 20px;
+  border-radius:19px;
+  background:linear-gradient(135deg,#ff6600,#ff7a1a);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 14px 28px rgba(255,102,0,.20);
+}
+
+.ai-suggestion{
+  margin-top:12px;
+  padding:13px 15px;
+  border-radius:18px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  color:#475569;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.filter{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+
+.filter button{
+  border:none;
+  padding:10px 15px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid #e2e8f0;
+  cursor:pointer;
+  font-weight:900;
+  color:#334155;
+}
+
+.filter button.active{
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff;
+  border-color:transparent;
+}
+
+.workspace{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 390px;
+  gap:22px;
+  align-items:start;
+  padding-bottom:60px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+  gap:18px;
+}
+
+.card{
+  position:relative;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+  border:1px solid #e2e8f0;
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 14px 30px rgba(15,23,42,.08);
+  transition:.22s ease;
+  cursor:pointer;
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:18px;
+  right:18px;
+  height:4px;
+  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
+  border-radius:0 0 999px 999px;
+}
+
+.card:hover,
+.card.active{
+  transform:translateY(-4px);
+  box-shadow:0 22px 50px rgba(77,20,140,.18);
+  border:2px solid #6d28d9;
+  background:linear-gradient(180deg,#ffffff,#f7f3ff);
+}
+
+.card.active::after{
+  content:"Selected";
+  position:absolute;
+  top:14px;
+  right:14px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.card-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.icon{
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:#f3f0ff;
+  color:#5b21b6;
+}
+
+.star{
+  color:#cbd5e1;
+  cursor:pointer;
+}
+
+.star.active{
+  color:#ff6600;
+}
+
+.card h3{
+  margin:14px 0 7px;
+  font-size:18px;
+  letter-spacing:-.03em;
+}
+
+.card p{
+  margin:0;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.badges{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.badge{
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  background:#f1f5f9;
+  color:#475569;
+}
+
+.badge.orange{
+  background:#fff7ed;
+  color:#c2410c;
+}
+
+  
+.btn{
+  border:none;
+  height:42px;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:900;
+  font-size:12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn-open{
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff;
+}
+
+.btn-copy{
+  background:#f1f5f9;
+  color:#334155;
+}
+
+.preview{
+  position:sticky;
+  top:22px;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+  border:1px solid #e2e8f0;
+  border-radius:28px;
+  padding:20px;
+  box-shadow:0 18px 44px rgba(15,23,42,.10);
+  overflow:hidden;
+}
+
+.preview::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:20px;
+  right:20px;
+  height:4px;
+  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
+  border-radius:0 0 999px 999px;
+}
+
+.preview-empty{
+  min-height:360px;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  color:#64748b;
+}
+
+.preview-empty i{
+  font-size:42px;
+  color:#7c3aed;
+  margin-bottom:12px;
+}
+
+.preview-head{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.preview-icon{
+  width:52px;
+  height:52px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#4d148c,#7c3aed);
+  color:#fff;
+  flex-shrink:0;
+}
+
+.preview h3{
+  margin:0 0 5px;
+  font-size:22px;
+  letter-spacing:-.04em;
+}
+
+.preview p{
+  margin:0;
+  color:#64748b;
+  font-size:14px;
+  line-height:1.65;
+}
+
+.preview-url{
+  margin-top:14px;
+  padding:14px;
+  border-radius:18px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  word-break:break-all;
+  font-size:12px;
+  color:#334155;
+  line-height:1.6;
+}
+
+.preview-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+
+.ai-result{
+  margin-top:15px;
+  padding:14px;
+  border-radius:18px;
+  background:#f5f3ff;
+  border:1px solid #ede9fe;
+  color:#4c1d95;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.preview-frame{
+  margin-top:15px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid #e2e8f0;
+  background:#f8fafc;
+  height:230px;
+}
+
+.preview-frame iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+
+.frame-note{
+  margin-top:10px;
+  font-size:12px;
+  color:#64748b;
+  line-height:1.5;
+}
+
+.no-results{
+  grid-column:1/-1;
+  padding:30px;
+  text-align:center;
+  border-radius:24px;
+  background:#fff;
+  border:1px dashed #cbd5e1;
+  color:#64748b;
+  font-weight:800;
+}
+
+#toast{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:99999;
+  background:#111827;
+  color:#fff;
+  padding:13px 17px;
+  border-radius:15px;
+  box-shadow:0 16px 34px rgba(15,23,42,.22);
+  opacity:0;
+  transform:translateY(10px);
+  transition:.22s ease;
+  pointer-events:none;
+  font-weight:900;
+  font-size:13px;
+}
+
+@media(max-width:1050px){
+  .workspace{grid-template-columns:1fr}
+  .preview{position:relative;top:auto}
+}
+
+@media(max-width:700px){
+  .search-row{grid-template-columns:1fr}
+  .ai-action{width:100%}
+  .hero{padding:24px;border-radius:26px}
+}
+</style>
+</head>
+
+<body data-page="links">
+<div id="site-header"></div>
+
+<main class="container">
+  <section class="hero">
+    <div class="hero-badge"><i class="fa-solid fa-sparkles"></i> AI-powered link workspace</div>
+    <h1>Tools & Links Hub</h1>
+    <p>Search naturally, preview the selected tool, copy links instantly, or open the correct system faster.</p>
+  </section>
+
+  <section class="ai-panel">
+    <div class="ai-top">
+      <div class="ai-title">
+        <div class="ai-icon"><i class="fa-solid fa-robot"></i></div>
+        <div>
+          <h2>AI Link Assistant</h2>
+          <p>Try: “open racf”, “copy ispi”, “service center”, “dashboard”, or “tools that need iSPI browser”.</p>
+        </div>
+      </div>
+      <div class="ai-status" id="aiStatus">Ready</div>
+    </div>
+
+    <div class="search-row">
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="search" type="text" placeholder="Ask or search for a tool...">
+      </div>
+      <button class="ai-action" type="button" onclick="runAiCommand()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Action
+      </button>
+    </div>
+
+    <div class="ai-suggestion" id="aiSuggestion">
+      AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.
+    </div>
+  </section>
+
+  <div class="filter">
+    <button class="active" onclick="filterCategory('all', event)">All</button>
+    <button onclick="filterCategory('favorites', event)">Favorites</button>
+    <button onclick="filterCategory('system', event)">System</button>
+    <button onclick="filterCategory('tools', event)">Tools</button>
+    <button onclick="filterCategory('directory', event)">Directory</button>
+    <button onclick="filterCategory('dashboard', event)">Dashboard</button>
+    <button onclick="filterCategory('ispi', event)">Needs iSPI Browser</button>
+  </div>
+
+  <section class="workspace">
+    <div class="grid" id="grid"></div>
+    <aside class="preview" id="preview"></aside>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<div id="toast">Copied!</div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer-loader.js"></script>
+
+<script>
+const LINKS = [
+  {
+    name:"iSPI",
+    url:"https://myapps.secure.fedex.com/SPI/",
+    cat:"system",
+    icon:"fa-network-wired",
+    desc:"Main internal system access for supported FedEx tools.",
+    keywords:["spi","ispi","main system","internal system"]
+  },
+  {
+    name:"Web Imaging",
+    url:"http://imaging.freight.fedex.com/Viewer/Home.aspx",
+    cat:"tools",
+    icon:"fa-image",
+    desc:"View shipment documents and imaging records.",
+    ispi:true,
+    keywords:["web imaging","imaging","documents","viewer","shipment documents"]
+  },
+  {
+    name:"Rules Tariff",
+    url:"\\\\iqor.qor.com\\inf-fs\\Commercial\\3rdParty\\3P_C044\\Agent\\FedEx-PHL_Agents\\FedEx Back Office\\Training Materials\\FXF 100 Rules Tariff",
+    cat:"system",
+    icon:"fa-folder-open",
+    desc:"Internal shared-drive access for FXF 100 Rules Tariff materials.",
+    internal:true,
+    keywords:["rules","tariff","fxf 100","rule"]
+  },
+  {
+    name:"Service Center Locator",
+    url:"http://c0013477.prod.cloud.fedex.com:9104/fxfIntranet/servlet/ServiceCenterInfo",
+    cat:"tools",
+    icon:"fa-location-dot",
+    desc:"Locate service centers and related center information.",
+    ispi:true,
+    keywords:["service center","locator","center","sc","terminal"]
+  },
+  {
+    name:"iSellLookup / Sales Locator",
+    url:"https://hr-directory.prod.fedex.com/PeopleDirectory",
+    cat:"directory",
+    icon:"fa-users",
+    desc:"Search people, sales contacts, and internal directory details.",
+    ispi:true,
+    keywords:["isell","sales","sales locator","people directory","directory"]
+  },
+  {
+    name:"Freight Inspection Tool",
+    url:"https://myapps-edc02.secure.fedex.com/FIT/search.xhtml",
+    cat:"tools",
+    icon:"fa-magnifying-glass-chart",
+    desc:"Search and review freight inspection details.",
+    ispi:true,
+    keywords:["fit","freight inspection","inspection"]
+  },
+  {
+    name:"Freight Accounts Helpful Tips",
+    url:"https://myfedex.sharepoint.com/:x:/r/teams/FXFFreightTipsforworkingAccounts/_layouts/15/doc2.aspx?sourcedoc=%7B91EA14EE-37B0-4B89-B1A7-9E0A9559F8B8%7D&file=Freight%20Accounts.xlsx&action=default&mobileredirect=true&cid=d6574d9d-c430-4979-a771-bf7eb0b36e07",
+    cat:"tools",
+    icon:"fa-file-excel",
+    desc:"Helpful Freight account handling tips in SharePoint/Excel.",
+    keywords:["freight accounts","helpful tips","account tips","sharepoint","excel"]
+  },
+  {
+    name:"EBS Hub",
+    url:"https://ebshub.web.fedex.com/",
+    cat:"system",
+    icon:"fa-cubes",
+    desc:"Main EBS Hub access point.",
+    keywords:["ebs","hub","ebshub"]
+  },
+  {
+    name:"RACF ID Lookup",
+    url:"https://ebs-powerbi.web.fedex.com/reports/report/EBS/Public_Reports/RACF_Lookup",
+    cat:"directory",
+    icon:"fa-id-card",
+    desc:"Look up RACF ID details through the EBS PowerBI report.",
+    keywords:["racf","id lookup","lookup","powerbi"]
+  },
+  {
+    name:"NOST Dashboard",
+    url:"https://fxfspot.prod.cloud.fedex.com:8080/spotfire/ui/login?targetUrl=%2Fspotfire%2Fwp%2Fanalysis%3Ffile%3D%2FFXF%2FRQ_S%2526A%2FZ_Users%2FChase%2520King%2FAnalysisFiles%2FNOST%2Fnost_stops%26waid%3DfIhNCccNekutCUHReLoYa-2222546782V1bt%26wavid%3D0",
+    cat:"dashboard",
+    icon:"fa-chart-line",
+    desc:"Spotfire dashboard for NOST-related review.",
+    ispi:true,
+    keywords:["nost","dashboard","spotfire"]
+  },
+  {
+    name:"ECIS",
+    url:"https://ecis.prod.cloud.fedex.com/ecis/",
+    cat:"system",
+    icon:"fa-database",
+    desc:"ECIS internal system access.",
+    ispi:true,
+    keywords:["ecis"]
+  },
+  {
+    name:"EDM 1.1",
+    url:"https://shipment-portal-g.prod.cloud.fedex.com/",
+    cat:"system",
+    icon:"fa-truck-fast",
+    desc:"Shipment portal access for EDM 1.1.",
+    ispi:true,
+    keywords:["edm","shipment portal","portal"]
+  },
+  {
+    name:"ECAM",
+    url:"https://myapps-atl01.secure.fedex.com/ecam/",
+    cat:"system",
+    icon:"fa-shield-halved",
+    desc:"ECAM internal account management access.",
+    ispi:true,
+    keywords:["ecam"]
+  }
+];
+
+let currentCategory = "all";
+let selectedLink = LINKS[0];
+
+function getFavs(){
+  return JSON.parse(localStorage.getItem("linkHubFavs") || "[]");
+}
+
+function setFavs(favs){
+  localStorage.setItem("linkHubFavs", JSON.stringify(favs));
+}
+
+function normalize(text){
+  return String(text || "").toLowerCase().trim();
+}
+
+function scoreLink(item, query){
+  const q = normalize(query)
+    .replace(/\b(open|copy|find|show|search|go to|launch|preview|link|tool|please)\b/g,"")
+    .trim();
+
+  if(!q) return 1;
+
+  const haystack = [
+    item.name,
+    item.cat,
+    item.desc,
+    item.ispi ? "ispi browser needs ispi" : "",
+    ...(item.keywords || [])
+  ].join(" ").toLowerCase();
+
+  let score = 0;
+
+  if(normalize(item.name).includes(q)) score += 100;
+  if(haystack.includes(q)) score += 60;
+
+  q.split(/\s+/).forEach(word => {
+    if(word && haystack.includes(word)) score += 15;
+  });
+
+  return score;
+}
+
+function getFilteredLinks(){
+  const query = document.getElementById("search").value;
+  const favs = getFavs();
+
+  return LINKS
+    .map(item => ({...item, score:scoreLink(item, query)}))
+    .filter(item => {
+      const categoryMatch =
+        currentCategory === "all" ||
+        currentCategory === item.cat ||
+        (currentCategory === "ispi" && item.ispi) ||
+        (currentCategory === "favorites" && favs.includes(item.name));
+
+      const queryMatch = !query.trim() || item.score > 0;
+      return categoryMatch && queryMatch;
+    })
+    .sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
+}
+
+function render(){
+  const grid = document.getElementById("grid");
+  const links = getFilteredLinks();
+  const favs = getFavs();
+
+  grid.innerHTML = "";
+
+  if(!links.length){
+    grid.innerHTML = `<div class="no-results">No matching tools found.</div>`;
+    document.getElementById("aiStatus").textContent = "No Match";
+    return;
+  }
+
+  document.getElementById("aiStatus").textContent = `${links.length} Result${links.length > 1 ? "s" : ""}`;
+
+  links.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card" + (selectedLink && selectedLink.name === item.name ? " active" : "");
+    card.onclick = () => selectLink(item.name);
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="icon"><i class="fa-solid ${item.icon}"></i></div>
+        <i class="fa-solid fa-star star ${favs.includes(item.name) ? "active" : ""}" onclick="toggleFav('${escapeAttr(item.name)}', event)"></i>
+      </div>
+
+      <h3>${escapeHtml(item.name)}</h3>
+      <p>${escapeHtml(item.desc)}</p>
+
+      <div class="badges">
+        <span class="badge">${escapeHtml(item.cat.toUpperCase())}</span>
+        ${item.ispi ? `<span class="badge orange">USE iSPI BROWSER</span>` : ""}
+        ${item.internal ? `<span class="badge orange">INTERNAL PATH</span>` : ""}
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  renderPreview();
+  updateAiSuggestion(links[0]);
+}
+
+function renderPreview(){
+  const preview = document.getElementById("preview");
+
+  if(!selectedLink){
+    preview.innerHTML = `
+      <div class="preview-empty">
+        <div>
+          <i class="fa-solid fa-link"></i>
+          <h3>Select a link</h3>
+          <p>Choose a tool from the list to preview details and actions.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const canFrame = selectedLink.url && !selectedLink.internal && selectedLink.url.startsWith("https://");
+
+  preview.innerHTML = `
+    <div class="preview-head">
+      <div class="preview-icon"><i class="fa-solid ${selectedLink.icon}"></i></div>
+      <div>
+        <h3>${escapeHtml(selectedLink.name)}</h3>
+        <p>${escapeHtml(selectedLink.desc)}</p>
+      </div>
+    </div>
+
+    <div class="badges">
+      <span class="badge">${escapeHtml(selectedLink.cat.toUpperCase())}</span>
+      ${selectedLink.ispi ? `<span class="badge orange">USE iSPI BROWSER</span>` : ""}
+      ${selectedLink.internal ? `<span class="badge orange">INTERNAL PATH</span>` : ""}
+    </div>
+
+    <div class="preview-url">${escapeHtml(selectedLink.url || "No link available")}</div>
+
+    <div class="preview-actions">
+      <button class="btn btn-open" onclick="openSelectedLink()">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+      </button>
+      <button class="btn btn-copy" onclick="copySelectedLink()">
+        <i class="fa-solid fa-copy"></i> Copy Link
+      </button>
+    </div>
+
+    <div class="ai-result" id="previewAiNote">
+      AI recommendation: This looks like the best match for your current search.
+    </div>
+
+    ${canFrame ? `
+      <div class="preview-frame">
+        <iframe src="${escapeAttr(selectedLink.url)}"></iframe>
+      </div>
+      <div class="frame-note">
+        Preview may be blocked by some internal systems. If it does not load, use the Open button.
+      </div>
+    ` : `
+      <div class="frame-note">
+        Live preview is not available for internal paths, non-HTTPS links, or systems that block embedded preview. Use Open or Copy Link instead.
+      </div>
+    `}
+  `;
+}
+
+function updateAiSuggestion(best){
+  const input = document.getElementById("search").value.trim();
+  const box = document.getElementById("aiSuggestion");
+
+  if(!input){
+    box.innerHTML = `AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.`;
+    return;
+  }
+
+  if(best){
+    box.innerHTML = `AI found: <strong>${escapeHtml(best.name)}</strong>. Press <strong>Run AI Action</strong> to follow your command.`;
+  }
+}
+
+function runAiCommand(){
+  const query = normalize(document.getElementById("search").value);
+  const matches = getFilteredLinks();
+
+  if(!matches.length){
+    showToast("No matching tool found");
+    return;
+  }
+
+  const best = matches[0];
+  selectedLink = LINKS.find(x => x.name === best.name);
+  render();
+
+  if(query.includes("copy")){
+    copySelectedLink();
+    document.getElementById("aiSuggestion").innerHTML = `AI action completed: copied <strong>${escapeHtml(best.name)}</strong>.`;
+    return;
+  }
+
+  if(query.includes("open") || query.includes("launch") || query.includes("go to")){
+    openSelectedLink();
+    document.getElementById("aiSuggestion").innerHTML = `AI action completed: opening <strong>${escapeHtml(best.name)}</strong>.`;
+    return;
+  }
+
+  document.getElementById("aiSuggestion").innerHTML = `AI preview ready: selected <strong>${escapeHtml(best.name)}</strong>.`;
+}
+
+function selectLink(name){
+  selectedLink = LINKS.find(x => x.name === name);
+  render();
+}
+
+function openSelectedLink(){
+  if(!selectedLink) return;
+
+  if(selectedLink.internal){
+    showToast("Internal path copied");
+    copyText(selectedLink.url);
+    alert("This is an internal shared drive path. I copied it for you. Open it through the company network.");
+    return;
+  }
+
+  window.open(selectedLink.url, "_blank");
+}
+
+function copySelectedLink(){
+  if(!selectedLink || !selectedLink.url) return;
+  copyText(selectedLink.url);
+  showToast("Link copied ✓");
+}
+
+function openLinkByName(name, event){
+  event.stopPropagation();
+  selectedLink = LINKS.find(x => x.name === name);
+  openSelectedLink();
+  render();
+}
+
+function copyLinkByName(name, event){
+  event.stopPropagation();
+  selectedLink = LINKS.find(x => x.name === name);
+  copySelectedLink();
+  render();
+}
+
+function copyText(text){
+  navigator.clipboard.writeText(text);
+}
+
+function toggleFav(name, event){
+  event.stopPropagation();
+  let favs = getFavs();
+
+  if(favs.includes(name)){
+    favs = favs.filter(x => x !== name);
+    showToast("Removed from favorites");
+  }else{
+    favs.push(name);
+    showToast("Added to favorites");
+  }
+
+  setFavs(favs);
+  render();
+}
+
+function filterCategory(cat, event){
+  currentCategory = cat;
+  document.querySelectorAll(".filter button").forEach(btn => btn.classList.remove("active"));
+  event.target.classList.add("active");
+  render();
+}
+
+function showToast(message){
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0)";
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(10px)";
+  }, 1400);
+}
+
+function escapeHtml(str){
+  return String(str || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function escapeAttr(str){
+  return escapeHtml(str).replaceAll("\\","\\\\");
+}
+
+document.getElementById("search").addEventListener("input", () => {
+  const matches = getFilteredLinks();
+  if(matches.length){
+    selectedLink = LINKS.find(x => x.name === matches[0].name);
+  }
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>
