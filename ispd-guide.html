@@ -1,0 +1,2919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Invalid Consignee/Shipper Account (ISPD)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/header-footer-style.css">
+  
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+ <style>
+  :root{
+    --bg:#07111f;
+    --bg-soft:#0c1728;
+    --panel:#0f1c31;
+    --panel-2:#12233d;
+    --card:#ffffff;
+    --card-soft:#f8fafc;
+    --text:#0f172a;
+    --text-soft:#475569;
+    --muted:#94a3b8;
+    --line:rgba(148,163,184,.18);
+    --white-line:rgba(255,255,255,.08);
+    --accent:#6d28d9;
+    --accent-2:#4d148c;
+    --accent-3:#ff6600;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+    --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+    --shadow-md:0 10px 28px rgba(15,23,42,.10);
+    --shadow-card:0 16px 40px rgba(15,23,42,.06);
+    --radius-xl:28px;
+    --radius-lg:20px;
+    --radius-md:16px;
+    --radius-sm:12px;
+    --max:1720px;
+    font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+      radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+      linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:36px 36px;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+    z-index:0;
+  }
+
+  a{color:inherit}
+  button,input,textarea{font:inherit}
+
+  .page{
+    position:relative;
+    z-index:1;
+  }
+
+  .app-shell{
+    width:min(calc(100% - 32px), var(--max));
+    margin:22px auto 24px;
+  }
+
+  .app-frame{
+    min-height:calc(100vh - 180px);
+    background:rgba(255,255,255,.58);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.68);
+    border-radius:34px;
+    box-shadow:var(--shadow-xl);
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:minmax(0,1.45fr) 380px 420px;
+  }
+
+  .main{
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    min-width:0;
+  }
+
+  .main-topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:16px 18px;
+    border-radius:24px;
+    background:rgba(255,255,255,.85);
+    border:1px solid rgba(219,228,240,.9);
+    box-shadow:var(--shadow-md);
+  }
+
+  .main-topbar h1{
+    margin:0;
+    font-size:24px;
+    letter-spacing:-.03em;
+  }
+
+  .main-status{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:11px 14px;
+    border-radius:999px;
+    background:#fff;
+    border:1px solid #dbe4f0;
+    font-size:12px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .pill.primary{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    border:none;
+  }
+
+  .workspace{
+    display:grid;
+    grid-template-rows:auto 1fr;
+    gap:16px;
+    min-height:0;
+  }
+
+  .progress-card{
+    background:#fff;
+    border:1px solid #dbe4f0;
+    border-radius:22px;
+    padding:16px 18px;
+    box-shadow:var(--shadow-md);
+  }
+
+  .progress-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .progress-title{
+    font-size:14px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .progress-status{
+    font-size:12px;
+    font-weight:800;
+    color:#64748b;
+  }
+
+  .progress-bar{
+    height:12px;
+    background:#eaf0f7;
+    border-radius:999px;
+    overflow:hidden;
+  }
+
+  .progress-fill{
+    height:100%;
+    width:0%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+    transition:width .28s ease;
+  }
+
+  .stage-area{
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .stage-card{
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border:1px solid #dbe4f0;
+    border-radius:30px;
+    box-shadow:var(--shadow-card);
+    min-height:640px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  .stage-top{
+    padding:22px 22px 0;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 13px;
+    border-radius:999px;
+    background:#eef4ff;
+    color:#1d4ed8;
+    font-size:12px;
+    font-weight:800;
+  }
+
+  .badge.alt{
+    background:#f8fafc;
+    color:#334155;
+  }
+
+  .question-wrap{
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    flex:1;
+  }
+
+  .question-card{
+    position:relative;
+    padding:30px;
+    border-radius:28px;
+    background:
+      radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+      linear-gradient(180deg,#ffffff,#f8fbff);
+    border:1px solid #e6edf7;
+    box-shadow:0 12px 30px rgba(15,23,42,.04);
+  }
+
+  .question-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+  }
+
+  .question-label{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#334155;
+  }
+
+  .question-text{
+    margin:18px 0 0;
+    font-size:36px;
+    line-height:1.08;
+    letter-spacing:-.045em;
+    font-weight:900;
+  }
+
+  .question-help{
+    margin:14px 0 0;
+    color:#64748b;
+    font-size:14px;
+    line-height:1.75;
+    max-width:760px;
+  }
+
+  .choices{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+  }
+
+  .choice{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    border-radius:24px;
+    padding:18px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border:1px solid #e2e8f0;
+    box-shadow:0 12px 28px rgba(15,23,42,.05);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    min-height:112px;
+  }
+
+  .choice:hover{
+    transform:translateY(-3px);
+    box-shadow:0 18px 36px rgba(15,23,42,.08);
+    border-color:#c7d5e6;
+  }
+
+  .choice.selected{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .choice-icon{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    background:#eef4ff;
+    color:#2563eb;
+    flex:0 0 auto;
+    font-size:17px;
+  }
+
+  .choice.selected .choice-icon{
+    background:rgba(255,255,255,.14);
+    color:#fff;
+  }
+
+  .choice-body{min-width:0}
+
+  .choice-title{
+    font-size:16px;
+    font-weight:800;
+    line-height:1.35;
+  }
+
+  .choice-desc{
+    font-size:12px;
+    line-height:1.6;
+    color:#64748b;
+    margin-top:6px;
+  }
+
+  .choice.selected .choice-desc{
+    color:rgba(255,255,255,.8);
+  }
+
+  .decision-footer{
+    margin-top:auto;
+    padding:18px 22px 22px;
+    border-top:1px solid #e8eef7;
+    background:linear-gradient(180deg,rgba(248,250,252,.2),#f8fbff);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .decision-footer-left{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .footer-label{
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#64748b;
+  }
+
+  .footer-value{
+    font-size:14px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .decision-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .app-btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:12px 16px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:800;
+    transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+
+  .app-btn:hover{
+    transform:translateY(-1px);
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin:0;
+    min-height:50px;
+    padding:0 18px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+    color:#fff;
+    text-decoration:none;
+    font-weight:800;
+    box-shadow:0 14px 24px rgba(77,20,140,.18);
+    transition:.22s ease;
+    width:100%;
+    cursor:pointer;
+  }
+
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 18px 30px rgba(77,20,140,.24);
+  }
+
+  .app-btn.primary{
+    background:#111827;
+    color:#fff;
+    box-shadow:0 8px 20px rgba(17,24,39,.14);
+  }
+
+  .app-btn.secondary{
+    background:#fff;
+    color:#111827;
+    border:1px solid #dbe4f0;
+  }
+
+  .app-btn.ghost{
+    background:#f8fafc;
+    color:#0f172a;
+    border:1px solid #e2e8f0;
+  }
+
+  .final-card{
+    margin:20px;
+    padding:24px;
+    border-radius:24px;
+    background:linear-gradient(180deg,#f0fdf4,#ffffff);
+    border:1px solid #dcfce7;
+    box-shadow:0 16px 34px rgba(22,163,74,.08);
+  }
+
+  .final-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 12px;
+    border-radius:999px;
+    background:#dcfce7;
+    color:#166534;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+  }
+
+  .final-title{
+    margin:16px 0 0;
+    font-size:14px;
+    font-weight:800;
+    color:#166534;
+  }
+
+  .final-text{
+    margin:10px 0 0;
+    font-size:24px;
+    line-height:1.5;
+    letter-spacing:-.02em;
+    font-weight:800;
+    color:#111827;
+  }
+
+  .final-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:18px;
+  }
+
+  .side-panel{
+    padding:18px 14px 18px 0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-width:0;
+  }
+
+  .template-panel{
+    padding:18px 18px 18px 0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-width:0;
+  }
+
+  .side-panel .summary-card,
+  .template-panel .summary-card{
+    background:#fff;
+    border:1px solid #dbe4f0;
+    border-radius:22px;
+    padding:18px;
+    box-shadow:var(--shadow-md);
+  }
+
+  .summary-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    font-size:14px;
+    font-weight:900;
+  }
+
+  .summary-head i{color:#7c3aed}
+
+  .recommendation{
+    min-height:120px;
+    padding:16px;
+    border-radius:18px;
+    background:linear-gradient(180deg,#fff8eb,#fff);
+    border-left:4px solid #f59e0b;
+    font-size:14px;
+    line-height:1.7;
+  }
+
+  .recommendation.empty{
+    background:#f8fafc;
+    border-left-color:#cbd5e1;
+    color:#64748b;
+  }
+
+  .summary-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .metric{
+    padding:14px;
+    border-radius:18px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+  }
+
+  .metric-k{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#64748b;
+    font-weight:800;
+    margin-bottom:6px;
+  }
+
+  .metric-v{
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:-.03em;
+    word-break:break-word;
+  }
+
+  .path-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    max-height:600px;
+    overflow:auto;
+    padding-right:4px;
+  }
+
+  .path-empty{
+    padding:16px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px dashed #d7e1ef;
+    color:#64748b;
+    font-size:13px;
+    line-height:1.7;
+  }
+
+  .path-item{
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+  }
+
+  .path-step{
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#2563eb;
+    margin-bottom:6px;
+  }
+
+  .path-question{
+    font-size:13px;
+    font-weight:700;
+    line-height:1.5;
+  }
+
+  .path-answer{
+    font-size:13px;
+    color:#64748b;
+    line-height:1.5;
+    margin-top:6px;
+  }
+  
+  .path-jump{
+    width:100%;
+    text-align:left;
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .path-jump:hover{
+    transform:translateY(-1px);
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    box-shadow:0 10px 22px rgba(37,99,235,.08);
+  }
+
+  .path-jump.active{
+    background:#f8fafc;
+    border:2px solid #2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+  }
+
+  .path-jump.active .path-step{
+    color:#2563eb;
+  }
+
+  .path-jump.active .path-question{
+    color:#0f172a;
+  }
+
+  .path-jump.active .path-answer{
+    color:#475569;
+  }
+
+  .section-note{
+    font-size:12px;
+    color:#64748b;
+    line-height:1.6;
+    margin-top:-2px;
+  }
+
+  .template-stack{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:14px;
+  }
+
+  .template-card{
+    border:1px solid #e5ebf4;
+    border-radius:18px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    overflow:hidden;
+  }
+
+  .template-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:14px 14px 10px;
+  }
+
+  .template-title-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+
+  .template-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:#f3e8ff;
+    color:#7c3aed;
+    flex:0 0 auto;
+  }
+
+  .template-title{
+    font-size:14px;
+    font-weight:900;
+    color:#0f172a;
+  }
+
+  .template-sub{
+    font-size:12px;
+    color:#64748b;
+    margin-top:2px;
+  }
+
+  .template-actions{
+    display:flex;
+    gap:8px;
+  }
+
+  .template-icon-btn{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:10px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    color:#475569;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    transition:all .16s ease;
+  }
+
+  .template-icon-btn:hover{
+    background:#eef4ff;
+    color:#1d4ed8;
+    border-color:#cfe0ff;
+  }
+
+  .template-body{
+    padding:0 14px 14px;
+  }
+
+  .template-box{
+    min-height:108px;
+    padding:14px;
+    border-radius:14px;
+    background:#f8fbff;
+    border:1px solid #e4ebf5;
+    font-size:13px;
+    line-height:1.7;
+    color:#334155;
+    white-space:pre-wrap;
+  }
+
+  .template-box.empty{
+    color:#94a3b8;
+  }
+
+  .template-foot{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:0 14px 14px;
+  }
+
+  .template-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 10px;
+    border-radius:999px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    font-size:11px;
+    font-weight:800;
+    color:#64748b;
+  }
+
+  .template-copy{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:12px;
+    background:#111827;
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    transition:all .18s ease;
+  }
+
+  .template-copy.copied,
+  .template-icon-btn.copied{
+    background:#dcfce7 !important;
+    color:#166534 !important;
+    border-color:#bbf7d0 !important;
+  }
+
+  .template-tag{
+  cursor:pointer;
+  text-decoration:none;
+  transition:.2s ease;
+}
+
+.template-tag:hover{
+  background:#eef4ff;
+  border-color:#cfe0ff;
+  color:#1d4ed8;
+  transform:translateY(-1px);
+} 
+
+  @media (max-width:1450px){
+    .app-frame{
+      grid-template-columns:minmax(0,1fr) 340px 360px;
+    }
+  }
+
+  @media (max-width:1220px){
+    .app-frame{
+      grid-template-columns:1fr;
+    }
+    .side-panel,
+    .template-panel{
+      padding:0 18px 18px;
+    }
+  }
+
+  @media (max-width:760px){
+    .app-shell{
+      width:min(calc(100% - 20px), var(--max));
+    }
+    .app-shell{margin:16px auto}
+    .app-frame{min-height:100vh;border-radius:24px}
+    .main{padding:18px}
+    .main-topbar{flex-direction:column;align-items:flex-start}
+    .question-text{font-size:28px}
+    .choices{grid-template-columns:1fr}
+    .summary-grid{grid-template-columns:1fr}
+    .decision-footer{flex-direction:column;align-items:flex-start}
+  }
+  
+  /*images*/
+  
+  .question-image{
+  margin-top:16px;
+  border-radius:18px;
+  overflow:hidden;
+  cursor:zoom-in;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  max-height:320px;
+  min-height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  box-shadow:0 12px 28px rgba(15,23,42,.08);
+}
+
+.question-image::after{
+  content:"Click to enlarge";
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(15,23,42,.72);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  opacity:0;
+  transform:translateY(6px);
+  transition:.2s ease;
+  pointer-events:none;
+}
+
+.question-image:hover::after{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.question-image img{
+  width:100%;
+  height:100%;
+  max-height:320px;
+  object-fit:contain;
+  display:block;
+  transition:transform .28s ease;
+  transform-origin:center center;
+}
+
+.question-image:hover img{
+  transform:scale(1.06);
+}
+
+.image-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(2,6,23,.88);
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  backdrop-filter:blur(8px);
+  cursor:zoom-out;
+}
+
+.image-modal.open{
+  display:flex;
+}
+
+.image-modal img{
+  max-width:94vw;
+  max-height:90vh;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+  cursor:default;
+}
+
+.image-modal-close{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:46px;
+  height:46px;
+  border:none;
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  transition:.2s ease;
+}
+
+.image-modal-close:hover{
+  background:rgba(255,255,255,.2);
+}
+
+@media (max-width:760px){
+  .question-image{
+    max-height:260px;
+    min-height:140px;
+  }
+
+  .question-image img{
+    max-height:260px;
+  }
+
+  .image-modal{
+    padding:14px;
+  }
+
+  .image-modal img{
+    max-width:96vw;
+    max-height:86vh;
+    border-radius:14px;
+  }
+
+  .image-modal-close{
+    top:10px;
+    right:10px;
+    width:42px;
+    height:42px;
+  }
+}
+
+    /*title/subtitle*/  
+.page-title-block{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.page-title-block h1{
+  margin:0;
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.03em;
+  color:#0f172a;
+}
+
+.page-subtitle{
+  margin:0;
+  font-size:13px;
+  color:#64748b;
+  line-height:1.6;
+  max-width:620px;
+}
+
+.main-topbar{
+  align-items:flex-start; /* 🔥 important */
+}
+
+/*premium note*/
+.note-card{
+  margin-top:18px;
+  padding:18px 18px 18px 20px;
+  border-radius:20px;
+  background:linear-gradient(180deg, #fff8eb 0%, #ffffff 100%);
+  border:1px solid rgba(245,158,11,.18);
+  box-shadow:
+    0 14px 30px rgba(15,23,42,.06),
+    inset 0 1px 0 rgba(255,255,255,.75);
+  position:relative;
+  overflow:hidden;
+}
+
+.note-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:5px;
+  background:linear-gradient(180deg, #f59e0b 0%, #ff6600 100%);
+}
+
+.note-head{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#fff7ed;
+  border:1px solid rgba(245,158,11,.18);
+  color:#b45309;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.smart-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  margin-top:8px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff !important;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:0 10px 18px rgba(77,20,140,.18);
+  transition:.2s ease;
+}
+
+.smart-link:hover{
+  transform:translateY(-2px) scale(1.02);
+  box-shadow:0 14px 24px rgba(77,20,140,.25);
+}
+
+/* ===== MODALS ===== */
+
+/* Keep edit/password modals local to this guide only */
+#passwordModal,
+#editModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:10000;
+}
+
+#passwordModal .modal-content,
+#editModal .modal-content{
+  background:#fff;
+  width:100%;
+  max-width:560px;
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.22);
+  border:1px solid #e2e8f0;
+  max-height:85vh;
+  overflow:auto;
+}
+
+#passwordModal .modal-header,
+#editModal .modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+#passwordModal .modal-close,
+#editModal .modal-close{
+  font-size:22px;
+  cursor:pointer;
+  color:#64748b;
+  line-height:1;
+}
+
+#passwordModal .modal-close:hover,
+#editModal .modal-close:hover{
+  color:#4d148c;
+}
+
+#passwordModal input,
+#editModal textarea{
+  width:100%;
+  border:1px solid #dbe4f0;
+  border-radius:14px;
+  padding:12px 14px;
+  font-size:14px;
+  outline:none;
+  background:#fff;
+}
+
+#passwordModal input:focus,
+#editModal textarea:focus{
+  border-color:#c4b5fd;
+  box-shadow:0 0 0 4px rgba(109,40,217,.10);
+}
+
+#editModal textarea{
+  min-height:220px;
+  resize:vertical;
+}
+
+/* Match shared header modals to index look */
+#commentModal,
+#allCommentsModal,
+#helpModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.52);
+  justify-content:center;
+  align-items:center;
+  padding:0 24px;
+  z-index:2147483647;
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
+}
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content{
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  border:1px solid rgba(148,163,184,.16);
+  margin:110px auto 32px;
+}
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content{
+  max-width:760px;
+}
+
+#helpModal .help-modal{
+  max-width:760px;
+  border-radius:30px;
+  padding:18px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close{
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
+}
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .feedback-header{
+  margin-bottom:10px;
+}
+
+#commentModal .feedback-header span:first-child{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  color:#111827;
+}
+
+#commentModal .rating-container{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:16px 0 18px;
+}
+
+#commentModal .rating-star{
+  cursor:pointer;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
+}
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
+  color:#ff6600;
+}
+
+#commentModal input,
+#commentModal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  transition:.18s ease;
+}
+
+#commentModal input{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+
+#commentModal textarea{
+  min-height:120px;
+  resize:vertical;
+  margin-top:0;
+}
+
+#commentModal input:focus,
+#commentModal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#commentModal .feedback-submit-btn{
+  margin:16px 0 8px;
+  min-height:54px;
+  border-radius:18px;
+}
+
+#commentModal .feedback-bottom-link{
+  margin-top:4px;
+}
+
+#commentModal .link-text{
+  color:#4d148c;
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+
+#commentModal .link-text:hover{
+  text-decoration:underline;
+}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{
+  border-bottom:none;
+}
+
+#allCommentsModal .stars{
+  color:#ff6600;
+  font-size:18px;
+  margin-bottom:6px;
+  display:block;
+}
+
+@media (max-width:720px){
+  #passwordModal,
+  #editModal{
+    padding:14px;
+  }
+
+  #passwordModal .modal-content,
+  #editModal .modal-content{
+    border-radius:18px;
+    padding:18px;
+  }
+
+  #commentModal,
+  #allCommentsModal,
+  #helpModal{
+    padding:0 14px;
+  }
+
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+
+  #commentModal .feedback-modal{
+    padding:18px;
+    border-radius:24px;
+  }
+
+  #helpModal .help-modal{
+    padding:16px;
+    border-radius:24px;
+  }
+}
+   
+ 
+.aj-card{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.aj-card h3{
+  margin-bottom:8px;
+  color:#4d148c;
+}
+
+.advise-box{
+  background:#eef6ff;
+  border-left:4px solid #4d148c;
+  padding:10px;
+  margin:6px 0 10px;
+  border-radius:6px;
+  font-size:13px;
+}
+
+.aj-header{
+  font-weight:700;
+  cursor:pointer;
+  padding:10px;
+  background:#f1f5f9;
+  border-radius:8px;
+  transition:.2s;
+}
+
+.aj-header:hover{
+  background:#e2e8f0;
+}
+
+.aj-content{
+  display:none;
+  margin-top:10px;
+  animation:fadeIn .3s ease-in;
+}
+
+.aj-search-container{
+  position:sticky;
+  top:0;
+  background:#fff;
+  padding:10px;
+  z-index:5;
+  border-bottom:1px solid #ddd;
+}
+
+#ajSearch{
+  width:100%;
+  padding:8px 12px;
+  font-size:13px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.link-btn{
+  color:#0073e6;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.link-btn:hover{
+  color:#005bb5;
+}
+
+.aj-section{
+  margin-bottom:14px;
+}
+
+.aj-subtitle{
+  font-size:12px;
+  font-weight:800;
+  color:#64748b;
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+
+.aj-block{
+  margin-bottom:10px;
+}
+
+.aj-label{
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.aj-list{
+  margin:8px 0;
+  padding-left:18px;
+  line-height:1.5;
+}
+
+.aj-link{
+  display:inline-block;
+  margin-bottom:8px;
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* 🔧 Fix NOTE spacing (final clean version) */
+
+.note-body{
+  color:#475569;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* Remove excessive spacing from elements inside notes */
+.note-body p{
+  margin:6px 0;
+}
+
+.note-body ul{
+  margin:8px 0;
+  padding-left:18px;
+}
+
+.note-body li{
+  margin:0;
+}
+
+/* Fix nested div spacing inside notes */
+.note-body div{
+  margin:6px 0;
+}
+
+/* Tighten strong/inline text spacing */
+.note-body strong{
+  font-weight:600;
+}
+
+/* Optional: clean link look */
+.note-body a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}  
+
+.final-note-html{
+  margin-top:12px;
+  color:#475569;
+  line-height:1.7;
+}
+
+.final-note-html a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}   
+
+</style>
+</head>
+<body data-page="">
+  <div class="page">
+<div id="site-header"></div>
+
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+            <div>
+<div class="page-title-block">
+  <h1>Invalid Consignee/Shipper Account (ISPD)</h1>
+  <p class="page-subtitle">
+    Follow this guide to work ISPD queue requests by reviewing the freight bill, validating shipper or consignee account discrepancies, checking BOL support, and applying the correct ACCR correction path.
+  </p>
+</div>
+            </div>
+            <div class="main-status">
+              <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Progress</div>
+                <div class="progress-status" id="progressText">Not started</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            </section>
+
+            <section class="stage-area">
+              <div class="stage-card" id="stageCard"></div>
+            </section>
+          </div>
+        </main>
+
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
+            <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as the user moves through the app.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Recommended Action</div>
+            <div class="recommendation empty" id="recommendationBox">No recommendation yet. Follow the flow to reach the final instruction.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v" id="metricSteps">0</span>
+              </div>
+              <div class="metric">
+                <span class="metric-k">Last Answer</span>
+                <span class="metric-v" id="metricAnswer">—</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
+            <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Comment</div>
+                      <div class="template-sub">Internal case note</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Corr Code Note</div>
+                      <div class="template-sub">Correction code guidance</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <a href="Correction Code Guide.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-hashtag"></i> Open Corr Code
+                  </a>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Email</div>
+                      <div class="template-sub">Customer communication</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <a href="ebs-response-template.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-paper-plane"></i> Open EBS Response
+                  </a>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div id="passwordModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          Enter Password
+          <span class="modal-close" onclick="closePasswordModal()">×</span>
+        </div>
+        <input id="adminPassword" type="password" placeholder="Enter admin password">
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="checkPassword()">Continue</button>
+          <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <span id="modalTitle">Edit</span>
+          <span class="modal-close" onclick="closeEditModal()">×</span>
+        </div>
+        <textarea id="editTextarea"></textarea>
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="saveEdit()">Save</button>
+          <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+<div id="site-footer"></div>
+ 
+    
+  </div>
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer-loader.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    });
+  }
+
+  const db = firebase.firestore();
+  const TEMPLATE_COLLECTION = "ispd_template";
+  const FEEDBACK_COLLECTION = "feedback";
+  const MAX_STEPS = 8;
+
+  const els = {
+    stageCard: document.getElementById("stageCard"),
+    progressFill: document.getElementById("progressFill"),
+    progressText: document.getElementById("progressText"),
+    recommendationBox: document.getElementById("recommendationBox"),
+    pathBox: document.getElementById("pathBox"),
+    metricSteps: document.getElementById("metricSteps"),
+    metricAnswer: document.getElementById("metricAnswer"),
+    statusPill: document.getElementById("statusPill"),
+
+    suggestedComment: document.getElementById("suggestedComment"),
+    suggestedCorrCode: document.getElementById("suggestedCorrCode"),
+    suggestedEmail: document.getElementById("suggestedEmail"),
+
+    passwordModal: document.getElementById("passwordModal"),
+    editModal: document.getElementById("editModal"),
+    adminPassword: document.getElementById("adminPassword"),
+    editTextarea: document.getElementById("editTextarea"),
+    modalTitle: document.getElementById("modalTitle")
+  };
+
+  let selectedRating = 0;
+  let path = [];
+  let historyStack = [];
+  let currentFinalRecommendation = "";
+  let currentEditType = "";
+  let commentsUnsubscribe = null;
+  let ratingStars = [];
+  let currentKey = "start";
+  const templateCache = {};
+
+  //nodes here
+const NODES = {
+  start: {
+    text: "Invalid Consignee/Shipper Account (ISPD)",
+    help: "Use this guide to work PROs in the ISPD queue and resolve invalid shipper or consignee account concerns.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_start_work",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the ISPD guide."
+      }
+    ]
+  },
+
+  ispd_start_work: {
+    text: "How to work the PROs on ISPD Queue.",
+    help: "Open the first PRO on the file that you received, then review the freight bill.",
+    note: "Workday function: ISPD\n\nACCOPS Freight Corrections Menu:\nEnter ISPD in the keyword ISPD in the queue name field.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_open_first_pro",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Open the first PRO."
+      }
+    ]
+  },
+
+  ispd_open_first_pro: {
+    text: "Open the first PRO on the file that you received.",
+    help: "Begin with the first PRO from the assigned ISPD file.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_review_freight_bill",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Review the freight bill."
+      }
+    ]
+  },
+
+  ispd_review_freight_bill: {
+    text: "Review the Freight Bill.",
+    help: "Review the bill details and identify whether the request is for shipper or consignee account correction.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_request_type",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Identify the request."
+      }
+    ]
+  },
+
+  ispd_request_type: {
+    text: "What is the request?",
+    help: "Choose whether the actual request is for the shipper or consignee.",
+    choices: [
+      {
+        label: "For Shipper",
+        next: "ispd_shipper_actual_request",
+        icon: "fa-solid fa-truck-ramp-box",
+        desc: "Refresh shipper SC code to match the OBL."
+      },
+      {
+        label: "For Consignee",
+        next: "ispd_consignee_actual_request",
+        icon: "fa-solid fa-warehouse",
+        desc: "Refresh consignee code to match the OBL."
+      }
+    ]
+  },
+
+  /* =========================
+     SHIPPER PATH
+  ========================= */
+
+  ispd_shipper_actual_request: {
+    text: "FOR SHIPPER: Actual request",
+    help: "RS-ACCT: Please refresh SC code to match information on the OBL.",
+    choices: [
+      {
+        label: "BOL is in EDM",
+        next: "ispd_shipper_check_bol",
+        icon: "fa-solid fa-circle-check",
+        desc: "Check if the BOL matches the shipper name and address on FBI."
+      },
+      {
+        label: "No BOL in EDM",
+        next: "ispd_shipper_request_bol",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Request the BOL in ISPD."
+      }
+    ]
+  },
+
+  ispd_shipper_request_bol: {
+    text: "No BOL in EDM.",
+    help: "If no BOL is available in EDM, request it in ISPD for electronic BOL.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_shipper_research_discrepancy",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Research the discrepancy after requesting the BOL."
+      }
+    ]
+  },
+
+  ispd_shipper_check_bol: {
+    text: "Check the BOL in EDM.",
+    help: "Verify if the BOL is matching the shipper name and address on FBI.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_shipper_research_discrepancy",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Research where the discrepancy is."
+      }
+    ]
+  },
+
+  ispd_shipper_research_discrepancy: {
+    text: "Research where the discrepancy is.",
+    help: "Identify whether the issue is with the name/address or the account code/location details.",
+    note: "Examples include:\n• Wrong name and address\n• Wrong account code\n• Wrong city, state, and ZIP",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_shipper_profile_check",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Check the customer profile tab."
+      }
+    ]
+  },
+
+  ispd_shipper_profile_check: {
+    text: "Check the customer profile tab of the shipper.",
+    help: "Use the shipper customer profile tab to verify the correct account and location details.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_shipper_compare_bill",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Compare ACCOPS details with the bill of lading."
+      }
+    ]
+  },
+
+  ispd_shipper_compare_bill: {
+    text: "Compare shipper details.",
+    help: "Check if the shipper name and address in ACCOPS Corrections is different than what is shown on the Bill of Lading.",
+    choices: [
+      {
+        label: "Shipper code is correct, but name/address is not",
+        next: "ispd_shipper_code_correct_name_wrong",
+        icon: "fa-solid fa-circle-check",
+        desc: "Refresh the shipper code to pull the correct account information."
+      },
+      {
+        label: "Shipper code and name are incorrect / not matching BOL",
+        next: "ispd_shipper_code_name_wrong",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Check for an account code that matches the BOL or create an account."
+      }
+    ]
+  },
+
+  ispd_shipper_code_correct_name_wrong: {
+    text: "Shipper code is correct, but the name and address on the freight bill is not.",
+    help: "The shipper code customer profile is correct and matches the bill of lading.",
+    choices: [
+      {
+        label: "Continue",
+        action: "Refresh the shipper code to pull the correct account information. After refreshing, you will see the shipper code. This box will pop up and ask if you would like to update the “Bill To” fields. Please review the Bill of Lading to see if there is a third-party request. If not, follow terms per OBL. In this case, click Yes to update the Bill To field.\n\nCORR is ACCR.\n\nThen ACCEPT ALL.",
+        icon: "fa-solid fa-circle-check",
+        desc: "Refresh shipper code and accept all."
+      }
+    ]
+  },
+
+  ispd_shipper_code_name_wrong: {
+    text: "Shipper code and name are incorrect and not matching the BOL.",
+    help: "Proceed by checking for an account code that matches the BOL.",
+    choices: [
+      {
+        label: "Continue",
+        action: "Proceed with checking an account code to match the BOL on AEM.\n\n1. Once you see a code matching the BOL, proceed with changing.\n2. If there is no account found in AEM/ISPI, create an account.\n\nCORR is ACCR.\n\nThen ACCEPT ALL.",
+        icon: "fa-solid fa-circle-check",
+        desc: "Check account code or create account, then accept all."
+      }
+    ]
+  },
+
+  /* =========================
+     CONSIGNEE PATH
+  ========================= */
+
+  ispd_consignee_actual_request: {
+    text: "FOR CONSIGNEE: Actual request",
+    help: "RS-ACCT: Please refresh CONS code to match information on the OBL.",
+    choices: [
+      {
+        label: "BOL is in EDM",
+        next: "ispd_consignee_check_bol",
+        icon: "fa-solid fa-circle-check",
+        desc: "Check if the BOL matches the consignee name and address on FBI."
+      },
+      {
+        label: "No BOL in EDM",
+        next: "ispd_consignee_request_bol",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Request the BOL in ISPD."
+      }
+    ]
+  },
+
+  ispd_consignee_request_bol: {
+    text: "No BOL in EDM.",
+    help: "If no BOL is available in EDM, request it in ISPD for electronic BOL.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_consignee_research_discrepancy",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Research the discrepancy after requesting the BOL."
+      }
+    ]
+  },
+
+  ispd_consignee_check_bol: {
+    text: "Check the BOL in EDM.",
+    help: "Verify if the BOL is matching the consignee name and address on FBI.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_consignee_research_discrepancy",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Research where the discrepancy is."
+      }
+    ]
+  },
+
+  ispd_consignee_research_discrepancy: {
+    text: "Research where the discrepancy is.",
+    help: "Identify whether the issue is with the name/address or the account code/location details.",
+    note: "Examples include:\n• Wrong name and address\n• Wrong account code\n• Wrong city, state, and ZIP",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_consignee_profile_check",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Check the customer profile tab."
+      }
+    ]
+  },
+
+  ispd_consignee_profile_check: {
+    text: "Check the customer profile tab of the consignee.",
+    help: "Use the consignee customer profile tab to verify the correct account and location details.",
+    choices: [
+      {
+        label: "Continue",
+        next: "ispd_consignee_compare_bill",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Compare ACCOPS details with the bill of lading."
+      }
+    ]
+  },
+
+  ispd_consignee_compare_bill: {
+    text: "Compare consignee details.",
+    help: "Check if the consignee name and address in ACCOPS Corrections is different than what is shown on the Bill of Lading.",
+    choices: [
+      {
+        label: "Consignee code is correct, but name/address is not",
+        next: "ispd_consignee_code_correct_name_wrong",
+        icon: "fa-solid fa-circle-check",
+        desc: "Refresh the consignee code to pull the correct account information."
+      },
+      {
+        label: "Consignee code and name are incorrect / not matching BOL",
+        next: "ispd_consignee_code_name_wrong",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Check for an account code that matches the BOL or create an account."
+      }
+    ]
+  },
+
+  ispd_consignee_code_correct_name_wrong: {
+    text: "Consignee code is correct, but the name and address on the freight bill is not.",
+    help: "The consignee code customer profile is correct and matches the bill of lading.",
+    choices: [
+      {
+        label: "Continue",
+        action: "Refresh the consignee code to pull the correct account information.\n\nAfter refreshing, check if there is a third-party request per OBL. If yes, update the Bill To field based on the OBL.\n\nCORR is ACCR.\n\nThen ACCEPT ALL.",
+        icon: "fa-solid fa-circle-check",
+        desc: "Refresh consignee code and accept all."
+      }
+    ]
+  },
+
+  ispd_consignee_code_name_wrong: {
+    text: "Consignee code and name are incorrect and not matching the BOL.",
+    help: "Proceed by checking for an account code that matches the BOL.",
+    choices: [
+      {
+        label: "Continue",
+        action: "Proceed with checking an account code to match the BOL on AEM.\n\n1. Once you see a code matching the BOL, proceed with changing.\n2. If there is no account found in AEM/ISPI or in any tools, create an account.\n\nCORR is ACCR.\n\nThen ACCEPT ALL.",
+        icon: "fa-solid fa-circle-check",
+        desc: "Check account code or create account, then accept all."
+      }
+    ]
+  }
+};
+
+  function escapeHtml(value){
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function normalizeId(str){
+    return String(str || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+  }
+
+  function getDocId(recommendation, type){
+    return `${type}__${normalizeId(recommendation)}`;
+  }
+
+  function getNodeText(node){
+    return node?.text || node?.question || "";
+  }
+
+  function getNodeHelp(node){
+    return node?.help || "";
+  }
+
+  function getNodeNote(node){
+    return node?.note || "";
+  }
+
+  function getNodeImage(node){
+    return node?.image || "";
+  }
+
+  function getNodeChoices(node){
+    return Array.isArray(node?.choices) ? node.choices : [];
+  }
+
+  function isFinalNode(node){
+    return !!node?.action || (!getNodeChoices(node).length && !node?.next);
+  }
+
+  function setTemplateValue(el, text){
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle("empty", !text);
+  }
+
+  async function loadTemplatesForRecommendation(recommendation){
+    if(!recommendation){
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      return;
+    }
+
+    const ids = {
+      comment: getDocId(recommendation, "comment"),
+      corr: getDocId(recommendation, "corr"),
+      email: getDocId(recommendation, "email")
+    };
+
+    try{
+      const [commentDoc, corrDoc, emailDoc] = await Promise.all([
+        db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
+        db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
+        db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
+      ]);
+
+      const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
+      const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
+      const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
+
+      templateCache[ids.comment] = finalComment;
+      templateCache[ids.corr] = finalCorr;
+      templateCache[ids.email] = finalEmail;
+
+      setTemplateValue(els.suggestedComment, finalComment);
+      setTemplateValue(els.suggestedCorrCode, finalCorr);
+      setTemplateValue(els.suggestedEmail, finalEmail);
+    } catch(err){
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+    }
+  }
+
+  function setCopiedState(btn, originalText){
+    btn.classList.add("copied");
+    btn.textContent = "Copied";
+    clearTimeout(btn._copiedTimer);
+    btn._copiedTimer = setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.textContent = originalText;
+    }, 1400);
+  }
+
+  async function copyTemplateText(targetId, btn){
+    const target = document.getElementById(targetId);
+    const value = target?.innerText.trim();
+    if(!value || target.classList.contains("empty")) return;
+
+    try{
+      await navigator.clipboard.writeText(value);
+      setCopiedState(btn, btn.textContent);
+    } catch {
+      alert("Unable to copy text.");
+    }
+  }
+
+  function attemptEdit(type){
+    if(!currentFinalRecommendation){
+      alert("Reach a final recommendation first before editing templates.");
+      return;
+    }
+    currentEditType = type;
+    els.adminPassword.value = "";
+    els.passwordModal.style.display = "flex";
+  }
+
+  function closePasswordModal(){
+    els.passwordModal.style.display = "none";
+  }
+
+  function closeEditModal(){
+    els.editModal.style.display = "none";
+  }
+
+  function checkPassword(){
+    if(els.adminPassword.value === "admin"){
+      closePasswordModal();
+      openEditModal();
+    } else {
+      alert("Incorrect password");
+    }
+  }
+
+  function openEditModal(){
+    const map = {
+      comment: "suggestedComment",
+      email: "suggestedEmail",
+      corr: "suggestedCorrCode"
+    };
+
+    els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+    els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+    els.editModal.style.display = "flex";
+  }
+
+  async function saveEdit(){
+    const val = els.editTextarea.value.trim();
+
+    if(!val){
+      alert("Cannot save empty text.");
+      return;
+    }
+
+    const docId = getDocId(currentFinalRecommendation, currentEditType);
+
+    try{
+      await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
+        text: val,
+        type: currentEditType,
+        recommendation: currentFinalRecommendation,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      templateCache[docId] = val;
+
+      if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
+      if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
+      if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
+
+      closeEditModal();
+      alert("Saved!");
+    } catch(err){
+      alert("Unable to save right now.");
+    }
+  }
+
+  function getPercent(isFinal){
+    if (isFinal) return 100;
+
+    const currentIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (currentIndex === -1) {
+      return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95);
+    }
+
+    const progress = ((currentIndex + 1) / MAX_STEPS) * 100;
+    return Math.min(Math.round(progress), 95);
+  }
+
+  function updateMeta(isFinal){
+    const pct = getPercent(isFinal);
+    const lastAnswer = path.length ? path[path.length - 1].answer : "—";
+    const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
+
+    els.progressFill.style.width = pct + "%";
+    els.progressText.textContent = progressLabel;
+    els.metricSteps.textContent = String(path.length);
+    els.metricAnswer.textContent = lastAnswer;
+    els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
+  }
+
+  function updatePath(){
+  if(!path.length){
+    els.pathBox.className = "path-empty";
+    els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+    return;
+  }
+
+  const html = path.map((item, index) => {
+    const isActive =
+      currentKey === "__final__"
+        ? (
+            item.nextKey === "__final__" ||
+            (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
+          )
+        : item.fromKey === currentKey;
+
+    return `
+      <div class="path-item">
+        <button
+          type="button"
+          class="path-jump ${isActive ? "active" : ""}"
+          data-step-index="${index}"
+        >
+          <div class="path-step">Step ${index + 1}</div>
+          <div class="path-question">${escapeHtml(item.question)}</div>
+          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+        </button>
+      </div>
+    `;
+  }).join("");
+
+  els.pathBox.className = "path-list";
+  els.pathBox.innerHTML = html;
+
+  els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.stepIndex);
+      jumpToPathStep(index);
+    });
+  });
+}
+
+  function jumpToPathStep(index){
+  if(index < 0 || index >= path.length) return;
+
+  const target = path[index];
+  if(!target) return;
+
+  currentFinalRecommendation = "";
+
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  if(target.nextKey === "__final__" && target.finalNode){
+    renderFinal(target.finalNode);
+    return;
+  }
+
+  renderNode(target.fromKey);
+}
+
+  function updateRecommendation(text, isFinal){
+    if(!isFinal){
+      els.recommendationBox.className = "recommendation empty";
+      els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
+      return;
+    }
+
+    els.recommendationBox.className = "recommendation";
+    els.recommendationBox.textContent = text;
+  }
+
+  function openImageModal(src){
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
+
+    img.src = src;
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeImageModal(e){
+    if (e) e.stopPropagation();
+
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
+
+    modal.classList.remove("open");
+    img.src = "";
+    document.body.style.overflow = "";
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeImageModal();
+  });
+
+  async function renderFinal(finalNode){
+    const finalText = finalNode.action || getNodeText(finalNode) || "";
+    const finalNote = finalNode.note || "";
+    const finalImage = finalNode.image || "";
+
+    const formattedFinalText = escapeHtml(finalText)
+      .replace(/\r\n/g, "\n")
+      .replace(/\n/g, "<br>");
+
+    currentFinalRecommendation = finalText;
+    currentKey = "__final__";
+    updateMeta(true);
+    updatePath();
+    updateRecommendation(finalText, true);
+    await loadTemplatesForRecommendation(finalText);
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+      </div>
+
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${formattedFinalText}</div>
+        ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+
+        ${finalImage ? `
+          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
+          </div>
+        ` : ""}
+
+        <div class="final-actions">
+          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart">Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+  }
+
+  async function renderNode(key){
+    currentKey = key;
+    const node = NODES[key];
+
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        </div>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
+
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
+
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
+
+const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+let currentStepNumber = 0;
+
+if (currentKey === "start") {
+  currentStepNumber = 0;
+} else if (fromIndex !== -1) {
+  // user is viewing a recorded step directly
+  currentStepNumber = fromIndex + 1;
+} else if (nextIndex !== -1) {
+  // user moved forward normally to the next screen
+  currentStepNumber = nextIndex + 2;
+} else {
+  // fallback for first real screen after intro
+  currentStepNumber = 1;
+}
+
+const footerStepText = currentKey === "start"
+  ? "Ready to begin"
+  : `Currently on step ${currentStepNumber}`;
+
+const badgeStepText = currentKey === "start"
+  ? "Start"
+  : `Step ${currentStepNumber}`;
+
+const hasPreviousStep = currentKey !== "start";
+
+    updateMeta(false);
+    updatePath();
+    updateRecommendation("", false);
+
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">${escapeHtml(nodeText)}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
+
+          ${nodeNote ? `
+            <div class="note-card">
+              <div class="note-head">
+                <i class="fa-solid fa-bell"></i>
+                Reminder
+              </div>
+              <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
+            </div>
+          ` : ""}
+
+          ${nodeImage ? `
+            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+            </div>
+          ` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+
+   els.stageCard.querySelectorAll(".choice").forEach(btn => {
+  btn.addEventListener("click", () => {
+    els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    const next = btn.dataset.next;
+    const label = btn.dataset.label;
+    const action = btn.dataset.action;
+    const note = btn.dataset.note;
+
+    const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+    const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (fromIndex !== -1) {
+      // user is re-answering an already-saved step
+      path = path.slice(0, fromIndex);
+    } else if (nextIndex !== -1) {
+      // user is continuing normally from the previous step
+      path = path.slice(0, nextIndex + 1);
+    }
+
+    historyStack.push({
+      key: currentKey,
+      path: [...path]
+    });
+
+    if (currentKey !== "start") {
+      path.push({
+        question: nodeText,
+        answer: label,
+        fromKey: currentKey,
+        nextKey: action ? "__final__" : next,
+        finalNode: action ? { action, note } : null
+      });
+    }
+
+    updatePath();
+    updateMeta(false);
+
+    setTimeout(() => {
+      if (action) {
+        renderFinal({ action, note });
+      } else {
+        renderNode(next);
+      }
+    }, 120);
+  });
+});
+  }
+
+function goBack(){
+  currentFinalRecommendation = "";
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  // Case 1: currently on final recommendation
+  if (currentKey === "__final__") {
+    const finalIndex = path.findIndex(item => {
+      if (item.nextKey === "__final__") return true;
+
+      const nextNode = NODES[item.nextKey];
+      return !!nextNode && isFinalNode(nextNode);
+    });
+
+    if (finalIndex === -1) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    // Go back to the actual last question step
+    currentKey = path[finalIndex].fromKey;
+    renderNode(path[finalIndex].fromKey);
+    return;
+  }
+
+  // Case 2: current screen matches a saved step directly (fromKey)
+  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+  if (fromIndex !== -1) {
+    if (fromIndex === 0) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    currentKey = path[fromIndex - 1].fromKey;
+    renderNode(path[fromIndex - 1].fromKey);
+    return;
+  }
+
+  // Case 3: current screen was reached normally from a previous step (nextKey)
+  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+  if (nextIndex !== -1) {
+    currentKey = path[nextIndex].fromKey;
+    renderNode(path[nextIndex].fromKey);
+    return;
+  }
+
+  // Fallback
+  currentKey = "start";
+  renderNode("start");
+}
+  
+  function restart(){
+    path = [];
+    historyStack = [];
+    currentFinalRecommendation = "";
+    currentKey = "start";
+
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    updatePath();
+    updateRecommendation("", false);
+    renderNode("start");
+  }
+
+  /* ===== PAGE MODALS + FEEDBACK ONLY ===== */
+
+function openModalAnimated(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
+
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
+
+function closeModalAnimated(id, onClosed) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
+
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
+
+function openComment() {
+  openModalAnimated("commentModal");
+}
+
+function closeComment() {
+  closeModalAnimated("commentModal");
+}
+
+function openHelp() {
+  openModalAnimated("helpModal");
+}
+
+function closeHelp() {
+  closeModalAnimated("helpModal");
+}
+
+function closeAllComments() {
+  closeModalAnimated("allCommentsModal");
+}
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+  if (!ratingStars.length) return;
+
+  ratingStars.forEach(star => {
+    star.onclick = function (e) {
+      e.stopPropagation();
+      selectedRating = Number(this.dataset.value || 0);
+
+      ratingStars.forEach(s => {
+        const val = Number(s.dataset.value || 0);
+        s.classList.toggle("selected", val <= selectedRating);
+      });
+    };
+  });
+}
+
+async function sendComment() {
+  const nameEl = document.getElementById("commentName");
+  const textEl = document.getElementById("commentText");
+  const feedbackMessage = document.getElementById("feedbackMessage");
+
+  const name = (nameEl?.value || "").trim();
+  const comment = (textEl?.value || "").trim();
+
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
+    }
+    return;
+  }
+
+  try {
+    await db.collection(FEEDBACK_COLLECTION).add({
+      name: name || "Anonymous",
+      comment,
+      rating: selectedRating,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    if (nameEl) nameEl.value = "";
+    if (textEl) textEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
+
+    setTimeout(() => {
+      closeComment();
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
+      }
+    }, 900);
+  } catch (err) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
+    }
+  }
+}
+
+async function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const commentsList = document.getElementById("commentsList");
+  if (!commentsList) return;
+
+  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+  const loadComments = async () => {
+    try {
+      const snap = await db
+        .collection(FEEDBACK_COLLECTION)
+        .orderBy("createdAt", "desc")
+        .get();
+
+      if (snap.empty) {
+        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+      } else {
+        commentsList.innerHTML = snap.docs.map(doc => {
+          const data = doc.data() || {};
+          const rating = Number(data.rating || 0);
+          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+          const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+          return `
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      openModalAnimated("allCommentsModal");
+    } catch (err) {
+      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+      openModalAnimated("allCommentsModal");
+    }
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeModalAnimated("commentModal", loadComments);
+  } else {
+    loadComments();
+  }
+}
+
+window.attemptEdit = attemptEdit;
+window.closePasswordModal = closePasswordModal;
+window.closeEditModal = closeEditModal;
+window.checkPassword = checkPassword;
+window.saveEdit = saveEdit;
+window.copyTemplateText = copyTemplateText;
+window.goBack = goBack;
+window.restart = restart;
+window.openImageModal = openImageModal;
+window.closeImageModal = closeImageModal;
+
+/* keep these for header.html buttons */
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
+
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+});
+
+setTimeout(() => {
+  initRatingStars();
+}, 300);
+
+renderNode("start");
+});
+</script>
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+  <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
+  <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
+</div>
+
+</body>
+</html>
