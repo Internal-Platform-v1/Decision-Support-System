@@ -915,7 +915,9 @@ body.modal-open{overflow:hidden;}
   <div id="site-footer"></div>
 </div>
 <div id="toast">Copied!</div>
-
+  
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
@@ -958,6 +960,17 @@ function initFbcCommentsPage() {
 document.addEventListener('DOMContentLoaded', initFbcCommentsPage); document.addEventListener('headerLoaded', initFbcCommentsPage);
 let currentFbiStep = 0;
 let fbiAutoPlayTimer = null;
+
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  });
+}  
 
 function getFbiSteps(){
   return Array.from(document.querySelectorAll('#fbiModal .fbi-step'));
