@@ -1825,25 +1825,97 @@ const NODES = {
      ADDING COD
   ========================= */
 
-  add_cod_valid: {
-    text: "Is the added COD charge valid?",
-    help: "Validate if the BOL supports the COD amount and all required COD information is present.",
-    choices: [
-      {
-        label: "Yes, Valid",
-        next: "add_pull_cbl",
-        icon: "fa-solid fa-circle-check",
-        desc: "Proceed with BOL validation and COD entry."
-      },
-      {
-        label: "Not Valid",
-        action: "Decline the request. The correction request must provide all COD information required to add COD from the original bill.",
-        note: "Required COD information:\n• COD Amount\n• COD Prepaid or Collect\n• Type of Funds Accepted: Certified check, company check, or cash\n• Complete Remit To Address\n\nIf the information is incomplete, the correction request must be declined.",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Decline because COD information is incomplete or invalid."
-      }
-    ]
-  },
+ add_cod_valid: {
+  text: "Is the added COD charge valid?",
+  help: "Validate if the BOL supports the COD amount and all required COD information is present.",
+  choices: [
+    {
+      label: "Yes, Valid",
+      next: "add_pull_cbl",
+      icon: "fa-solid fa-circle-check",
+      desc: "Proceed with BOL validation and COD entry."
+    },
+    {
+      label: "Not Valid",
+      next: "add_not_valid_missing_info",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Follow the decline process when required COD information is missing."
+    }
+  ]
+},
+
+add_not_valid_missing_info: {
+  text: "Not Valid — required COD information is missing.",
+  help: "Decline the request if one or more required COD details are missing.",
+  note: "Correction request must provide all COD info that needs to be added to the Freight Bill:\n\n• COD Amount\n• COD Fee Prepaid or Collect\n• Type of Funds Acceptable: Certified check, company check, or Cash\n• Complete Remit to Address\n\nIf correction request is missing one or all of the information, the correction request MUST BE DECLINED.",
+  choices: [
+    {
+      label: "Continue",
+      next: "add_not_valid_remit_missing",
+      icon: "fa-solid fa-arrow-right",
+      desc: "Proceed to the decline comment process."
+    }
+  ]
+},
+
+add_not_valid_remit_missing: {
+  text: "Pro is missing the Remit To address.",
+  help: "Declined comments should state the missing information clearly.",
+  note: "Use this declined comment:\n\nDECLINED — CORRECTION REQUEST IS REQUIRED TO SUPPLY ALL THE COD INFO. THIS REQUEST IS MISSING THE REMIT TO ADDRESS. PLEASE RE-ENTER AND SUPPLY ALL REQUIRED INFO.",
+  image: "cod-images/9.png",
+  choices: [
+    {
+      label: "Continue",
+      next: "add_not_valid_add_comment",
+      icon: "fa-solid fa-arrow-right",
+      desc: "Add the declined comment."
+    }
+  ]
+},
+
+add_not_valid_add_comment: {
+  text: "After entering the declined comment, select the ADD button.",
+  help: "Make sure the declined comment is added before closing the comment screen.",
+  image: "cod-images/10.png",
+  image: "cod-images/10v1.png",
+  choices: [
+    {
+      label: "Continue",
+      next: "add_not_valid_close",
+      icon: "fa-solid fa-arrow-right",
+      desc: "Close the comment screen."
+    }
+  ]
+},
+
+add_not_valid_close: {
+  text: "Then select the Close button.",
+  help: "After saving the declined comment, close the comment maintenance window.",
+  choices: [
+    {
+      label: "Continue",
+      next: "add_not_valid_decline_request",
+      icon: "fa-solid fa-arrow-right",
+      desc: "Proceed to decline the correction request."
+    }
+  ]
+},
+
+add_not_valid_decline_request: {
+  text: "Click Declined and put the comment on F6 comments.",
+  help: "Use the decline popup and reference the F6 comment.",
+  note: "Decline popup comment:\n\nDECLINED — SEE F6 COMMENTS",
+  image: "cod-images/11.png",
+  image: "cod-images/11v1.png",
+  choices: [
+    {
+      label: "Continue",
+      action: "Decline the correction request and use: DECLINED — SEE F6 COMMENTS. Make sure the detailed declined reason is already added in F6 comments.",
+      icon: "fa-solid fa-circle-check",
+      desc: "Finish the Not Valid decline flow."
+    }
+  ]
+},
 
   add_pull_cbl: {
     text: "Pull the CBL up in EDM.",
@@ -1983,35 +2055,65 @@ const NODES = {
     ]
   },
 
-  remove_confirmation_check: {
-    text: "Does the corrected Bill of Lading or Letter of Authority confirm removal of the COD?",
-    help: "We cannot update this freight bill until the corrected bill of lading or letter of authority confirms COD removal.",
-    choices: [
-      {
-        label: "Yes, imaged and valid",
-        next: "remove_valid_requirements",
-        icon: "fa-solid fa-circle-check",
-        desc: "The corrected BOL/LOA is imaged and confirms removal."
-      },
-      {
-        label: "No, not imaged yet",
-        action: "Decline the request. We must confirm by reviewing the imaged CBL or LOA authorizing the COD removal before we can complete the update. Re-enter the request after the paperwork is imaged.",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Decline until paperwork is imaged."
-      },
-      {
-        label: "LOA does not state COD removal",
-        action: "Decline the request. The current imaged Letter of Authority or corrected Bill of Lading does not follow our required guidelines and does not specifically say to remove the COD. It must be very clear that the customer wants the COD removed from the freight bill.",
-        icon: "fa-solid fa-triangle-exclamation",
-        desc: "Decline because the document does not clearly authorize COD removal."
-      }
-    ]
-  },
+remove_confirmation_check: {
+  text: "Does the corrected Bill of Lading or Letter of Authority confirm removal of the COD?",
+  help: "We cannot update this freight bill until the corrected bill of lading or letter of authority confirms COD removal.",
+  choices: [
+    {
+      label: "Yes, imaged and valid",
+      next: "remove_valid_requirements",
+      icon: "fa-solid fa-circle-check",
+      desc: "The corrected BOL/LOA is imaged and confirms removal."
+    },
+    {
+      label: "No, LOA is not imaged at time of review",
+      next: "remove_no_loa_not_imaged",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Decline until the corrected document is imaged."
+    },
+    {
+      label: "Letter of Authority does not state to remove COD",
+      next: "remove_no_loa_not_clear",
+      icon: "fa-solid fa-triangle-exclamation",
+      desc: "Decline because the LOA does not clearly authorize COD removal."
+    }
+  ]
+},
+
+remove_no_loa_not_imaged: {
+  text: "LOA is not imaged at the time of review.",
+  help: "The correction request must be declined if the LOA/CBL authorizing COD removal is not imaged at the time of review.",
+  note: "Declined comment:\n\nDECLINED — WE MUST CONFIRM BY REVIEWING THE IMAGED CBL OR LOA AUTHORIZING THE COD BE REMOVED FROM THE INVOICE BEFORE WE CAN COMPLETE THE UPDATE. PLEASE RE-ENTER REQUEST AFTER PAPERWORK IS IMAGED.",
+  image: "cod-images/remove-no-loa-not-imaged.png",
+  choices: [
+    {
+      label: "Continue",
+      action: "Decline the request because the LOA/CBL authorizing COD removal is not imaged. Use the declined comment shown in the reminder.",
+      icon: "fa-solid fa-circle-check",
+      desc: "Finish the not-imaged decline path."
+    }
+  ]
+},
+
+remove_no_loa_not_clear: {
+  text: "The Letter of Authority does not state to remove the COD.",
+  help: "Decline the request if the LOA or corrected BOL does not clearly state that the COD should be removed.",
+  note: "Declined comment:\n\nDECLINED — CURRENT IMAGED LETTER OF AUTHORITY / CORRECTED BILL OF LADING DOES NOT FOLLOW OUR REQUIRED GUIDELINES AND SPECIFICALLY SAY TO REMOVE THE COD. IT MUST BE VERY CLEAR THAT THEY ARE WANTING THE COD REMOVED FROM THE FREIGHT BILL.",
+  choices: [
+    {
+      label: "Continue",
+      action: "Decline the request because the imaged LOA/corrected BOL does not clearly state to remove the COD.",
+      icon: "fa-solid fa-circle-check",
+      desc: "Finish the unclear-LOA decline path."
+    }
+  ]
+},
 
   remove_valid_requirements: {
     text: "Verify that the COD removal requirements were met.",
     help: "Confirm both requirements before removing the COD.",
     note: "Requirements:\n1. Letter of Authority was imaged at the time of correction review.\n2. Letter of Authority specifically states that the COD is not supposed to be a COD shipment.\n\nIf valid, LOA/CBL status must be NOT a COD shipment, and the Letter of Authority must come from the shipper of the freight.",
+      image: "cod-images/12.png",
     choices: [
       {
         label: "Requirements met",
@@ -2045,6 +2147,8 @@ const NODES = {
     text: "Delete all COD keyword lines.",
     help: "Click each keyword line and select Delete Line to remove all COD-related keywords.",
     note: "Remove the following COD keywords if present:\n• COD\n• CCACCR\n• REM1\n• REM2\n• REM4\n• COD Fee Prepaid (CFP) or Collect (CFC)",
+      image: "cod-images/13.png",
+      image: "cod-images/13v1.png",
     choices: [
       {
         label: "Continue",
@@ -2058,6 +2162,7 @@ const NODES = {
   remove_confirm_delete_popup: {
     text: "Confirm the remove keyword popup.",
     help: "When removing the COD amount line, a popup box appears asking you to confirm removal of the COD amount line.",
+    image: "cod-images/14.png",
     choices: [
       {
         label: "Continue",
