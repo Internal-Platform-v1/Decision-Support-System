@@ -1788,437 +1788,648 @@ document.addEventListener("DOMContentLoaded", () => {
   const templateCache = {};
 
   //nodes here
-     const NODES = {
-    
-    start: {
-  text: "Debtor Update per BOL - General Guide",
-  help: "Select the correct billing setup shown on the BOL to determine the appropriate dispute handling process. This guide will walk you through prepaid, collect, no terms, and third-party billing scenarios to ensure accurate resolution.",
-  note: "Always review the BOL, invoice details, and account information carefully before proceeding. Billing terms and BOL instructions will determine the correct dispute path.",
-  choices: [
-    {
-      label: "Continue",
-      next: "start_billing_term",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Start the Billing Dispute decision guide."
-    }
-  ]
-},  
-      start_billing_term: {
-        text: "What is the shipment billing term?",
-        help: "Choose the billing setup shown on the BOL so the guide can route you to the correct dispute handling path.",
-        choices: [
-          { label: "Prepaid", next: "prepaid", icon: "fa-solid fa-truck-fast", desc: "Shipment is billed prepaid." },
-          { label: "Collect", next: "collect", icon: "fa-solid fa-hand-holding-dollar", desc: "Shipment is billed collect." },
-          { label: "No Terms", next: "noterms", icon: "fa-solid fa-file-circle-question", desc: "No billing terms are clearly shown." },
-          { label: "Third Party", next: "third_party_root", icon: "fa-solid fa-building-user", desc: "Shipment is billed to a third party." }
-        ]
-      },
+const NODES = {
 
-      prepaid: {
-        text: "Is there an Account No. noted on BOL?",
-        help: "Check whether an account number is written on the BOL for the prepaid shipment.",
-        choices: [
-          { label: "Yes", next: "prepaid_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is present on the BOL." },
-          { label: "No", action: "Bill the pro to the Shipper per Terms noted on BOL.", icon: "fa-solid fa-circle-xmark", desc: "No account number is noted." }
-        ]
-      },
-
-      prepaid_account_yes: {
-        text: "Is the account no. related to?",
-        help: "Identify whether the account belongs to the shipper, consignee, or a true third party.",
-        choices: [
-          { label: "Shipper", next: "prepaid_shipper_account_type", icon: "fa-solid fa-warehouse", desc: "Account is related to the shipper." },
-          { label: "Consignee", next: "prepaid_consignee_initial_billed", icon: "fa-solid fa-location-dot", desc: "Account is related to the consignee." },
-          { label: "True 3rd Party", next: "prepaid_true3pty_initial_billed", icon: "fa-solid fa-building", desc: "Account belongs to a true third party." }
-        ]
-      },
-
-      prepaid_shipper_account_type: {
-        text: "Is it a billing or shipping account?",
-        help: "Determine the type of account related to the shipper.",
-        choices: [
-          { label: "Shipping account", next: "prepaid_shipper_shipping_addr_check", icon: "fa-solid fa-box", desc: "Use the shipping account path." },
-          { label: "Billing account", next: "prepaid_shipper_billing_account", icon: "fa-solid fa-file-invoice-dollar", desc: "Use the billing account path." }
-        ]
-      },
-
-      prepaid_shipper_shipping_addr_check: {
-        text: "Is the shipping account address same as the shipper?",
-        help: "Compare the shipper address against the shipping account address.",
-        choices: [
-          { label: "Yes", action: "Update the shipper code using the account number noted on the BOL.", icon: "fa-solid fa-circle-check", desc: "Address matches the shipper." },
-          { label: "No", action: "Look for a shipping account of shipper that has ABT matching the address of the account number noted on BOL. If none, look for a billing account using the address of the account no. noted on BOL.", icon: "fa-solid fa-magnifying-glass", desc: "Address does not match." }
-        ]
-      },
-
-      prepaid_shipper_billing_account: {
-        text: "Billing account handling",
-        help: "Follow the shipper billing account handling rule.",
-        choices: [
-          { label: "Continue", action: "Look for another shipping address of shipper that has ABT matching the billing account number noted on BOL.", note: "NOTE: If no shipping account with ABT is found, manually add the billing account.", icon: "fa-solid fa-arrow-right", desc: "Proceed to billing account handling." }
-        ]
-      },
-
-      prepaid_consignee_initial_billed: {
-        text: "Who was initially billed on the pro?",
-        help: "Confirm whether the pro was billed to the shipper per terms or to the account number on the BOL.",
-        choices: [
-          { label: "Shipper – per Terms on BOL", next: "prepaid_consignee_shipper_dispute", icon: "fa-solid fa-file-signature", desc: "Pro was billed to shipper per BOL terms." },
-          { label: "Account no. per BOL", action: "If the disputing party is the Account no. owner and the request is to bill it to the Shipper, proceed and rebill it to the Shipper per Terms noted on BOL. Consider this as Debtor update per RVSL.", icon: "fa-solid fa-credit-card", desc: "Pro was billed to the account number on the BOL." }
-        ]
-      },
-
-      prepaid_consignee_shipper_dispute: {
-        text: "Who is the disputing party?",
-        help: "Identify who is disputing the prepaid consignee billing.",
-        choices: [
-          { label: "Shipper", next: "prepaid_consignee_rebill_check", icon: "fa-solid fa-warehouse", desc: "The shipper is disputing." },
-          { label: "Account no. owner", next: "prepaid_consignee_owner_billable_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
-        ]
-      },
-
-      prepaid_consignee_rebill_check: {
-        text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
-        help: "Check if the BOL clearly supports billing the account.",
-        choices: [
-          { label: "Yes", next: "prepaid_consignee_billable_check", icon: "fa-solid fa-circle-check", desc: "The BOL clearly supports the billing instruction." },
-          { label: "No", action: "Terms will trump and LOA will be needed to update to the random account no. listed on the BOL.", icon: "fa-solid fa-circle-xmark", desc: "The BOL does not clearly support the instruction." }
-        ]
-      },
-
-      prepaid_consignee_billable_check: {
-        text: "Is the account number billable(active and a BT account)?",
-        help: "Check whether the account is active and a valid BT account.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account number per BOL.(Update the terms if neccessary. Example: Update to Collect if the account is related to the Consignee. Check if the account is ABT of the Consignee)", note: "NOTE: If the account number has the same name and address of the Consignee(shipping account), use the account and update the Consignee Section then change the terms to Collect.", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
-          { label: "No", action: "Search for a valid BT account that can be billed. If no available account, advise the customer that the account cannot be billed since it's inactive or not a valid BT account(assuming that it's a Shipping acct)", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
-        ]
-      },
-
-      prepaid_consignee_owner_billable_check: {
-        text: "Is the account number billable(active and a BT account)?",
-        help: "Use this when the account owner is the disputing party.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account number per BOL.", note: "NOTE: If the account number has the same name and address of the Consignee(shipping account), use the account and update the Consignee Section then change the terms to Collect.", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
-          { label: "No", action: "Search for a valid BT account that can be billed. If no available account, advise the customer that the account cannot be billed since it's inactive or not a valid BT account(assuming that it's a Shipping acct with no ABT)", note: "NOTE: If it's a shipping account with an ABT, bill it to the ABT of the Shipping account.", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
-        ]
-      },
-
-      prepaid_true3pty_initial_billed: {
-        text: "Who was initially billed on the pro?",
-        help: "Check how the prepaid true 3rd party shipment was originally billed.",
-        choices: [
-          { label: "Shipper – per Terms on BOL", next: "prepaid_true3pty_shipper_dispute", icon: "fa-solid fa-file-signature", desc: "Pro was billed to shipper per terms." },
-          { label: "Account no. per BOL", action: "If the disputing party is the Account no. owner and the request is to bill it to the Shipper, proceed and rebill it to the Shipper per Terms noted on BOL. Consider this as Debtor update per RVSL.", icon: "fa-solid fa-credit-card", desc: "Pro was billed to the account number per BOL." }
-        ]
-      },
-
-      prepaid_true3pty_shipper_dispute: {
-        text: "Who is the disputing party?",
-        help: "Identify the disputing party for prepaid true 3rd party handling.",
-        choices: [
-          { label: "Shipper", next: "prepaid_true3pty_rebill_check", icon: "fa-solid fa-warehouse", desc: "The shipper is disputing." },
-          { label: "Account no. owner", next: "prepaid_true3pty_owner_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
-        ]
-      },
-
-      prepaid_true3pty_rebill_check: {
-        text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
-        help: "Confirm whether the BOL clearly supports billing the account.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account no. in attempt of payment.", icon: "fa-solid fa-circle-check", desc: "Instruction is clear on the BOL." },
-          { label: "No", action: "Terms will trump and LOA will be needed.", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clearly shown." }
-        ]
-      },
-
-      prepaid_true3pty_owner_check: {
-        text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
-        help: "Use this when the account owner is disputing.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account no. per BOL.", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
-          { label: "No", action: "This will be considered rebill per LOA with Correction Fee.", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
-        ]
-      },
-
-      collect: {
-        text: "Is there an Account No. noted on BOL?",
-        help: "Check whether an account number is noted for the collect shipment.",
-        choices: [
-          { label: "Yes", next: "collect_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is present on the BOL." },
-          { label: "No", action: "Bill the Pro to the Consignee per Terms noted on BOL.", icon: "fa-solid fa-circle-xmark", desc: "No account number is noted." }
-        ]
-      },
-
-      collect_account_yes: {
-        text: "Is the account no. related to?",
-        help: "Identify who the account number belongs to for collect billing.",
-        choices: [
-          { label: "Consignee", next: "collect_consignee_account_type", icon: "fa-solid fa-location-dot", desc: "Account is related to the consignee." },
-          { label: "Shipper", next: "collect_shipper_account_path", icon: "fa-solid fa-warehouse", desc: "Account is related to the shipper." },
-          { label: "True 3rd Party", next: "collect_true3pty_path", icon: "fa-solid fa-building", desc: "Account is related to a true third party." }
-        ]
-      },
-
-      collect_consignee_account_type: {
-        text: "Is it a billing or shipping account?",
-        help: "Determine the type of consignee account.",
-        choices: [
-          { label: "Shipping account", next: "collect_consignee_shipping_addr_check", icon: "fa-solid fa-box", desc: "Use shipping account path." },
-          { label: "Billing account", next: "collect_consignee_billing_account", icon: "fa-solid fa-file-invoice-dollar", desc: "Use billing account path." }
-        ]
-      },
-
-      collect_consignee_shipping_addr_check: {
-        text: "Is the shipping account address same as the Consignee?",
-        help: "Compare the consignee address against the shipping account address.",
-        choices: [
-          { label: "Yes", action: "Update the Consignee code using the account number noted on the BOL.", icon: "fa-solid fa-circle-check", desc: "Address matches the consignee." },
-          { label: "No", action: "Look for a shipping account of Consignee that has ABT matching the address of the account no. noted on BOL. If none, look for a billing account using the address of the account no. noted on BOL.", icon: "fa-solid fa-magnifying-glass", desc: "Address does not match." }
-        ]
-      },
-
-      collect_consignee_billing_account: {
-        text: "Billing account handling",
-        help: "Follow the collect consignee billing account handling rule.",
-        choices: [
-          { label: "Continue", action: "Look for another shipping address of Consignee that has ABT matching the billing account number noted on BOL.", note: "NOTE: If no shipping account with ABT is found, manually add the billing account.", icon: "fa-solid fa-arrow-right", desc: "Proceed to billing account handling." }
-        ]
-      },
-
-      collect_shipper_account_path: {
-        text: "Who was initially billed on the pro?",
-        help: "Check how the collect/shipper-related pro was originally billed.",
-        choices: [
-          { label: "Collect – per Terms on BOL", next: "collect_shipper_initial_collect", icon: "fa-solid fa-file-signature", desc: "The pro was billed collect per BOL terms." },
-          { label: "Account no. per BOL", next: "collect_shipper_account_billed", icon: "fa-solid fa-credit-card", desc: "The pro was billed to the account number on the BOL." }
-        ]
-      },
-
-      collect_shipper_initial_collect: {
-        text: "Who is the disputing party?",
-        help: "Identify the disputing party for collect shipper handling.",
-        choices: [
-          { label: "Consignee", next: "collect_shipper_rebill_check", icon: "fa-solid fa-location-dot", desc: "The consignee is disputing." },
-          { label: "Account no. owner", next: "collect_shipper_owner_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
-        ]
-      },
-
-      collect_shipper_rebill_check: {
-        text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
-        help: "Confirm whether the BOL clearly supports billing the account.",
-        choices: [
-          { label: "Yes", next: "collect_shipper_billable_check", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
-          { label: "No", action: "Terms will trump and LOA will be needed.", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
-        ]
-      },
-
-      collect_shipper_owner_check: {
-        text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
-        help: "Use this when the account owner is disputing.",
-        choices: [
-          { label: "Yes", next: "collect_shipper_billable_check", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
-          { label: "No", action: "This will be considered rebill per LOA with Correction Fee.", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
-        ]
-      },
-
-      collect_shipper_billable_check: {
-        text: "Is the account no. billable (active and a BT account)?",
-        help: "Verify if the account is active and billable.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account no. per BOL. Update the terms if necessary.", note: "NOTE: If account no. has the same name and address of the Shipper (shipping account), update the Shipper section and change Terms to Prepaid.", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
-          { label: "No", action: "Search for a valid BT account that can be billed. If none, advise the customer that the account cannot be billed.", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
-        ]
-      },
-
-      collect_shipper_account_billed: {
-        text: "Account no. per BOL handling",
-        help: "Follow this rule when the pro was already billed to the account number per BOL.",
-        choices: [
-          { label: "Continue", action: "If the disputing party is the Account no. owner and the request is to bill the Consignee, proceed and rebill it to Collect per Terms noted on BOL. If Collect was billed and disputed before, bill Shipper per RVSL.", icon: "fa-solid fa-arrow-right", desc: "Continue with the account-billed handling." }
-        ]
-      },
-
-      collect_true3pty_path: {
-        text: "Who was initially billed on the pro?",
-        help: "Use the true 3rd party collect route based on original billing.",
-        choices: [
-          { label: "Collect – per Terms on BOL", next: "collect_true3pty_terms_check", icon: "fa-solid fa-file-signature", desc: "The pro was billed collect per terms." },
-          { label: "Account no. per BOL", action: "If the disputing party is the Account no. owner and the request is to bill it to Collect per Terms noted on BOL, proceed accordingly. Consider this as Debtor update per RVSL.", icon: "fa-solid fa-credit-card", desc: "The pro was billed to the account number per BOL." }
-        ]
-      },
-
-      collect_true3pty_terms_check: {
-        text: "Who is the disputing party?",
-        help: "Identify who is disputing the collect true 3rd party billing.",
-        choices: [
-          { label: "Consignee", next: "collect_true3pty_rebill_check", icon: "fa-solid fa-location-dot", desc: "The consignee is disputing." },
-          { label: "Account no. owner", next: "collect_true3pty_owner_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
-        ]
-      },
-
-      collect_true3pty_rebill_check: {
-        text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
-        help: "Confirm whether the billing instruction is clearly shown on the BOL.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account no. in attempt of payment.", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
-          { label: "No", action: "Terms will trump and LOA will be needed.", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
-        ]
-      },
-
-      collect_true3pty_owner_check: {
-        text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
-        help: "Use this when the account owner is disputing.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account no. per BOL.", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
-          { label: "No", action: "This will be considered rebill per LOA with Correction Fee.", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
-        ]
-      },
-
-      noterms: {
-        text: "Is there an Account No. noted on BOL?",
-        help: "Use this branch when no billing terms are clearly shown on the BOL.",
-        choices: [
-          { label: "Yes", next: "noterms_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is present." },
-          { label: "No", next: "noterms_no_account", icon: "fa-solid fa-circle-xmark", desc: "No account number is present." }
-        ]
-      },
-
-      noterms_account_yes: {
-        text: "Is the account no. related to?",
-        help: "Identify the related party for the account number.",
-        choices: [
-          { label: "Shipper", next: "prepaid_shipper_account_type", icon: "fa-solid fa-warehouse", desc: "Account is related to the shipper." },
-          { label: "Consignee", next: "noterms_consignee_account_type", icon: "fa-solid fa-location-dot", desc: "Account is related to the consignee." },
-          { label: "True 3rd Party", action: "Bill it to the account no. with Prepaid as Terms.", icon: "fa-solid fa-building", desc: "Account is related to a true third party." }
-        ]
-      },
-
-      noterms_consignee_account_type: {
-        text: "Is it a billing or shipping account?",
-        help: "Determine the type of consignee account.",
-        choices: [
-          { label: "Shipping account", next: "noterms_consignee_shipping_addr_check", icon: "fa-solid fa-box", desc: "Use shipping account path." },
-          { label: "Billing account", next: "noterms_consignee_billing_account", icon: "fa-solid fa-file-invoice-dollar", desc: "Use billing account path." }
-        ]
-      },
-
-      noterms_consignee_shipping_addr_check: {
-        text: "Is the shipping account address same as the Consignee?",
-        help: "Compare the consignee address against the shipping account address.",
-        choices: [
-          { label: "Yes", action: "Update the Consignee code using the account number noted on the BOL.", icon: "fa-solid fa-circle-check", desc: "Address matches the consignee." },
-          { label: "No", action: "Look for a shipping account of Consignee that has ABT matching the address of the account no. noted on BOL. If none, look for a billing account using the address of the account no. noted on BOL.", icon: "fa-solid fa-magnifying-glass", desc: "Address does not match." }
-        ]
-      },
-
-      noterms_consignee_billing_account: {
-        text: "Billing account handling",
-        help: "Follow the no-terms consignee billing account rule.",
-        choices: [
-          { label: "Continue", action: "Look for another shipping address of Consignee that has ABT matching the billing account number noted on BOL.", note: "NOTE: If no shipping account with ABT is found, manually add the billing account.", icon: "fa-solid fa-arrow-right", desc: "Proceed with billing account handling." }
-        ]
-      },
-
-      noterms_no_account: {
-        text: "Is the shipment originating in the US or Canada?",
-        help: "Default billing depends on the origin when no terms and no account are shown.",
-        choices: [
-          { label: "US", action: "Bill it Prepaid per default billing.", icon: "fa-solid fa-flag-usa", desc: "Shipment originated in the US." },
-          { label: "Canada", action: "Bill it Collect per default billing.", icon: "fa-solid fa-flag", desc: "Shipment originated in Canada." }
-        ]
-      },
-
-      third_party_root: {
-        text: "Is there an Account No. noted on the BOL?",
-        help: "Use the third-party branch when the billing is intended for a third party.",
-        choices: [
-          { label: "Yes", next: "tp_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is noted on the BOL." },
-          { label: "No", action: "Cannot bill Third Party. No account number noted on the BOL. Billing remains per original terms.", icon: "fa-solid fa-circle-xmark", desc: "No account number is noted." }
-        ]
-      },
-
-      tp_account_yes: {
-        text: "Is the account no. information (Name and Address) same as the BT information noted on the BOL?",
-        help: "Compare the account information against the BT information on the BOL.",
-        choices: [
-          { label: "Yes", next: "tp_bt_match_yes", icon: "fa-solid fa-circle-check", desc: "The information matches." },
-          { label: "No", next: "tp_bt_match_no", icon: "fa-solid fa-circle-xmark", desc: "The information does not match." }
-        ]
-      },
-
-      tp_bt_match_yes: {
-        text: "Is the account no. billable (active and a BT account)?",
-        help: "Verify whether the account is active and a valid BT account.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account no. per BOL(Update the terms if necessary Example: Update to Prepaid if Account is related to the Shipper or True 3rd party. Collect if related to the Consignee. Check if account is ABT of the Shipper or Consignee)", note: "Note: If account no. has the same name and address of the Shipper(shipping account), use the account and update the Shipper Section then change the Terms to Prepaid. Follow the same rule of related to the Consignee.", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
-          { label: "No", action: "Search for a Valid BT account that can be billed. If no available account, advise the customer that account cannot be billed since it is inactive or not a valid BT account (assuming that it is a Shipping Account with no ABT).", note: "NOTE: If it is a Shipping account with an ABT, bill it to the ABT of the shipping account.", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
-        ]
-      },
-
-      tp_bt_match_no: {
-        text: "Who was initially billed on the Pro?",
-        help: "Choose whether the pro was billed to the account number or BT information.",
-        choices: [
-          { label: "Account No.", next: "tp_initial_account_no", icon: "fa-solid fa-credit-card", desc: "The pro was initially billed to the account number." },
-          { label: "BT Information", next: "tp_initial_bt_info", icon: "fa-solid fa-file-lines", desc: "The pro was initially billed to the BT information." }
-        ]
-      },
-
-      tp_initial_account_no: {
-        text: "Who is the disputing party?",
-        help: "Identify who is requesting the change from the account-no.-billed scenario.",
-        choices: [
-          { label: "Account No. owner requesting to bill a different BT info noted on the BOL", next: "tp_account_owner_bt_request", icon: "fa-solid fa-user", desc: "Account owner wants billing moved to different BT info on BOL." },
-          { label: "Owner of the BT information requesting to bill to their account", next: "tp_bt_owner_account_request", icon: "fa-solid fa-building-user", desc: "BT owner wants the bill moved to their account." }
-        ]
-      },
-
-      tp_account_owner_bt_request: {
-        text: "Is there a valid account no. available and billable that matches the BT information?",
-        help: "Check if there is a valid billable account that matches the BT info.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling to the valid BT account that matches the BT information noted on the BOL.", icon: "fa-solid fa-circle-check", desc: "A matching valid account is available." },
-          { label: "No", action: "Advise the customer that no valid billable account matching the BT information is available. LOA may be needed depending on the request.", icon: "fa-solid fa-circle-xmark", desc: "No matching valid account is available." }
-        ]
-      },
-
-      tp_bt_owner_account_request: {
-        text: "Is there a clear instruction on the BOL to bill to the BT information or account?",
-        help: "Use the BOL instruction to decide whether the requested rebill is supported.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling to the BT owner account per BOL instruction.", icon: "fa-solid fa-circle-check", desc: "The BOL clearly supports the billing." },
-          { label: "No", action: "This will be considered rebill per LOA with Correction Fee.", icon: "fa-solid fa-circle-xmark", desc: "The BOL does not clearly support the request." }
-        ]
-      },
-
-      tp_initial_bt_info: {
-        text: "Who is the disputing party?",
-        help: "Identify the disputing party when the pro was initially billed to BT information.",
-        choices: [
-          { label: "Owner of BT information", next: "tp_bt_owner_dispute", icon: "fa-solid fa-building-user", desc: "The BT information owner is disputing." },
-          { label: "Account No. owner", next: "tp_account_owner_dispute", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
-        ]
-      },
-
-      tp_bt_owner_dispute: {
-        text: "Is there a valid account number that matches the BT information and is billable?",
-        help: "Check if a valid matching BT account exists.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the valid account number that matches the BT information.", icon: "fa-solid fa-circle-check", desc: "Valid matching BT account exists." },
-          { label: "No", action: "Advise the customer that no valid matching BT account can be billed.", icon: "fa-solid fa-circle-xmark", desc: "No valid matching BT account exists." }
-        ]
-      },
-
-      tp_account_owner_dispute: {
-        text: "Is there a clear instruction on the BOL to bill the account no. or place it in the BT section?",
-        help: "Use the BOL instruction to determine whether the dispute can be rebilled.",
-        choices: [
-          { label: "Yes", action: "Proceed with rebilling the account no. per BOL.", icon: "fa-solid fa-circle-check", desc: "The BOL clearly supports the account billing." },
-          { label: "No", action: "This will be considered rebill per LOA with Correction Fee.", icon: "fa-solid fa-circle-xmark", desc: "The BOL does not clearly support the account billing." }
-        ]
+  start: {
+    text: "Debtor Update per BOL - General Guide",
+    help: "Select the correct billing setup shown on the BOL to determine the appropriate dispute handling process. This guide will walk you through prepaid, collect, no terms, and third-party billing scenarios to ensure accurate resolution.",
+    note: "Always review the BOL, invoice details, and account information carefully before proceeding. Billing terms and BOL instructions will determine the correct dispute path.",
+    choices: [
+      {
+        label: "Continue",
+        next: "start_billing_term",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the Billing Dispute decision guide."
       }
-    };
+    ]
+  },
 
+  start_billing_term: {
+    text: "What is the shipment billing term?",
+    help: "Choose the billing setup shown on the BOL so the guide can route you to the correct dispute handling path.",
+    choices: [
+      { label: "Prepaid", next: "prepaid", icon: "fa-solid fa-truck-fast", desc: "Shipment is billed prepaid." },
+      { label: "Collect", next: "collect", icon: "fa-solid fa-hand-holding-dollar", desc: "Shipment is billed collect." },
+      { label: "No Terms", next: "noterms", icon: "fa-solid fa-file-circle-question", desc: "No billing terms are clearly shown." },
+      { label: "Third Party", next: "third_party_root", icon: "fa-solid fa-building-user", desc: "Shipment is billed to a third party." }
+    ]
+  },
+
+  prepaid: {
+    text: "Is there an Account No. noted on BOL?",
+    help: "Check whether an account number is written on the BOL for the prepaid shipment.",
+    choices: [
+      { label: "Yes", next: "prepaid_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is present on the BOL." },
+      { label: "No", next: "final_prepaid_no_account", icon: "fa-solid fa-circle-xmark", desc: "No account number is noted." }
+    ]
+  },
+
+  final_prepaid_no_account: {
+    text: "Bill the pro to the Shipper per Terms noted on BOL.",
+    choices: []
+  },
+
+  prepaid_account_yes: {
+    text: "Is the account no. related to?",
+    help: "Identify whether the account belongs to the shipper, consignee, or a true third party.",
+    choices: [
+      { label: "Shipper", next: "prepaid_shipper_account_type", icon: "fa-solid fa-warehouse", desc: "Account is related to the shipper." },
+      { label: "Consignee", next: "prepaid_consignee_initial_billed", icon: "fa-solid fa-location-dot", desc: "Account is related to the consignee." },
+      { label: "True 3rd Party", next: "prepaid_true3pty_initial_billed", icon: "fa-solid fa-building", desc: "Account belongs to a true third party." }
+    ]
+  },
+
+  prepaid_shipper_account_type: {
+    text: "Is it a billing or shipping account?",
+    help: "Determine the type of account related to the shipper.",
+    choices: [
+      { label: "Shipping account", next: "prepaid_shipper_shipping_addr_check", icon: "fa-solid fa-box", desc: "Use the shipping account path." },
+      { label: "Billing account", next: "prepaid_shipper_billing_account", icon: "fa-solid fa-file-invoice-dollar", desc: "Use the billing account path." }
+    ]
+  },
+
+  prepaid_shipper_shipping_addr_check: {
+    text: "Is the shipping account address same as the shipper?",
+    help: "Compare the shipper address against the shipping account address.",
+    choices: [
+      { label: "Yes", next: "final_prepaid_shipper_update_code", icon: "fa-solid fa-circle-check", desc: "Address matches the shipper." },
+      { label: "No", next: "final_prepaid_shipper_find_abt", icon: "fa-solid fa-magnifying-glass", desc: "Address does not match." }
+    ]
+  },
+
+  final_prepaid_shipper_update_code: {
+    text: "Update the shipper code using the account number noted on the BOL.",
+    choices: []
+  },
+
+  final_prepaid_shipper_find_abt: {
+    text: "Look for a shipping account of shipper that has ABT matching the address of the account number noted on BOL. If none, look for a billing account using the address of the account no. noted on BOL.",
+    choices: []
+  },
+
+  prepaid_shipper_billing_account: {
+    text: "Look for another shipping address of shipper that has ABT matching the billing account number noted on BOL.",
+    help: "Follow the shipper billing account handling rule.",
+    note: "NOTE: If no shipping account with ABT is found, manually add the billing account.",
+    choices: []
+  },
+
+  prepaid_consignee_initial_billed: {
+    text: "Who was initially billed on the pro?",
+    help: "Confirm whether the pro was billed to the shipper per terms or to the account number on the BOL.",
+    choices: [
+      { label: "Shipper – per Terms on BOL", next: "prepaid_consignee_shipper_dispute", icon: "fa-solid fa-file-signature", desc: "Pro was billed to shipper per BOL terms." },
+      { label: "Account no. per BOL", next: "final_prepaid_consignee_account_billed", icon: "fa-solid fa-credit-card", desc: "Pro was billed to the account number on the BOL." }
+    ]
+  },
+
+  final_prepaid_consignee_account_billed: {
+    text: "If the disputing party is the Account no. owner and the request is to bill it to the Shipper, proceed and rebill it to the Shipper per Terms noted on BOL. Consider this as Debtor update per RVSL.",
+    choices: []
+  },
+
+  prepaid_consignee_shipper_dispute: {
+    text: "Who is the disputing party?",
+    help: "Identify who is disputing the prepaid consignee billing.",
+    choices: [
+      { label: "Shipper", next: "prepaid_consignee_rebill_check", icon: "fa-solid fa-warehouse", desc: "The shipper is disputing." },
+      { label: "Account no. owner", next: "prepaid_consignee_owner_billable_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
+    ]
+  },
+
+  prepaid_consignee_rebill_check: {
+    text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
+    help: "Check if the BOL clearly supports billing the account.",
+    choices: [
+      { label: "Yes", next: "prepaid_consignee_billable_check", icon: "fa-solid fa-circle-check", desc: "The BOL clearly supports the billing instruction." },
+      { label: "No", next: "final_prepaid_consignee_terms_trump", icon: "fa-solid fa-circle-xmark", desc: "The BOL does not clearly support the instruction." }
+    ]
+  },
+
+  final_prepaid_consignee_terms_trump: {
+    text: "Terms will trump and LOA will be needed to update to the random account no. listed on the BOL.",
+    choices: []
+  },
+
+  prepaid_consignee_billable_check: {
+    text: "Is the account number billable(active and a BT account)?",
+    help: "Check whether the account is active and a valid BT account.",
+    choices: [
+      { label: "Yes", next: "final_prepaid_consignee_billable_yes", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
+      { label: "No", next: "final_prepaid_consignee_billable_no", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
+    ]
+  },
+
+  final_prepaid_consignee_billable_yes: {
+    text: "Proceed with rebilling the account number per BOL.(Update the terms if neccessary. Example: Update to Collect if the account is related to the Consignee. Check if the account is ABT of the Consignee)",
+    note: "NOTE: If the account number has the same name and address of the Consignee(shipping account), use the account and update the Consignee Section then change the terms to Collect.",
+    choices: []
+  },
+
+  final_prepaid_consignee_billable_no: {
+    text: "Search for a valid BT account that can be billed. If no available account, advise the customer that the account cannot be billed since it's inactive or not a valid BT account(assuming that it's a Shipping acct)",
+    choices: []
+  },
+
+  prepaid_consignee_owner_billable_check: {
+    text: "Is the account number billable(active and a BT account)?",
+    help: "Use this when the account owner is the disputing party.",
+    choices: [
+      { label: "Yes", next: "final_prepaid_consignee_owner_billable_yes", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
+      { label: "No", next: "final_prepaid_consignee_owner_billable_no", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
+    ]
+  },
+
+  final_prepaid_consignee_owner_billable_yes: {
+    text: "Proceed with rebilling the account number per BOL.",
+    note: "NOTE: If the account number has the same name and address of the Consignee(shipping account), use the account and update the Consignee Section then change the terms to Collect.",
+    choices: []
+  },
+
+  final_prepaid_consignee_owner_billable_no: {
+    text: "Search for a valid BT account that can be billed. If no available account, advise the customer that the account cannot be billed since it's inactive or not a valid BT account(assuming that it's a Shipping acct with no ABT)",
+    note: "NOTE: If it's a shipping account with an ABT, bill it to the ABT of the Shipping account.",
+    choices: []
+  },
+
+  prepaid_true3pty_initial_billed: {
+    text: "Who was initially billed on the pro?",
+    help: "Check how the prepaid true 3rd party shipment was originally billed.",
+    choices: [
+      { label: "Shipper – per Terms on BOL", next: "prepaid_true3pty_shipper_dispute", icon: "fa-solid fa-file-signature", desc: "Pro was billed to shipper per terms." },
+      { label: "Account no. per BOL", next: "final_prepaid_true3pty_account_billed", icon: "fa-solid fa-credit-card", desc: "Pro was billed to the account number per BOL." }
+    ]
+  },
+
+  final_prepaid_true3pty_account_billed: {
+    text: "If the disputing party is the Account no. owner and the request is to bill it to the Shipper, proceed and rebill it to the Shipper per Terms noted on BOL. Consider this as Debtor update per RVSL.",
+    choices: []
+  },
+
+  prepaid_true3pty_shipper_dispute: {
+    text: "Who is the disputing party?",
+    help: "Identify the disputing party for prepaid true 3rd party handling.",
+    choices: [
+      { label: "Shipper", next: "prepaid_true3pty_rebill_check", icon: "fa-solid fa-warehouse", desc: "The shipper is disputing." },
+      { label: "Account no. owner", next: "prepaid_true3pty_owner_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
+    ]
+  },
+
+  prepaid_true3pty_rebill_check: {
+    text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
+    help: "Confirm whether the BOL clearly supports billing the account.",
+    choices: [
+      { label: "Yes", next: "final_prepaid_true3pty_rebill_yes", icon: "fa-solid fa-circle-check", desc: "Instruction is clear on the BOL." },
+      { label: "No", next: "final_prepaid_true3pty_rebill_no", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clearly shown." }
+    ]
+  },
+
+  final_prepaid_true3pty_rebill_yes: {
+    text: "Proceed with rebilling the account no. in attempt of payment.",
+    choices: []
+  },
+
+  final_prepaid_true3pty_rebill_no: {
+    text: "Terms will trump and LOA will be needed.",
+    choices: []
+  },
+
+  prepaid_true3pty_owner_check: {
+    text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
+    help: "Use this when the account owner is disputing.",
+    choices: [
+      { label: "Yes", next: "final_prepaid_true3pty_owner_yes", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
+      { label: "No", next: "final_prepaid_true3pty_owner_no", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
+    ]
+  },
+
+  final_prepaid_true3pty_owner_yes: {
+    text: "Proceed with rebilling the account no. per BOL.",
+    choices: []
+  },
+
+  final_prepaid_true3pty_owner_no: {
+    text: "This will be considered rebill per LOA with Correction Fee.",
+    choices: []
+  },
+
+  collect: {
+    text: "Is there an Account No. noted on BOL?",
+    help: "Check whether an account number is noted for the collect shipment.",
+    choices: [
+      { label: "Yes", next: "collect_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is present on the BOL." },
+      { label: "No", next: "final_collect_no_account", icon: "fa-solid fa-circle-xmark", desc: "No account number is noted." }
+    ]
+  },
+
+  final_collect_no_account: {
+    text: "Bill the Pro to the Consignee per Terms noted on BOL.",
+    choices: []
+  },
+
+  collect_account_yes: {
+    text: "Is the account no. related to?",
+    help: "Identify who the account number belongs to for collect billing.",
+    choices: [
+      { label: "Consignee", next: "collect_consignee_account_type", icon: "fa-solid fa-location-dot", desc: "Account is related to the consignee." },
+      { label: "Shipper", next: "collect_shipper_account_path", icon: "fa-solid fa-warehouse", desc: "Account is related to the shipper." },
+      { label: "True 3rd Party", next: "collect_true3pty_path", icon: "fa-solid fa-building", desc: "Account is related to a true third party." }
+    ]
+  },
+
+  collect_consignee_account_type: {
+    text: "Is it a billing or shipping account?",
+    help: "Determine the type of consignee account.",
+    choices: [
+      { label: "Shipping account", next: "collect_consignee_shipping_addr_check", icon: "fa-solid fa-box", desc: "Use shipping account path." },
+      { label: "Billing account", next: "collect_consignee_billing_account", icon: "fa-solid fa-file-invoice-dollar", desc: "Use billing account path." }
+    ]
+  },
+
+  collect_consignee_shipping_addr_check: {
+    text: "Is the shipping account address same as the Consignee?",
+    help: "Compare the consignee address against the shipping account address.",
+    choices: [
+      { label: "Yes", next: "final_collect_consignee_update_code", icon: "fa-solid fa-circle-check", desc: "Address matches the consignee." },
+      { label: "No", next: "final_collect_consignee_find_abt", icon: "fa-solid fa-magnifying-glass", desc: "Address does not match." }
+    ]
+  },
+
+  final_collect_consignee_update_code: {
+    text: "Update the Consignee code using the account number noted on the BOL.",
+    choices: []
+  },
+
+  final_collect_consignee_find_abt: {
+    text: "Look for a shipping account of Consignee that has ABT matching the address of the account no. noted on BOL. If none, look for a billing account using the address of the account no. noted on BOL.",
+    choices: []
+  },
+
+  collect_consignee_billing_account: {
+    text: "Look for another shipping address of Consignee that has ABT matching the billing account number noted on BOL.",
+    help: "Follow the collect consignee billing account handling rule.",
+    note: "NOTE: If no shipping account with ABT is found, manually add the billing account.",
+    choices: []
+  },
+
+  collect_shipper_account_path: {
+    text: "Who was initially billed on the pro?",
+    help: "Check how the collect/shipper-related pro was originally billed.",
+    choices: [
+      { label: "Collect – per Terms on BOL", next: "collect_shipper_initial_collect", icon: "fa-solid fa-file-signature", desc: "The pro was billed collect per BOL terms." },
+      { label: "Account no. per BOL", next: "collect_shipper_account_billed", icon: "fa-solid fa-credit-card", desc: "The pro was billed to the account number on the BOL." }
+    ]
+  },
+
+  collect_shipper_initial_collect: {
+    text: "Who is the disputing party?",
+    help: "Identify the disputing party for collect shipper handling.",
+    choices: [
+      { label: "Consignee", next: "collect_shipper_rebill_check", icon: "fa-solid fa-location-dot", desc: "The consignee is disputing." },
+      { label: "Account no. owner", next: "collect_shipper_owner_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
+    ]
+  },
+
+  collect_shipper_rebill_check: {
+    text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
+    help: "Confirm whether the BOL clearly supports billing the account.",
+    choices: [
+      { label: "Yes", next: "collect_shipper_billable_check", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
+      { label: "No", next: "final_collect_shipper_rebill_no", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
+    ]
+  },
+
+  final_collect_shipper_rebill_no: {
+    text: "Terms will trump and LOA will be needed.",
+    choices: []
+  },
+
+  collect_shipper_owner_check: {
+    text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
+    help: "Use this when the account owner is disputing.",
+    choices: [
+      { label: "Yes", next: "collect_shipper_billable_check", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
+      { label: "No", next: "final_collect_shipper_owner_no", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
+    ]
+  },
+
+  final_collect_shipper_owner_no: {
+    text: "This will be considered rebill per LOA with Correction Fee.",
+    choices: []
+  },
+
+  collect_shipper_billable_check: {
+    text: "Is the account no. billable (active and a BT account)?",
+    help: "Verify if the account is active and billable.",
+    choices: [
+      { label: "Yes", next: "final_collect_shipper_billable_yes", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
+      { label: "No", next: "final_collect_shipper_billable_no", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
+    ]
+  },
+
+  final_collect_shipper_billable_yes: {
+    text: "Proceed with rebilling the account no. per BOL. Update the terms if necessary.",
+    note: "NOTE: If account no. has the same name and address of the Shipper (shipping account), update the Shipper section and change Terms to Prepaid.",
+    choices: []
+  },
+
+  final_collect_shipper_billable_no: {
+    text: "Search for a valid BT account that can be billed. If none, advise the customer that the account cannot be billed.",
+    choices: []
+  },
+
+  collect_shipper_account_billed: {
+    text: "If the disputing party is the Account no. owner and the request is to bill the Consignee, proceed and rebill it to Collect per Terms noted on BOL. If Collect was billed and disputed before, bill Shipper per RVSL.",
+    help: "Follow this rule when the pro was already billed to the account number per BOL.",
+    choices: []
+  },
+
+  collect_true3pty_path: {
+    text: "Who was initially billed on the pro?",
+    help: "Use the true 3rd party collect route based on original billing.",
+    choices: [
+      { label: "Collect – per Terms on BOL", next: "collect_true3pty_terms_check", icon: "fa-solid fa-file-signature", desc: "The pro was billed collect per terms." },
+      { label: "Account no. per BOL", next: "final_collect_true3pty_account_billed", icon: "fa-solid fa-credit-card", desc: "The pro was billed to the account number per BOL." }
+    ]
+  },
+
+  final_collect_true3pty_account_billed: {
+    text: "If the disputing party is the Account no. owner and the request is to bill it to Collect per Terms noted on BOL, proceed accordingly. Consider this as Debtor update per RVSL.",
+    choices: []
+  },
+
+  collect_true3pty_terms_check: {
+    text: "Who is the disputing party?",
+    help: "Identify who is disputing the collect true 3rd party billing.",
+    choices: [
+      { label: "Consignee", next: "collect_true3pty_rebill_check", icon: "fa-solid fa-location-dot", desc: "The consignee is disputing." },
+      { label: "Account no. owner", next: "collect_true3pty_owner_check", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
+    ]
+  },
+
+  collect_true3pty_rebill_check: {
+    text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
+    help: "Confirm whether the billing instruction is clearly shown on the BOL.",
+    choices: [
+      { label: "Yes", next: "final_collect_true3pty_rebill_yes", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
+      { label: "No", next: "final_collect_true3pty_rebill_no", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
+    ]
+  },
+
+  final_collect_true3pty_rebill_yes: {
+    text: "Proceed with rebilling the account no. in attempt of payment.",
+    choices: []
+  },
+
+  final_collect_true3pty_rebill_no: {
+    text: "Terms will trump and LOA will be needed.",
+    choices: []
+  },
+
+  collect_true3pty_owner_check: {
+    text: "Is there a clear instruction on the BOL to bill the account or is it placed on the BT section of the BOL?",
+    help: "Use this when the account owner is disputing.",
+    choices: [
+      { label: "Yes", next: "final_collect_true3pty_owner_yes", icon: "fa-solid fa-circle-check", desc: "Instruction is clear." },
+      { label: "No", next: "final_collect_true3pty_owner_no", icon: "fa-solid fa-circle-xmark", desc: "Instruction is not clear." }
+    ]
+  },
+
+  final_collect_true3pty_owner_yes: {
+    text: "Proceed with rebilling the account no. per BOL.",
+    choices: []
+  },
+
+  final_collect_true3pty_owner_no: {
+    text: "This will be considered rebill per LOA with Correction Fee.",
+    choices: []
+  },
+
+  noterms: {
+    text: "Is there an Account No. noted on BOL?",
+    help: "Use this branch when no billing terms are clearly shown on the BOL.",
+    choices: [
+      { label: "Yes", next: "noterms_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is present." },
+      { label: "No", next: "noterms_no_account", icon: "fa-solid fa-circle-xmark", desc: "No account number is present." }
+    ]
+  },
+
+  noterms_account_yes: {
+    text: "Is the account no. related to?",
+    help: "Identify the related party for the account number.",
+    choices: [
+      { label: "Shipper", next: "prepaid_shipper_account_type", icon: "fa-solid fa-warehouse", desc: "Account is related to the shipper." },
+      { label: "Consignee", next: "noterms_consignee_account_type", icon: "fa-solid fa-location-dot", desc: "Account is related to the consignee." },
+      { label: "True 3rd Party", next: "final_noterms_true3pty", icon: "fa-solid fa-building", desc: "Account is related to a true third party." }
+    ]
+  },
+
+  final_noterms_true3pty: {
+    text: "Bill it to the account no. with Prepaid as Terms.",
+    choices: []
+  },
+
+  noterms_consignee_account_type: {
+    text: "Is it a billing or shipping account?",
+    help: "Determine the type of consignee account.",
+    choices: [
+      { label: "Shipping account", next: "noterms_consignee_shipping_addr_check", icon: "fa-solid fa-box", desc: "Use shipping account path." },
+      { label: "Billing account", next: "noterms_consignee_billing_account", icon: "fa-solid fa-file-invoice-dollar", desc: "Use billing account path." }
+    ]
+  },
+
+  noterms_consignee_shipping_addr_check: {
+    text: "Is the shipping account address same as the Consignee?",
+    help: "Compare the consignee address against the shipping account address.",
+    choices: [
+      { label: "Yes", next: "final_noterms_consignee_update_code", icon: "fa-solid fa-circle-check", desc: "Address matches the consignee." },
+      { label: "No", next: "final_noterms_consignee_find_abt", icon: "fa-solid fa-magnifying-glass", desc: "Address does not match." }
+    ]
+  },
+
+  final_noterms_consignee_update_code: {
+    text: "Update the Consignee code using the account number noted on the BOL.",
+    choices: []
+  },
+
+  final_noterms_consignee_find_abt: {
+    text: "Look for a shipping account of Consignee that has ABT matching the address of the account no. noted on BOL. If none, look for a billing account using the address of the account no. noted on BOL.",
+    choices: []
+  },
+
+  noterms_consignee_billing_account: {
+    text: "Look for another shipping address of Consignee that has ABT matching the billing account number noted on BOL.",
+    help: "Follow the no-terms consignee billing account rule.",
+    note: "NOTE: If no shipping account with ABT is found, manually add the billing account.",
+    choices: []
+  },
+
+  noterms_no_account: {
+    text: "Is the shipment originating in the US or Canada?",
+    help: "Default billing depends on the origin when no terms and no account are shown.",
+    choices: [
+      { label: "US", next: "final_noterms_us", icon: "fa-solid fa-flag-usa", desc: "Shipment originated in the US." },
+      { label: "Canada", next: "final_noterms_canada", icon: "fa-solid fa-flag", desc: "Shipment originated in Canada." }
+    ]
+  },
+
+  final_noterms_us: {
+    text: "Bill it Prepaid per default billing.",
+    choices: []
+  },
+
+  final_noterms_canada: {
+    text: "Bill it Collect per default billing.",
+    choices: []
+  },
+
+  third_party_root: {
+    text: "Is there an Account No. noted on the BOL?",
+    help: "Use the third-party branch when the billing is intended for a third party.",
+    choices: [
+      { label: "Yes", next: "tp_account_yes", icon: "fa-solid fa-circle-check", desc: "An account number is noted on the BOL." },
+      { label: "No", next: "final_tp_no_account", icon: "fa-solid fa-circle-xmark", desc: "No account number is noted." }
+    ]
+  },
+
+  final_tp_no_account: {
+    text: "Cannot bill Third Party. No account number noted on the BOL. Billing remains per original terms.",
+    choices: []
+  },
+
+  tp_account_yes: {
+    text: "Is the account no. information (Name and Address) same as the BT information noted on the BOL?",
+    help: "Compare the account information against the BT information on the BOL.",
+    choices: [
+      { label: "Yes", next: "tp_bt_match_yes", icon: "fa-solid fa-circle-check", desc: "The information matches." },
+      { label: "No", next: "tp_bt_match_no", icon: "fa-solid fa-circle-xmark", desc: "The information does not match." }
+    ]
+  },
+
+  tp_bt_match_yes: {
+    text: "Is the account no. billable (active and a BT account)?",
+    help: "Verify whether the account is active and a valid BT account.",
+    choices: [
+      { label: "Yes", next: "final_tp_bt_match_billable_yes", icon: "fa-solid fa-circle-check", desc: "Account is billable." },
+      { label: "No", next: "final_tp_bt_match_billable_no", icon: "fa-solid fa-circle-xmark", desc: "Account is not billable." }
+    ]
+  },
+
+  final_tp_bt_match_billable_yes: {
+    text: "Proceed with rebilling the account no. per BOL(Update the terms if necessary Example: Update to Prepaid if Account is related to the Shipper or True 3rd party. Collect if related to the Consignee. Check if account is ABT of the Shipper or Consignee)",
+    note: "Note: If account no. has the same name and address of the Shipper(shipping account), use the account and update the Shipper Section then change the Terms to Prepaid. Follow the same rule of related to the Consignee.",
+    choices: []
+  },
+
+  final_tp_bt_match_billable_no: {
+    text: "Search for a Valid BT account that can be billed. If no available account, advise the customer that account cannot be billed since it is inactive or not a valid BT account (assuming that it is a Shipping Account with no ABT).",
+    note: "NOTE: If it is a Shipping account with an ABT, bill it to the ABT of the shipping account.",
+    choices: []
+  },
+
+  tp_bt_match_no: {
+    text: "Who was initially billed on the Pro?",
+    help: "Choose whether the pro was billed to the account number or BT information.",
+    choices: [
+      { label: "Account No.", next: "tp_initial_account_no", icon: "fa-solid fa-credit-card", desc: "The pro was initially billed to the account number." },
+      { label: "BT Information", next: "tp_initial_bt_info", icon: "fa-solid fa-file-lines", desc: "The pro was initially billed to the BT information." }
+    ]
+  },
+
+  tp_initial_account_no: {
+    text: "Who is the disputing party?",
+    help: "Identify who is requesting the change from the account-no.-billed scenario.",
+    choices: [
+      { label: "Account No. owner requesting to bill a different BT info noted on the BOL", next: "tp_account_owner_bt_request", icon: "fa-solid fa-user", desc: "Account owner wants billing moved to different BT info on BOL." },
+      { label: "Owner of the BT information requesting to bill to their account", next: "tp_bt_owner_account_request", icon: "fa-solid fa-building-user", desc: "BT owner wants the bill moved to their account." }
+    ]
+  },
+
+  tp_account_owner_bt_request: {
+    text: "Is there a valid account no. available and billable that matches the BT information?",
+    help: "Check if there is a valid billable account that matches the BT info.",
+    choices: [
+      { label: "Yes", next: "final_tp_account_owner_bt_yes", icon: "fa-solid fa-circle-check", desc: "A matching valid account is available." },
+      { label: "No", next: "final_tp_account_owner_bt_no", icon: "fa-solid fa-circle-xmark", desc: "No matching valid account is available." }
+    ]
+  },
+
+  final_tp_account_owner_bt_yes: {
+    text: "Proceed with rebilling to the valid BT account that matches the BT information noted on the BOL.",
+    choices: []
+  },
+
+  final_tp_account_owner_bt_no: {
+    text: "Advise the customer that no valid billable account matching the BT information is available. LOA may be needed depending on the request.",
+    choices: []
+  },
+
+  tp_bt_owner_account_request: {
+    text: "Is there a clear instruction on the BOL to bill to the BT information or account?",
+    help: "Use the BOL instruction to decide whether the requested rebill is supported.",
+    choices: [
+      { label: "Yes", next: "final_tp_bt_owner_account_yes", icon: "fa-solid fa-circle-check", desc: "The BOL clearly supports the billing." },
+      { label: "No", next: "final_tp_bt_owner_account_no", icon: "fa-solid fa-circle-xmark", desc: "The BOL does not clearly support the request." }
+    ]
+  },
+
+  final_tp_bt_owner_account_yes: {
+    text: "Proceed with rebilling to the BT owner account per BOL instruction.",
+    choices: []
+  },
+
+  final_tp_bt_owner_account_no: {
+    text: "This will be considered rebill per LOA with Correction Fee.",
+    choices: []
+  },
+
+  tp_initial_bt_info: {
+    text: "Who is the disputing party?",
+    help: "Identify the disputing party when the pro was initially billed to BT information.",
+    choices: [
+      { label: "Owner of BT information", next: "tp_bt_owner_dispute", icon: "fa-solid fa-building-user", desc: "The BT information owner is disputing." },
+      { label: "Account No. owner", next: "tp_account_owner_dispute", icon: "fa-solid fa-user", desc: "The account owner is disputing." }
+    ]
+  },
+
+  tp_bt_owner_dispute: {
+    text: "Is there a valid account number that matches the BT information and is billable?",
+    help: "Check if a valid matching BT account exists.",
+    choices: [
+      { label: "Yes", next: "final_tp_bt_owner_dispute_yes", icon: "fa-solid fa-circle-check", desc: "Valid matching BT account exists." },
+      { label: "No", next: "final_tp_bt_owner_dispute_no", icon: "fa-solid fa-circle-xmark", desc: "No valid matching BT account exists." }
+    ]
+  },
+
+  final_tp_bt_owner_dispute_yes: {
+    text: "Proceed with rebilling the valid account number that matches the BT information.",
+    choices: []
+  },
+
+  final_tp_bt_owner_dispute_no: {
+    text: "Advise the customer that no valid matching BT account can be billed.",
+    choices: []
+  },
+
+  tp_account_owner_dispute: {
+    text: "Is there a clear instruction on the BOL to bill the account no. or place it in the BT section?",
+    help: "Use the BOL instruction to determine whether the dispute can be rebilled.",
+    choices: [
+      { label: "Yes", next: "final_tp_account_owner_dispute_yes", icon: "fa-solid fa-circle-check", desc: "The BOL clearly supports the account billing." },
+      { label: "No", next: "final_tp_account_owner_dispute_no", icon: "fa-solid fa-circle-xmark", desc: "The BOL does not clearly support the account billing." }
+    ]
+  },
+
+  final_tp_account_owner_dispute_yes: {
+    text: "Proceed with rebilling the account no. per BOL.",
+    choices: []
+  },
+
+  final_tp_account_owner_dispute_no: {
+    text: "This will be considered rebill per LOA with Correction Fee.",
+    choices: []
+  }
+};
 
   function escapeHtml(value){
     return String(value ?? "")
