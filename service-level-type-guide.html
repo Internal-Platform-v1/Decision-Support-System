@@ -1365,350 +1365,236 @@ document.addEventListener("DOMContentLoaded", () => {
   const templateCache = {};
 
 const NODES = {
-  start: {
-    text: "Service level/type",
-    help: "Start by identifying what type of service level is being disputed.",
-    choices: [
-      {
-        label: "Priority",
-        next: "check_current_service_level",
-        icon: "fa-solid fa-bolt",
-        desc: "Service type should be Priority."
-      },
-      {
-        label: "Economy",
-        next: "check_current_service_level",
-        icon: "fa-solid fa-box",
-        desc: "Service type should be Economy."
-      }
-    ]
-  },
 
-  check_current_service_level: {
-    text: "Pull up the PRO on FBC and check what is the current service level.",
-    help: "Review the current service level shown on FBC before proceeding.",
-    choices: [
-      {
-        label: "Continue",
-        next: "volume_quote_check",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the next check."
-      }
-    ]
-  },
+start:{
+  text:"Service Level / Type Update per BOL",
+  help:"Use this guide to determine if the service level should be updated based on delay, BOL, and FBC rating.",
+  note:"Always check Expected Delivery Date, Actual Delivery Date, BOL service level, and FBC service rating.",
+  choices:[
+    {
+      label:"Continue",
+      next:"root",
+      icon:"fa-solid fa-arrow-right",
+      desc:"Start the Service Level decision flow."
+    }
+  ]
+},
 
-  volume_quote_check: {
-    text: "Is the PRO rated as Volume Quote TLX/TLS?",
-    help: "Check whether the PRO is rated under a Volume Quote.",
-    choices: [
-      {
-        label: "Yes",
-        next: "move_to_dispute_resolution",
-        icon: "fa-solid fa-circle-check",
-        desc: "PRO is rated as Volume Quote TLX/TLS."
-      },
-      {
-        label: "No",
-        next: "match_requested_service",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "PRO is not rated as Volume Quote TLX/TLS."
-      }
-    ]
-  },
+/* ================= ROOT ================= */
 
-  move_to_dispute_resolution: {
-    text: "Move the case to Dispute Resolution.",
-    help: "Use this when the PRO is rated as Volume Quote TLX/TLS.",
-    note: "If case is already under DR, advise customer that PRO is rated as Volume Quote and it will override the service.",
-    choices: []
-  },
+root:{
+  text:"What is the concern?",
+  choices:[
+    {label:"Delayed Delivery Dispute",next:"delay_check_dates",icon:"fa-solid fa-clock",desc:"Customer is disputing delay."},
+    {label:"Service Type Mismatch",next:"service_check_fbc",icon:"fa-solid fa-file-circle-exclamation",desc:"Service level mismatch."}
+  ]
+},
 
-  match_requested_service: {
-    text: "Is the service level match on what is being requested?",
-    help: "Compare the current service level against the requested service level.",
-    choices: [
-      {
-        label: "Yes",
-        next: "already_correct_final",
-        icon: "fa-solid fa-circle-check",
-        desc: "The current service level already matches the request."
-      },
-      {
-        label: "No",
-        next: "review_bol",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "The current service level does not match the request."
-      }
-    ]
-  },
+/* ================= DELAY FLOW ================= */
 
-  already_correct_final: {
-    text: "Advise customer that service level is already correct (Priority/Economy) depending on what is requested.",
-    help: "Use this when the service level already matches the request.",
-    choices: []
-  },
+delay_check_dates:{
+  text:"Check Expected Delivery Date vs Actual Delivery Date.",
+  choices:[
+    {label:"Continue",next:"delay_3days",icon:"fa-solid fa-arrow-right",desc:"Proceed to delay validation."}
+  ]
+},
 
-  review_bol: {
-    text: "Pull up and review the BOL.",
-    help: "Check the Bill of Lading to verify the service level noted by the customer.",
-    choices: [
-      {
-        label: "Continue",
-        next: "fxfe_note",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed after reviewing the BOL."
-      }
-    ]
-  },
+delay_3days:{
+  text:"Was shipment delivered 3 or more business days after Expected Delivery Date?",
+  choices:[
+    {label:"Yes",next:"delay_service_level",icon:"fa-solid fa-circle-check",desc:"Shipment delayed 3+ days."},
+    {label:"No",next:"delay_within_standard",icon:"fa-solid fa-circle-xmark",desc:"Within standard timeframe."}
+  ]
+},
 
-  fxfe_note: {
-    text: "NOTE: FXFE is not Economy, this means FedEx Freight East.",
-    help: "Keep this note in mind before identifying the service level on the BOL.",
-    note: "FXFE does not mean Economy.",
-    choices: [
-      {
-        label: "Continue",
-        next: "bol_service_level",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to identify the service level noted on the BOL."
-      }
-    ]
-  },
+delay_within_standard:{
+  text:"Advise customer shipment was delivered within standard timeframe.",
+  choices:[]
+},
 
-  bol_service_level: {
-    text: "What is the service level noted on BOL?",
-    help: "Identify the exact service level written on the BOL.",
-    choices: [
-      {
-        label: "Economy / ECON / FXNL / National",
-        next: "economy_noted_final",
-        icon: "fa-solid fa-box",
-        desc: "BOL shows Economy-related service level."
-      },
-      {
-        label: "Priority / PRTY / FXFR",
-        next: "priority_noted_final",
-        icon: "fa-solid fa-bolt",
-        desc: "BOL shows Priority-related service level."
-      },
-      {
-        label: "No service level noted at all",
-        next: "no_service_noted_final",
-        icon: "fa-solid fa-file-circle-question",
-        desc: "No service level is written on the BOL."
-      }
-    ]
-  },
+delay_service_level:{
+  text:"What is the current service level of the PRO?",
+  choices:[
+    {label:"Priority",next:"delay_priority_action",icon:"fa-solid fa-bolt",desc:"Shipment is Priority."},
+    {label:"Economy",next:"delay_economy_action",icon:"fa-solid fa-box",desc:"Shipment is Economy."}
+  ]
+},
 
-  economy_noted_final: {
-    text: "Advise customer that PRO is rated correctly as Economy since it was noted/requested on BOL.",
-    help: "Use this when the BOL shows Economy / ECON / FXNL / National.",
-    choices: [
-      {
-        label: "Continue",
-        next: "fbc_match_check",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the follow-up note."
-      }
-    ]
-  },
+delay_priority_action:{
+  text:"Send email to service center to confirm delay.",
+  choices:[
+    {label:"Continue",next:"delay_reason_check",icon:"fa-solid fa-arrow-right",desc:"Wait for confirmation."}
+  ]
+},
 
-  priority_noted_final: {
-    text: "Advise customer that PRO is rated correctly as Priority since it was noted/requested on BOL.",
-    help: "Use this when the BOL shows Priority / PRTY / FXFR.",
-    choices: [
-      {
-        label: "Continue",
-        next: "fbc_match_check",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the follow-up note."
-      }
-    ]
-  },
+delay_reason_check:{
+  text:"Who caused the delay?",
+  choices:[
+    {label:"Service Center",next:"delay_sc_fault",icon:"fa-solid fa-building",desc:"Internal delay."},
+    {label:"Customer",next:"delay_customer_fault",icon:"fa-solid fa-user",desc:"Customer delay."}
+  ]
+},
 
-  no_service_noted_final: {
-    text: "PRO # is rated correctly as Priority since the service level was not listed on BOL per FXF Rules Tariff Item 188 Section 2.",
-    help: "Use this when no service level is noted on the BOL.",
-    choices: [
-      {
-        label: "Continue",
-        next: "reopened_case_note",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the follow-up note."
-      }
-    ]
-  },
+delay_sc_fault:{
+  text:`Change service level to Economy and process write-off of difference.`,
+  choices:[]
+},
 
-  reopened_case_note: {
-    text: "If the case reopened and customer is claiming that service level was covered by the FedEx stamp, check previous shipments to locate the common service level of the customer then update the service level per previous shipment.",
-    help: "Use previous shipments as reference if the customer claims the service level was covered by the FedEx stamp.",
-    choices: [
-      {
-        label: "Continue",
-        next: "bol_service_level",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to question -What is service level noted on BOL?."
-      }
-    ]
-  },
+delay_customer_fault:{
+  text:"Advise customer delay is on their end.",
+  choices:[]
+},
 
-  fbc_match_check: {
-    text: "If service level noted on BOL doesn't match the service level on FBC, follow step below on how to update service level on FBC.",
-    help: "Follow the update steps only when the BOL and FBC service levels do not match.",
-    choices: [
-      {
-        label: "Continue",
-        next: "click_service_level_fbc",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Open the FBC update steps."
-      }
-    ]
-  },
+delay_economy_action:{
+  text:"Send email to training team / SME.",
+  choices:[
+    {label:"Continue",next:"delay_customer_request",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
 
-  click_service_level_fbc: {
-    text: "Click the service level on FBC. See image below.",
-    help: "Select the service level field in FBC to begin updating it.",
-    image: "service-level-guide-images/service-level-field.png",
-    choices: [
-      {
-        label: "Continue",
-        next: "open_new_screen",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the service selection screen."
-      }
-    ]
-  },
+delay_customer_request:{
+  text:"Did customer request removal of charges?",
+  choices:[
+    {label:"Yes",next:"delay_writeoff",icon:"fa-solid fa-circle-check",desc:"Customer wants removal."},
+    {label:"No",next:"delay_end",icon:"fa-solid fa-circle-xmark",desc:"No request."}
+  ]
+},
 
-  open_new_screen: {
-    text: "This will open a new screen.",
-    help: "Click the arrows next to the current service until the correct one is found, then click it so it will highlight blue.",
-    image: "service-level-guide-images/select-service-screen.jpg",
-    choices: [
-      {
-        label: "Continue",
-        next: "priority_to_economy_exception",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the exception handling step."
-      }
-    ]
-  },
+delay_writeoff:{
+  text:"Process write-off with supervisor approval.",
+  choices:[]
+},
 
-  priority_to_economy_exception: {
-    text: "When updating service level from Priority to Economy but no ECON option appears, follow the special step below.",
-    help: "Use this only when ECON is not available while changing from Priority to Economy.",
-    choices: [
-      {
-        label: "Continue",
-        next: "ctrl_alt_p_step",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the workaround."
-      }
-    ]
-  },
+delay_end:{
+  text:"No further action required.",
+  choices:[]
+},
 
-  ctrl_alt_p_step: {
-    text: "Try CTRL + ALT + P to change the Service Type. Enter ONLY either FXFR or ECON.",
-    help: "Attempt this workaround to enable the correct service type.",
-    choices: [
-      {
-        label: "Did work",
-        next: "comment_box_step",
-        icon: "fa-solid fa-circle-check",
-        desc: "The workaround worked."
-      },
-      {
-        label: "Didn't work",
-        next: "dnu_check",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "The workaround did not work."
-      }
-    ]
-  },
+/* ================= SERVICE FLOW ================= */
 
-  dnu_check: {
-    text: "Check if either the current Shipper or Consignee was flagged as DNU in error.",
-    help: "Review the account status if the service type workaround did not work.",
-    choices: [
-      {
-        label: "Continue",
-        next: "change_to_active_account",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to account correction."
-      }
-    ]
-  },
+service_check_fbc:{
+  text:"Pull up PRO on FBC and check current service level.",
+  choices:[
+    {label:"Continue",next:"service_volume_check",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
 
-  change_to_active_account: {
-    text: "If so, search for active account and change the flagged account to an active one.",
-    help: "Replace the flagged shipper or consignee with an active account.",
-    choices: [
-      {
-        label: "Continue",
-        next: "corr_sysm_note",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed after changing the account."
-      }
-    ]
-  },
+service_volume_check:{
+  text:"Is the PRO rated as Volume Quote (TLX/TLS)?",
+  choices:[
+    {label:"Yes",next:"service_move_dispute",icon:"fa-solid fa-circle-check",desc:"Volume quote."},
+    {label:"No",next:"service_match_check",icon:"fa-solid fa-circle-xmark",desc:"Not volume quote."}
+  ]
+},
 
-  corr_sysm_note: {
-    text: "Put a note on 2x4 comment on FBC: UPDATED SC/CC TO AN ACTIVE ACCOUNT TO ENABLE ECON OPTION. Use CORR SYSM and accept all.",
-    help: "Document the correction and complete the correction process.",
-    choices: [
-      {
-        label: "Continue",
-        next: "reopen_pro_econ",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to reopen the PRO."
-      }
-    ]
-  },
+service_move_dispute:{
+  text:"Move the case to Dispute Resolution.",
+  note:"If already under DR, advise it overrides service.",
+  choices:[]
+},
 
-  reopen_pro_econ: {
-    text: "Reopen the PRO and you should be able to update to ECON.",
-    help: "After correcting the account, reopen the PRO and continue the service update.",
-    choices: [
-      {
-        label: "Continue",
-        next: "comment_box_step",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the comment box step."
-      }
-    ]
-  },
+service_match_check:{
+  text:"Does service level match requested?",
+  choices:[
+    {label:"Yes",next:"service_already_correct",icon:"fa-solid fa-circle-check",desc:"Already correct."},
+    {label:"No",next:"service_check_bol",icon:"fa-solid fa-circle-xmark",desc:"Mismatch."}
+  ]
+},
 
-  comment_box_step: {
-    text: "On the comment box, put VS-BLER-Case#-UPDATED SERVICE LEVEL TO ECONOMY/PRIORITY PER BOL.",
-    help: "Enter the required comment after selecting the correct service level.",
-    image: "service-level-guide-images/comment-box-step.jpg",
-    choices: [
-      {
-        label: "Continue",
-        next: "click_ok_step",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed after entering the comment."
-      }
-    ]
-  },
+service_already_correct:{
+  text:"Advise customer service level is already correct.",
+  choices:[]
+},
 
-  click_ok_step: {
-    text: "Click OK. The system will automatically put the CORR EPDC and the 2X4 comment on FBC.",
-    help: "Confirm the update and let the system apply the correction.",
-    choices: [
-      {
-        label: "Continue",
-        next: "autorate_accept_all_final",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Proceed to the final step."
-      }
-    ]
-  },
+service_check_bol:{
+  text:"Check service level noted on BOL.",
+  choices:[
+    {label:"Economy",next:"service_correct_econ",icon:"fa-solid fa-box",desc:"BOL shows Economy."},
+    {label:"Priority",next:"service_correct_priority",icon:"fa-solid fa-bolt",desc:"BOL shows Priority."},
+    {label:"No Service Level",next:"service_no_bol",icon:"fa-solid fa-circle-question",desc:"Not indicated."}
+  ]
+},
 
-  autorate_accept_all_final: {
-    text: "Autorate and accept all.",
-    help: "Complete the service level update process.",
-    choices: []
-  }
+service_correct_econ:{
+  text:"Advise PRO is correctly rated as Economy per BOL.",
+  choices:[]
+},
+
+service_correct_priority:{
+  text:"Advise PRO is correctly rated as Priority per BOL.",
+  choices:[]
+},
+
+service_no_bol:{
+  text:"PRO is correctly rated as Priority since no service level is listed on BOL.",
+  choices:[]
+},
+
+/* ================= UPDATE FLOW WITH IMAGES ================= */
+
+service_update_steps:{
+  text:"Click the service level on FBC. See image below.",
+  image:"service-level-guide-images/service-level-field.png",
+  choices:[
+    {label:"Continue",next:"service_update_screen",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
+
+service_update_screen:{
+  text:"This will open a new screen.",
+  help:"Click arrows to select correct service and highlight it.",
+  image:"service-level-guide-images/select-service-screen.jpg",
+  choices:[
+    {label:"Continue",next:"service_update_action",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
+
+service_update_action:{
+  text:"Try CTRL + ALT + P. Enter FXFR or ECON.",
+  choices:[
+    {label:"Did work",next:"service_comment",icon:"fa-solid fa-circle-check",desc:"Worked."},
+    {label:"Didn't work",next:"service_dnu_check",icon:"fa-solid fa-circle-xmark",desc:"Did not work."}
+  ]
+},
+
+service_dnu_check:{
+  text:"Check if Shipper/Consignee is flagged as DNU.",
+  choices:[
+    {label:"Continue",next:"service_fix_account",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
+
+service_fix_account:{
+  text:"Search and replace with active account.",
+  choices:[
+    {label:"Continue",next:"service_note_fix",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
+
+service_note_fix:{
+  text:"Put note: UPDATED SC/CC TO ACTIVE ACCOUNT. Use CORR SYSM.",
+  choices:[
+    {label:"Continue",next:"service_reopen",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
+
+service_reopen:{
+  text:"Reopen PRO and update again.",
+  choices:[
+    {label:"Continue",next:"service_comment",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+  ]
+},
+
+service_comment:{
+  text:`Put 2x4 comment:
+
+VS-BLER-CASE#-UPDATED SERVICE LEVEL TO ECONOMY/PRIORITY PER BOL
+
+Click OK → system applies CORR EPDC → Autorate and accept all.`,
+  image:"service-level-guide-images/comment-box-step.jpg",
+  choices:[]
+}
+
 };
   function escapeHtml(value){
     return String(value ?? "")
