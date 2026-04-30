@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Service Level/Type Guide<</title>
+  <title>Service Level / Type Update per BOL</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -641,6 +641,42 @@
     line-height:1.5;
     margin-top:6px;
   }
+  
+  .path-jump{
+    width:100%;
+    text-align:left;
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .path-jump:hover{
+    transform:translateY(-1px);
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    box-shadow:0 10px 22px rgba(37,99,235,.08);
+  }
+
+  .path-jump.active{
+    background:#f8fafc;
+    border:2px solid #2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+  }
+
+  .path-jump.active .path-step{
+    color:#2563eb;
+  }
+
+  .path-jump.active .path-question{
+    color:#0f172a;
+  }
+
+  .path-jump.active .path-answer{
+    color:#475569;
+  }
 
   .section-note{
     font-size:12px;
@@ -786,6 +822,19 @@
     color:#166534 !important;
     border-color:#bbf7d0 !important;
   }
+
+  .template-tag{
+  cursor:pointer;
+  text-decoration:none;
+  transition:.2s ease;
+}
+
+.template-tag:hover{
+  background:#eef4ff;
+  border-color:#cfe0ff;
+  color:#1d4ed8;
+  transform:translateY(-1px);
+} 
 
   @media (max-width:1450px){
     .app-frame{
@@ -1017,24 +1066,6 @@
   text-transform:uppercase;
 }
 
-.note-body{
-  color:#475569;
-  line-height:1.8;
-  font-size:14px;
-  white-space:pre-wrap;
-}   
-
-/*links*/
-
-.note-body{
-  color:#5b6474;
-  font-size:14px;
-  line-height:1.8;
-}
-
-.note-body a{
-  text-decoration:none;
-}
 .smart-link{
   display:inline-flex;
   align-items:center;
@@ -1056,8 +1087,11 @@
   box-shadow:0 14px 24px rgba(77,20,140,.25);
 }
 
-/*for edit/save comments,email and corr code modal*/
-.modal{
+/* ===== MODALS ===== */
+
+/* Keep edit/password modals local to this guide only */
+#passwordModal,
+#editModal{
   display:none;
   position:fixed;
   inset:0;
@@ -1068,7 +1102,8 @@
   z-index:10000;
 }
 
-.modal-content{
+#passwordModal .modal-content,
+#editModal .modal-content{
   background:#fff;
   width:100%;
   max-width:560px;
@@ -1080,7 +1115,8 @@
   overflow:auto;
 }
 
-.modal-header{
+#passwordModal .modal-header,
+#editModal .modal-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -1091,14 +1127,16 @@
   color:#0f172a;
 }
 
-.modal-close{
+#passwordModal .modal-close,
+#editModal .modal-close{
   font-size:22px;
   cursor:pointer;
   color:#64748b;
   line-height:1;
 }
 
-.modal-close:hover{
+#passwordModal .modal-close:hover,
+#editModal .modal-close:hover{
   color:#4d148c;
 }
 
@@ -1123,8 +1161,388 @@
   min-height:220px;
   resize:vertical;
 }
+
+/* Match shared header modals to index look */
+#commentModal,
+#allCommentsModal,
+#helpModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.52);
+  justify-content:center;
+  align-items:center;
+  padding:0 24px;
+  z-index:2147483647;
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
+}
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content{
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  border:1px solid rgba(148,163,184,.16);
+  margin:110px auto 32px;
+}
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content{
+  max-width:760px;
+}
+
+#helpModal .help-modal{
+  max-width:760px;
+  border-radius:30px;
+  padding:18px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close{
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
+}
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .feedback-header{
+  margin-bottom:10px;
+}
+
+#commentModal .feedback-header span:first-child{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  color:#111827;
+}
+
+#commentModal .rating-container{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:16px 0 18px;
+}
+
+#commentModal .rating-star{
+  cursor:pointer;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
+}
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
+  color:#ff6600;
+}
+
+#commentModal input,
+#commentModal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  transition:.18s ease;
+}
+
+#commentModal input{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+
+#commentModal textarea{
+  min-height:120px;
+  resize:vertical;
+  margin-top:0;
+}
+
+#commentModal input:focus,
+#commentModal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#commentModal .feedback-submit-btn{
+  margin:16px 0 8px;
+  min-height:54px;
+  border-radius:18px;
+}
+
+#commentModal .feedback-bottom-link{
+  margin-top:4px;
+}
+
+#commentModal .link-text{
+  color:#4d148c;
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+
+#commentModal .link-text:hover{
+  text-decoration:underline;
+}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{
+  border-bottom:none;
+}
+
+#allCommentsModal .stars{
+  color:#ff6600;
+  font-size:18px;
+  margin-bottom:6px;
+  display:block;
+}
+
+@media (max-width:720px){
+  #passwordModal,
+  #editModal{
+    padding:14px;
+  }
+
+  #passwordModal .modal-content,
+  #editModal .modal-content{
+    border-radius:18px;
+    padding:18px;
+  }
+
+  #commentModal,
+  #allCommentsModal,
+  #helpModal{
+    padding:0 14px;
+  }
+
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+
+  #commentModal .feedback-modal{
+    padding:18px;
+    border-radius:24px;
+  }
+
+  #helpModal .help-modal{
+    padding:16px;
+    border-radius:24px;
+  }
+}
    
-  
+ 
+.aj-card{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.aj-card h3{
+  margin-bottom:8px;
+  color:#4d148c;
+}
+
+.advise-box{
+  background:#eef6ff;
+  border-left:4px solid #4d148c;
+  padding:10px;
+  margin:6px 0 10px;
+  border-radius:6px;
+  font-size:13px;
+}
+
+.aj-header{
+  font-weight:700;
+  cursor:pointer;
+  padding:10px;
+  background:#f1f5f9;
+  border-radius:8px;
+  transition:.2s;
+}
+
+.aj-header:hover{
+  background:#e2e8f0;
+}
+
+.aj-content{
+  display:none;
+  margin-top:10px;
+  animation:fadeIn .3s ease-in;
+}
+
+.aj-search-container{
+  position:sticky;
+  top:0;
+  background:#fff;
+  padding:10px;
+  z-index:5;
+  border-bottom:1px solid #ddd;
+}
+
+#ajSearch{
+  width:100%;
+  padding:8px 12px;
+  font-size:13px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.link-btn{
+  color:#0073e6;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.link-btn:hover{
+  color:#005bb5;
+}
+
+.aj-section{
+  margin-bottom:14px;
+}
+
+.aj-subtitle{
+  font-size:12px;
+  font-weight:800;
+  color:#64748b;
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+
+.aj-block{
+  margin-bottom:10px;
+}
+
+.aj-label{
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.aj-list{
+  margin:8px 0;
+  padding-left:18px;
+  line-height:1.5;
+}
+
+.aj-link{
+  display:inline-block;
+  margin-bottom:8px;
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* 🔧 Fix NOTE spacing (final clean version) */
+
+.note-body{
+  color:#475569;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* Remove excessive spacing from elements inside notes */
+.note-body p{
+  margin:6px 0;
+}
+
+.note-body ul{
+  margin:8px 0;
+  padding-left:18px;
+}
+
+.note-body li{
+  margin:0;
+}
+
+/* Fix nested div spacing inside notes */
+.note-body div{
+  margin:6px 0;
+}
+
+/* Tighten strong/inline text spacing */
+.note-body strong{
+  font-weight:600;
+}
+
+/* Optional: clean link look */
+.note-body a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}  
+
+.final-note-html{
+  margin-top:12px;
+  color:#475569;
+  line-height:1.7;
+}
+
+.final-note-html a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}   
+
 </style>
 </head>
 <body data-page="">
@@ -1136,11 +1554,11 @@
         <main class="main">
           <div class="main-topbar">
             <div>
-             <div class="page-title-block">
-<h1>Service Level/Type Guide</h1>
-<p class="page-subtitle">
-  Follow a structured decision flow for service level disputes including Priority vs Economy checks, BOL validation, volume quote handling, and FBC update steps.
-</p>
+<div class="page-title-block">
+  <h1>Service Level / Type Update per BOL</h1>
+  <p class="page-subtitle">
+    Follow a structured decision flow to validate and correct the service level/type based on BOL, delivery performance, FBC rating, and customer dispute scenarios including delayed delivery and service mismatch.
+  </p>
 </div>
             </div>
             <div class="main-status">
@@ -1244,7 +1662,9 @@
                 </div>
 
                 <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr code</span>
+                  <a href="Correction Code Guide.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-hashtag"></i> Open Corr Code
+                  </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
                 </div>
               </div>
@@ -1271,7 +1691,9 @@
                 </div>
 
                 <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email</span>
+                  <a href="ebs-response-template.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-paper-plane"></i> Open EBS Response
+                  </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
                 </div>
               </div>
@@ -1309,7 +1731,8 @@
       </div>
     </div>
 
-<div id="site-footer"></div>   
+<div id="site-footer"></div>
+ 
     
   </div>
 <script src="assets/js/header-loader.js"></script>
@@ -1364,6 +1787,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentKey = "start";
   const templateCache = {};
 
+  //nodes here
 const NODES = {
 
 start:{
@@ -1380,222 +1804,265 @@ start:{
   ]
 },
 
-/* ================= ROOT ================= */
-
 root:{
   text:"What is the concern?",
   choices:[
-    {label:"Delayed Delivery Dispute",next:"delay_check_dates",icon:"fa-solid fa-clock",desc:"Customer is disputing delay."},
-    {label:"Service Type Mismatch",next:"service_check_fbc",icon:"fa-solid fa-file-circle-exclamation",desc:"Service level mismatch."}
+    {label:"Delayed Delivery Dispute",next:"delay_check_dates",icon:"fa-solid fa-clock",desc:"Customer is disputing delayed delivery."},
+    {label:"Service Type Mismatch",next:"service_check_fbc",icon:"fa-solid fa-file-circle-exclamation",desc:"Service level/type does not match the request or BOL."}
   ]
 },
 
 /* ================= DELAY FLOW ================= */
 
 delay_check_dates:{
-  text:"Check Expected Delivery Date vs Actual Delivery Date.",
+  text:"Check the Expected Delivery Date and the Actual Delivery Date.",
   choices:[
     {label:"Continue",next:"delay_3days",icon:"fa-solid fa-arrow-right",desc:"Proceed to delay validation."}
   ]
 },
 
 delay_3days:{
-  text:"Was shipment delivered 3 or more business days after Expected Delivery Date?",
+  text:"Was the shipment delivered 3 or more business days after the Expected Delivery Date?",
   choices:[
-    {label:"Yes",next:"delay_service_level",icon:"fa-solid fa-circle-check",desc:"Shipment delayed 3+ days."},
-    {label:"No",next:"delay_within_standard",icon:"fa-solid fa-circle-xmark",desc:"Within standard timeframe."}
+    {label:"Yes",next:"delay_service_level",icon:"fa-solid fa-circle-check",desc:"Shipment was delayed 3 or more business days."},
+    {label:"No",next:"delay_within_standard",icon:"fa-solid fa-circle-xmark",desc:"Shipment was delivered within standard timeframe."}
   ]
 },
 
 delay_within_standard:{
-  text:"Advise customer shipment was delivered within standard timeframe.",
+  text:"Advise customer that shipment was delivered within the standard delivery timeframe depending on their location.",
   choices:[]
 },
 
 delay_service_level:{
   text:"What is the current service level of the PRO?",
   choices:[
-    {label:"Priority",next:"delay_priority_action",icon:"fa-solid fa-bolt",desc:"Shipment is Priority."},
-    {label:"Economy",next:"delay_economy_action",icon:"fa-solid fa-box",desc:"Shipment is Economy."}
+    {label:"Priority",next:"delay_priority_action",icon:"fa-solid fa-bolt",desc:"Current service level is Priority."},
+    {label:"Economy",next:"delay_economy_action",icon:"fa-solid fa-box",desc:"Current service level is Economy."}
   ]
 },
 
 delay_priority_action:{
-  text:"Send email to service center to confirm delay.",
+  text:"Send an email to the service center to confirm why the shipment was delayed.",
   choices:[
-    {label:"Continue",next:"delay_reason_check",icon:"fa-solid fa-arrow-right",desc:"Wait for confirmation."}
+    {label:"Continue",next:"delay_reason_check",icon:"fa-solid fa-arrow-right",desc:"Proceed after service center confirmation."}
   ]
 },
 
 delay_reason_check:{
-  text:"Who caused the delay?",
+  text:"What was the reason for the delay?",
   choices:[
-    {label:"Service Center",next:"delay_sc_fault",icon:"fa-solid fa-building",desc:"Internal delay."},
-    {label:"Customer",next:"delay_customer_fault",icon:"fa-solid fa-user",desc:"Customer delay."}
+    {label:"Service Center Delay",next:"delay_sc_fault",icon:"fa-solid fa-building",desc:"Delay was caused by the service center."},
+    {label:"Customer Delay",next:"delay_customer_fault",icon:"fa-solid fa-user",desc:"Delay was caused by the customer."}
   ]
 },
 
 delay_sc_fault:{
-  text:`Change service level to Economy and process write-off of difference.`,
+  text:`If the service center confirmed that the reason of the delay is on their end, change the service level to Economy and advise the service center to process the write-off of the difference on their end.
+
+Example:
+Invoice amount if rated Priority is $300
+Invoice amount if rated Economy is $250
+Difference to be written off is $50`,
   choices:[]
 },
 
 delay_customer_fault:{
-  text:"Advise customer delay is on their end.",
+  text:"If the reason of the delay is on the customer end, advise the customer accordingly.",
   choices:[]
 },
 
 delay_economy_action:{
-  text:"Send email to training team / SME.",
+  text:"Send an email to Training team / SME so we can send to team lead to confirm what relief can be provided.",
   choices:[
-    {label:"Continue",next:"delay_customer_request",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"delay_customer_request",icon:"fa-solid fa-arrow-right",desc:"Proceed to customer request check."}
   ]
 },
 
 delay_customer_request:{
-  text:"Did customer request removal of charges?",
+  text:"Did the customer proactively ask to remove all charges to their account?",
   choices:[
-    {label:"Yes",next:"delay_writeoff",icon:"fa-solid fa-circle-check",desc:"Customer wants removal."},
-    {label:"No",next:"delay_end",icon:"fa-solid fa-circle-xmark",desc:"No request."}
+    {label:"Yes",next:"delay_writeoff",icon:"fa-solid fa-circle-check",desc:"Customer requested removal of all charges."},
+    {label:"No",next:"delay_end",icon:"fa-solid fa-circle-xmark",desc:"No charge removal requested."}
   ]
 },
 
 delay_writeoff:{
-  text:"Process write-off with supervisor approval.",
+  text:"If customer proactively asked to remove all charges to their account, process it through write-off but ask approval from your Supervisor.",
   choices:[]
 },
 
 delay_end:{
-  text:"No further action required.",
+  text:"No further service level update action is required.",
   choices:[]
 },
 
-/* ================= SERVICE FLOW ================= */
+/* ================= SERVICE TYPE FLOW ================= */
 
 service_check_fbc:{
-  text:"Pull up PRO on FBC and check current service level.",
+  text:"Pull up the PRO on FBC and check what is the current service level.",
   choices:[
-    {label:"Continue",next:"service_volume_check",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"service_volume_check",icon:"fa-solid fa-arrow-right",desc:"Proceed to service level validation."}
   ]
 },
 
 service_volume_check:{
-  text:"Is the PRO rated as Volume Quote (TLX/TLS)?",
+  text:"Is the PRO rated as Volume Quote TLX/TLS?",
   choices:[
-    {label:"Yes",next:"service_move_dispute",icon:"fa-solid fa-circle-check",desc:"Volume quote."},
-    {label:"No",next:"service_match_check",icon:"fa-solid fa-circle-xmark",desc:"Not volume quote."}
+    {label:"Yes",next:"service_move_dispute",icon:"fa-solid fa-circle-check",desc:"PRO is rated as Volume Quote TLX/TLS."},
+    {label:"No",next:"service_match_check",icon:"fa-solid fa-circle-xmark",desc:"PRO is not rated as Volume Quote TLX/TLS."}
   ]
 },
 
 service_move_dispute:{
   text:"Move the case to Dispute Resolution.",
-  note:"If already under DR, advise it overrides service.",
+  note:"If the case is already under DR, advise customer that PRO is rated as Volume Quote and it will override the service.",
   choices:[]
 },
 
 service_match_check:{
-  text:"Does service level match requested?",
+  text:"Is the service level on FBC matching what is being requested?",
   choices:[
-    {label:"Yes",next:"service_already_correct",icon:"fa-solid fa-circle-check",desc:"Already correct."},
-    {label:"No",next:"service_check_bol",icon:"fa-solid fa-circle-xmark",desc:"Mismatch."}
+    {label:"Yes",next:"service_already_correct",icon:"fa-solid fa-circle-check",desc:"Service level already matches the request."},
+    {label:"No",next:"service_review_bol",icon:"fa-solid fa-circle-xmark",desc:"Service level does not match the request."}
   ]
 },
 
 service_already_correct:{
-  text:"Advise customer service level is already correct.",
+  text:"Advise customer that the invoice is already rated correctly based on the requested service level.",
   choices:[]
 },
 
-service_check_bol:{
-  text:"Check service level noted on BOL.",
+service_review_bol:{
+  text:"Pull up and review the BOL.",
+  note:"NOTE: FXFE is not Economy. This means FedEx Freight East.",
   choices:[
-    {label:"Economy",next:"service_correct_econ",icon:"fa-solid fa-box",desc:"BOL shows Economy."},
-    {label:"Priority",next:"service_correct_priority",icon:"fa-solid fa-bolt",desc:"BOL shows Priority."},
-    {label:"No Service Level",next:"service_no_bol",icon:"fa-solid fa-circle-question",desc:"Not indicated."}
+    {label:"Continue",next:"service_check_bol",icon:"fa-solid fa-arrow-right",desc:"Proceed to identify the service level noted on BOL."}
+  ]
+},
+
+service_check_bol:{
+  text:"What is the service level noted on BOL?",
+  choices:[
+    {label:"Economy / ECON / FXNL / National",next:"service_correct_econ",icon:"fa-solid fa-box",desc:"BOL shows Economy-related service level."},
+    {label:"Priority / PRTY / FXFR",next:"service_correct_priority",icon:"fa-solid fa-bolt",desc:"BOL shows Priority-related service level."},
+    {label:"No service level noted at all",next:"service_no_bol",icon:"fa-solid fa-file-circle-question",desc:"No service level is written on the BOL."}
   ]
 },
 
 service_correct_econ:{
-  text:"Advise PRO is correctly rated as Economy per BOL.",
-  choices:[]
+  text:"Advise customer that PRO is rated correctly as Economy since it was noted/requested on BOL.",
+  choices:[
+    {label:"Continue",next:"service_fbc_mismatch_update",icon:"fa-solid fa-arrow-right",desc:"Proceed if FBC does not match the BOL service level."}
+  ]
 },
 
 service_correct_priority:{
-  text:"Advise PRO is correctly rated as Priority per BOL.",
-  choices:[]
+  text:"Advise customer that PRO is rated correctly as Priority since it was noted/requested on BOL.",
+  choices:[
+    {label:"Continue",next:"service_fbc_mismatch_update",icon:"fa-solid fa-arrow-right",desc:"Proceed if FBC does not match the BOL service level."}
+  ]
 },
 
 service_no_bol:{
-  text:"PRO is correctly rated as Priority since no service level is listed on BOL.",
-  choices:[]
+  text:"PRO # is rated correctly as Priority since the service level was not listed on BOL per FXF Rules Tariff Item 188 Section 2.",
+  choices:[
+    {label:"Continue",next:"service_reopened_case_note",icon:"fa-solid fa-arrow-right",desc:"Proceed to reopened case guidance."}
+  ]
+},
+
+service_reopened_case_note:{
+  text:"If the case reopened and customer is claiming that service level was covered by the FedEx stamp, check previous shipments to locate the common service level of the customer then update the service level per previous shipment.",
+  choices:[
+    {label:"Continue",next:"service_fbc_mismatch_update",icon:"fa-solid fa-arrow-right",desc:"Proceed to FBC update steps if service level needs to be updated."}
+  ]
+},
+
+service_fbc_mismatch_update:{
+  text:"If service level noted on BOL doesn't match the service level on FBC, follow step below on how to update service level on FBC.",
+  choices:[
+    {label:"Continue",next:"service_update_steps",icon:"fa-solid fa-arrow-right",desc:"Open the FBC update steps."}
+  ]
 },
 
 /* ================= UPDATE FLOW WITH IMAGES ================= */
 
 service_update_steps:{
   text:"Click the service level on FBC. See image below.",
+  help:"Select the service level field in FBC to begin updating it.",
   image:"service-level-guide-images/service-level-field.png",
   choices:[
-    {label:"Continue",next:"service_update_screen",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"service_update_screen",icon:"fa-solid fa-arrow-right",desc:"Proceed to the service selection screen."}
   ]
 },
 
 service_update_screen:{
   text:"This will open a new screen.",
-  help:"Click arrows to select correct service and highlight it.",
+  help:"Click the arrows next to the current service until the correct one is found, then click it so it will highlight blue.",
   image:"service-level-guide-images/select-service-screen.jpg",
   choices:[
-    {label:"Continue",next:"service_update_action",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"service_priority_to_economy_exception",icon:"fa-solid fa-arrow-right",desc:"Proceed to exception handling step."}
   ]
 },
 
-service_update_action:{
-  text:"Try CTRL + ALT + P. Enter FXFR or ECON.",
+service_priority_to_economy_exception:{
+  text:"When updating service level from Priority to Economy but no ECON option appears, follow the step below.",
   choices:[
-    {label:"Did work",next:"service_comment",icon:"fa-solid fa-circle-check",desc:"Worked."},
-    {label:"Didn't work",next:"service_dnu_check",icon:"fa-solid fa-circle-xmark",desc:"Did not work."}
+    {label:"Continue",next:"service_ctrl_alt_p",icon:"fa-solid fa-arrow-right",desc:"Proceed to the service type workaround."}
+  ]
+},
+
+service_ctrl_alt_p:{
+  text:"Try CTRL + ALT + P to change the Service Type. Enter ONLY either FXFR or ECON.",
+  choices:[
+    {label:"Did work",next:"service_comment",icon:"fa-solid fa-circle-check",desc:"The workaround worked."},
+    {label:"Didn't work",next:"service_dnu_check",icon:"fa-solid fa-circle-xmark",desc:"The workaround did not work."}
   ]
 },
 
 service_dnu_check:{
-  text:"Check if Shipper/Consignee is flagged as DNU.",
+  text:"Check if either the current Shipper or Consignee was flagged as DNU in error.",
   choices:[
-    {label:"Continue",next:"service_fix_account",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"service_fix_account",icon:"fa-solid fa-arrow-right",desc:"Proceed to account correction."}
   ]
 },
 
 service_fix_account:{
-  text:"Search and replace with active account.",
+  text:"If so, search for active account and change the flagged account to an active one.",
   choices:[
-    {label:"Continue",next:"service_note_fix",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"service_note_fix",icon:"fa-solid fa-arrow-right",desc:"Proceed after changing the account."}
   ]
 },
 
 service_note_fix:{
-  text:"Put note: UPDATED SC/CC TO ACTIVE ACCOUNT. Use CORR SYSM.",
+  text:"Put a note on 2x4 comment on FBC: UPDATED SC/CC TO AN ACTIVE ACCOUNT TO ENABLE ECON OPTION. Use CORR SYSM and accept all.",
   choices:[
-    {label:"Continue",next:"service_reopen",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"service_reopen",icon:"fa-solid fa-arrow-right",desc:"Proceed to reopen the PRO."}
   ]
 },
 
 service_reopen:{
-  text:"Reopen PRO and update again.",
+  text:"Reopen the PRO and you should be able to update to ECON.",
   choices:[
-    {label:"Continue",next:"service_comment",icon:"fa-solid fa-arrow-right",desc:"Proceed."}
+    {label:"Continue",next:"service_comment",icon:"fa-solid fa-arrow-right",desc:"Proceed to the comment box step."}
   ]
 },
 
 service_comment:{
-  text:`Put 2x4 comment:
+  text:`On the comment box, put:
 
 VS-BLER-CASE#-UPDATED SERVICE LEVEL TO ECONOMY/PRIORITY PER BOL
 
-Click OK → system applies CORR EPDC → Autorate and accept all.`,
+Click OK. The system will automatically put the CORR EPDC and the 2X4 comment on FBC.
+
+Then autorate and accept all.`,
+  help:"Enter the required comment after selecting the correct service level.",
   image:"service-level-guide-images/comment-box-step.jpg",
   choices:[]
 }
 
 };
+
   function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -1638,19 +2105,6 @@ Click OK → system applies CORR EPDC → Autorate and accept all.`,
 
   function isFinalNode(node){
     return !!node?.action || (!getNodeChoices(node).length && !node?.next);
-  }
-
-  function initRatingStars() {
-    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-
-    ratingStars.forEach(star => {
-      star.onclick = function () {
-        selectedRating = Number(this.dataset.value);
-        ratingStars.forEach(s => {
-          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
-        });
-      };
-    });
   }
 
   function setTemplateValue(el, text){
@@ -1731,8 +2185,13 @@ Click OK → system applies CORR EPDC → Autorate and accept all.`,
     els.passwordModal.style.display = "flex";
   }
 
-  function closePasswordModal(){ els.passwordModal.style.display = "none"; }
-  function closeEditModal(){ els.editModal.style.display = "none"; }
+  function closePasswordModal(){
+    els.passwordModal.style.display = "none";
+  }
+
+  function closeEditModal(){
+    els.editModal.style.display = "none";
+  }
 
   function checkPassword(){
     if(els.adminPassword.value === "admin"){
@@ -1754,7 +2213,6 @@ Click OK → system applies CORR EPDC → Autorate and accept all.`,
     els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
     els.editModal.style.display = "flex";
   }
-
 
   async function saveEdit(){
     const val = els.editTextarea.value.trim();
@@ -1789,8 +2247,15 @@ Click OK → system applies CORR EPDC → Autorate and accept all.`,
 
   function getPercent(isFinal){
     if (isFinal) return 100;
-    if(path.length === 0) return 0;
-    return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
+
+    const currentIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (currentIndex === -1) {
+      return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95);
+    }
+
+    const progress = ((currentIndex + 1) / MAX_STEPS) * 100;
+    return Math.min(Math.round(progress), 95);
   }
 
   function updateMeta(isFinal){
@@ -1806,23 +2271,67 @@ Click OK → system applies CORR EPDC → Autorate and accept all.`,
   }
 
   function updatePath(){
-    if(!path.length){
-      els.pathBox.className = "path-empty";
-      els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
-      return;
-    }
-
-    const html = path.map((item,index)=>`
-      <div class="path-item">
-        <div class="path-step">Step ${index + 1}</div>
-        <div class="path-question">${escapeHtml(item.question)}</div>
-        <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
-      </div>
-    `).join("");
-
-    els.pathBox.className = "path-list";
-    els.pathBox.innerHTML = html;
+  if(!path.length){
+    els.pathBox.className = "path-empty";
+    els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+    return;
   }
+
+  const html = path.map((item, index) => {
+    const isActive =
+      currentKey === "__final__"
+        ? (
+            item.nextKey === "__final__" ||
+            (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
+          )
+        : item.fromKey === currentKey;
+
+    return `
+      <div class="path-item">
+        <button
+          type="button"
+          class="path-jump ${isActive ? "active" : ""}"
+          data-step-index="${index}"
+        >
+          <div class="path-step">Step ${index + 1}</div>
+          <div class="path-question">${escapeHtml(item.question)}</div>
+          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+        </button>
+      </div>
+    `;
+  }).join("");
+
+  els.pathBox.className = "path-list";
+  els.pathBox.innerHTML = html;
+
+  els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.stepIndex);
+      jumpToPathStep(index);
+    });
+  });
+}
+
+  function jumpToPathStep(index){
+  if(index < 0 || index >= path.length) return;
+
+  const target = path[index];
+  if(!target) return;
+
+  currentFinalRecommendation = "";
+
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  if(target.nextKey === "__final__" && target.finalNode){
+    renderFinal(target.finalNode);
+    return;
+  }
+
+  renderNode(target.fromKey);
+}
 
   function updateRecommendation(text, isFinal){
     if(!isFinal){
@@ -1835,430 +2344,535 @@ Click OK → system applies CORR EPDC → Autorate and accept all.`,
     els.recommendationBox.textContent = text;
   }
 
-function openImageModal(src){
-  const modal = document.getElementById("imageModal");
-  const img = document.getElementById("imageModalImg");
-  if (!modal || !img) return;
+  function openImageModal(src){
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
 
-  img.src = src;
-  modal.classList.add("open");
-  document.body.style.overflow = "hidden";
-}
+    img.src = src;
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
 
-function closeImageModal(e){
-  if (e) e.stopPropagation();
+  function closeImageModal(e){
+    if (e) e.stopPropagation();
 
-  const modal = document.getElementById("imageModal");
-  const img = document.getElementById("imageModalImg");
-  if (!modal || !img) return;
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
 
-  modal.classList.remove("open");
-  img.src = "";
-  document.body.style.overflow = "";
-}
+    modal.classList.remove("open");
+    img.src = "";
+    document.body.style.overflow = "";
+  }
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeImageModal();
-});
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeImageModal();
+  });
 
-async function renderFinal(finalNode){
-  const finalText = finalNode.action || getNodeText(finalNode) || "";
-  const finalNote = finalNode.note || "";
-  const finalImage = finalNode.image || "";
+  async function renderFinal(finalNode){
+    const finalText = finalNode.action || getNodeText(finalNode) || "";
+    const finalNote = finalNode.note || "";
+    const finalImage = finalNode.image || "";
 
-  const cleanedFinalNote = escapeHtml(finalNote)
-    .replace(/\r\n/g, "\n")
-    .replace(/^\s+/, "")
-    .split("\n")
-    .map(line => line.trimStart())
-    .join("\n")
-    .trim();
+    const formattedFinalText = escapeHtml(finalText)
+      .replace(/\r\n/g, "\n")
+      .replace(/\n/g, "<br>");
 
-  currentFinalRecommendation = finalText;
-  updateMeta(true);
-  updatePath();
-  updateRecommendation(finalText, true);
-  await loadTemplatesForRecommendation(finalText);
+    currentFinalRecommendation = finalText;
+    currentKey = "__final__";
+    updateMeta(true);
+    updatePath();
+    updateRecommendation(finalText, true);
+    await loadTemplatesForRecommendation(finalText);
 
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
-      <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
-    </div>
-
-    <div class="final-card">
-      <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
-      <div class="final-title">Use this handling outcome</div>
-      <div class="final-text">${escapeHtml(finalText)}</div>
-      ${cleanedFinalNote ? `<div style="margin-top:12px; color:#475569; line-height:1.7; white-space:pre-wrap;">${cleanedFinalNote}</div>` : ""}
-
-      ${finalImage ? `
-        <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
-          <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
-        </div>
-      ` : ""}
-
-      <div class="final-actions">
-        <button class="app-btn secondary" id="inlineBack">Go Back</button>
-        <button class="app-btn primary" id="inlineRestart">Start Over</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("inlineBack").onclick = goBack;
-  document.getElementById("inlineRestart").onclick = restart;
-}
-  
-  function formatNoteContent(text){
-  if (!text) return "";
-
-  return escapeHtml(text)
-    .replace(/\n/g, "<br>")
-    .replace(
-      /(^|[\s(>])((https?:\/\/[^\s]+)|([A-Za-z0-9._/-]+\.html))(?=$|[\s)<])/g,
-      (match, prefix, url) => {
-        const clean = url.trim();
-        const label = clean
-          .replace(".html", "")
-          .replace(/[-_]/g, " ")
-          .replace(/\b\w/g, c => c.toUpperCase());
-
-        return `${prefix}<a href="${clean}" target="_blank" class="smart-link">${label} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
-      }
-    );
-}
-
- async function renderNode(key){
-  currentKey = key;
-  const node = NODES[key];
-  if (!node) {
     els.stageCard.innerHTML = `
       <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
       </div>
-      <div class="question-wrap">
-        <div class="question-card">
-          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-          <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-          <div class="question-help">Check the node key in your NODES object.</div>
+
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${formattedFinalText}</div>
+        ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+
+        ${finalImage ? `
+          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
+          </div>
+        ` : ""}
+
+        <div class="final-actions">
+          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart">Start Over</button>
         </div>
       </div>
     `;
-    return;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
   }
 
-  const choices = getNodeChoices(node);
-  const isFinal = isFinalNode(node);
+  async function renderNode(key){
+    currentKey = key;
+    const node = NODES[key];
 
-  if (isFinal) {
-    await renderFinal(node);
-    return;
-  }
-
-  updateMeta(false);
-  updatePath();
-  updateRecommendation("", false);
-
-  currentFinalRecommendation = "";
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-
-  const nodeText = getNodeText(node);
-  const nodeHelp = getNodeHelp(node);
-  const nodeNote = getNodeNote(node);
-  const nodeImage = getNodeImage(node);
-
-  const hasHtmlNote = nodeNote && /<[^>]+>/.test(nodeNote);
-
-  const formattedPlainNote = nodeNote
-    ? escapeHtml(nodeNote)
-        .replace(/\n/g, "<br>")
-        .replace(
-          /(^|[\s(>])([A-Za-z0-9._/-]+\.html)(?=$|[\s)<])/g,
-          '$1<a href="$2" target="_blank" class="auto-note-link">Open ${"$2".replace(".html","").replace(/[-_]/g," ")} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'
-        )
-    : "";
-
-  const choicesHtml = choices.map(choice => `
-    <button class="choice"
-      data-next="${escapeHtml(choice.next || "")}"
-      data-label="${escapeHtml(choice.label || "")}"
-      data-action="${escapeHtml(choice.action || "")}"
-      data-note="${escapeHtml(choice.note || "")}">
-      <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-      <div class="choice-body">
-        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-        <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-      </div>
-    </button>
-  `).join("");
-
-  const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
-
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
-    </div>
-
-    <div class="question-wrap">
-      <div class="question-card">
-        <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-        <div class="question-text">${escapeHtml(nodeText)}</div>
-        ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
-
-        ${nodeNote ? `
-          <div class="note-card">
-            <div class="note-head">
-              <i class="fa-solid fa-bell"></i>
-              Reminder
-            </div>
-            <div class="note-body">${hasHtmlNote ? nodeNote : formatNoteContent(nodeNote)}</div>
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        </div>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
           </div>
-        ` : ""}
+        </div>
+      `;
+      return;
+    }
 
-        ${nodeImage ? `
-          <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
-            <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
-          </div>
-        ` : ""}
-      </div>
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
 
-      <div class="choices">${choicesHtml}</div>
-    </div>
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
 
-    <div class="decision-footer">
-      <div class="decision-footer-left">
-        <div class="footer-label">Decision Guide</div>
-        <div class="footer-value">${footerStepText}</div>
-      </div>
-
-      <div class="decision-actions">
-        <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-      </div>
-    </div>
-  `;
-
-  const inlineBack = document.getElementById("inlineBack");
-  const inlineRestart = document.getElementById("inlineRestart");
-
-  if(inlineBack) inlineBack.onclick = goBack;
-  if(inlineRestart) inlineRestart.onclick = restart;
-
-  els.stageCard.querySelectorAll(".choice").forEach(btn => {
-    btn.addEventListener("click", () => {
-      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-      btn.classList.add("selected");
-
-      const next = btn.dataset.next;
-      const label = btn.dataset.label;
-      const action = btn.dataset.action;
-      const note = btn.dataset.note;
-
-      historyStack.push({ key: currentKey, path: [...path] });
-      path.push({ question: nodeText, answer: label });
-
-      updatePath();
-      updateMeta(false);
-
-      setTimeout(() => {
-        if (action) {
-          renderFinal({ action, note });
-        } else {
-          renderNode(next);
-        }
-      }, 120);
-    });
-  });
-}
-
-  function goBack(){
-    if(!historyStack.length) return;
-    const prev = historyStack.pop();
-    path = prev.path || [];
-    renderNode(prev.key);
-  }
-
-  function restart(){
-    path = [];
-    historyStack = [];
     currentFinalRecommendation = "";
     setTemplateValue(els.suggestedComment, "");
     setTemplateValue(els.suggestedCorrCode, "");
     setTemplateValue(els.suggestedEmail, "");
+
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
+
+const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+let currentStepNumber = 0;
+
+if (currentKey === "start") {
+  currentStepNumber = 0;
+} else if (fromIndex !== -1) {
+  // user is viewing a recorded step directly
+  currentStepNumber = fromIndex + 1;
+} else if (nextIndex !== -1) {
+  // user moved forward normally to the next screen
+  currentStepNumber = nextIndex + 2;
+} else {
+  // fallback for first real screen after intro
+  currentStepNumber = 1;
+}
+
+const footerStepText = currentKey === "start"
+  ? "Ready to begin"
+  : `Currently on step ${currentStepNumber}`;
+
+const badgeStepText = currentKey === "start"
+  ? "Start"
+  : `Step ${currentStepNumber}`;
+
+const hasPreviousStep = currentKey !== "start";
+
+    updateMeta(false);
+    updatePath();
+    updateRecommendation("", false);
+
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">${escapeHtml(nodeText)}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
+
+          ${nodeNote ? `
+            <div class="note-card">
+              <div class="note-head">
+                <i class="fa-solid fa-bell"></i>
+                Reminder
+              </div>
+              <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
+            </div>
+          ` : ""}
+
+          ${nodeImage ? `
+            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+            </div>
+          ` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+
+   els.stageCard.querySelectorAll(".choice").forEach(btn => {
+  btn.addEventListener("click", () => {
+    els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    const next = btn.dataset.next;
+    const label = btn.dataset.label;
+    const action = btn.dataset.action;
+    const note = btn.dataset.note;
+
+    const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+    const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (fromIndex !== -1) {
+      // user is re-answering an already-saved step
+      path = path.slice(0, fromIndex);
+    } else if (nextIndex !== -1) {
+      // user is continuing normally from the previous step
+      path = path.slice(0, nextIndex + 1);
+    }
+
+    historyStack.push({
+      key: currentKey,
+      path: [...path]
+    });
+
+    if (currentKey !== "start") {
+      path.push({
+        question: nodeText,
+        answer: label,
+        fromKey: currentKey,
+        nextKey: action ? "__final__" : next,
+        finalNode: action ? { action, note } : null
+      });
+    }
+
+    updatePath();
+    updateMeta(false);
+
+    setTimeout(() => {
+      if (action) {
+        renderFinal({ action, note });
+      } else {
+        renderNode(next);
+      }
+    }, 120);
+  });
+});
+  }
+
+function goBack(){
+  currentFinalRecommendation = "";
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  // Case 1: currently on final recommendation
+  if (currentKey === "__final__") {
+    const finalIndex = path.findIndex(item => {
+      if (item.nextKey === "__final__") return true;
+
+      const nextNode = NODES[item.nextKey];
+      return !!nextNode && isFinalNode(nextNode);
+    });
+
+    if (finalIndex === -1) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    // Go back to the actual last question step
+    currentKey = path[finalIndex].fromKey;
+    renderNode(path[finalIndex].fromKey);
+    return;
+  }
+
+  // Case 2: current screen matches a saved step directly (fromKey)
+  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+  if (fromIndex !== -1) {
+    if (fromIndex === 0) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    currentKey = path[fromIndex - 1].fromKey;
+    renderNode(path[fromIndex - 1].fromKey);
+    return;
+  }
+
+  // Case 3: current screen was reached normally from a previous step (nextKey)
+  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+  if (nextIndex !== -1) {
+    currentKey = path[nextIndex].fromKey;
+    renderNode(path[nextIndex].fromKey);
+    return;
+  }
+
+  // Fallback
+  currentKey = "start";
+  renderNode("start");
+}
+  
+  function restart(){
+    path = [];
+    historyStack = [];
+    currentFinalRecommendation = "";
+    currentKey = "start";
+
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
     updatePath();
     updateRecommendation("", false);
     renderNode("start");
   }
 
-  function openComment() {
-    const modal = document.getElementById("commentModal");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "none";
-      feedbackMessage.textContent = "";
-    }
-    if (modal) modal.style.display = "flex";
-  }
+  /* ===== PAGE MODALS + FEEDBACK ONLY ===== */
 
-  function closeComment() {
-    const modal = document.getElementById("commentModal");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "none";
-      feedbackMessage.textContent = "";
-    }
-    if (modal) modal.style.display = "none";
-  }
+function openModalAnimated(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
 
-  function openHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "flex";
-  }
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
 
-  function closeHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "none";
-  }
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
 
-  function closeAllComments() {
-    const modal = document.getElementById("allCommentsModal");
-    if (modal) modal.style.display = "none";
-    if (commentsUnsubscribe) {
-      commentsUnsubscribe();
-      commentsUnsubscribe = null;
-    }
-  }
+function closeModalAnimated(id, onClosed) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
 
-  async function sendComment() {
-    const commentName = document.getElementById("commentName");
-    const commentText = document.getElementById("commentText");
-    const feedbackMessage = document.getElementById("feedbackMessage");
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
 
-    const name = commentName ? commentName.value.trim() : "";
-    const comment = commentText ? commentText.value.trim() : "";
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
 
-    if (!selectedRating) {
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Please select a star rating first.";
-      }
-      return;
-    }
+function openComment() {
+  openModalAnimated("commentModal");
+}
 
-    try {
-      await db.collection(FEEDBACK_COLLECTION).add({
-        name: name || "Anonymous",
-        comment,
-        rating: selectedRating,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+function closeComment() {
+  closeModalAnimated("commentModal");
+}
+
+function openHelp() {
+  openModalAnimated("helpModal");
+}
+
+function closeHelp() {
+  closeModalAnimated("helpModal");
+}
+
+function closeAllComments() {
+  closeModalAnimated("allCommentsModal");
+}
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+  if (!ratingStars.length) return;
+
+  ratingStars.forEach(star => {
+    star.onclick = function (e) {
+      e.stopPropagation();
+      selectedRating = Number(this.dataset.value || 0);
+
+      ratingStars.forEach(s => {
+        const val = Number(s.dataset.value || 0);
+        s.classList.toggle("selected", val <= selectedRating);
       });
+    };
+  });
+}
 
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#16a34a";
-        feedbackMessage.textContent = "Feedback sent successfully.";
-      }
+async function sendComment() {
+  const nameEl = document.getElementById("commentName");
+  const textEl = document.getElementById("commentText");
+  const feedbackMessage = document.getElementById("feedbackMessage");
 
-      if (commentName) commentName.value = "";
-      if (commentText) commentText.value = "";
-      selectedRating = 0;
-      ratingStars.forEach(s => s.classList.remove("selected"));
+  const name = (nameEl?.value || "").trim();
+  const comment = (textEl?.value || "").trim();
 
-      setTimeout(() => {
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "none";
-          feedbackMessage.textContent = "";
-        }
-        closeComment();
-      }, 1200);
-    } catch (error) {
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Unable to send feedback. Please try again.";
-      }
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
     }
+    return;
   }
 
-  async function showAllComments() {
-    const commentsList = document.getElementById("commentsList");
-    const allCommentsModal = document.getElementById("allCommentsModal");
-    if (!commentsList || !allCommentsModal) return;
+  try {
+    await db.collection(FEEDBACK_COLLECTION).add({
+      name: name || "Anonymous",
+      comment,
+      rating: selectedRating,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    if (nameEl) nameEl.value = "";
+    if (textEl) textEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
+
+    setTimeout(() => {
+      closeComment();
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
+      }
+    }, 900);
+  } catch (err) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
+    }
+  }
+}
+
+async function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const commentsList = document.getElementById("commentsList");
+  if (!commentsList) return;
+
+  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+  const loadComments = async () => {
     try {
-      commentsList.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>";
-
-      const snap = await db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").get();
-      commentsList.innerHTML = "";
+      const snap = await db
+        .collection(FEEDBACK_COLLECTION)
+        .orderBy("createdAt", "desc")
+        .get();
 
       if (snap.empty) {
-        commentsList.innerHTML = `<p style="color:#64748b;">No comments yet.</p>`;
+        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
       } else {
-        snap.forEach(doc => {
-          const d = doc.data();
-          const item = document.createElement("div");
-          item.className = "comment-list-item";
-          item.innerHTML = `
-            <span class="stars">${"★".repeat(d.rating || 0)}${"☆".repeat(5 - (d.rating || 0))}</span>
-            <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(d.name || "Anonymous")}</strong>
-            <div style="color:#475569; line-height:1.7;">${escapeHtml(d.comment || "")}</div>
+        commentsList.innerHTML = snap.docs.map(doc => {
+          const data = doc.data() || {};
+          const rating = Number(data.rating || 0);
+          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+          const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+          return `
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            </div>
           `;
-          commentsList.appendChild(item);
-        });
+        }).join("");
       }
 
-      closeComment();
-      allCommentsModal.style.display = "flex";
-    } catch(err) {
-      alert("Unable to load comments right now.");
+      openModalAnimated("allCommentsModal");
+    } catch (err) {
+      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+      openModalAnimated("allCommentsModal");
     }
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeModalAnimated("commentModal", loadComments);
+  } else {
+    loadComments();
   }
+}
 
-  window.addEventListener("click", function(e){
-    const helpModal = document.getElementById("helpModal");
-    const commentModal = document.getElementById("commentModal");
-    const allCommentsModal = document.getElementById("allCommentsModal");
+window.attemptEdit = attemptEdit;
+window.closePasswordModal = closePasswordModal;
+window.closeEditModal = closeEditModal;
+window.checkPassword = checkPassword;
+window.saveEdit = saveEdit;
+window.copyTemplateText = copyTemplateText;
+window.goBack = goBack;
+window.restart = restart;
+window.openImageModal = openImageModal;
+window.closeImageModal = closeImageModal;
 
-    if(e.target === helpModal) closeHelp();
-    if(e.target === commentModal) closeComment();
-    if(e.target === allCommentsModal) closeAllComments();
-    if(e.target === els.passwordModal) closePasswordModal();
-    if(e.target === els.editModal) closeEditModal();
-  });
+/* keep these for header.html buttons */
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
 
-  window.openComment = openComment;
-  window.closeComment = closeComment;
-  window.openHelp = openHelp;
-  window.closeHelp = closeHelp;
-  window.closeAllComments = closeAllComments;
-  window.sendComment = sendComment;
-  window.showAllComments = showAllComments;
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+});
 
-  window.attemptEdit = attemptEdit;
-  window.copyTemplateText = copyTemplateText;
-  window.closePasswordModal = closePasswordModal;
-  window.closeEditModal = closeEditModal;
-  window.checkPassword = checkPassword;
-  window.saveEdit = saveEdit;
-  window.goBack = goBack;
-  window.restart = restart;
-  window.openImageModal = openImageModal;
-  window.closeImageModal = closeImageModal;
+setTimeout(() => {
+  initRatingStars();
+}, 300);
 
-  document.addEventListener("headerLoaded", () => {
-    initRatingStars();
-  });
-
-  renderNode("start");
+renderNode("start");
 });
 </script>
 <div id="imageModal" class="image-modal" onclick="closeImageModal()">
   <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
   <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
 </div>
+
 </body>
 </html>
