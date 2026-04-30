@@ -1,1139 +1,3135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Rebill per LOA Guide — Fixed</title>
-<style>
-:root{
-  --bg:#f4f7fb;
-  --card:#ffffff;
-  --muted:#64748b;
-  --accent:#4d148c;
-  --accent-2:#ff6600;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color:#0f172a;
-}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,var(--bg),#eef6ff);display:flex;flex-direction:column;min-height:100vh;}
-header, footer{background:var(--accent);color:white;padding:16px 28px;}
-header h1, footer p{margin:0;font-weight:600;}
-.container{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 420px;gap:20px;align-items:start;padding:28px 0;flex:1}
-.card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 8px 28px rgba(2,6,23,0.06);overflow:hidden}
-h1{margin:0;font-size:22px;color:var(--accent)}
-p.lead{margin:6px 0 14px;color:var(--muted);font-size:13px}
-.progress-container{display:flex;align-items:center;gap:10px;margin:14px 0}
-.progress-bar{flex:1;height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
-.progress-fill{height:100%;width:0%;background:var(--accent);transition:width .3s}
-.progress-text{font-size:13px;color:var(--muted)}
-.node{padding:12px;border-radius:10px;border:1px solid rgba(3,7,18,0.05);background:linear-gradient(180deg,#ffffff,#fbfeff);margin:10px 0;min-height:64px}
-.choice-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.choice{padding:8px 12px;border-radius:999px;background:#eef8f7;border:1px solid rgba(4,20,20,0.03);cursor:pointer;font-weight:600}
-.choice:hover{background:#e0f2fe}
-.choice.active{background:var(--accent);color:white}
-.path{margin-top:12px;padding:10px;border-radius:10px;background:#f8fafc;border:1px dashed rgba(3,7,18,0.04);font-size:13px}
-.path strong{color:var(--accent)}
-.result{margin-top:12px;padding:12px;border-radius:10px;background:#e6fbfb;border-left:4px solid var(--accent-2);animation:fadeIn 0.4s ease-in;min-height:56px}
-.note{margin-top:6px;font-size:13px;color:var(--muted);font-style:italic}
-.controls{display:flex;gap:8px;margin-top:12px}
-button{background:var(--accent);color:white;border:none;padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:600}
-button.secondary{background:#fff;color:var(--accent);border:1px solid #ccc}
-.output-card{margin-top:16px;padding:14px;border-radius:10px;background:#ffffff;box-shadow:0 4px 12px rgba(0,0,0,0.05);animation:fadeIn 0.45s ease-in;position:relative}
-.output-header{font-weight:700;color:var(--accent);margin-bottom:8px ;color:#000 !important;display:flex;justify-content:space-between;align-items:center;}
-.output-box{
-  padding:10px;
-  border-left:4px solid var(--accent-2);
-  background:#f8fafc;
-  border-radius:8px;
-  white-space:pre-wrap;
-  font-size:11px; 
-}
-.copy-btn{background:var(--accent);color:white;border:none;padding:6px 10px;margin-top:10px;border-radius:6px;cursor:pointer;font-size:13px}
-.copy-btn:hover{opacity:.85}
-.extra-note{margin-top:8px;font-size:13px;color:var(--muted);font-style:italic}
-.edit-icon{cursor:pointer;font-size:16px;color:var(--accent);margin-left:8px}
-.edit-icon:hover{text-decoration:underline}
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:1000}
-.modal-content{background:white;padding:20px;border-radius:10px;min-width:300px;text-align:center}
-textarea{resize:none}
-@keyframes fadeIn {from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@media(max-width:1200px){.container{grid-template-columns:1fr}}
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.3s ease;}
-.modal-content { background: #fff; padding: 25px 30px; border-radius: 12px; min-width: 500px; max-width: 600px; box-shadow: 0 12px 28px rgba(0,0,0,0.2); text-align: center; font-family: Inter, sans-serif; }
-.modal-content h3 { margin-top: 0; margin-bottom: 15px; font-size: 18px; font-weight: 600; color: var(--accent); }
-.modal-content input[type="password"], .modal-content textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; margin-top: 10px; font-family: Inter, sans-serif; }
-.modal-content textarea { min-height: 120px; resize: vertical; }
-.modal-content button { border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; margin-left: 6px; cursor: pointer; transition: all 0.2s ease; }
-.modal-content button:hover { opacity: 0.9; }
-.modal-content .save-btn { background-color: var(--accent); color: #fff; }
-.modal-content .cancel-btn { background-color: #e5e7eb; color: #111827; }
-@media(max-width:500px){ .modal-content { width: 90%; min-width: unset; padding:20px; } }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Debtor Update per LOA</title>
 
-/* ---------- LOGO ANIMATION ---------- */
-@keyframes logoFlyIn {
-  0% { opacity: 0; transform: translateX(-50px) scale(0.8); }
-  100% { opacity: 1; transform: translateX(0) scale(1); }
-}
-
-header img {
-  opacity: 0; /* start hidden */
-  animation: logoFlyIn 1s ease-out forwards;
-}
-
-/* ---------- CARD FADE & SLIDE UP ---------- */
-@keyframes cardFadeIn {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.card {
-  opacity: 0; /* start hidden */
-  transform: translateY(20px);
-}
-
-/* ---------- OPTIONAL SWOOSH BEHIND HEADER ---------- */
-header {
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-header::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform: skewX(-20deg);
-  animation: sweep 1s ease-out forwards;
-  z-index: 0;
-  opacity: 0.2;
-}
-
-@keyframes sweep {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-</style>
-</head>
-<body>
-
-<!-- this is the header codes that can be used to other guides -->
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<header>
-  <div style="display:flex;align-items:center;gap:40px;">
-    <a href="index.html">
-      <img src="fedex.png" alt="FedEx Logo">
-    </a>
-    <nav class="nav-tabs">
-      <a href="index.html" class="tab active">Home</a>
-      <a href="case-directory.html" class="tab">Case Directory</a>
-      <a href="ebs-response-template.html" class="tab">EBS Response</a>
-      <a href="volume-application.html" class="tab">Volume Application</a>  
-    </nav>
-  </div>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/header-footer-style.css">
   
-    <div class="header-icons">
-    <div id="clockBtn">
-      <i class="fa-regular fa-clock"></i>
-      <span id="clockText">--:-- PM</span>
-    </div>
-    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
-    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
-  </div>
-  
-</header>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<!-- HELP Modal -->
-<div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
-    <ul>
-      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
-      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
-      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
-      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
-    </ul>
-    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
-  </div>
-</div>
-
-<!-- COMMENT MODALS -->
-<div id="commentModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
-    </div>
-    <div class="rating-container">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-    <div class="comment-modal-footer">
-      <button class="btn" onclick="sendComment()">Send</button>
-      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-    </div>
-  </div>
-</div>
-
-<div id="allCommentsModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
-    </div>
-    <div id="commentsList"></div>
-  </div>
-</div>
-
-<!-- TIME & CALENDAR POPUP -->
-<div id="timeCalendarPopup">
-
-  <div class="popup-time" id="popupTime"></div>
-  <div class="popup-date" id="popupDate"></div>
-
-  <div class="calendar-header">
-    <span id="prevMonth">‹</span>
-    <div id="monthYear" class="calendar-title"></div>
-    <span id="nextMonth">›</span>
-  </div>
-
-  <div class="calendar-grid" id="calendarGrid"></div>
-
-</div>
-
-<script>
-/* =========================
-   CALENDAR LOGIC
-========================= */
-
-function updateClock(){
-  const now = new Date();
-
-  // HEADER TIME (Hour + Minute only)
-  const headerTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).format(now);
-
-  // POPUP TIME (Hour + Minute + Second)
-  const popupTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupDate = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(now);
-
-  // Update header
-  document.getElementById("clockText").textContent = headerTime;
-
-  // Update popup
-  document.getElementById("popupTime").textContent = popupTime;
-  document.getElementById("popupDate").textContent = popupDate;
-}
-// START CLOCK
-updateClock();
-setInterval(updateClock, 1000);
-
-
-const clockBtn = document.getElementById("clockBtn");
-const calendarPopup = document.getElementById("timeCalendarPopup");
-const calendarGrid = document.getElementById("calendarGrid");
-const monthYear = document.getElementById("monthYear");
-
-let currentDate = new Date();
-
-clockBtn.onclick = function(e){
-  e.stopPropagation();
-  calendarPopup.style.display =
-    calendarPopup.style.display === "block" ? "none" : "block";
-  renderCalendar(currentDate);
-};
-
-document.addEventListener("click", function(){
-  calendarPopup.style.display = "none";
-});
-
-document.getElementById("prevMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-};
-
-document.getElementById("nextMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-};
-
-function renderCalendar(date){
-  calendarGrid.innerHTML = "";
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  monthYear.textContent =
-    date.toLocaleString("en-PH", { month: "long", year: "numeric" });
-
-  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  dayNames.forEach(d=>{
-    const el = document.createElement("div");
-    el.className="day-name";
-    el.textContent=d;
-    calendarGrid.appendChild(el);
-  });
-
-  for(let i=0;i<firstDay;i++){
-    const empty=document.createElement("div");
-    calendarGrid.appendChild(empty);
+ <style>
+  :root{
+    --bg:#07111f;
+    --bg-soft:#0c1728;
+    --panel:#0f1c31;
+    --panel-2:#12233d;
+    --card:#ffffff;
+    --card-soft:#f8fafc;
+    --text:#0f172a;
+    --text-soft:#475569;
+    --muted:#94a3b8;
+    --line:rgba(148,163,184,.18);
+    --white-line:rgba(255,255,255,.08);
+    --accent:#6d28d9;
+    --accent-2:#4d148c;
+    --accent-3:#ff6600;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+    --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+    --shadow-md:0 10px 28px rgba(15,23,42,.10);
+    --shadow-card:0 16px 40px rgba(15,23,42,.06);
+    --radius-xl:28px;
+    --radius-lg:20px;
+    --radius-md:16px;
+    --radius-sm:12px;
+    --max:1720px;
+    font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
- const today = new Date(
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date())
-);
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
 
-  for(let d=1; d<=daysInMonth; d++){
-    const day=document.createElement("div");
-    day.className="day";
-    day.textContent=d;
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+      radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+      linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+    overflow-x:hidden;
+  }
 
-    if(
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ){
-      day.classList.add("today");
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size:36px 36px;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+    z-index:0;
+  }
+
+  a{color:inherit}
+  button,input,textarea{font:inherit}
+
+  .page{
+    position:relative;
+    z-index:1;
+  }
+
+  .app-shell{
+    width:min(calc(100% - 32px), var(--max));
+    margin:22px auto 24px;
+  }
+
+  .app-frame{
+    min-height:calc(100vh - 180px);
+    background:rgba(255,255,255,.58);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.68);
+    border-radius:34px;
+    box-shadow:var(--shadow-xl);
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:minmax(0,1.45fr) 380px 420px;
+  }
+
+  .main{
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    min-width:0;
+  }
+
+  .main-topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:16px 18px;
+    border-radius:24px;
+    background:rgba(255,255,255,.85);
+    border:1px solid rgba(219,228,240,.9);
+    box-shadow:var(--shadow-md);
+  }
+
+  .main-topbar h1{
+    margin:0;
+    font-size:24px;
+    letter-spacing:-.03em;
+  }
+
+  .main-status{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:11px 14px;
+    border-radius:999px;
+    background:#fff;
+    border:1px solid #dbe4f0;
+    font-size:12px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .pill.primary{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    border:none;
+  }
+
+  .workspace{
+    display:grid;
+    grid-template-rows:auto 1fr;
+    gap:16px;
+    min-height:0;
+  }
+
+  .progress-card{
+    background:#fff;
+    border:1px solid #dbe4f0;
+    border-radius:22px;
+    padding:16px 18px;
+    box-shadow:var(--shadow-md);
+  }
+
+  .progress-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .progress-title{
+    font-size:14px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .progress-status{
+    font-size:12px;
+    font-weight:800;
+    color:#64748b;
+  }
+
+  .progress-bar{
+    height:12px;
+    background:#eaf0f7;
+    border-radius:999px;
+    overflow:hidden;
+  }
+
+  .progress-fill{
+    height:100%;
+    width:0%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+    transition:width .28s ease;
+  }
+
+  .stage-area{
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .stage-card{
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border:1px solid #dbe4f0;
+    border-radius:30px;
+    box-shadow:var(--shadow-card);
+    min-height:640px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  .stage-top{
+    padding:22px 22px 0;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 13px;
+    border-radius:999px;
+    background:#eef4ff;
+    color:#1d4ed8;
+    font-size:12px;
+    font-weight:800;
+  }
+
+  .badge.alt{
+    background:#f8fafc;
+    color:#334155;
+  }
+
+  .question-wrap{
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    flex:1;
+  }
+
+  .question-card{
+    position:relative;
+    padding:30px;
+    border-radius:28px;
+    background:
+      radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+      linear-gradient(180deg,#ffffff,#f8fbff);
+    border:1px solid #e6edf7;
+    box-shadow:0 12px 30px rgba(15,23,42,.04);
+  }
+
+  .question-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+  }
+
+  .question-label{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#334155;
+  }
+
+  .question-text{
+    margin:18px 0 0;
+    font-size:36px;
+    line-height:1.08;
+    letter-spacing:-.045em;
+    font-weight:900;
+  }
+
+  .question-help{
+    margin:14px 0 0;
+    color:#64748b;
+    font-size:14px;
+    line-height:1.75;
+    max-width:760px;
+  }
+
+  .choices{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+  }
+
+  .choice{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    border-radius:24px;
+    padding:18px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    border:1px solid #e2e8f0;
+    box-shadow:0 12px 28px rgba(15,23,42,.05);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    min-height:112px;
+  }
+
+  .choice:hover{
+    transform:translateY(-3px);
+    box-shadow:0 18px 36px rgba(15,23,42,.08);
+    border-color:#c7d5e6;
+  }
+
+  .choice.selected{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .choice-icon{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    background:#eef4ff;
+    color:#2563eb;
+    flex:0 0 auto;
+    font-size:17px;
+  }
+
+  .choice.selected .choice-icon{
+    background:rgba(255,255,255,.14);
+    color:#fff;
+  }
+
+  .choice-body{min-width:0}
+
+  .choice-title{
+    font-size:16px;
+    font-weight:800;
+    line-height:1.35;
+  }
+
+  .choice-desc{
+    font-size:12px;
+    line-height:1.6;
+    color:#64748b;
+    margin-top:6px;
+  }
+
+  .choice.selected .choice-desc{
+    color:rgba(255,255,255,.8);
+  }
+
+  .decision-footer{
+    margin-top:auto;
+    padding:18px 22px 22px;
+    border-top:1px solid #e8eef7;
+    background:linear-gradient(180deg,rgba(248,250,252,.2),#f8fbff);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .decision-footer-left{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .footer-label{
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#64748b;
+  }
+
+  .footer-value{
+    font-size:14px;
+    font-weight:800;
+    color:#0f172a;
+  }
+
+  .decision-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .app-btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:12px 16px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:800;
+    transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+
+  .app-btn:hover{
+    transform:translateY(-1px);
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin:0;
+    min-height:50px;
+    padding:0 18px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+    color:#fff;
+    text-decoration:none;
+    font-weight:800;
+    box-shadow:0 14px 24px rgba(77,20,140,.18);
+    transition:.22s ease;
+    width:100%;
+    cursor:pointer;
+  }
+
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 18px 30px rgba(77,20,140,.24);
+  }
+
+  .app-btn.primary{
+    background:#111827;
+    color:#fff;
+    box-shadow:0 8px 20px rgba(17,24,39,.14);
+  }
+
+  .app-btn.secondary{
+    background:#fff;
+    color:#111827;
+    border:1px solid #dbe4f0;
+  }
+
+  .app-btn.ghost{
+    background:#f8fafc;
+    color:#0f172a;
+    border:1px solid #e2e8f0;
+  }
+
+  .final-card{
+    margin:20px;
+    padding:24px;
+    border-radius:24px;
+    background:linear-gradient(180deg,#f0fdf4,#ffffff);
+    border:1px solid #dcfce7;
+    box-shadow:0 16px 34px rgba(22,163,74,.08);
+  }
+
+  .final-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 12px;
+    border-radius:999px;
+    background:#dcfce7;
+    color:#166534;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+  }
+
+  .final-title{
+    margin:16px 0 0;
+    font-size:14px;
+    font-weight:800;
+    color:#166534;
+  }
+
+  .final-text{
+    margin:10px 0 0;
+    font-size:24px;
+    line-height:1.5;
+    letter-spacing:-.02em;
+    font-weight:800;
+    color:#111827;
+  }
+
+  .final-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:18px;
+  }
+
+  .side-panel{
+    padding:18px 14px 18px 0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-width:0;
+  }
+
+  .template-panel{
+    padding:18px 18px 18px 0;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-width:0;
+  }
+
+  .side-panel .summary-card,
+  .template-panel .summary-card{
+    background:#fff;
+    border:1px solid #dbe4f0;
+    border-radius:22px;
+    padding:18px;
+    box-shadow:var(--shadow-md);
+  }
+
+  .summary-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+    font-size:14px;
+    font-weight:900;
+  }
+
+  .summary-head i{color:#7c3aed}
+
+  .recommendation{
+    min-height:120px;
+    padding:16px;
+    border-radius:18px;
+    background:linear-gradient(180deg,#fff8eb,#fff);
+    border-left:4px solid #f59e0b;
+    font-size:14px;
+    line-height:1.7;
+  }
+
+  .recommendation.empty{
+    background:#f8fafc;
+    border-left-color:#cbd5e1;
+    color:#64748b;
+  }
+
+  .summary-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .metric{
+    padding:14px;
+    border-radius:18px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+  }
+
+  .metric-k{
+    display:block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#64748b;
+    font-weight:800;
+    margin-bottom:6px;
+  }
+
+  .metric-v{
+    font-size:18px;
+    font-weight:900;
+    letter-spacing:-.03em;
+    word-break:break-word;
+  }
+
+  .path-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    max-height:600px;
+    overflow:auto;
+    padding-right:4px;
+  }
+
+  .path-empty{
+    padding:16px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px dashed #d7e1ef;
+    color:#64748b;
+    font-size:13px;
+    line-height:1.7;
+  }
+
+  .path-item{
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+  }
+
+  .path-step{
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:#2563eb;
+    margin-bottom:6px;
+  }
+
+  .path-question{
+    font-size:13px;
+    font-weight:700;
+    line-height:1.5;
+  }
+
+  .path-answer{
+    font-size:13px;
+    color:#64748b;
+    line-height:1.5;
+    margin-top:6px;
+  }
+  
+  .path-jump{
+    width:100%;
+    text-align:left;
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .path-jump:hover{
+    transform:translateY(-1px);
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    box-shadow:0 10px 22px rgba(37,99,235,.08);
+  }
+
+  .path-jump.active{
+    background:#f8fafc;
+    border:2px solid #2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+  }
+
+  .path-jump.active .path-step{
+    color:#2563eb;
+  }
+
+  .path-jump.active .path-question{
+    color:#0f172a;
+  }
+
+  .path-jump.active .path-answer{
+    color:#475569;
+  }
+
+  .section-note{
+    font-size:12px;
+    color:#64748b;
+    line-height:1.6;
+    margin-top:-2px;
+  }
+
+  .template-stack{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:14px;
+  }
+
+  .template-card{
+    border:1px solid #e5ebf4;
+    border-radius:18px;
+    background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    overflow:hidden;
+  }
+
+  .template-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:14px 14px 10px;
+  }
+
+  .template-title-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+
+  .template-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    background:#f3e8ff;
+    color:#7c3aed;
+    flex:0 0 auto;
+  }
+
+  .template-title{
+    font-size:14px;
+    font-weight:900;
+    color:#0f172a;
+  }
+
+  .template-sub{
+    font-size:12px;
+    color:#64748b;
+    margin-top:2px;
+  }
+
+  .template-actions{
+    display:flex;
+    gap:8px;
+  }
+
+  .template-icon-btn{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:10px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    color:#475569;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    transition:all .16s ease;
+  }
+
+  .template-icon-btn:hover{
+    background:#eef4ff;
+    color:#1d4ed8;
+    border-color:#cfe0ff;
+  }
+
+  .template-body{
+    padding:0 14px 14px;
+  }
+
+  .template-box{
+    min-height:108px;
+    padding:14px;
+    border-radius:14px;
+    background:#f8fbff;
+    border:1px solid #e4ebf5;
+    font-size:13px;
+    line-height:1.7;
+    color:#334155;
+    white-space:pre-wrap;
+  }
+
+  .template-box.empty{
+    color:#94a3b8;
+  }
+
+  .template-foot{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:0 14px 14px;
+  }
+
+  .template-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 10px;
+    border-radius:999px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    font-size:11px;
+    font-weight:800;
+    color:#64748b;
+  }
+
+  .template-copy{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:12px;
+    background:#111827;
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    transition:all .18s ease;
+  }
+
+  .template-copy.copied,
+  .template-icon-btn.copied{
+    background:#dcfce7 !important;
+    color:#166534 !important;
+    border-color:#bbf7d0 !important;
+  }
+
+  .template-tag{
+  cursor:pointer;
+  text-decoration:none;
+  transition:.2s ease;
+}
+
+.template-tag:hover{
+  background:#eef4ff;
+  border-color:#cfe0ff;
+  color:#1d4ed8;
+  transform:translateY(-1px);
+} 
+
+  @media (max-width:1450px){
+    .app-frame{
+      grid-template-columns:minmax(0,1fr) 340px 360px;
     }
-
-    calendarGrid.appendChild(day);
-  }
-}
-/* =========================
-   MODALS
-========================= */
-
-document.getElementById("helpIcon").onclick = () =>
-  document.getElementById("helpModal").style.display = "flex";
-
-document.getElementById("commentIcon").onclick = () => {
-  clearCommentForm();
-  document.getElementById("commentModal").style.display = "flex";
-};
-
-function closeHelp(){document.getElementById("helpModal").style.display="none";}
-function closeComment(){document.getElementById("commentModal").style.display="none";}
-function closeAllComments(){document.getElementById("allCommentsModal").style.display="none";}
-
-
-/* =========================
-   FEEDBACK SYSTEM
-========================= */
-
-let selectedRating = 0;
-
-document.querySelectorAll('.rating-star').forEach(star=>{
-  star.onclick=function(){
-    selectedRating=parseInt(this.dataset.value);
-    document.querySelectorAll('.rating-star').forEach(s=>
-      s.classList.toggle('selected', parseInt(s.dataset.value)<=selectedRating)
-    );
-  };
-});
-
-
-function sendComment(){
-  const name = document.getElementById('commentName').value.trim();
-  const comment = document.getElementById('commentText').value.trim();
-
-  if(selectedRating===0){
-    alert("Select a rating.");
-    return;
   }
 
-  db.collection("feedback").add({
-    rating:selectedRating,
-    name:name||"Anonymous",
-    comment:comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>{
-    alert("Saved!");
-    clearCommentForm();
-  }).catch(()=>alert("Save failed."));
+  @media (max-width:1220px){
+    .app-frame{
+      grid-template-columns:1fr;
+    }
+    .side-panel,
+    .template-panel{
+      padding:0 18px 18px;
+    }
+  }
+
+  @media (max-width:760px){
+    .app-shell{
+      width:min(calc(100% - 20px), var(--max));
+    }
+    .app-shell{margin:16px auto}
+    .app-frame{min-height:100vh;border-radius:24px}
+    .main{padding:18px}
+    .main-topbar{flex-direction:column;align-items:flex-start}
+    .question-text{font-size:28px}
+    .choices{grid-template-columns:1fr}
+    .summary-grid{grid-template-columns:1fr}
+    .decision-footer{flex-direction:column;align-items:flex-start}
+  }
+  
+  /*images*/
+  
+  .question-image{
+  margin-top:16px;
+  border-radius:18px;
+  overflow:hidden;
+  cursor:zoom-in;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  max-height:320px;
+  min-height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  box-shadow:0 12px 28px rgba(15,23,42,.08);
 }
 
-
-function clearCommentForm(){
-  selectedRating=0;
-  document.getElementById('commentName').value="";
-  document.getElementById('commentText').value="";
-  document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));
+.question-image::after{
+  content:"Click to enlarge";
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(15,23,42,.72);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  opacity:0;
+  transform:translateY(6px);
+  transition:.2s ease;
+  pointer-events:none;
 }
 
-
-let unsubscribeListener=null;
-
-function showAllComments(){
-  const listEl=document.getElementById('commentsList');
-  listEl.innerHTML="Loading…";
-
-  if(unsubscribeListener) unsubscribeListener();
-
-  unsubscribeListener=db.collection("feedback")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snap=>{
-      listEl.innerHTML="";
-      if(snap.empty){
-        listEl.innerHTML="<p>No feedback yet.</p>";
-      }
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const div=document.createElement('div');
-        div.className="comment-list-item";
-        div.innerHTML=`
-          <div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div>
-          <strong>${d.name}</strong>
-          <p>${d.comment}</p>
-        `;
-        listEl.appendChild(div);
-      });
-      document.getElementById('allCommentsModal').style.display='flex';
-    });
+.question-image:hover::after{
+  opacity:1;
+  transform:translateY(0);
 }
-</script>
 
-<style>
-/* =========================
-   PROFESSIONAL MODALS
-========================= */
-/* MODALS */
-.modal {
+.question-image img{
+  width:100%;
+  height:100%;
+  max-height:320px;
+  object-fit:contain;
+  display:block;
+  transition:transform .28s ease;
+  transform-origin:center center;
+}
+
+.question-image:hover img{
+  transform:scale(1.06);
+}
+
+.image-modal{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.4);
+  z-index:99999;
+  background:rgba(2,6,23,.88);
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  backdrop-filter:blur(8px);
+  cursor:zoom-out;
+}
+
+.image-modal.open{
+  display:flex;
+}
+
+.image-modal img{
+  max-width:94vw;
+  max-height:90vh;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+  cursor:default;
+}
+
+.image-modal-close{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:46px;
+  height:46px;
+  border:none;
+  border-radius:14px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  transition:.2s ease;
+}
+
+.image-modal-close:hover{
+  background:rgba(255,255,255,.2);
+}
+
+@media (max-width:760px){
+  .question-image{
+    max-height:260px;
+    min-height:140px;
+  }
+
+  .question-image img{
+    max-height:260px;
+  }
+
+  .image-modal{
+    padding:14px;
+  }
+
+  .image-modal img{
+    max-width:96vw;
+    max-height:86vh;
+    border-radius:14px;
+  }
+
+  .image-modal-close{
+    top:10px;
+    right:10px;
+    width:42px;
+    height:42px;
+  }
+}
+
+    /*title/subtitle*/  
+.page-title-block{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.page-title-block h1{
+  margin:0;
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.03em;
+  color:#0f172a;
+}
+
+.page-subtitle{
+  margin:0;
+  font-size:13px;
+  color:#64748b;
+  line-height:1.6;
+  max-width:620px;
+}
+
+.main-topbar{
+  align-items:flex-start; /* 🔥 important */
+}
+
+/*premium note*/
+.note-card{
+  margin-top:18px;
+  padding:18px 18px 18px 20px;
+  border-radius:20px;
+  background:linear-gradient(180deg, #fff8eb 0%, #ffffff 100%);
+  border:1px solid rgba(245,158,11,.18);
+  box-shadow:
+    0 14px 30px rgba(15,23,42,.06),
+    inset 0 1px 0 rgba(255,255,255,.75);
+  position:relative;
+  overflow:hidden;
+}
+
+.note-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  width:5px;
+  background:linear-gradient(180deg, #f59e0b 0%, #ff6600 100%);
+}
+
+.note-head{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#fff7ed;
+  border:1px solid rgba(245,158,11,.18);
+  color:#b45309;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.smart-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  margin-top:8px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff !important;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:0 10px 18px rgba(77,20,140,.18);
+  transition:.2s ease;
+}
+
+.smart-link:hover{
+  transform:translateY(-2px) scale(1.02);
+  box-shadow:0 14px 24px rgba(77,20,140,.25);
+}
+
+/* ===== MODALS ===== */
+
+/* Keep edit/password modals local to this guide only */
+#passwordModal,
+#editModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.45);
   justify-content:center;
   align-items:center;
   padding:20px;
-  z-index:1000;
+  z-index:10000;
 }
-.modal-content {
-  background:white;
-  border-radius:10px;
-  padding:24px;
+
+#passwordModal .modal-content,
+#editModal .modal-content{
+  background:#fff;
   width:100%;
-  max-width:500px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  max-width:560px;
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 24px 60px rgba(15,23,42,.22);
+  border:1px solid #e2e8f0;
+  max-height:85vh;
+  overflow:auto;
 }
-.modal-header {
+
+#passwordModal .modal-header,
+#editModal .modal-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:12px;
   font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
+  font-weight:900;
+  margin-bottom:14px;
+  color:#0f172a;
 }
-.modal-close {
+
+#passwordModal .modal-close,
+#editModal .modal-close{
   font-size:22px;
   cursor:pointer;
-  color:var(--muted);
+  color:#64748b;
+  line-height:1;
 }
-.modal-close:hover {color:var(--accent);}
 
-/* STAR RATING */
-.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
-.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
-.rating-star:hover{transform:scale(1.3);}
-.rating-star.selected{color:var(--accent-dark);}
+#passwordModal .modal-close:hover,
+#editModal .modal-close:hover{
+  color:#4d148c;
+}
 
-/* COMMENTS */
-.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
-.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
-.comment-list-item:last-child{border:none;}
-input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
-
-/* TIME CALENDAR */
-#timeCalendarPopup {
-  display:none;
-  position:absolute;
-  top:60px; right:20px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  padding:16px;
-  width:310px;
-  z-index:900;
-}
-#timeCalendarPopup h3 {
-  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
-  margin-bottom:8px;
-}
-.calendar-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#f0f0f0;
-  padding:8px;
-  border-radius:6px;
-}
-.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
-.calendar-title{font-weight:700;}
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
-}
-.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
-.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
-.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
-.calendar-grid .day:hover{background:#f0f0f0;}
-
-/* COMMENT LINK */
-.link-text{
-  color:var(--accent-dark);
-  cursor:pointer;
-  text-decoration:underline;
+#passwordModal input,
+#editModal textarea{
+  width:100%;
+  border:1px solid #dbe4f0;
+  border-radius:14px;
+  padding:12px 14px;
   font-size:14px;
-  margin-top:10px;
+  outline:none;
+  background:#fff;
+}
+
+#passwordModal input:focus,
+#editModal textarea:focus{
+  border-color:#c4b5fd;
+  box-shadow:0 0 0 4px rgba(109,40,217,.10);
+}
+
+#editModal textarea{
+  min-height:220px;
+  resize:vertical;
+}
+
+/* Match shared header modals to index look */
+#commentModal,
+#allCommentsModal,
+#helpModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.52);
+  justify-content:center;
+  align-items:center;
+  padding:0 24px;
+  z-index:2147483647;
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
+}
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content{
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  border:1px solid rgba(148,163,184,.16);
+  margin:110px auto 32px;
+}
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content{
+  max-width:760px;
+}
+
+#helpModal .help-modal{
+  max-width:760px;
+  border-radius:30px;
+  padding:18px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close{
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
+}
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .feedback-header{
+  margin-bottom:10px;
+}
+
+#commentModal .feedback-header span:first-child{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  color:#111827;
+}
+
+#commentModal .rating-container{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:16px 0 18px;
+}
+
+#commentModal .rating-star{
+  cursor:pointer;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
+}
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
+  color:#ff6600;
+}
+
+#commentModal input,
+#commentModal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  transition:.18s ease;
+}
+
+#commentModal input{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+
+#commentModal textarea{
+  min-height:120px;
+  resize:vertical;
+  margin-top:0;
+}
+
+#commentModal input:focus,
+#commentModal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#commentModal .feedback-submit-btn{
+  margin:16px 0 8px;
+  min-height:54px;
+  border-radius:18px;
+}
+
+#commentModal .feedback-bottom-link{
+  margin-top:4px;
+}
+
+#commentModal .link-text{
+  color:#4d148c;
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+
+#commentModal .link-text:hover{
+  text-decoration:underline;
+}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{
+  border-bottom:none;
+}
+
+#allCommentsModal .stars{
+  color:#ff6600;
+  font-size:18px;
+  margin-bottom:6px;
   display:block;
 }
 
-/* STAR RATING COLORS */
-.rating-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
+@media (max-width:720px){
+  #passwordModal,
+  #editModal{
+    padding:14px;
+  }
+
+  #passwordModal .modal-content,
+  #editModal .modal-content{
+    border-radius:18px;
+    padding:18px;
+  }
+
+  #commentModal,
+  #allCommentsModal,
+  #helpModal{
+    padding:0 14px;
+  }
+
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+
+  #commentModal .feedback-modal{
+    padding:18px;
+    border-radius:24px;
+  }
+
+  #helpModal .help-modal{
+    padding:16px;
+    border-radius:24px;
+  }
 }
-
-.rating-star {
-  cursor: pointer;
-  font-size: 28px;
-  color: #ccc; /* default grey */
-  transition: color .2s, transform .2s;
-}
-
-.rating-star:hover {
-  transform: scale(1.3);
-}
-
-.rating-star.selected {
-  color: #FF6600; /* FedEx orange */
-}
-
-/* footer alignment */
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-/* COMMENT LIST STAR COLORS */
-#commentsList .stars {
-  color: #FF6600; /* FedEx orange */
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-  z-index:1;
-}
-header img{height:40px; animation:logoFlyIn 1s ease-out forwards; opacity:0;}
-.nav-tabs{display:flex; gap:30px;}
-.tab{color:white; text-decoration:none; font-weight:600; font-size:16px; position:relative; padding:6px 0; transition: opacity 0.2s;}
-.tab:hover{opacity:0.8;}
-.tab.active::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:3px;background:#ff6600;border-radius:3px;}
-
-.header-icons{display:flex;align-items:center;gap:20px;}
-#clockBtn{cursor:pointer; display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; color:white; position:relative;}
-#clockBtn:hover{transform:scale(1.1);}
-.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
-.header-icon:hover{transform:scale(1.3);}
-.header-icon.active{color:var(--accent-dark);}
-
-/* ---------- HEADER ANIMATIONS ---------- */
-@keyframes logoFlyIn {0%{opacity:0;transform:translateX(-50px) scale(0.8);}100%{opacity:1;transform:translateX(0) scale(1);}}
-header::after{
-  content:"";
-  position:absolute; top:0; left:-100%;
-  width:100%; height:100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform:skewX(-20deg);
-  animation:sweep 1s ease-out forwards;
-  z-index:0;
-  opacity:0.2;
-}
-@keyframes sweep{0%{left:-100%;}100%{left:100%;}}
-
-/*pop up time style*/
-/* POPUP TIME STYLE (Windows-like) */
-.popup-time{
-  font-size:34px;
-  font-weight:600;
-  text-align:left;
-  margin-bottom:4px;
-  color:#111;
-}
-
-#timeCalendarPopup {
-  background:white;}
-
-.popup-date{
-  font-size:14px;
-  color:#555;
+   
+ 
+.aj-card{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:14px;
   margin-bottom:14px;
-  text-align:left;
 }
+
+.aj-card h3{
+  margin-bottom:8px;
+  color:#4d148c;
+}
+
+.advise-box{
+  background:#eef6ff;
+  border-left:4px solid #4d148c;
+  padding:10px;
+  margin:6px 0 10px;
+  border-radius:6px;
+  font-size:13px;
+}
+
+.aj-header{
+  font-weight:700;
+  cursor:pointer;
+  padding:10px;
+  background:#f1f5f9;
+  border-radius:8px;
+  transition:.2s;
+}
+
+.aj-header:hover{
+  background:#e2e8f0;
+}
+
+.aj-content{
+  display:none;
+  margin-top:10px;
+  animation:fadeIn .3s ease-in;
+}
+
+.aj-search-container{
+  position:sticky;
+  top:0;
+  background:#fff;
+  padding:10px;
+  z-index:5;
+  border-bottom:1px solid #ddd;
+}
+
+#ajSearch{
+  width:100%;
+  padding:8px 12px;
+  font-size:13px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.link-btn{
+  color:#0073e6;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.link-btn:hover{
+  color:#005bb5;
+}
+
+.aj-section{
+  margin-bottom:14px;
+}
+
+.aj-subtitle{
+  font-size:12px;
+  font-weight:800;
+  color:#64748b;
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+
+.aj-block{
+  margin-bottom:10px;
+}
+
+.aj-label{
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.aj-list{
+  margin:8px 0;
+  padding-left:18px;
+  line-height:1.5;
+}
+
+.aj-link{
+  display:inline-block;
+  margin-bottom:8px;
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* 🔧 Fix NOTE spacing (final clean version) */
+
+.note-body{
+  color:#475569;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* Remove excessive spacing from elements inside notes */
+.note-body p{
+  margin:6px 0;
+}
+
+.note-body ul{
+  margin:8px 0;
+  padding-left:18px;
+}
+
+.note-body li{
+  margin:0;
+}
+
+/* Fix nested div spacing inside notes */
+.note-body div{
+  margin:6px 0;
+}
+
+/* Tighten strong/inline text spacing */
+.note-body strong{
+  font-weight:600;
+}
+
+/* Optional: clean link look */
+.note-body a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}  
+
+.final-note-html{
+  margin-top:12px;
+  color:#475569;
+  line-height:1.7;
+}
+
+.final-note-html a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}   
+
 </style>
+</head>
+<body data-page="">
+  <div class="page">
+<div id="site-header"></div>
 
-<!-- this is the end header codes that can be used to other guides -->
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+            <div>
+<div class="page-title-block">
+  <h1>Debtor Update per LOA</h1>
+  <p class="page-subtitle">
+    Follow a structured decision flow for LOA rebill requests, including BOL debtor, new debtor, 3PL, FPAY, and collector handling.
+  </p>
+</div>
+            </div>
+            <div class="main-status">
+              <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
+            </div>
+          </div>
 
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Progress</div>
+                <div class="progress-status" id="progressText">Not started</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            </section>
 
-<div class="container">
-  <div class="card">
-    <h1>Rebill per LOA Guide</h1>
-    <p class="lead">Follow the flow below to determine the recommended rebill action according to LOA guidelines.</p>
-    <div class="progress-container">
-      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
-      <div id="progressText" class="progress-text"></div>
-    </div>
-    <div id="flowArea" class="node"></div>
-    <div class="controls">
-      <button id="goBackBtn" class="secondary" style="display:none;">← Go Back</button>
-      <button id="startOverBtn" class="secondary" style="display:none;">Start Over</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="node">
-      <strong>Selected Path</strong>
-      <div id="selectedPath" class="path">No steps selected yet.</div>
-    </div>
-    <div class="node">
-      <strong>Recommended Action</strong>
-      <div id="recommendation" class="result">No recommendation yet.</div>
-    </div>
-  </div>
+            <section class="stage-area">
+              <div class="stage-card" id="stageCard"></div>
+            </section>
+          </div>
+        </main>
 
-  <div class="card" id="suggestedPanel" style="display:none;">
-    <div class="output-card" id="commentCard">
-      <div class="output-header">
-        Suggested Comment
-        <span class="edit-icon" onclick="attemptEdit('comment')" title="Do you want to update the Comment?">✏️</span>
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-list-check"></i> Selected Path</div>
+            <div id="pathBox" class="path-empty">No steps selected yet. The full path will appear here as the user moves through the app.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Recommended Action</div>
+            <div class="recommendation empty" id="recommendationBox">No recommendation yet. Follow the flow to reach the final instruction.</div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v" id="metricSteps">0</span>
+              </div>
+              <div class="metric">
+                <span class="metric-k">Last Answer</span>
+                <span class="metric-v" id="metricAnswer">—</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
+            <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Comment</div>
+                      <div class="template-sub">Internal case note</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Corr Code Note</div>
+                      <div class="template-sub">Correction code guidance</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <a href="Correction Code Guide.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-hashtag"></i> Open Corr Code
+                  </a>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                      <div class="template-title">Suggested Email</div>
+                      <div class="template-sub">Customer communication</div>
+                    </div>
+                  </div>
+
+                  <div class="template-actions">
+                    <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
+                </div>
+
+                <div class="template-foot">
+                  <a href="ebs-response-template.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-paper-plane"></i> Open EBS Response
+                  </a>
+                  <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
-      <div id="suggestedComment" class="output-box"></div>
     </div>
+
+    <div id="passwordModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          Enter Password
+          <span class="modal-close" onclick="closePasswordModal()">×</span>
+        </div>
+        <input id="adminPassword" type="password" placeholder="Enter admin password">
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="checkPassword()">Continue</button>
+          <button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="editModal" class="modal">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <span id="modalTitle">Edit</span>
+          <span class="modal-close" onclick="closeEditModal()">×</span>
+        </div>
+        <textarea id="editTextarea"></textarea>
+        <div class="decision-actions" style="justify-content:flex-end; margin-top:18px;">
+          <button class="app-btn primary" onclick="saveEdit()">Save</button>
+          <button class="app-btn secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+<div id="site-footer"></div>
+ 
     
-    <!-- CORR CODE -->
-    <div class="output-card" id="corrCard">
-      <div class="output-header">
-        Possible CORR CODE
-        <span class="edit-icon" onclick="attemptEdit('corr')">✏️</span>
-      </div>
-      <div id="suggestedCorrCode" class="output-box"></div>
-      <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('suggestedCorrCode').innerText).then(()=>alert('CORR Code copied!'));">📋 Copy CORR</button>
-    </div>
-    
-    <div class="output-card" id="emailCard">
-      <div class="output-header">
-        Suggested Email
-        <span class="edit-icon" onclick="attemptEdit('email')" title="Do you want to update the Email?">✏️</span>
-      </div>
-      <div id="suggestedEmail" class="output-box"></div>
-      <button class="copy-btn" id="copyEmailBtn">📋 Copy Email</button>
-    </div>
-    <div id="generalNote" class="note">Note: These are suggested templates. Personalized emails or comments are always more appreciated.</div>
   </div>
-</div>
-
-<footer style="display:flex;align-items:center;justify-content:space-between;">
-  <p>© 2025 EBS Operations</p>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:12px;color:white;">
-      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
-    </span>
-  </div>
-</footer>
-
-<!-- Password Modal -->
-<div id="passwordModal" class="modal">
-  <div class="modal-content">
-    <h3>Enter Password to Edit</h3>
-    <input type="password" id="adminPassword" placeholder="Password">
-    <div style="margin-top:18px;">
-      <button class="save-btn" onclick="checkPassword()">Submit</button>
-      <button class="cancel-btn" onclick="closePasswordModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Modal -->
-<div id="editModal" class="modal">
-  <div class="modal-content">
-    <h3 id="modalTitle">Edit</h3>
-    <div id="modalHint" class="note" style="margin-bottom:6px;"></div>
-    <textarea id="editTextarea"></textarea>
-    <div style="margin-top:18px;text-align:right;">
-      <button class="save-btn" onclick="saveEdit()">Save</button>
-      <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
-    </div>
-  </div>
-</div>
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer-loader.js"></script>
 <script>
-/* ---------- DECISION TREE DATA (NODES) ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    });
+  }
+
+  const db = firebase.firestore();
+  const TEMPLATE_COLLECTION = "debtor_update_per_loa_template";
+  const FEEDBACK_COLLECTION = "feedback";
+  const MAX_STEPS = 8;
+
+  const els = {
+    stageCard: document.getElementById("stageCard"),
+    progressFill: document.getElementById("progressFill"),
+    progressText: document.getElementById("progressText"),
+    recommendationBox: document.getElementById("recommendationBox"),
+    pathBox: document.getElementById("pathBox"),
+    metricSteps: document.getElementById("metricSteps"),
+    metricAnswer: document.getElementById("metricAnswer"),
+    statusPill: document.getElementById("statusPill"),
+
+    suggestedComment: document.getElementById("suggestedComment"),
+    suggestedCorrCode: document.getElementById("suggestedCorrCode"),
+    suggestedEmail: document.getElementById("suggestedEmail"),
+
+    passwordModal: document.getElementById("passwordModal"),
+    editModal: document.getElementById("editModal"),
+    adminPassword: document.getElementById("adminPassword"),
+    editTextarea: document.getElementById("editTextarea"),
+    modalTitle: document.getElementById("modalTitle")
+  };
+
+  let selectedRating = 0;
+  let path = [];
+  let historyStack = [];
+  let currentFinalRecommendation = "";
+  let currentEditType = "";
+  let commentsUnsubscribe = null;
+  let ratingStars = [];
+  let currentKey = "start";
+  const templateCache = {};
 
 const NODES = {
-  /* Root and all nodes (unchanged) */
-  root:{ id:"root", text:"WHO IS THE DISPUTING / REQUESTING PARTY?", choices:[
-    {label:"BOL DEBTOR", next:"bol_prestart"},
-    {label:"NEW DEBTOR", next:"new_start"},
-    {label:"3PL", next:"tpl_start"},
-    {label:"FPAY", next:"fpay_request"},
-    {label:"COLLECTOR", next:"collector_start"}
-  ]},
-  bol_prestart:{ id:"bol_prestart", text:"Does the requestor exactly the same company and address per BOL?", choices:[{label:"YES",next:"bol_prestart_advise"},{label:"NO",next:"bol_start"}]},
-  bol_prestart_advise:{ id:"bol_prestart_advise", text:"Advise customer that PRO is billing correctly per BOL. Ask LOA from the new debtor and see if LOA provided?", choices:[{label:"YES",next:"follow_process"},{label:"NO",next:"follow_process_yes"}]},
-  follow_process:{ id:"follow_process", text:"Follow process for NEW DEBTOR update.", choices:[]},
-  follow_process_yes:{ id:"follow_process_yes", text:"Insist that PRO is billing correctly per BOL. No updates can be made without LOA from the new debtor.", choices:[]},
-  bol_start:{ id:"bol_start", text:"Same Company but Different Mailing Address and Pricing/BRAP?", choices:[{label:"YES",next:"bol_account_name"},{label:"NO",next:"bol_per_debtor"}]},
-  bol_per_debtor:{ id:"bol_per_debtor", text:"If one of the criteria is not met, use per debtor for better billing.", choices:[]},
-  bol_account_name:{ id:"bol_account_name", text:"Is the account name the same or related to the debtor?", choices:[{label:"YES",next:"bol_mailing_diff"},{label:"NO",next:"bol_per_debtor"}]},
-  bol_mailing_diff:{ id:"bol_mailing_diff", text:"Is the mailing address different from the current debtor?", choices:[{label:"YES",next:"bol_prau"},{label:"NO",next:"bol_per_debtor"}]},
-  bol_prau:{ id:"bol_prau", text:"Was the PRAU TOTALLY changed? (pricing/contract replaced)", choices:[{label:"YES",next:"bol_corr_loa"},{label:"NO",next:"bol_per_debtor"}]},
-  bol_corr_loa:{ id:"bol_corr_loa", text:"CORR LOA with correction fee.", choices:[]},
-  new_start:{ id:"new_start", text:"Is the PRO paid & closed?", choices:[
-    {label:"YES", next:"new_over_year"},
-    {label:"NO", next:"new_credit_hold"}
-  ]},
-  new_over_year:{ id:"new_over_year", text:"Is it over a year?", choices:[
-    {label:"YES", next:"new_deny_paid_bol"},
-    {label:"NO", next:"new_advise_paid"}
-  ]},
-  new_deny_paid_bol:{ id:"new_deny_paid_bol", text:"DENY. Advise that PRO was already paid by the debtor per BOL.", choices:[]},
-  new_advise_paid:{ id:"new_advise_paid", text:"Advise customer that PRO was already paid and closed by the debtor per BOL.", choices:[
-    {label:"Next", next:"new_customer_insist"}
-  ]},
-  new_customer_insist:{ id:"new_customer_insist", text:"Did the customer reply and insist on rebilling per LOA?", choices:[
-    {label:"YES", next:"new_rebill_or_keep"},
-    {label:"NO", next:"new_leave_as_is"}
-  ]},
-  new_rebill_or_keep:{ id:"new_rebill_or_keep", text:"Proceed to rebill. Payment from debtor per BOL = REMOVE payment. Payment from accepting party per LOA = KEEP payment.", choices:[]},
-  new_leave_as_is:{ id:"new_leave_as_is", text:"Leave the PRO as is since it is already paid and closed by the debtor per BOL.", choices:[]},
-  new_credit_hold:{ id:"new_credit_hold", text:"Is the new debtor account on Credit Hold?", choices:[
-    {label:"YES", next:"new_deny_credit_hold"},
-    {label:"NO", next:"new_loa_details"}
-  ]},
-  new_deny_credit_hold:{ id:"new_deny_credit_hold", text:"DENY. Advise customer that: At this time, FXF is unable to accept the attached LOA. The invoice will remain billed per the bill of lading received at pick up. If you have questions why the account cannot be billed, please contact credit department at 866-756-3590 opt 4 to speak to an agent. Hours of operation are 7AM to 5PM CST.", choices:[]},
-  new_loa_details:{ id:"new_loa_details", text:"Are the LOA details and information complete and accurate?", choices:[
-    {label:"YES", next:"new_proceed"},
-    {label:"NO", next:"new_deny_incomplete"}
-  ]},
-  new_proceed:{ id:"new_proceed", text:"Proceed with the Rebill per LOA.", choices:[]},
-  new_deny_incomplete:{ id:"new_deny_incomplete", text:"DENY. Advise to provide complete and accurate LOA details.", choices:[]},
-  tpl_start:{ id:"tpl_start", text:"What is the request?", choices:[
-    {label:"Rebill to Shipper/Consignee c/o 3PL", next:"tpl_shipper_check"},
-    {label:"Rebill to Company C (not shipper/consignee) c/o 3PL", next:"tpl_companyc_check"},
-    {label:"Rebill to Company B c/o 3PL", next:"tpl_companyb_check"},
-    {label:"Rebill to Company A c/o 3PL2", next:"tpl_companya_check"},
-    {label:"Bill directly to 3PL", next:"tpl_direct_check"}
-  ]},
-  tpl_shipper_check:{ id:"tpl_shipper_check", text:"Is the BOL debtor a 3PL only with no company?", choices:[
-    {label:"YES", next:"tpl_corr_accr"},
-    {label:"NO", next:"tpl_who_debtor_shipper"}
-  ]},
-  tpl_corr_accr:{ id:"tpl_corr_accr", text:"CORR ACCR for proper billing.", choices:[]},
-  tpl_who_debtor_shipper:{ id:"tpl_who_debtor_shipper", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Shipper/Consignee", next:"tpl_shipper_rebill"}
-  ]},
-  tpl_shipper_rebill:{ id:"tpl_shipper_rebill", text:"Rebill Shipper/Consignee c/o 3PL. CORR ACCR with correction fee.", choices:[]},
-  tpl_companyc_check:{ id:"tpl_companyc_check", text:"Is the BOL debtor a 3PL only with no company?", choices:[
-    {label:"YES", next:"tpl_auth_corr_fee"},
-    {label:"NO", next:"tpl_who_debtor_c"}
-  ]},
-  tpl_auth_corr_fee:{ id:"tpl_auth_corr_fee", text:"Auth: Per LOA CORR ACCR with correction fee.", choices:[]},
-  tpl_who_debtor_c:{ id:"tpl_who_debtor_c", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Company C(not Shipper/Consignee)", next:"tpl_companyc_rebill"}
-  ]},
-  tpl_companyc_rebill:{ id:"tpl_companyc_rebill", text:"Rebill Company C c/o 3PL. CORR LOA with correction fee.", choices:[]},
-  tpl_companyb_check:{ id:"tpl_companyb_check", text:"Is the debtor per BOL Company A c/o 3PL?", choices:[
-    {label:"YES", next:"tpl_companyb_corr"},
-    {label:"NO", next:"tpl_who_debtor_b"}
-  ]},
-  tpl_companyb_corr:{ id:"tpl_companyb_corr", text:"CORR LOA with correction fee.", choices:[]},
-  tpl_who_debtor_b:{ id:"tpl_who_debtor_b", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Company B", next:"tpl_companyb_rebill"}
-  ]},
-  tpl_companyb_rebill:{ id:"tpl_companyb_rebill", text:"Rebill Company B c/o 3PL. CORR ACCR for proper billing. Note that if the debtor is not an ABT, Correction fee applied", choices:[]},
-  tpl_companya_check:{ id:"tpl_companya_check", text:"Is the debtor per BOL Company A c/o 3PL1?", choices:[
-    {label:"YES", next:"tpl_companya_corr"},
-    {label:"NO", next:"tpl_who_debtor_a"}
-  ]},
-  tpl_companya_corr:{ id:"tpl_companya_corr", text:`CORR LOA with correction fee (request should come from new 3PL).
+  start: {
+    text: "Debtor Update per LOA - General Guide",
+    help: "Use this guide to determine the correct rebill handling based on the requesting party, debtor setup, LOA details, and billing relationship.",
+    note: "Always verify the BOL debtor, new debtor, LOA details, account status, and payment status before proceeding.",
+    choices: [
+      {
+        label: "Continue",
+        next: "root",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the LOA rebill decision flow."
+      }
+    ]
+  },
 
-NOTES:
-`, choices:[]},
-  tpl_who_debtor_a:{ id:"tpl_who_debtor_a", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"3PL2", next:"tpl_companya_rebill"}
-  ]},
-  tpl_companya_rebill:{ id:"tpl_companya_rebill", text:"Rebill Company A c/o 3PL2. CORR ACCR for proper billing.", choices:[]},
-  tpl_direct_check:{ id:"tpl_direct_check", text:"Is the debtor per BOL Company A c/o 3PL?", choices:[
-    {label:"YES", next:"tpl_direct_corr"},
-    {label:"NO", next:"tpl_who_debtor_direct"}
-  ]},
-  tpl_direct_corr:{ id:"tpl_direct_corr", text:"CORR LOA without correction fee.", choices:[]},
-  tpl_who_debtor_direct:{ id:"tpl_who_debtor_direct", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Company A", next:"tpl_direct_rebill"}
-  ]},
-  tpl_direct_rebill:{ id:"tpl_direct_rebill", text:"Rebill directly to 3PL. CORR LOA with correction fee.", choices:[]},
-  fpay_request:{ id:"fpay_request", text:"What is the request?", choices:[
-    {label:"Rebill to Company A c/o FPAY", next:"fpay_companya_check"},
-    {label:"Rebill to Company B c/o FPAY", next:"fpay_companyb_check"},
-    {label:"Rebill to Company A c/o FPAY2", next:"fpay_companya2_check"},
-    {label:"Bill directly to FPAY", next:"fpay_direct_check"}
-  ]},
-  fpay_companya_check:{ id:"fpay_companya_check", text:"Is the BOL debtor Company A?", choices:[
-    {label:"YES", next:"fpay_companya_accr"},
-    {label:"NO", next:"fpay_companya_who"}
-  ]},
-  fpay_companya_accr:{ id:"fpay_companya_accr", text:"CORR ACCR for proper billing.", choices:[]},
-  fpay_companya_who:{ id:"fpay_companya_who", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Company B", next:"fpay_companya_rebill_as_b"},
-    {label:"Other", next:"fpay_companya_rebill_other"}
-  ]},
-  fpay_companya_rebill_as_b:{ id:"fpay_companya_rebill_as_b", text:"Company B c/o FPAY\n\nRebill Company A c/o FPAY — CORR LOA with correction fee.", choices:[]},
-  fpay_companya_rebill_other:{ id:"fpay_companya_rebill_other", text:"Rebill Company A c/o FPAY — CORR LOA with correction fee.", choices:[]},
-  fpay_companyb_check:{ id:"fpay_companyb_check", text:"Is the debtor per BOL Company B?", choices:[
-    {label:"YES", next:"fpay_companyb_corr"},
-    {label:"NO", next:"fpay_companyb_who"}
-  ]},
-  fpay_companyb_corr:{ id:"fpay_companyb_corr", text:"CORR LOA with correction fee.", choices:[]},
-  fpay_companyb_who:{ id:"fpay_companyb_who", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Company A", next:"fpay_companyb_rebill_as_a"},
-    {label:"Other", next:"fpay_companyb_rebill_other"}
-  ]},
-  fpay_companyb_rebill_as_a:{ id:"fpay_companyb_rebill_as_a", text:"Company A\n\nRebill Company B c/o FPAY — CORR LOA with correction fee.", choices:[]},
-  fpay_companyb_rebill_other:{ id:"fpay_companyb_rebill_other", text:"Rebill Company B c/o FPAY — CORR LOA with correction fee.", choices:[]},
-  fpay_companya2_check:{ id:"fpay_companya2_check", text:"Is the debtor per BOL Company A c/o FPAY2?", choices:[
-    {label:"YES", next:"fpay_companya2_rebill"},
-    {label:"NO", next:"fpay_companya2_who"}
-  ]},
-  fpay_companya2_rebill:{ id:"fpay_companya2_rebill", text:"Rebill Company A c/o FPAY2. CORR ACCR for proper billing.", choices:[]},
-  fpay_companya2_who:{ id:"fpay_companya2_who", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Company A", next:"fpay_companya2_rebill"},
-    {label:"Other", next:"fpay_direct_check"}
-  ]},
-  fpay_direct_check:{ id:"fpay_direct_check", text:"Is the debtor per BOL Company A?", choices:[
-    {label:"YES", next:"fpay_direct_corr"},
-    {label:"NO", next:"fpay_direct_who"}
-  ]},
-  fpay_direct_corr:{ id:"fpay_direct_corr", text:"CORR LOA without correction fee.", choices:[]},
-  fpay_direct_who:{ id:"fpay_direct_who", text:"Who is the current Debtor per BOL?", choices:[
-    {label:"Company A", next:"fpay_direct_rebill_as_a"},
-    {label:"Other", next:"fpay_direct_rebill_other"}
-  ]},
-  fpay_direct_rebill_as_a:{ id:"fpay_direct_rebill_as_a", text:"Company A\n\nRebill Company A c/o FPAY2. CORR LOA with correction fee.", choices:[]},
-  fpay_direct_rebill_other:{ id:"fpay_direct_rebill_other", text:"Rebill directly to FPAY. CORR LOA with correction fee.", choices:[]},
-  collector_start:{ id:"collector_start", text:"Advise collector that PRO is billing correctly per BOL. Ask LOA from the new debtor.", choices:[
-    {label:"Continue", next:"collector_loa_check"}
-  ]},
-  collector_loa_check:{ id:"collector_loa_check", text:"LOA Provided?", choices:[
-    {label:"YES", next:"collector_loa_yes"},
-    {label:"NO", next:"collector_loa_no"}
-  ]},
-  collector_loa_yes:{ id:"collector_loa_yes", text:"Follow process for NEW DEBTOR update.", choices:[]},
-  collector_loa_no:{ id:"collector_loa_no", text:"Insist that PRO is billing correctly per BOL. No updates can be made without LOA from the new debtor.", choices:[]}
-}; // end NODES
+  root: {
+    text: "Who is the disputing / requesting party?",
+    help: "Select the party requesting the LOA rebill or debtor update.",
+    choices: [
+      { label: "BOL Debtor", next: "bol_prestart", icon: "fa-solid fa-file-invoice", desc: "The debtor currently shown per BOL is requesting." },
+      { label: "New Debtor", next: "new_start", icon: "fa-solid fa-user-plus", desc: "A new debtor is requesting or accepting billing." },
+      { label: "3PL", next: "tpl_start", icon: "fa-solid fa-building-user", desc: "The request involves a third-party logistics billing setup." },
+      { label: "FPAY", next: "fpay_request", icon: "fa-solid fa-money-check-dollar", desc: "The request involves FPAY billing." },
+      { label: "Collector", next: "collector_start", icon: "fa-solid fa-headset", desc: "The request is coming from a collector." }
+    ]
+  },
 
-/* ---------- STATE ---------- */
-let path = [];
-let historyStack = [];
-let currentFinalRecommendation = "";
-let currentEditType = "";
-window.firebaseReady = false;
+  bol_prestart: {
+    text: "Is the requestor exactly the same company and address per BOL?",
+    help: "Compare the requestor information against the company name and address shown on the BOL.",
+    choices: [
+      { label: "Yes", next: "bol_prestart_advise", icon: "fa-solid fa-circle-check", desc: "Requestor matches the BOL debtor exactly." },
+      { label: "No", next: "bol_start", icon: "fa-solid fa-circle-xmark", desc: "Requestor does not exactly match the BOL debtor." }
+    ]
+  },
 
-/* ---------- RENDER ---------- */
-function renderNode(nodeObj, nodeKey="root") {
-  const flowArea = document.getElementById("flowArea");
-  const goBackBtn = document.getElementById("goBackBtn");
-  const startOverBtn = document.getElementById("startOverBtn");
-  const progressFill = document.getElementById("progressFill");
-  const suggestedPanel = document.getElementById("suggestedPanel");
+  bol_prestart_advise: {
+    text: "Advise customer that PRO is billing correctly per BOL. Was LOA provided from the new debtor?",
+    help: "If the PRO is billing correctly per BOL, LOA from the new debtor is required before changing the billing party.",
+    choices: [
+      { label: "Yes", next: "follow_process", icon: "fa-solid fa-file-circle-check", desc: "LOA was provided." },
+      { label: "No", next: "follow_process_no", icon: "fa-solid fa-file-circle-xmark", desc: "LOA was not provided." }
+    ]
+  },
 
-  flowArea.innerHTML = "";
-  document.getElementById("recommendation").innerHTML = "No recommendation yet.";
-  document.getElementById("suggestedComment").innerHTML = "";
-  document.getElementById("suggestedEmail").innerHTML = "";
-  document.getElementById("suggestedCorrCode").innerHTML = "";
-  suggestedPanel.style.display = "none";
+  follow_process: {
+    text: "Follow process for New Debtor update.",
+    choices: [
+      { label: "Final Recommendation", action: "Follow process for NEW DEBTOR update.", icon: "fa-solid fa-check", desc: "Proceed using the New Debtor path." }
+    ]
+  },
 
-  if (nodeObj && nodeObj.text && nodeObj.choices && nodeObj.choices.length) {
-    const q = document.createElement("div");
-    q.innerHTML = `<strong style="font-size:16px">${nodeObj.text}</strong>`;
-    flowArea.appendChild(q);
+  follow_process_no: {
+    text: "No LOA from new debtor",
+    choices: [
+      { label: "Final Recommendation", action: "Insist that PRO is billing correctly per BOL. No updates can be made without LOA from the new debtor.", icon: "fa-solid fa-ban", desc: "Do not update without LOA." }
+    ]
+  },
 
-    const list = document.createElement("div");
-    list.className = "choice-list";
+  bol_start: {
+    text: "Same company but different mailing address and Pricing / BRAP?",
+    help: "Check if the company is related but the mailing address and pricing setup differ.",
+    choices: [
+      { label: "Yes", next: "bol_account_name", icon: "fa-solid fa-circle-check", desc: "Criteria appears to match." },
+      { label: "No", next: "bol_per_debtor", icon: "fa-solid fa-circle-xmark", desc: "Criteria does not match." }
+    ]
+  },
 
-    nodeObj.choices.forEach(choice => {
-      const btn = document.createElement("div");
-      btn.className = "choice";
-      btn.textContent = choice.label;
-      btn.onclick = () => {
-        document.querySelectorAll(".choice").forEach(c => c.classList.remove("active"));
-        btn.classList.add("active");
+  bol_per_debtor: {
+    text: "Use per debtor for better billing.",
+    choices: [
+      { label: "Final Recommendation", action: "If one of the criteria is not met, use per debtor for better billing.", icon: "fa-solid fa-user-check", desc: "Use debtor-based billing." }
+    ]
+  },
 
-        historyStack.push({ nodeKey, path: JSON.parse(JSON.stringify(path)) });
-        path.push({ question: nodeObj.text, answer: choice.label });
+  bol_account_name: {
+    text: "Is the account name the same or related to the debtor?",
+    choices: [
+      { label: "Yes", next: "bol_mailing_diff", icon: "fa-solid fa-circle-check", desc: "Account name is same or related." },
+      { label: "No", next: "bol_per_debtor", icon: "fa-solid fa-circle-xmark", desc: "Account name is not related." }
+    ]
+  },
 
-        const nextNode = NODES[choice.next] || {};
-        if (nextNode && nextNode.text && (!nextNode.choices || nextNode.choices.length === 0)) {
-          currentFinalRecommendation = nextNode.text;
-          document.getElementById("recommendation").innerHTML = `<strong>${currentFinalRecommendation}</strong>`;
-          generateSuggestedTemplates(currentFinalRecommendation);
-        } else {
-          currentFinalRecommendation = "";
-          suggestedPanel.style.display = "none";
-        }
+  bol_mailing_diff: {
+    text: "Is the mailing address different from the current debtor?",
+    choices: [
+      { label: "Yes", next: "bol_prau", icon: "fa-solid fa-circle-check", desc: "Mailing address is different." },
+      { label: "No", next: "bol_per_debtor", icon: "fa-solid fa-circle-xmark", desc: "Mailing address is not different." }
+    ]
+  },
 
-        renderNode(nextNode, choice.next);
-        updateSelectedPath();
-      };
-      list.appendChild(btn);
-    });
+  bol_prau: {
+    text: "Was the PRAU totally changed?",
+    help: "Confirm if the pricing or contract was fully replaced.",
+    choices: [
+      { label: "Yes", next: "bol_corr_loa", icon: "fa-solid fa-circle-check", desc: "Pricing or contract was replaced." },
+      { label: "No", next: "bol_per_debtor", icon: "fa-solid fa-circle-xmark", desc: "PRAU was not totally changed." }
+    ]
+  },
 
-    flowArea.appendChild(list);
-  } else if (nodeObj && nodeObj.text) {
-    currentFinalRecommendation = nodeObj.text;
-    document.getElementById("recommendation").innerHTML = `<strong>${currentFinalRecommendation}</strong>`;
-    updateSelectedPath();
-    generateSuggestedTemplates(currentFinalRecommendation);
+  bol_corr_loa: {
+    text: "CORR LOA with correction fee.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR LOA with correction fee.", icon: "fa-solid fa-file-pen", desc: "Apply CORR LOA with fee." }
+    ]
+  },
+
+  new_start: {
+    text: "Is the PRO paid and closed?",
+    choices: [
+      { label: "Yes", next: "new_over_year", icon: "fa-solid fa-circle-check", desc: "PRO is paid and closed." },
+      { label: "No", next: "new_credit_hold", icon: "fa-solid fa-circle-xmark", desc: "PRO is not paid and closed." }
+    ]
+  },
+
+  new_over_year: {
+    text: "Is it over a year?",
+    choices: [
+      { label: "Yes", next: "new_deny_paid_bol", icon: "fa-solid fa-calendar-xmark", desc: "The PRO is over one year old." },
+      { label: "No", next: "new_advise_paid", icon: "fa-solid fa-calendar-check", desc: "The PRO is within one year." }
+    ]
+  },
+
+  new_deny_paid_bol: {
+    text: "Deny request.",
+    choices: [
+      { label: "Final Recommendation", action: "DENY. Advise that PRO was already paid by the debtor per BOL.", icon: "fa-solid fa-ban", desc: "Do not rebill." }
+    ]
+  },
+
+  new_advise_paid: {
+    text: "Advise customer that PRO was already paid and closed by the debtor per BOL.",
+    choices: [
+      { label: "Continue", next: "new_customer_insist", icon: "fa-solid fa-arrow-right", desc: "Check if customer still insists." }
+    ]
+  },
+
+  new_customer_insist: {
+    text: "Did the customer reply and insist on rebilling per LOA?",
+    choices: [
+      { label: "Yes", next: "new_rebill_or_keep", icon: "fa-solid fa-circle-check", desc: "Customer insists on rebilling." },
+      { label: "No", next: "new_leave_as_is", icon: "fa-solid fa-circle-xmark", desc: "Customer does not insist." }
+    ]
+  },
+
+  new_rebill_or_keep: {
+    text: "Proceed to rebill.",
+    choices: [
+      { label: "Final Recommendation", action: "Proceed to rebill. Payment from debtor per BOL = REMOVE payment. Payment from accepting party per LOA = KEEP payment.", icon: "fa-solid fa-rotate", desc: "Rebill and handle payment accordingly." }
+    ]
+  },
+
+  new_leave_as_is: {
+    text: "Leave PRO as is.",
+    choices: [
+      { label: "Final Recommendation", action: "Leave the PRO as is since it is already paid and closed by the debtor per BOL.", icon: "fa-solid fa-lock", desc: "No rebill needed." }
+    ]
+  },
+
+  new_credit_hold: {
+    text: "Is the new debtor account on Credit Hold?",
+    choices: [
+      { label: "Yes", next: "new_deny_credit_hold", icon: "fa-solid fa-triangle-exclamation", desc: "New debtor is on credit hold." },
+      { label: "No", next: "new_loa_details", icon: "fa-solid fa-circle-check", desc: "New debtor is not on credit hold." }
+    ]
+  },
+
+  new_deny_credit_hold: {
+    text: "Deny due to Credit Hold.",
+    choices: [
+      {
+        label: "Final Recommendation",
+        action: "DENY. Advise customer that: At this time, FXF is unable to accept the attached LOA. The invoice will remain billed per the bill of lading received at pick up. If you have questions why the account cannot be billed, please contact credit department at 866-756-3590 opt 4 to speak to an agent. Hours of operation are 7AM to 5PM CST.",
+        icon: "fa-solid fa-ban",
+        desc: "Do not accept LOA."
+      }
+    ]
+  },
+
+  new_loa_details: {
+    text: "Are the LOA details and information complete and accurate?",
+    choices: [
+      { label: "Yes", next: "new_proceed", icon: "fa-solid fa-circle-check", desc: "LOA details are complete." },
+      { label: "No", next: "new_deny_incomplete", icon: "fa-solid fa-circle-xmark", desc: "LOA details are incomplete." }
+    ]
+  },
+
+  new_proceed: {
+    text: "Proceed with the Rebill per LOA.",
+    choices: [
+      { label: "Final Recommendation", action: "Proceed with the Rebill per LOA.", icon: "fa-solid fa-check", desc: "Rebill per LOA." }
+    ]
+  },
+
+  new_deny_incomplete: {
+    text: "Deny incomplete LOA.",
+    choices: [
+      { label: "Final Recommendation", action: "DENY. Advise to provide complete and accurate LOA details.", icon: "fa-solid fa-file-circle-xmark", desc: "Request complete LOA details." }
+    ]
+  },
+
+  tpl_start: {
+    text: "What is the 3PL request?",
+    choices: [
+      { label: "Rebill to Shipper/Consignee c/o 3PL", next: "tpl_shipper_check", icon: "fa-solid fa-truck", desc: "Rebill to shipper or consignee care of 3PL." },
+      { label: "Rebill to Company C c/o 3PL", next: "tpl_companyc_check", icon: "fa-solid fa-building", desc: "Company C is not shipper or consignee." },
+      { label: "Rebill to Company B c/o 3PL", next: "tpl_companyb_check", icon: "fa-solid fa-building", desc: "Rebill Company B care of 3PL." },
+      { label: "Rebill to Company A c/o 3PL2", next: "tpl_companya_check", icon: "fa-solid fa-building", desc: "Rebill Company A care of another 3PL." },
+      { label: "Bill directly to 3PL", next: "tpl_direct_check", icon: "fa-solid fa-building-user", desc: "Bill directly to the 3PL." }
+    ]
+  },
+
+  tpl_shipper_check: {
+    text: "Is the BOL debtor a 3PL only with no company?",
+    choices: [
+      { label: "Yes", next: "tpl_corr_accr", icon: "fa-solid fa-circle-check", desc: "BOL debtor is 3PL only." },
+      { label: "No", next: "tpl_who_debtor_shipper", icon: "fa-solid fa-circle-xmark", desc: "BOL debtor includes a company." }
+    ]
+  },
+
+  tpl_corr_accr: {
+    text: "CORR ACCR for proper billing.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR ACCR for proper billing.", icon: "fa-solid fa-hashtag", desc: "Use CORR ACCR." }
+    ]
+  },
+
+  tpl_who_debtor_shipper: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Shipper/Consignee", next: "tpl_shipper_rebill", icon: "fa-solid fa-user", desc: "Current debtor is shipper or consignee." }
+    ]
+  },
+
+  tpl_shipper_rebill: {
+    text: "Rebill Shipper/Consignee c/o 3PL.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill Shipper/Consignee c/o 3PL. CORR ACCR with correction fee.", icon: "fa-solid fa-check", desc: "Rebill with CORR ACCR and fee." }
+    ]
+  },
+
+  tpl_companyc_check: {
+    text: "Is the BOL debtor a 3PL only with no company?",
+    choices: [
+      { label: "Yes", next: "tpl_auth_corr_fee", icon: "fa-solid fa-circle-check", desc: "BOL debtor is 3PL only." },
+      { label: "No", next: "tpl_who_debtor_c", icon: "fa-solid fa-circle-xmark", desc: "BOL debtor includes a company." }
+    ]
+  },
+
+  tpl_auth_corr_fee: {
+    text: "Auth: Per LOA CORR ACCR with correction fee.",
+    choices: [
+      { label: "Final Recommendation", action: "Auth: Per LOA CORR ACCR with correction fee.", icon: "fa-solid fa-check", desc: "Authorize CORR ACCR with fee." }
+    ]
+  },
+
+  tpl_who_debtor_c: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Company C", next: "tpl_companyc_rebill", icon: "fa-solid fa-building", desc: "Company C is current debtor." }
+    ]
+  },
+
+  tpl_companyc_rebill: {
+    text: "Rebill Company C c/o 3PL.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill Company C c/o 3PL. CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  tpl_companyb_check: {
+    text: "Is the debtor per BOL Company A c/o 3PL?",
+    choices: [
+      { label: "Yes", next: "tpl_companyb_corr", icon: "fa-solid fa-circle-check", desc: "Debtor per BOL is Company A c/o 3PL." },
+      { label: "No", next: "tpl_who_debtor_b", icon: "fa-solid fa-circle-xmark", desc: "Debtor per BOL is not Company A c/o 3PL." }
+    ]
+  },
+
+  tpl_companyb_corr: {
+    text: "CORR LOA with correction fee.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR LOA with correction fee.", icon: "fa-solid fa-file-pen", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  tpl_who_debtor_b: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Company B", next: "tpl_companyb_rebill", icon: "fa-solid fa-building", desc: "Company B is current debtor." }
+    ]
+  },
+
+  tpl_companyb_rebill: {
+    text: "Rebill Company B c/o 3PL.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill Company B c/o 3PL. CORR ACCR for proper billing. Note that if the debtor is not an ABT, correction fee applies.", icon: "fa-solid fa-check", desc: "Use CORR ACCR." }
+    ]
+  },
+
+  tpl_companya_check: {
+    text: "Is the debtor per BOL Company A c/o 3PL1?",
+    choices: [
+      { label: "Yes", next: "tpl_companya_corr", icon: "fa-solid fa-circle-check", desc: "Debtor per BOL is Company A c/o 3PL1." },
+      { label: "No", next: "tpl_who_debtor_a", icon: "fa-solid fa-circle-xmark", desc: "Debtor per BOL is not Company A c/o 3PL1." }
+    ]
+  },
+
+  tpl_companya_corr: {
+    text: "CORR LOA with correction fee.",
+    note: "Request should come from the new 3PL.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR LOA with correction fee. Request should come from the new 3PL.", icon: "fa-solid fa-file-pen", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  tpl_who_debtor_a: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "3PL2", next: "tpl_companya_rebill", icon: "fa-solid fa-building-user", desc: "3PL2 is current debtor." }
+    ]
+  },
+
+  tpl_companya_rebill: {
+    text: "Rebill Company A c/o 3PL2.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill Company A c/o 3PL2. CORR ACCR for proper billing.", icon: "fa-solid fa-check", desc: "Use CORR ACCR." }
+    ]
+  },
+
+  tpl_direct_check: {
+    text: "Is the debtor per BOL Company A c/o 3PL?",
+    choices: [
+      { label: "Yes", next: "tpl_direct_corr", icon: "fa-solid fa-circle-check", desc: "Debtor per BOL is Company A c/o 3PL." },
+      { label: "No", next: "tpl_who_debtor_direct", icon: "fa-solid fa-circle-xmark", desc: "Debtor per BOL is not Company A c/o 3PL." }
+    ]
+  },
+
+  tpl_direct_corr: {
+    text: "CORR LOA without correction fee.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR LOA without correction fee.", icon: "fa-solid fa-file-circle-check", desc: "Use CORR LOA without fee." }
+    ]
+  },
+
+  tpl_who_debtor_direct: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Company A", next: "tpl_direct_rebill", icon: "fa-solid fa-building", desc: "Company A is current debtor." }
+    ]
+  },
+
+  tpl_direct_rebill: {
+    text: "Rebill directly to 3PL.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill directly to 3PL. CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  fpay_request: {
+    text: "What is the FPAY request?",
+    choices: [
+      { label: "Rebill to Company A c/o FPAY", next: "fpay_companya_check", icon: "fa-solid fa-building", desc: "Rebill Company A care of FPAY." },
+      { label: "Rebill to Company B c/o FPAY", next: "fpay_companyb_check", icon: "fa-solid fa-building", desc: "Rebill Company B care of FPAY." },
+      { label: "Rebill to Company A c/o FPAY2", next: "fpay_companya2_check", icon: "fa-solid fa-building", desc: "Rebill Company A care of FPAY2." },
+      { label: "Bill directly to FPAY", next: "fpay_direct_check", icon: "fa-solid fa-money-check-dollar", desc: "Bill directly to FPAY." }
+    ]
+  },
+
+  fpay_companya_check: {
+    text: "Is the BOL debtor Company A?",
+    choices: [
+      { label: "Yes", next: "fpay_companya_accr", icon: "fa-solid fa-circle-check", desc: "BOL debtor is Company A." },
+      { label: "No", next: "fpay_companya_who", icon: "fa-solid fa-circle-xmark", desc: "BOL debtor is not Company A." }
+    ]
+  },
+
+  fpay_companya_accr: {
+    text: "CORR ACCR for proper billing.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR ACCR for proper billing.", icon: "fa-solid fa-hashtag", desc: "Use CORR ACCR." }
+    ]
+  },
+
+  fpay_companya_who: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Company B", next: "fpay_companya_rebill_as_b", icon: "fa-solid fa-building", desc: "Current debtor is Company B." },
+      { label: "Other", next: "fpay_companya_rebill_other", icon: "fa-solid fa-circle-question", desc: "Current debtor is another party." }
+    ]
+  },
+
+  fpay_companya_rebill_as_b: {
+    text: "Rebill Company A c/o FPAY.",
+    choices: [
+      { label: "Final Recommendation", action: "Company B\n\nRebill Company A c/o FPAY — CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  fpay_companya_rebill_other: {
+    text: "Rebill Company A c/o FPAY.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill Company A c/o FPAY — CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  fpay_companyb_check: {
+    text: "Is the debtor per BOL Company B?",
+    choices: [
+      { label: "Yes", next: "fpay_companyb_corr", icon: "fa-solid fa-circle-check", desc: "Debtor per BOL is Company B." },
+      { label: "No", next: "fpay_companyb_who", icon: "fa-solid fa-circle-xmark", desc: "Debtor per BOL is not Company B." }
+    ]
+  },
+
+  fpay_companyb_corr: {
+    text: "CORR LOA with correction fee.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR LOA with correction fee.", icon: "fa-solid fa-file-pen", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  fpay_companyb_who: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Company A", next: "fpay_companyb_rebill_as_a", icon: "fa-solid fa-building", desc: "Current debtor is Company A." },
+      { label: "Other", next: "fpay_companyb_rebill_other", icon: "fa-solid fa-circle-question", desc: "Current debtor is another party." }
+    ]
+  },
+
+  fpay_companyb_rebill_as_a: {
+    text: "Rebill Company B c/o FPAY.",
+    choices: [
+      { label: "Final Recommendation", action: "Company A\n\nRebill Company B c/o FPAY — CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  fpay_companyb_rebill_other: {
+    text: "Rebill Company B c/o FPAY.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill Company B c/o FPAY — CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  fpay_companya2_check: {
+    text: "Is the debtor per BOL Company A c/o FPAY2?",
+    choices: [
+      { label: "Yes", next: "fpay_companya2_rebill", icon: "fa-solid fa-circle-check", desc: "Debtor per BOL is Company A c/o FPAY2." },
+      { label: "No", next: "fpay_companya2_who", icon: "fa-solid fa-circle-xmark", desc: "Debtor per BOL is not Company A c/o FPAY2." }
+    ]
+  },
+
+  fpay_companya2_rebill: {
+    text: "Rebill Company A c/o FPAY2.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill Company A c/o FPAY2. CORR ACCR for proper billing.", icon: "fa-solid fa-check", desc: "Use CORR ACCR." }
+    ]
+  },
+
+  fpay_companya2_who: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Company A", next: "fpay_companya2_rebill", icon: "fa-solid fa-building", desc: "Current debtor is Company A." },
+      { label: "Other", next: "fpay_direct_check", icon: "fa-solid fa-circle-question", desc: "Current debtor is another party." }
+    ]
+  },
+
+  fpay_direct_check: {
+    text: "Is the debtor per BOL Company A?",
+    choices: [
+      { label: "Yes", next: "fpay_direct_corr", icon: "fa-solid fa-circle-check", desc: "Debtor per BOL is Company A." },
+      { label: "No", next: "fpay_direct_who", icon: "fa-solid fa-circle-xmark", desc: "Debtor per BOL is not Company A." }
+    ]
+  },
+
+  fpay_direct_corr: {
+    text: "CORR LOA without correction fee.",
+    choices: [
+      { label: "Final Recommendation", action: "CORR LOA without correction fee.", icon: "fa-solid fa-file-circle-check", desc: "Use CORR LOA without fee." }
+    ]
+  },
+
+  fpay_direct_who: {
+    text: "Who is the current debtor per BOL?",
+    choices: [
+      { label: "Company A", next: "fpay_direct_rebill_as_a", icon: "fa-solid fa-building", desc: "Current debtor is Company A." },
+      { label: "Other", next: "fpay_direct_rebill_other", icon: "fa-solid fa-circle-question", desc: "Current debtor is another party." }
+    ]
+  },
+
+  fpay_direct_rebill_as_a: {
+    text: "Rebill Company A c/o FPAY2.",
+    choices: [
+      { label: "Final Recommendation", action: "Company A\n\nRebill Company A c/o FPAY2. CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  fpay_direct_rebill_other: {
+    text: "Rebill directly to FPAY.",
+    choices: [
+      { label: "Final Recommendation", action: "Rebill directly to FPAY. CORR LOA with correction fee.", icon: "fa-solid fa-check", desc: "Use CORR LOA with fee." }
+    ]
+  },
+
+  collector_start: {
+    text: "Advise collector that PRO is billing correctly per BOL. Ask LOA from the new debtor.",
+    choices: [
+      { label: "Continue", next: "collector_loa_check", icon: "fa-solid fa-arrow-right", desc: "Check if LOA was provided." }
+    ]
+  },
+
+  collector_loa_check: {
+    text: "Was LOA provided?",
+    choices: [
+      { label: "Yes", next: "collector_loa_yes", icon: "fa-solid fa-circle-check", desc: "LOA was provided." },
+      { label: "No", next: "collector_loa_no", icon: "fa-solid fa-circle-xmark", desc: "LOA was not provided." }
+    ]
+  },
+
+  collector_loa_yes: {
+    text: "Follow process for New Debtor update.",
+    choices: [
+      { label: "Final Recommendation", action: "Follow process for NEW DEBTOR update.", icon: "fa-solid fa-check", desc: "Proceed using New Debtor path." }
+    ]
+  },
+
+  collector_loa_no: {
+    text: "No LOA provided.",
+    choices: [
+      { label: "Final Recommendation", action: "Insist that PRO is billing correctly per BOL. No updates can be made without LOA from the new debtor.", icon: "fa-solid fa-ban", desc: "Do not update without LOA." }
+    ]
+  }
+};
+
+
+  function escapeHtml(value){
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
   }
 
-  goBackBtn.style.display = historyStack.length ? "inline-block" : "none";
-  startOverBtn.style.display = path.length ? "inline-block" : "none";
+  function normalizeId(str){
+    return String(str || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+  }
 
-  const stepNum = path.length + 1;
-  progressFill.style.width = Math.min(stepNum * 20, 100) + "%";
-  document.getElementById("progressText").textContent = `Step ${stepNum}`;
-}
+  function getDocId(recommendation, type){
+    return `${type}__${normalizeId(recommendation)}`;
+  }
 
-function updateSelectedPath() {
-  const el = document.getElementById("selectedPath");
-  if (!path.length) { el.innerHTML = "No steps selected yet."; return; }
-  el.innerHTML = path.map((p, idx) =>
-    `<strong>Step ${idx+1}:</strong> ${p.question} → <strong><em>${p.answer}</em></strong>`
-  ).join("<br>");
-}
+  function getNodeText(node){
+    return node?.text || node?.question || "";
+  }
 
-/* ---------- SUGGESTED COMMENT, EMAIL & CORR CODE ---------- */
-function generateSuggestedTemplates(finalText) {
-  const commentBox = document.getElementById("suggestedComment");
-  const emailBox = document.getElementById("suggestedEmail");
-  const corrBox = document.getElementById("suggestedCorrCode");
-  const panel = document.getElementById("suggestedPanel");
+  function getNodeHelp(node){
+    return node?.help || "";
+  }
 
-  if (!finalText) { panel.style.display = "none"; return; }
+  function getNodeNote(node){
+    return node?.note || "";
+  }
 
-  if (!window.firebaseReady) {
-    setTimeout(() => generateSuggestedTemplates(finalText), 200);
+  function getNodeImage(node){
+    return node?.image || "";
+  }
+
+  function getNodeChoices(node){
+    return Array.isArray(node?.choices) ? node.choices : [];
+  }
+
+  function isFinalNode(node){
+    return !!node?.action || (!getNodeChoices(node).length && !node?.next);
+  }
+
+  function setTemplateValue(el, text){
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle("empty", !text);
+  }
+
+  async function loadTemplatesForRecommendation(recommendation){
+    if(!recommendation){
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+      return;
+    }
+
+    const ids = {
+      comment: getDocId(recommendation, "comment"),
+      corr: getDocId(recommendation, "corr"),
+      email: getDocId(recommendation, "email")
+    };
+
+    try{
+      const [commentDoc, corrDoc, emailDoc] = await Promise.all([
+        db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
+        db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
+        db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
+      ]);
+
+      const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
+      const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
+      const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
+
+      templateCache[ids.comment] = finalComment;
+      templateCache[ids.corr] = finalCorr;
+      templateCache[ids.email] = finalEmail;
+
+      setTemplateValue(els.suggestedComment, finalComment);
+      setTemplateValue(els.suggestedCorrCode, finalCorr);
+      setTemplateValue(els.suggestedEmail, finalEmail);
+    } catch(err){
+      setTemplateValue(els.suggestedComment, "");
+      setTemplateValue(els.suggestedCorrCode, "");
+      setTemplateValue(els.suggestedEmail, "");
+    }
+  }
+
+  function setCopiedState(btn, originalText){
+    btn.classList.add("copied");
+    btn.textContent = "Copied";
+    clearTimeout(btn._copiedTimer);
+    btn._copiedTimer = setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.textContent = originalText;
+    }, 1400);
+  }
+
+  async function copyTemplateText(targetId, btn){
+    const target = document.getElementById(targetId);
+    const value = target?.innerText.trim();
+    if(!value || target.classList.contains("empty")) return;
+
+    try{
+      await navigator.clipboard.writeText(value);
+      setCopiedState(btn, btn.textContent);
+    } catch {
+      alert("Unable to copy text.");
+    }
+  }
+
+  function attemptEdit(type){
+    if(!currentFinalRecommendation){
+      alert("Reach a final recommendation first before editing templates.");
+      return;
+    }
+    currentEditType = type;
+    els.adminPassword.value = "";
+    els.passwordModal.style.display = "flex";
+  }
+
+  function closePasswordModal(){
+    els.passwordModal.style.display = "none";
+  }
+
+  function closeEditModal(){
+    els.editModal.style.display = "none";
+  }
+
+  function checkPassword(){
+    if(els.adminPassword.value === "admin"){
+      closePasswordModal();
+      openEditModal();
+    } else {
+      alert("Incorrect password");
+    }
+  }
+
+  function openEditModal(){
+    const map = {
+      comment: "suggestedComment",
+      email: "suggestedEmail",
+      corr: "suggestedCorrCode"
+    };
+
+    els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+    els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+    els.editModal.style.display = "flex";
+  }
+
+  async function saveEdit(){
+    const val = els.editTextarea.value.trim();
+
+    if(!val){
+      alert("Cannot save empty text.");
+      return;
+    }
+
+    const docId = getDocId(currentFinalRecommendation, currentEditType);
+
+    try{
+      await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
+        text: val,
+        type: currentEditType,
+        recommendation: currentFinalRecommendation,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      templateCache[docId] = val;
+
+      if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
+      if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
+      if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
+
+      closeEditModal();
+      alert("Saved!");
+    } catch(err){
+      alert("Unable to save right now.");
+    }
+  }
+
+  function getPercent(isFinal){
+    if (isFinal) return 100;
+
+    const currentIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (currentIndex === -1) {
+      return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95);
+    }
+
+    const progress = ((currentIndex + 1) / MAX_STEPS) * 100;
+    return Math.min(Math.round(progress), 95);
+  }
+
+  function updateMeta(isFinal){
+    const pct = getPercent(isFinal);
+    const lastAnswer = path.length ? path[path.length - 1].answer : "—";
+    const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
+
+    els.progressFill.style.width = pct + "%";
+    els.progressText.textContent = progressLabel;
+    els.metricSteps.textContent = String(path.length);
+    els.metricAnswer.textContent = lastAnswer;
+    els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
+  }
+
+  function updatePath(){
+  if(!path.length){
+    els.pathBox.className = "path-empty";
+    els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
     return;
   }
 
-  const docId = encodeURIComponent(finalText.replace(/\s+/g,'_'));
+  const html = path.map((item, index) => {
+    const isActive =
+      currentKey === "__final__"
+        ? (
+            item.nextKey === "__final__" ||
+            (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
+          )
+        : item.fromKey === currentKey;
 
-  window.loadFromFirestore(docId)
-    .then(data => {
-      commentBox.innerHTML = data.comment || `VS-LOA-CASE#-${finalText}`;
-      emailBox.innerHTML = data.email ? data.email.replace(/\n/g, "<br>") : `Hi,<br><br>${finalText}<br><br>Thank you,<br>EBS Operations - Invoicing`;
-      corrBox.innerHTML = data.corr || `CORR-${finalText}`;
-      panel.style.display = "block";
-    })
-    .catch(() => {
-      commentBox.innerHTML = `VS-LOA-CASE#-${finalText}`;
-      emailBox.innerHTML = `Hi,<br><br>${finalText}<br><br>Thank you,<br>EBS Operations - Invoicing`;
-      corrBox.innerHTML = `CORR-${finalText}`;
-      panel.style.display = "block";
+    return `
+      <div class="path-item">
+        <button
+          type="button"
+          class="path-jump ${isActive ? "active" : ""}"
+          data-step-index="${index}"
+        >
+          <div class="path-step">Step ${index + 1}</div>
+          <div class="path-question">${escapeHtml(item.question)}</div>
+          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+        </button>
+      </div>
+    `;
+  }).join("");
+
+  els.pathBox.className = "path-list";
+  els.pathBox.innerHTML = html;
+
+  els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.stepIndex);
+      jumpToPathStep(index);
     });
+  });
 }
 
-/* ---------- ADMIN EDIT ---------- */
-function attemptEdit(type) {
-  if (!currentFinalRecommendation) {
-    alert("Please select a final recommendation first!");
+  function jumpToPathStep(index){
+  if(index < 0 || index >= path.length) return;
+
+  const target = path[index];
+  if(!target) return;
+
+  currentFinalRecommendation = "";
+
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  if(target.nextKey === "__final__" && target.finalNode){
+    renderFinal(target.finalNode);
     return;
   }
-  if (!window.firebaseReady) { alert("Firebase is loading. Wait a few seconds."); return; }
-  currentEditType = type;
-  document.getElementById("adminPassword").value = "";
-  document.getElementById("passwordModal").style.display = "flex";
+
+  renderNode(target.fromKey);
 }
 
-function closePasswordModal() { document.getElementById("passwordModal").style.display = "none"; }
+  function updateRecommendation(text, isFinal){
+    if(!isFinal){
+      els.recommendationBox.className = "recommendation empty";
+      els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
+      return;
+    }
 
-function checkPassword() {
-  if (document.getElementById("adminPassword").value === "admin") {
-    closePasswordModal();
-    openEditModal();
-  } else alert("Incorrect password!");
-}
-
-function openEditModal() {
-  const boxId = currentEditType === "comment" ? "suggestedComment" :
-                currentEditType === "email" ? "suggestedEmail" : "suggestedCorrCode";
-  const htmlContent = document.getElementById(boxId).innerHTML || "";
-  document.getElementById("editTextarea").value = htmlContent.replace(/<br\s*\/?>/gi, "\n");
-  document.getElementById("modalTitle").textContent = `Edit ${currentEditType.toUpperCase()}`;
-  document.getElementById("modalHint").textContent = "Edits will be saved to Firestore (collection: loa_recommendations).";
-  document.getElementById("editModal").style.display = "flex";
-}
-
-function closeEditModal() { document.getElementById("editModal").style.display = "none"; }
-
-async function saveEdit() {
-  if (!window.firebaseReady) { alert("Firebase not ready yet."); return; }
-  if (!currentFinalRecommendation) { alert("No final recommendation selected!"); return; }
-
-  const val = document.getElementById("editTextarea").value;
-  const docId = encodeURIComponent(currentFinalRecommendation.replace(/\s+/g,'_'));
-  const payload = {};
-  if (currentEditType === "comment") payload.comment = val;
-  else if (currentEditType === "email") payload.email = val;
-  else payload.corr = val;
-
-  try {
-    await window.saveTemplateToFirestore(docId, payload);
-
-    if (currentEditType === "comment") document.getElementById("suggestedComment").innerHTML = val;
-    else if (currentEditType === "email") document.getElementById("suggestedEmail").innerHTML = val.replace(/\n/g,"<br>");
-    else document.getElementById("suggestedCorrCode").innerHTML = val;
-
-    document.getElementById("suggestedPanel").style.display = "block";
-    closeEditModal();
-    alert("✅ Successfully saved to Firestore.");
-  } catch (err) {
-    console.error(err);
-    alert("❌ Save failed. Please check your Firebase configuration.");
+    els.recommendationBox.className = "recommendation";
+    els.recommendationBox.textContent = text;
   }
-}
 
-/* ---------- BUTTON EVENTS ---------- */
-document.getElementById("goBackBtn").onclick = () => {
-  if (!historyStack.length) return;
-  const last = historyStack.pop();
-  path = last.path || [];
-  renderNode(NODES[last.nodeKey] || NODES.root, last.nodeKey);
-  updateSelectedPath();
-};
+  function openImageModal(src){
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
 
-document.getElementById("startOverBtn").onclick = () => {
-  path = []; historyStack = []; currentFinalRecommendation = "";
-  document.getElementById("selectedPath").textContent = "No steps selected yet.";
-  document.getElementById("suggestedPanel").style.display = "none";
-  renderNode(NODES.root, "root");
-};
+    img.src = src;
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
 
-document.getElementById("copyEmailBtn").onclick = () => {
-  const txt = document.getElementById('suggestedEmail').innerHTML.replace(/<br\s*\/?>/g,"\n");
-  navigator.clipboard.writeText(txt).then(()=>alert("Email copied!")).catch(()=>alert("Unable to copy."));
-};
+  function closeImageModal(e){
+    if (e) e.stopPropagation();
 
-/* ---------- FIREBASE ---------- */
-(async function() {
-  const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
-  const { getFirestore, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
 
-  const firebaseConfig = {
-  apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-  authDomain: "bdgg-database.firebaseapp.com",
-  projectId: "bdgg-database",
-  storageBucket: "bdgg-database.firebasestorage.app",
-  messagingSenderId: "43574975434",
-  appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-};
+    modal.classList.remove("open");
+    img.src = "";
+    document.body.style.overflow = "";
+  }
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  window.saveTemplateToFirestore = async (docId, payload) => {
-    if (!docId || !payload) throw new Error("docId and payload required");
-    await setDoc(doc(db, "loa_recommendations", docId), payload, { merge: true });
-  };
-
-  window.loadFromFirestore = async (docId) => {
-    if (!docId) return {};
-    const snap = await getDoc(doc(db, "loa_recommendations", docId));
-    return snap.exists() ? snap.data() : {};
-  };
-
-  window.firebaseReady = true;
-
-  // INITIAL RENDER AFTER FIREBASE READY
-  renderNode(NODES.root, "root");
-})();
-
-/* ---------- INITIAL RENDER ---------- */
-renderNode(NODES.root, "root");
-
-// ---------- STAGGERED CARD FADE-IN ----------
-window.addEventListener('load', () => {
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((card, i) => {
-    card.style.animation = `cardFadeIn 0.6s ease-out forwards`;
-    card.style.animationDelay = `${1 + i * 0.15}s`; // starts after logo (1s)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeImageModal();
   });
 
-  // Make sure logo is visible after its animation
-  const logo = document.querySelector('header img');
-  logo.style.opacity = 1;
+  async function renderFinal(finalNode){
+    const finalText = finalNode.action || getNodeText(finalNode) || "";
+    const finalNote = finalNode.note || "";
+    const finalImage = finalNode.image || "";
+
+    const formattedFinalText = escapeHtml(finalText)
+      .replace(/\r\n/g, "\n")
+      .replace(/\n/g, "<br>");
+
+    currentFinalRecommendation = finalText;
+    currentKey = "__final__";
+    updateMeta(true);
+    updatePath();
+    updateRecommendation(finalText, true);
+    await loadTemplatesForRecommendation(finalText);
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+      </div>
+
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${formattedFinalText}</div>
+        ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+
+        ${finalImage ? `
+          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
+          </div>
+        ` : ""}
+
+        <div class="final-actions">
+          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart">Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+  }
+
+  async function renderNode(key){
+    currentKey = key;
+    const node = NODES[key];
+
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        </div>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
+
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
+
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
+
+const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+let currentStepNumber = 0;
+
+if (currentKey === "start") {
+  currentStepNumber = 0;
+} else if (fromIndex !== -1) {
+  // user is viewing a recorded step directly
+  currentStepNumber = fromIndex + 1;
+} else if (nextIndex !== -1) {
+  // user moved forward normally to the next screen
+  currentStepNumber = nextIndex + 2;
+} else {
+  // fallback for first real screen after intro
+  currentStepNumber = 1;
+}
+
+const footerStepText = currentKey === "start"
+  ? "Ready to begin"
+  : `Currently on step ${currentStepNumber}`;
+
+const badgeStepText = currentKey === "start"
+  ? "Start"
+  : `Step ${currentStepNumber}`;
+
+const hasPreviousStep = currentKey !== "start";
+
+    updateMeta(false);
+    updatePath();
+    updateRecommendation("", false);
+
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">${escapeHtml(nodeText)}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
+
+          ${nodeNote ? `
+            <div class="note-card">
+              <div class="note-head">
+                <i class="fa-solid fa-bell"></i>
+                Reminder
+              </div>
+              <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
+            </div>
+          ` : ""}
+
+          ${nodeImage ? `
+            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+            </div>
+          ` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+
+   els.stageCard.querySelectorAll(".choice").forEach(btn => {
+  btn.addEventListener("click", () => {
+    els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    const next = btn.dataset.next;
+    const label = btn.dataset.label;
+    const action = btn.dataset.action;
+    const note = btn.dataset.note;
+
+    const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+    const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (fromIndex !== -1) {
+      // user is re-answering an already-saved step
+      path = path.slice(0, fromIndex);
+    } else if (nextIndex !== -1) {
+      // user is continuing normally from the previous step
+      path = path.slice(0, nextIndex + 1);
+    }
+
+    historyStack.push({
+      key: currentKey,
+      path: [...path]
+    });
+
+    if (currentKey !== "start") {
+      path.push({
+        question: nodeText,
+        answer: label,
+        fromKey: currentKey,
+        nextKey: action ? "__final__" : next,
+        finalNode: action ? { action, note } : null
+      });
+    }
+
+    updatePath();
+    updateMeta(false);
+
+    setTimeout(() => {
+      if (action) {
+        renderFinal({ action, note });
+      } else {
+        renderNode(next);
+      }
+    }, 120);
+  });
+});
+  }
+
+function goBack(){
+  currentFinalRecommendation = "";
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  // Case 1: currently on final recommendation
+  if (currentKey === "__final__") {
+    const finalIndex = path.findIndex(item => {
+      if (item.nextKey === "__final__") return true;
+
+      const nextNode = NODES[item.nextKey];
+      return !!nextNode && isFinalNode(nextNode);
+    });
+
+    if (finalIndex === -1) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    // Go back to the actual last question step
+    currentKey = path[finalIndex].fromKey;
+    renderNode(path[finalIndex].fromKey);
+    return;
+  }
+
+  // Case 2: current screen matches a saved step directly (fromKey)
+  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+  if (fromIndex !== -1) {
+    if (fromIndex === 0) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    currentKey = path[fromIndex - 1].fromKey;
+    renderNode(path[fromIndex - 1].fromKey);
+    return;
+  }
+
+  // Case 3: current screen was reached normally from a previous step (nextKey)
+  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+  if (nextIndex !== -1) {
+    currentKey = path[nextIndex].fromKey;
+    renderNode(path[nextIndex].fromKey);
+    return;
+  }
+
+  // Fallback
+  currentKey = "start";
+  renderNode("start");
+}
+  
+  function restart(){
+    path = [];
+    historyStack = [];
+    currentFinalRecommendation = "";
+    currentKey = "start";
+
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
+    updatePath();
+    updateRecommendation("", false);
+    renderNode("start");
+  }
+
+  /* ===== PAGE MODALS + FEEDBACK ONLY ===== */
+
+function openModalAnimated(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
+
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
+
+function closeModalAnimated(id, onClosed) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
+
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
+
+function openComment() {
+  openModalAnimated("commentModal");
+}
+
+function closeComment() {
+  closeModalAnimated("commentModal");
+}
+
+function openHelp() {
+  openModalAnimated("helpModal");
+}
+
+function closeHelp() {
+  closeModalAnimated("helpModal");
+}
+
+function closeAllComments() {
+  closeModalAnimated("allCommentsModal");
+}
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+  if (!ratingStars.length) return;
+
+  ratingStars.forEach(star => {
+    star.onclick = function (e) {
+      e.stopPropagation();
+      selectedRating = Number(this.dataset.value || 0);
+
+      ratingStars.forEach(s => {
+        const val = Number(s.dataset.value || 0);
+        s.classList.toggle("selected", val <= selectedRating);
+      });
+    };
+  });
+}
+
+async function sendComment() {
+  const nameEl = document.getElementById("commentName");
+  const textEl = document.getElementById("commentText");
+  const feedbackMessage = document.getElementById("feedbackMessage");
+
+  const name = (nameEl?.value || "").trim();
+  const comment = (textEl?.value || "").trim();
+
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
+    }
+    return;
+  }
+
+  try {
+    await db.collection(FEEDBACK_COLLECTION).add({
+      name: name || "Anonymous",
+      comment,
+      rating: selectedRating,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    if (nameEl) nameEl.value = "";
+    if (textEl) textEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
+
+    setTimeout(() => {
+      closeComment();
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
+      }
+    }, 900);
+  } catch (err) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
+    }
+  }
+}
+
+async function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const commentsList = document.getElementById("commentsList");
+  if (!commentsList) return;
+
+  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+  const loadComments = async () => {
+    try {
+      const snap = await db
+        .collection(FEEDBACK_COLLECTION)
+        .orderBy("createdAt", "desc")
+        .get();
+
+      if (snap.empty) {
+        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+      } else {
+        commentsList.innerHTML = snap.docs.map(doc => {
+          const data = doc.data() || {};
+          const rating = Number(data.rating || 0);
+          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+          const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+          return `
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      openModalAnimated("allCommentsModal");
+    } catch (err) {
+      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+      openModalAnimated("allCommentsModal");
+    }
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeModalAnimated("commentModal", loadComments);
+  } else {
+    loadComments();
+  }
+}
+
+window.attemptEdit = attemptEdit;
+window.closePasswordModal = closePasswordModal;
+window.closeEditModal = closeEditModal;
+window.checkPassword = checkPassword;
+window.saveEdit = saveEdit;
+window.copyTemplateText = copyTemplateText;
+window.goBack = goBack;
+window.restart = restart;
+window.openImageModal = openImageModal;
+window.closeImageModal = closeImageModal;
+
+/* keep these for header.html buttons */
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
+
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
 });
 
+setTimeout(() => {
+  initRatingStars();
+}, 300);
 
+renderNode("start");
+});
 </script>
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+  <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
+  <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
+</div>
+
 </body>
 </html>
