@@ -496,36 +496,9 @@
         </div>
       </div>
 
-      <div class="field" id="otpSection" style="display:none;">
-        <div class="label-row">
-          <label class="label" for="otp">OTP Code</label>
-          <span class="label-hint">Enter 6-digit code</span>
-        </div>
-        <div class="input-wrap">
-          <i class="fa-solid fa-shield-halved left-icon"></i>
-          <input
-            id="otp"
-            type="text"
-            maxlength="6"
-            inputmode="numeric"
-            placeholder="Enter OTP"
-            autocomplete="one-time-code"
-          >
-        </div>
-      </div>
-
       <button class="primary-btn" id="loginBtn" type="button">
         Sign In
       </button>
-
-      <button class="primary-btn" id="verifyOtpBtn" type="button" style="display:none; margin-top:12px;">
-        Verify OTP
-      </button>
-
-      <div class="resend-row" id="resendRow">
-        <div class="resend-info" id="resendInfo">You can request a new code in 60s.</div>
-        <button class="resend-link" id="resendOtpBtn" type="button" disabled>Resend OTP</button>
-      </div>
 
       <div class="forgot-row" id="forgotRow">
         <button class="forgot-link" id="resetBtn" type="button">Forgot password?</button>
@@ -534,7 +507,7 @@
       <div id="message" class="message"></div>
 
       <div class="foot-note">
-        After successful sign-in, only verified and approved users will be redirected to the main guide page.
+        Only verified, approved, and trusted-device users can access the main guide page.
       </div>
     </section>
   </div>
@@ -556,7 +529,7 @@
     const ALLOWED_DOMAIN = "@fedexfreight.com";
     const APPROVED_USERS_COLLECTION = "approved_users";
     const REDIRECT_AFTER_LOGIN = "index-main.html";
-    const OTP_API = "https://otp-server-1-8xfn.onrender.com";
+    const CHANGE_PASSWORD_PAGE = "change-password.html";
 
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
@@ -565,24 +538,13 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const loginCard = document.querySelector(".login-card");
     const emailEl = document.getElementById("email");
     const passwordEl = document.getElementById("password");
-    const otpEl = document.getElementById("otp");
-    const otpSection = document.getElementById("otpSection");
     const loginBtn = document.getElementById("loginBtn");
-    const verifyOtpBtn = document.getElementById("verifyOtpBtn");
     const resetBtn = document.getElementById("resetBtn");
-    const forgotRow = document.getElementById("forgotRow");
-    const resendRow = document.getElementById("resendRow");
-    const resendInfo = document.getElementById("resendInfo");
-    const resendOtpBtn = document.getElementById("resendOtpBtn");
     const messageEl = document.getElementById("message");
     const togglePasswordBtn = document.getElementById("togglePassword");
     const togglePasswordIcon = document.getElementById("togglePasswordIcon");
-
-    let resendCooldown = null;
-    let resendSecondsLeft = 60;
 
     function showMessage(text, type = "error") {
       messageEl.className = "message " + type;
@@ -615,8 +577,10 @@
       if (isLoading) {
         if (stage === "checking") {
           text = "Checking account access...";
-        } else if (stage === "sending") {
-          text = "Sending security code...";
+        } else if (stage === "device") {
+          text = "Checking trusted device...";
+        } else if (stage === "redirect") {
+          text = "Preparing your workspace...";
         }
       }
 
@@ -625,81 +589,34 @@
         : `Sign In`;
     }
 
-    function setOtpState(isLoading) {
-      verifyOtpBtn.disabled = isLoading;
-      otpEl.disabled = isLoading;
-      verifyOtpBtn.classList.toggle("is-loading", isLoading);
+    function createDeviceId() {
+      if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return window.crypto.randomUUID();
+      }
 
-      verifyOtpBtn.innerHTML = isLoading
-        ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Verifying code...</span></span>`
-        : `Verify OTP`;
+      return "device-" + Date.now() + "-" + Math.random().toString(16).slice(2);
     }
 
-    function startResendCooldown(seconds = 60) {
-      clearInterval(resendCooldown);
-      resendSecondsLeft = seconds;
+    function getDeviceId() {
+      let deviceId = localStorage.getItem("decisionGuideDeviceId");
 
-      resendRow.style.display = "flex";
-      resendOtpBtn.disabled = true;
-      resendInfo.textContent = `You can request a new code in ${resendSecondsLeft}s.`;
+      if (!deviceId) {
+        deviceId = createDeviceId();
+        localStorage.setItem("decisionGuideDeviceId", deviceId);
+      }
 
-      resendCooldown = setInterval(() => {
-        resendSecondsLeft -= 1;
-
-        if (resendSecondsLeft <= 0) {
-          clearInterval(resendCooldown);
-          resendOtpBtn.disabled = false;
-          resendInfo.textContent = "Did not receive the code?";
-          return;
-        }
-
-        resendInfo.textContent = `You can request a new code in ${resendSecondsLeft}s.`;
-      }, 1000);
+      return deviceId;
     }
 
-    function stopResendCooldown() {
-      clearInterval(resendCooldown);
-      resendCooldown = null;
-      resendSecondsLeft = 60;
-      resendRow.style.display = "none";
-      resendOtpBtn.disabled = true;
-      resendOtpBtn.innerHTML = "Resend OTP";
-      resendInfo.textContent = "You can request a new code in 60s.";
-    }
+    function getDeviceLabel() {
+      const ua = navigator.userAgent || "Unknown device";
 
-    function triggerStateTransition() {
-      loginCard.classList.add("state-transition");
-      setTimeout(() => {
-        loginCard.classList.remove("state-transition");
-      }, 260);
-    }
+      if (/Edg\//i.test(ua)) return "Microsoft Edge browser";
+      if (/Chrome\//i.test(ua)) return "Google Chrome browser";
+      if (/Firefox\//i.test(ua)) return "Firefox browser";
+      if (/Safari\//i.test(ua)) return "Safari browser";
 
-    function showOtpStep() {
-      triggerStateTransition();
-      otpSection.style.display = "grid";
-      otpSection.classList.add("fade-in");
-      verifyOtpBtn.style.display = "block";
-      verifyOtpBtn.classList.add("fade-in");
-      resendRow.style.display = "flex";
-      resendRow.classList.add("fade-in");
-      loginBtn.style.display = "none";
-      forgotRow.style.display = "none";
-      emailEl.readOnly = true;
-      passwordEl.readOnly = true;
-      otpEl.focus();
-      startResendCooldown(60);
-    }
-
-    function hideOtpStep() {
-      triggerStateTransition();
-      otpSection.style.display = "none";
-      verifyOtpBtn.style.display = "none";
-      loginBtn.style.display = "block";
-      forgotRow.style.display = "flex";
-      emailEl.readOnly = false;
-      passwordEl.readOnly = false;
-      otpEl.value = "";
-      stopResendCooldown();
+      return "Browser device";
     }
 
     async function checkApprovedUser(email) {
@@ -710,7 +627,9 @@
       if (!docSnap.exists) {
         return {
           allowed: false,
-          reason: "This email is not yet approved for access. Please contact your administrator."
+          reason: "This email is not yet approved for access. Please contact your administrator.",
+          docRef,
+          data: null
         };
       }
 
@@ -719,71 +638,131 @@
       if (data.active === false) {
         return {
           allowed: false,
-          reason: "Your account has been disabled. Please contact your administrator."
+          reason: "Your account has been disabled. Please contact your administrator.",
+          docRef,
+          data
         };
       }
 
       return {
         allowed: true,
+        docRef,
         data
       };
     }
 
-    async function getFreshIdToken() {
-      const user = auth.currentUser;
+    async function handleDeviceCheck(user, userData, docRef) {
+      const deviceId = getDeviceId();
+      const email = normalizeEmail(user.email);
+      const devices = Array.isArray(userData.devices) ? userData.devices : [];
+      const now = Date.now();
+      const deviceLabel = getDeviceLabel();
+      const existingIndex = devices.findIndex(device => device && device.id === deviceId);
+      const existingDevice = existingIndex >= 0 ? devices[existingIndex] : null;
+
+      if (existingDevice && existingDevice.verified === false) {
+        existingDevice.lastAttemptAt = now;
+        existingDevice.label = existingDevice.label || deviceLabel;
+        existingDevice.userAgent = navigator.userAgent || "";
+        devices[existingIndex] = existingDevice;
+        await docRef.update({ devices });
+        await auth.signOut();
+
+        showMessage(
+          "This device is still waiting for admin approval. Please contact your administrator before trying again.",
+          "error"
+        );
+        return false;
+      }
+
+      if (existingDevice && existingDevice.verified !== false) {
+        existingDevice.verified = true;
+        existingDevice.lastLoginAt = now;
+        existingDevice.label = existingDevice.label || deviceLabel;
+        existingDevice.userAgent = navigator.userAgent || "";
+        devices[existingIndex] = existingDevice;
+        await docRef.update({ devices });
+        return true;
+      }
+
+      if (devices.length === 0) {
+        devices.push({
+          id: deviceId,
+          verified: true,
+          label: deviceLabel,
+          userAgent: navigator.userAgent || "",
+          firstTrustedDevice: true,
+          addedAt: now,
+          lastLoginAt: now
+        });
+
+        await docRef.update({ devices });
+        return true;
+      }
+
+      devices.push({
+        id: deviceId,
+        verified: false,
+        label: deviceLabel,
+        userAgent: navigator.userAgent || "",
+        pendingApproval: true,
+        addedAt: now,
+        lastAttemptAt: now
+      });
+
+      await docRef.update({ devices });
+      await auth.signOut();
+
+      showMessage(
+        "New device detected. For security, this device must be approved by an administrator before access is allowed.",
+        "error"
+      );
+      return false;
+    }
+
+    async function continueAfterSecurityChecks(user) {
       if (!user) {
-        throw new Error("No signed-in user was found.");
-      }
-      return await user.getIdToken(true);
-    }
-
-    async function sendOtpRequest() {
-      const idToken = await getFreshIdToken();
-
-      let response;
-      try {
-        response = await fetch(`${OTP_API}/api/send-otp`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${idToken}`
-          }
-        });
-      } catch (error) {
-        throw new Error("Unable to connect to the OTP server right now. Please try again in a moment.");
+        showMessage("Unable to sign in right now.");
+        return;
       }
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Unable to send OTP right now.");
+      const email = normalizeEmail(user.email);
+
+      if (!isAllowedFedExEmail(email)) {
+        await auth.signOut();
+        showMessage("Please use your FedEx Freight email address.");
+        return;
       }
 
-      return data;
-    }
-
-    async function verifyOtpRequest(otp) {
-      const idToken = await getFreshIdToken();
-
-      let response;
-      try {
-        response = await fetch(`${OTP_API}/api/verify-otp`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${idToken}`
-          },
-          body: JSON.stringify({ otp })
-        });
-      } catch (error) {
-        throw new Error("Unable to connect to the OTP server right now. Please try again in a moment.");
+      if (!user.emailVerified) {
+        await user.sendEmailVerification();
+        await auth.signOut();
+        showMessage(
+          "Your email is not verified yet. A verification email has been sent to your FedEx Freight inbox. Please verify your email first, then sign in again.",
+          "success"
+        );
+        return;
       }
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Unable to verify OTP right now.");
+      const approvalCheck = await checkApprovedUser(email);
+
+      if (!approvalCheck.allowed) {
+        await auth.signOut();
+        showMessage(approvalCheck.reason || "You are not authorized to access this system.");
+        return;
       }
 
-      return data;
+      setLoadingState(true, "device");
+      const deviceAllowed = await handleDeviceCheck(user, approvalCheck.data, approvalCheck.docRef);
+      if (!deviceAllowed) return;
+
+      if (approvalCheck.data.forcePasswordChange === true) {
+        window.location.href = CHANGE_PASSWORD_PAGE;
+        return;
+      }
+
+      setLoadingState(true, "redirect");
+      window.location.href = REDIRECT_AFTER_LOGIN;
     }
 
     togglePasswordBtn.addEventListener("click", () => {
@@ -795,20 +774,13 @@
     });
 
     passwordEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter" && loginBtn.style.display !== "none") {
+      if (e.key === "Enter") {
         loginBtn.click();
-      }
-    });
-
-    otpEl.addEventListener("keypress", (e) => {
-      if (e.key === "Enter" && verifyOtpBtn.style.display !== "none") {
-        verifyOtpBtn.click();
       }
     });
 
     loginBtn.addEventListener("click", async () => {
       clearMessage();
-      hideOtpStep();
 
       const email = normalizeEmail(emailEl.value);
       const password = passwordEl.value;
@@ -829,35 +801,7 @@
         await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
 
         const result = await auth.signInWithEmailAndPassword(email, password);
-        const user = result.user;
-
-        if (!user) {
-          showMessage("Unable to sign in right now.");
-          return;
-        }
-
-        if (!user.emailVerified) {
-          await user.sendEmailVerification();
-          await auth.signOut();
-          showMessage(
-            "Your email is not verified yet. A verification email has been sent to your FedEx Freight inbox. Please verify your email first, then sign in again.",
-            "success"
-          );
-          return;
-        }
-
-        const approvalCheck = await checkApprovedUser(user.email);
-
-        if (!approvalCheck.allowed) {
-          await auth.signOut();
-          showMessage(approvalCheck.reason || "You are not authorized to access this system.");
-          return;
-        }
-
-        setLoadingState(true, "sending");
-        await sendOtpRequest();
-        showOtpStep();
-        showMessage("An OTP has been sent to your approved email. Enter the code below to continue.", "success");
+        await continueAfterSecurityChecks(result.user);
       } catch (error) {
         let friendlyMessage = error.message || "Unable to sign in right now.";
 
@@ -876,57 +820,6 @@
         showMessage(friendlyMessage);
       } finally {
         setLoadingState(false);
-      }
-    });
-
-    verifyOtpBtn.addEventListener("click", async () => {
-      clearMessage();
-
-      const otp = String(otpEl.value || "").trim();
-
-      if (!otp) {
-        showMessage("Please enter the OTP sent to your email.");
-        return;
-      }
-
-      if (!/^\d{6}$/.test(otp)) {
-        showMessage("Please enter a valid 6-digit OTP.");
-        return;
-      }
-
-      try {
-        setOtpState(true);
-
-        await verifyOtpRequest(otp);
-        await auth.currentUser.getIdToken(true);
-
-        showMessage("OTP verified successfully. Redirecting now...", "success");
-
-        setTimeout(() => {
-          window.location.href = REDIRECT_AFTER_LOGIN;
-        }, 1500);
-      } catch (error) {
-        showMessage(error.message || "Unable to verify OTP right now.");
-      } finally {
-        setOtpState(false);
-      }
-    });
-
-    resendOtpBtn.addEventListener("click", async () => {
-      clearMessage();
-
-      try {
-        resendOtpBtn.disabled = true;
-        resendOtpBtn.innerHTML = `<span class="btn-loading-content"><span class="btn-spinner"></span><span>Sending...</span></span>`;
-
-        await sendOtpRequest();
-        showMessage("A new OTP has been sent to your approved email.", "success");
-        resendOtpBtn.innerHTML = `Resend OTP`;
-        startResendCooldown(60);
-      } catch (error) {
-        resendOtpBtn.innerHTML = `Resend OTP`;
-        resendOtpBtn.disabled = false;
-        showMessage(error.message || "Unable to resend OTP right now.");
       }
     });
 
@@ -962,23 +855,20 @@
     });
 
     auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        hideOtpStep();
-        return;
-      }
+      if (!user) return;
 
-      if (!isAllowedFedExEmail(user.email)) {
+      const email = normalizeEmail(user.email);
+
+      if (!isAllowedFedExEmail(email)) {
         await auth.signOut();
         showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
         return;
       }
 
-      if (!user.emailVerified) {
-        return;
-      }
+      if (!user.emailVerified) return;
 
       try {
-        const approvalCheck = await checkApprovedUser(user.email);
+        const approvalCheck = await checkApprovedUser(email);
 
         if (!approvalCheck.allowed) {
           await auth.signOut();
