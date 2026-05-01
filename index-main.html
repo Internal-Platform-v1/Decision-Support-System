@@ -1380,26 +1380,43 @@
     window.location.replace(LOGIN_PAGE);
   }
 
-  function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  function getDeviceId() {
+    let deviceId = localStorage.getItem("deviceId");
 
-  async function getFreshTokenWithRetry(user, retries = 5, delay = 1200) {
-    let tokenResult = null;
-
-    for (let i = 0; i < retries; i++) {
-      tokenResult = await user.getIdTokenResult(true);
-
-      if (tokenResult?.claims?.otp_verified === true) {
-        return tokenResult;
-      }
-
-      if (i < retries - 1) {
-        await wait(delay);
-      }
+    if (!deviceId) {
+      deviceId = crypto.randomUUID();
+      localStorage.setItem("deviceId", deviceId);
     }
 
-    return tokenResult;
+    return deviceId;
+  }
+
+  async function handleDeviceCheck(user, userData) {
+    const deviceId = getDeviceId();
+    const email = normalizeEmail(user.email);
+    const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(email);
+    const devices = Array.isArray(userData.devices) ? userData.devices : [];
+    const existingDevice = devices.find(device => device && device.id === deviceId);
+
+    if (!existingDevice) {
+      devices.push({
+        id: deviceId,
+        verified: true,
+        addedAt: Date.now(),
+        lastLoginAt: Date.now(),
+        userAgent: navigator.userAgent || "Unknown browser"
+      });
+
+      await docRef.update({ devices });
+      return true;
+    }
+
+    existingDevice.verified = true;
+    existingDevice.lastLoginAt = Date.now();
+    existingDevice.userAgent = navigator.userAgent || existingDevice.userAgent || "Unknown browser";
+
+    await docRef.update({ devices });
+    return true;
   }
 
   async function guardProtectedPage() {
@@ -1428,10 +1445,16 @@
             return;
           }
 
-          const tokenResult = await getFreshTokenWithRetry(user, 5, 1200);
+          const userData = approvalCheck.data || {};
 
-          if (!tokenResult?.claims?.otp_verified) {
+          const deviceAllowed = await handleDeviceCheck(user, userData);
+          if (!deviceAllowed) {
             await denyAccessAndRedirect();
+            return;
+          }
+
+          if (userData.forcePasswordChange === true) {
+            window.location.replace("change-password.html");
             return;
           }
 
