@@ -1,1018 +1,876 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Steps on How to Check EPRS</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-:root{
-  --bg:#f4f7fb;
-  --card:#ffffff;
-  --muted:#64748b;
-  --accent:#4d148c;
-  --accent-dark:#3a0f6b;
-  --orange:#ff6600;
-  font-family: Inter, ui-sans-serif, system-ui;
-}
-
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  background:linear-gradient(180deg,var(--bg),#eef6ff);
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-}
-
-header img{height:40px;}
-
-.nav-tabs{display:flex; gap:30px;}
-.tab{
-  color:white;
-  text-decoration:none;
-  font-weight:600;
-  font-size:16px;
-  position:relative;
-  padding:6px 0;
-}
-.tab.active::after{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:-6px;
-  width:100%;
-  height:3px;
-  background:var(--orange);
-  border-radius:3px;
-}
-
-/* ---------- BANNER ---------- */
-.welcome-section{
-  background: linear-gradient(90deg,#4D148C 0%,#330d5e 50%,#FF6600 100%);
-  background-size:200% 200%;
-  animation: shimmer 15s ease infinite;
-  color:white;
-  padding:20px 40px;
-}
-
-@keyframes shimmer{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
-
-.welcome-content h1{
-  margin:0;
-  font-size:2rem;
-  font-weight:800;
-}
-
-.welcome-content p{
-  margin-top:6px;
-  opacity:0.9;
-}
-
-/* ---------- MAIN CARD ---------- */
-.main{
-  flex:1;
-  padding:40px;
-  display:flex;
-  justify-content:center;
-}
-
-.step-card{
-  background:white;
-  width:100%;
-  max-width:900px;
-  padding:40px;
-  border-radius:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.08);
-  position:relative;
-  overflow:hidden;
-}
-
-.step-counter{
-  font-size:14px;
-  font-weight:600;
-  color:var(--muted);
-  margin-bottom:15px;
-}
-
-.step-title{
-  font-size:22px;
-  font-weight:700;
-  margin-bottom:20px;
-  color:var(--accent-dark);
-}
-
-.step-content{
-  font-size:16px;
-  line-height:1.6;
-  white-space:pre-line;
-  margin-bottom:30px;
-}
-
-/* Progress Bar */
-.progress-container{
-  height:6px;
-  background:#e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
-  margin-bottom:30px;
-}
-
-.progress-bar{
-  height:100%;
-  background:linear-gradient(90deg,var(--accent),var(--orange));
-  width:0%;
-  transition:width 0.4s ease;
-}
-
-/* Navigation */
-.nav-buttons{
-  display:flex;
-  justify-content:space-between;
-}
-
-
-/* Fade animation */
-.fade{
-  animation:fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateX(10px);}
-  to{opacity:1; transform:translateX(0);}
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  text-align:center;
-  padding:16px;
-}
-
-/* =========================
-   PROFESSIONAL MODALS
-========================= */
-/* MODALS */
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  z-index:1000;
-}
-.modal-content {
-  background:white;
-  border-radius:10px;
-  padding:24px;
-  width:100%;
-  max-width:500px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-.modal-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-.modal-close {
-  font-size:22px;
-  cursor:pointer;
-  color:var(--muted);
-}
-.modal-close:hover {color:var(--accent);}
-
-/* STAR RATING */
-.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
-.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
-.rating-star:hover{transform:scale(1.3);}
-.rating-star.selected{color:var(--accent-dark);}
-
-/* COMMENTS */
-.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
-.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
-.comment-list-item:last-child{border:none;}
-input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
-
-/* TIME CALENDAR */
-#timeCalendarPopup {
-  display:none;
-  position:absolute;
-  top:60px; right:20px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  padding:16px;
-  width:310px;
-  z-index:900;
-}
-#timeCalendarPopup h3 {
-  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
-  margin-bottom:8px;
-}
-.calendar-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#f0f0f0;
-  padding:8px;
-  border-radius:6px;
-}
-.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
-.calendar-title{font-weight:700;}
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
-}
-.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
-.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
-.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
-.calendar-grid .day:hover{background:#f0f0f0;}
-
-/* COMMENT LINK */
-.link-text{
-  color:var(--accent-dark);
-  cursor:pointer;
-  text-decoration:underline;
-  font-size:14px;
-  margin-top:10px;
-  display:block;
-}
-
-/* STAR RATING COLORS */
-.rating-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.rating-star {
-  cursor: pointer;
-  font-size: 28px;
-  color: #ccc; /* default grey */
-  transition: color .2s, transform .2s;
-}
-
-.rating-star:hover {
-  transform: scale(1.3);
-}
-
-.rating-star.selected {
-  color: #FF6600; /* FedEx orange */
-}
-
-/* footer alignment */
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-/* COMMENT LIST STAR COLORS */
-#commentsList .stars {
-  color: #FF6600; /* FedEx orange */
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-  z-index:1;
-}
-header img{height:40px; animation:logoFlyIn 1s ease-out forwards; opacity:0;}
-.nav-tabs{display:flex; gap:30px;}
-.tab{color:white; text-decoration:none; font-weight:600; font-size:16px; position:relative; padding:6px 0; transition: opacity 0.2s;}
-.tab:hover{opacity:0.8;}
-.tab.active::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:3px;background:#ff6600;border-radius:3px;}
-
-.header-icons{display:flex;align-items:center;gap:20px;}
-#clockBtn{cursor:pointer; display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; color:white; position:relative;}
-#clockBtn:hover{transform:scale(1.1);}
-.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
-.header-icon:hover{transform:scale(1.3);}
-.header-icon.active{color:var(--accent-dark);}
-
-/* ---------- HEADER ANIMATIONS ---------- */
-@keyframes logoFlyIn {0%{opacity:0;transform:translateX(-50px) scale(0.8);}100%{opacity:1;transform:translateX(0) scale(1);}}
-header::after{
-  content:"";
-  position:absolute; top:0; left:-100%;
-  width:100%; height:100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform:skewX(-20deg);
-  animation:sweep 1s ease-out forwards;
-  z-index:0;
-  opacity:0.2;
-}
-@keyframes sweep{0%{left:-100%;}100%{left:100%;}}
-
-
-/* ---------- FED-EX ORANGE & PURPLE BANNER ---------- */
-.welcome-section {
-  background: linear-gradient(90deg, #4D148C 0%, #330d5e 50%, #FF6600 100%);
-  background-size: 200% 200%;
-  animation: fedexShimmer 15s ease infinite; /* slow shimmer */
-  color: white;
-  border-bottom:1px solid var(--border);
-  padding:26px 10px;  /* compact height */
-  text-align: left;     /* left-aligned text */
-  margin-bottom: 20px;
-  box-shadow: 0 5px 15px rgba(77, 20, 140, 0.15); /* subtle shadow */
-  border-radius: 0;     /* straight edges */
-}
-
-/* Shimmer animation */
-@keyframes fedexShimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.welcome-content h1 {
-  font-size: 2rem;  /* compact heading */
-  margin-bottom: 6px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.welcome-content p {
-  font-size: 1rem;  /* smaller subtitle */
-  max-width: 600px;
-  margin: 0;
-  opacity: 0.9;
-  line-height: 1.5;
-}
-/* ---------- MAIN ---------- */
-.message-box{
-  background:white;
-  padding:40px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-
-  max-width:900px;
-  width:100%;
-  margin:auto;
-}
-
-.btn{
-  background:var(--accent);
-  color:white;
-  border:none;
-  padding:10px 18px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-.btn:hover{background:var(--accent-dark);}
-
-/* ---------- VOLUME STEP BACKGROUND ---------- */
-.volume-content-wrapper{
-  background:#f1f5f9; /* same soft grey used in directory table */
-  border-radius:12px;
-  padding:30px;
-  margin-top:30px;
-  margin-bottom:30px;
-}
-
-/*pop up time style*/
-/* POPUP TIME STYLE (Windows-like) */
-.popup-time{
-  font-size:34px;
-  font-weight:600;
-  text-align:left;
-  margin-bottom:4px;
-  color:#111;
-}
-
-#timeCalendarPopup {
-  background:white;}
-
-.popup-date{
-  font-size:14px;
-  color:#555;
-  margin-bottom:14px;
-  text-align:left;
-}
-/* =================================
-   PROFESSIONAL STEP IMAGE DISPLAY
-================================= */
-
-.step-images{
-  grid-template-columns:1fr;
-  gap:22px;
-  margin:30px 0;
-  width:100%;
-}
-
-
-/* IMAGE STYLE */
-.step-images img{
-  max-width:100%;
-  height:auto;
-  max-height:420px;
-  border-radius:12px;
-  box-shadow:0 15px 35px rgba(0,0,0,0.15);
-  border:1px solid #e5e7eb;
-
-  transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease,
-    opacity 0.4s ease;
-  animation: imageFadeIn 0.5s ease;
-}
-
-/* Hover zoom animation */
-.step-images img:hover{
-  transform:scale(1.03);
-  box-shadow:0 20px 50px rgba(0,0,0,0.25);
-}
-
-/* Image appear animation */
-@keyframes imageFadeIn{
-  from{
-    opacity:0;
-    transform:translateY(15px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-/* =========================
-   IMAGE FULLSCREEN PREVIEW
-========================= */
-
-.image-preview-modal{
-  display:none;
-  position:fixed;
-  z-index:2000;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.9);
-  justify-content:center;
-  align-items:center;
-  animation:fadeIn 0.3s ease;
-}
-
-.image-preview-modal img{
-  max-width:90%;
-  max-height:90%;
-  border-radius:10px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-.image-preview-close{
-  position:absolute;
-  top:20px;
-  right:40px;
-  font-size:40px;
-  color:white;
-  cursor:pointer;
-  font-weight:bold;
-}
-/* STEP NAVIGATION */
-.step-nav{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  justify-content:center;
-  margin-bottom:20px;
-}
-
-.step-dot{
-  width:32px;
-  height:32px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:8px;
-  background:#e5e7eb;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:600;
-  transition:all 0.2s ease;
-}
-
-.step-dot:hover{
-  background:#4d148c;
-  color:white;
-}
-
-.step-dot.active{
-  background:#ff6600;
-  color:white;
-}
-
-/* NAVIGATION BUTTONS */
-.nav-buttons{
-  display:flex;
-  justify-content:space-between;
-  margin-top:30px;
-}
-
-.nav-buttons button{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 22px;
-  border:none;
-  border-radius:10px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.25s ease;
-}
-
-/* PREVIOUS BUTTON */
-#prevBtn{
-  background:#e5e7eb;
-  color:#374151;
-}
-
-#prevBtn:hover{
-  background:#d1d5db;
-}
-
-/* NEXT BUTTON */
-#nextBtn{
-  background:#4d148c;
-  color:white;
-}
-
-#nextBtn:hover{
-  background:#3a0f6b;
-  transform:translateY(-1px);
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-}
-
-/* FINISH BUTTON */
-#nextBtn.finish{
-  background:#10b981;
-}
-
-#nextBtn.finish:hover{
-  background:#059669;
-}
-
-/* DISABLED STATE */
-.nav-buttons button:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  box-shadow:none;
-  transform:none;
-}
-
-
-/* =========================
-   PRESENTATION STYLE
-========================= */
-
-.slide-wrapper{
-  max-width:850px;
-  margin:auto;
-}
-
-/* TOP AREA */
-
-.slide-top{
-  margin-bottom:25px;
-}
-
-/* TITLE */
-
-.step-title{
-  font-size:30px;
-  font-weight:800;
-  color:#4d148c;
-  margin-bottom:18px;
-}
-
-/* BODY */
-
-.slide-body{
-  padding:10px 0;
-}
-
-/* TEXT */
-
-.step-content{
-  font-size:17px;
-  line-height:1.7;
-  margin-bottom:30px;
-}
-
-/* IMAGE STACK */
-
-.step-images{
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
-
-/* =========================
-   SLIDE TRANSITION SYSTEM
-========================= */
-
-.slide-body{
-  position:relative;
-  overflow:hidden;
-  min-height:260px;
-}
-
-/* default state */
-
-.slide-body.animate-left{
-  animation:slideLeft .45s ease;
-}
-
-.slide-body.animate-right{
-  animation:slideRight .45s ease;
-}
-
-/* NEXT slide */
-
-@keyframes slideLeft{
-
-  from{
-    opacity:0;
-    transform:translateX(60px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-
-}
-
-/* PREVIOUS slide */
-
-@keyframes slideRight{
-
-  from{
-    opacity:0;
-    transform:translateX(-60px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-
-}
-
-/* NAVIGATION */
-
-.slide-navigation{
-  display:flex;
-  justify-content:space-between;
-  margin-top:40px;
-}
-
-.slide-navigation button{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 26px;
-  border-radius:10px;
-  border:none;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .25s ease;
-}
-
-/* PREVIOUS */
-
-#prevBtn{
-  background:#e5e7eb;
-  color:#374151;
-}
-
-#prevBtn:hover{
-  background:#d1d5db;
-}
-
-/* NEXT */
-
-#nextBtn{
-  background:#4d148c;
-  color:white;
-}
-
-#nextBtn:hover{
-  background:#3a0f6b;
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* FINISH BUTTON */
-
-#nextBtn.finish{
-  background:#10b981;
-}
-
-#nextBtn.finish:hover{
-  background:#059669;
-}
-
-/* =========================
-   STEP PROGRESS DOTS
-========================= */
-
-.step-dots{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-  margin-top:14px;
-}
-
-.step-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:#d1d5db;
-  transition:all .25s ease;
-}
-
-.step-dot.active{
-  background:#ff6600;
-  transform:scale(1.3);
-}
-
-/* =========================
-   PRESENTATION MODE
-========================= */
-
-.presentation-mode .header-icons,
-.presentation-mode nav,
-.presentation-mode footer{
-  display:none;
-}
-
-.presentation-mode .main{
-  padding:10px;
-}
-
-.presentation-mode .message-box{
-  max-width:1100px;
-  box-shadow:none;
-}
-
-.presentation-mode .step-title{
-  font-size:36px;
-}
-
-.presentation-mode .step-content{
-  font-size:20px;
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  padding:4px 28px;   /* reduce height */
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  font-size:15px;
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Steps on How to Check EPRS</title>
+
+  <script>
+    window.SITE_BASE = "../";
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root{
+      --purple:#4d148c;
+      --purple2:#6d28d9;
+      --orange:#ff6600;
+      --dark:#07111f;
+      --dark2:#0c1728;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --soft:#f8fafc;
+      --success:#16a34a;
+      --shadow:0 24px 80px rgba(2,6,23,.22);
+      --shadow2:0 14px 35px rgba(15,23,42,.10);
+      font-family:"Inter",system-ui,sans-serif;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.32), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.22), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(77,20,140,.20), transparent 30%),
+        linear-gradient(180deg,#08111f 0%,#0c1728 48%,#07111f 100%);
+      color:var(--ink);
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 60%);
+      z-index:0;
+    }
+
+    a{text-decoration:none;color:inherit}
+
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    .shell{
+      width:min(calc(100% - 32px),1500px);
+      margin:22px auto 28px;
+    }
+
+    .glass-frame{
+      background:rgba(255,255,255,.64);
+      border:1px solid rgba(255,255,255,.72);
+      border-radius:34px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      overflow:hidden;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      padding:30px;
+      color:white;
+      background:
+        radial-gradient(circle at right top, rgba(255,102,0,.34), transparent 32%),
+        linear-gradient(135deg,#4d148c 0%,#2f145a 58%,#ff6600 135%);
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-90px;
+      top:-110px;
+      width:280px;
+      height:280px;
+      border-radius:50%;
+      background:rgba(255,255,255,.12);
+    }
+
+    .hero-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:24px;
+      align-items:center;
+    }
+
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      padding:9px 13px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:16px;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(32px,4vw,58px);
+      line-height:.95;
+      font-weight:900;
+      letter-spacing:-.07em;
+      max-width:820px;
+    }
+
+    .hero p{
+      margin:16px 0 0;
+      max-width:820px;
+      color:rgba(255,255,255,.84);
+      line-height:1.75;
+      font-size:15px;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:24px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:48px;
+      padding:0 17px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.18);
+      color:white;
+      font-size:13px;
+      font-weight:900;
+      transition:.2s ease;
+      cursor:pointer;
+      text-decoration:none;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.04);
+    }
+
+    .btn.white{
+      background:white;
+      color:var(--purple);
+      box-shadow:0 18px 36px rgba(0,0,0,.16);
+    }
+
+    .btn.orange{
+      background:linear-gradient(135deg,#ff6600,#f59e0b);
+      border:none;
+      color:white;
+      box-shadow:0 18px 34px rgba(255,102,0,.24);
+    }
+
+    .hero-card{
+      width:300px;
+      padding:18px;
+      border-radius:26px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.20);
+      backdrop-filter:blur(14px);
+      box-shadow:0 20px 50px rgba(0,0,0,.14);
+    }
+
+    .hero-card-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      margin-bottom:14px;
+    }
+
+    .hero-stat{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .stat{
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .stat b{
+      display:block;
+      font-size:24px;
+      letter-spacing:-.04em;
+    }
+
+    .stat span{
+      display:block;
+      margin-top:3px;
+      font-size:11px;
+      color:rgba(255,255,255,.78);
+      font-weight:800;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns:1fr 360px;
+      gap:20px;
+      padding:20px;
+    }
+
+    .main-panel,
+    .side-panel{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .section-card{
+      background:white;
+      border:1px solid #dbe4f0;
+      border-radius:28px;
+      box-shadow:var(--shadow2);
+      overflow:hidden;
+    }
+
+    .section-head{
+      padding:20px 22px;
+      border-bottom:1px solid #eef2f7;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      background:linear-gradient(180deg,#fff,#fbfdff);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .section-title i{
+      width:38px;
+      height:38px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg,var(--purple),var(--purple2));
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      color:#475569;
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .slide-shell{
+      padding:22px;
+    }
+
+    .slide-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+
+    .step-counter{
+      font-size:12px;
+      font-weight:900;
+      color:#475569;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+
+    .progress-container{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+      flex:1;
+      min-width:230px;
+    }
+
+    .progress-bar{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#4d148c 0%, #6d28d9 48%, #ff6600 100%);
+      transition:width .35s ease;
+    }
+
+    .slide-body{
+      position:relative;
+      min-height:520px;
+      padding:26px;
+      border-radius:26px;
+      border:1px solid #e5edf7;
+      background:
+        radial-gradient(circle at top right, rgba(109,40,217,.08), transparent 30%),
+        linear-gradient(180deg,#fff,#fbfdff);
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .slide-body::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:5px;
+      background:linear-gradient(180deg,#4d148c,#ff6600);
+    }
+
+    .step-title{
+      margin:0;
+      font-size:clamp(28px,3vw,44px);
+      line-height:1.05;
+      letter-spacing:-.06em;
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .step-content{
+      margin-top:18px;
+      font-size:15px;
+      line-height:1.85;
+      color:#475569;
+      white-space:pre-line;
+      max-width:960px;
+    }
+
+    .step-images{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      margin-top:24px;
+    }
+
+    .step-images img{
+      width:100%;
+      max-height:460px;
+      object-fit:contain;
+      border-radius:20px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      box-shadow:0 18px 45px rgba(15,23,42,.14);
+      cursor:zoom-in;
+      transition:.25s ease;
+    }
+
+    .step-images img:hover{
+      transform:scale(1.015);
+      box-shadow:0 24px 60px rgba(15,23,42,.22);
+    }
+
+    .slide-body.animate-left{
+      animation:slideLeft .38s ease;
+    }
+
+    .slide-body.animate-right{
+      animation:slideRight .38s ease;
+    }
+
+    @keyframes slideLeft{
+      from{opacity:0;transform:translateX(40px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+
+    @keyframes slideRight{
+      from{opacity:0;transform:translateX(-40px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+
+    .slide-navigation{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .nav-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 20px;
+      border:none;
+      border-radius:16px;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .nav-btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .nav-btn.prev{
+      background:#f8fafc;
+      color:#334155;
+      border:1px solid #dbe4f0;
+    }
+
+    .nav-btn.next{
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      color:#fff;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+    }
+
+    .nav-btn.finish{
+      background:linear-gradient(135deg,#16a34a,#22c55e);
+    }
+
+    .nav-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+
+    .step-dots{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
+      margin-top:16px;
+    }
+
+    .step-dot{
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:#d1d5db;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .step-dot:hover{
+      transform:scale(1.3);
+      background:#6d28d9;
+    }
+
+    .step-dot.active{
+      width:30px;
+      background:#ff6600;
+    }
+
+    .side-panel{
+      position:sticky;
+      top:18px;
+      align-self:start;
+    }
+
+    .side-card{
+      background:white;
+      border:1px solid #dbe4f0;
+      border-radius:26px;
+      padding:18px;
+      box-shadow:var(--shadow2);
+    }
+
+    .side-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:14px;
+      font-weight:900;
+      margin-bottom:12px;
+    }
+
+    .side-title i{
+      color:var(--purple2);
+    }
+
+    .reminder-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .reminder{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:13px;
+      border-radius:17px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      color:#475569;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .reminder i{
+      color:var(--orange);
+      margin-top:3px;
+    }
+
+    .quick-jump{
+      display:grid;
+      gap:10px;
+    }
+
+    .jump-btn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:11px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      color:#475569;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.18s ease;
+      text-align:left;
+    }
+
+    .jump-btn:hover{
+      transform:translateY(-1px);
+      background:#eef4ff;
+      color:#1d4ed8;
+      border-color:#cfe0ff;
+    }
+
+    .jump-btn span{
+      width:24px;
+      height:24px;
+      border-radius:9px;
+      display:grid;
+      place-items:center;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:11px;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .copy-card{
+      margin-top:12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+    }
+
+    .copy-text{
+      font-size:13px;
+      line-height:1.6;
+      font-weight:800;
+      color:#0f172a;
+      word-break:break-word;
+    }
+
+    .copy-btn{
+      border:0;
+      cursor:pointer;
+      border-radius:12px;
+      padding:9px 12px;
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      transition:.18s ease;
+      white-space:nowrap;
+    }
+
+    .copy-btn:hover{transform:translateY(-1px)}
+    .copy-btn.copied{background:#dcfce7;color:#166534}
+
+    .image-preview-modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      background:rgba(2,6,23,.88);
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      backdrop-filter:blur(8px);
+    }
+
+    .image-preview-modal img{
+      max-width:94vw;
+      max-height:90vh;
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 30px 80px rgba(0,0,0,.45);
+    }
+
+    .image-preview-close{
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:30px;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .image-preview-close:hover{
+      background:rgba(255,255,255,.2);
+    }
+
+    @media(max-width:1100px){
+      .hero-grid,
+      .content{grid-template-columns:1fr}
+      .hero-card{width:100%}
+      .side-panel{position:relative;top:0}
+    }
+
+    @media(max-width:720px){
+      .shell{width:min(calc(100% - 20px),1500px);margin:16px auto}
+      .hero{padding:22px}
+      .content{padding:14px}
+      .slide-body{padding:22px;min-height:460px}
+      .section-head{align-items:flex-start;flex-direction:column}
+      .copy-card{flex-direction:column}
+      .copy-btn{width:100%}
+    }
+  </style>
 </head>
-<body>
 
-<header>
-  <div style="display:flex;align-items:center;gap:40px;">
-    <a href="../index.html">
-      <img src="../fedex.png" alt="FedEx Logo">
-    </a>
-    <nav class="nav-tabs">
-   	<a href="../index.html" class="tab active">Home</a>
-	<a href="../case-directory.html" class="tab">Case Directory</a>
-	<a href="../ebs-response-template.html" class="tab">EBS Response</a>
-	<a href="../volume-application.html" class="tab">Volume Application</a>  
-    </nav>
-  </div>
-  
-    <div class="header-icons">
-    <div id="clockBtn">
-      <i class="fa-regular fa-clock"></i>
-      <span id="clockText">--:-- PM</span>
-    </div>
-    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
-    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
-  </div>
-  
-</header>
+<body data-page="">
+  <div class="page">
+    <div id="site-header"></div>
 
+    <div class="shell">
+      <div class="glass-frame">
 
-<div class="main">
-  <div class="message-box">
+        <section class="hero">
+          <div class="hero-grid">
+            <div>
+              <div class="kicker">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+                Pricing Research
+              </div>
 
-    <div class="welcome-section">
-      <div class="welcome-content">
-        <h1>Steps on How to Check EPRS</h1>
-        <p>Follow the guided process to Check EPRS.</p>
+              <h1>Steps on How to Check ePRS</h1>
+              <p>
+                Use this guided walkthrough to check ePRS agreements, verify effective versions, review surcharge terms, and understand which agreement details should be used for pricing validation.
+              </p>
+
+              <div class="hero-actions">
+                <a class="btn white" href="https://fdx.highspot.com" target="_blank">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  Open SolutionPoint
+                </a>
+                <a class="btn orange" href="https://myapps.secure.fedex.com/pricing/eprs" target="_blank">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  Open ePRS
+                </a>
+              </div>
+            </div>
+
+            <div class="hero-card">
+              <div class="hero-card-title">
+                <i class="fa-solid fa-chart-simple"></i>
+                Guide Snapshot
+              </div>
+              <div class="hero-stat">
+                <div class="stat">
+                  <b>19</b>
+                  <span>Steps</span>
+                </div>
+                <div class="stat">
+                  <b>6</b>
+                  <span>Images</span>
+                </div>
+                <div class="stat">
+                  <b>2</b>
+                  <span>Search Options</span>
+                </div>
+                <div class="stat">
+                  <b>1</b>
+                  <span>Agreement Flow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="content">
+          <main class="main-panel">
+            <section class="section-card">
+              <div class="section-head">
+                <div class="section-title">
+                  <i class="fa-solid fa-display"></i>
+                  Guided ePRS Walkthrough
+                </div>
+                <div class="badge">
+                  <i class="fa-solid fa-keyboard"></i>
+                  Arrow keys supported
+                </div>
+              </div>
+
+              <div class="slide-shell">
+                <div class="slide-top">
+                  <div class="step-counter" id="stepCounter"></div>
+                  <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                  </div>
+                </div>
+
+                <div class="slide-body fade" id="slideBody">
+                  <h2 class="step-title" id="stepTitle"></h2>
+                  <div class="step-content" id="stepContent"></div>
+                  <div class="step-images" id="stepImages"></div>
+                </div>
+
+                <div class="slide-navigation">
+                  <button class="nav-btn prev" id="prevBtn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Previous
+                  </button>
+
+                  <button class="nav-btn next" id="nextBtn">
+                    Next
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
+
+                <div id="stepDots" class="step-dots"></div>
+              </div>
+            </section>
+          </main>
+
+          <aside class="side-panel">
+            <section class="side-card">
+              <div class="side-title">
+                <i class="fa-solid fa-route"></i>
+                Quick Jump
+              </div>
+
+              <div class="quick-jump">
+                <button class="jump-btn" onclick="goToStep(1)"><span>1</span> Open SolutionPoint</button>
+                <button class="jump-btn" onclick="goToStep(5)"><span>5</span> Search Options</button>
+                <button class="jump-btn" onclick="goToStep(7)"><span>7</span> Agreement Versions</button>
+                <button class="jump-btn" onclick="goToStep(11)"><span>11</span> Important Notes</button>
+                <button class="jump-btn" onclick="goToStep(13)"><span>13</span> Surcharge Terms</button>
+                <button class="jump-btn" onclick="goToStep(19)"><span>19</span> Proposal Attachment</button>
+              </div>
+            </section>
+
+            <section class="side-card">
+              <div class="side-title">
+                <i class="fa-solid fa-circle-info"></i>
+                Key Reminders
+              </div>
+
+              <div class="reminder-list">
+                <div class="reminder">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <span>Always validate the actual effective agreement version.</span>
+                </div>
+                <div class="reminder">
+                  <i class="fa-solid fa-ban"></i>
+                  <span>Do not use Dup Load / Dupe Load Successful agreements for pricing exception validation.</span>
+                </div>
+                <div class="reminder">
+                  <i class="fa-solid fa-calendar-check"></i>
+                  <span>Customer signature date may control the actual effective date.</span>
+                </div>
+                <div class="reminder">
+                  <i class="fa-solid fa-file-contract"></i>
+                  <span>Use Customer Signed Agreement first, then review Legal Modified Agreement when needed.</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="side-card">
+              <div class="side-title">
+                <i class="fa-solid fa-link"></i>
+                Direct Links
+              </div>
+
+              <div class="copy-card">
+                <div class="copy-text" id="solutionPointLink">https://fdx.highspot.com</div>
+                <button class="copy-btn" onclick="copyText('solutionPointLink', this)">Copy</button>
+              </div>
+
+              <div class="copy-card">
+                <div class="copy-text" id="eprsLink">https://myapps.secure.fedex.com/pricing/eprs</div>
+                <button class="copy-btn" onclick="copyText('eprsLink', this)">Copy</button>
+              </div>
+            </section>
+          </aside>
+        </div>
       </div>
     </div>
 
-   <div class="volume-content-wrapper">
-
-<div class="slide-wrapper">
-
-<div class="slide-top">
-
-<div class="step-counter" id="stepCounter"></div>
-
-<div class="progress-container">
-<div class="progress-bar" id="progressBar"></div>
-
-</div>
-
-
-</div>
-
-<div class="slide-body fade">
-
-<h2 class="step-title" id="stepTitle"></h2>
-
-<div class="step-content" id="stepContent"></div>
-
-<div class="step-images" id="stepImages"></div>
-
-</div>
-
-<div id="decisionButtons" style="display:none; margin-top:25px; text-align:center;"></div>
-
-<div class="slide-navigation">
-
-<button id="prevBtn">
-<i class="fa-solid fa-arrow-left"></i>
-Previous
-</button>
-
-<button id="nextBtn">
-Next
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-<div id="stepDots" class="step-dots"></div>
-</div>
-
-</div>
-</div>
-</div>
-
-<footer>
-  <p><span style="font-weight:600;">© 2025 EBS Operations</span></p>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:12px;color:white;">
-      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
-    </span>
-  </div>
-</footer>
-
-<!-- HELP Modal -->
-<div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
-    <ul>
-      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
-      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
-      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
-      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
-    </ul>
-    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
-  </div>
-</div>
-
-<!-- COMMENT MODALS -->
-<div id="commentModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
-    </div>
-    <div class="rating-container">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-    <div class="comment-modal-footer">
-      <button class="btn" onclick="sendComment()">Send</button>
-      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-    </div>
-  </div>
-</div>
-
-<div id="allCommentsModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
-    </div>
-    <div id="commentsList"></div>
-  </div>
-</div>
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-<!-- TIME & CALENDAR POPUP -->
-<div id="timeCalendarPopup">
-
-  <div class="popup-time" id="popupTime"></div>
-  <div class="popup-date" id="popupDate"></div>
-
-  <div class="calendar-header">
-    <span id="prevMonth">‹</span>
-    <div id="monthYear" class="calendar-title"></div>
-    <span id="nextMonth">›</span>
+    <div id="site-footer"></div>
   </div>
 
-  <div class="calendar-grid" id="calendarGrid"></div>
+  <div id="imagePreviewModal" class="image-preview-modal">
+    <span class="image-preview-close">×</span>
+    <img id="imagePreview" src="" alt="Preview">
+  </div>
 
-</div>
+  <script src="../assets/js/header-loader.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer-loader.js"></script>
 
-
-<!-- IMAGE PREVIEW MODAL -->
-<div id="imagePreviewModal" class="image-preview-modal">
-  <span class="image-preview-close">×</span>
-  <img id="imagePreview" src="" alt="Preview">
-</div>
-
-<script>
-/* =========================
-   STEPS DATA
-========================= */
-const steps = {
-1: { title:"Open SolutionPoint", text:`Using iSPI Browser/Citrix Browser, go to the SolutionPoint homepage
+  <script>
+    const steps = {
+      1: { title:"Open SolutionPoint", text:`Using iSPI Browser/Citrix Browser, go to the SolutionPoint homepage
 
 https://fdx.highspot.com
 
 or access Direct Link
 
 https://myapps.secure.fedex.com/pricing/eprs`},
-2: { title:"Click Pricing", text:`Click on “Pricing” (same as to view a PRS agreement)`},
-3: { title:"Choose Agreement Type", text:`Choose between ePRS for ePRS Agreement or PRS Rerate for Tariff`},
-4: { title:"Select Level ID", text:`Click the Level ID in the Research Type dropdown menu`},
-5: { title:"Search Options", text:`(1st Option) - Using Country ID, Group or Subgroup ID
+      2: { title:"Click Pricing", text:`Click on “Pricing” (same as to view a PRS agreement)`},
+      3: { title:"Choose Agreement Type", text:`Choose between ePRS for ePRS Agreement or PRS Rerate for Tariff`},
+      4: { title:"Select Level ID", text:`Click the Level ID in the Research Type dropdown menu`},
+      5: { title:"Search Options", text:`(1st Option) - Using Country ID, Group or Subgroup ID
 
 - If you search by the Agreement Number shown on the freight bill, it is possible to pull the Dup Load version instead of the actual effective version.
 - ePRS agreements are not normally loaded at actual account code level, so searching an account code will not pull the agreement.
@@ -1022,11 +880,11 @@ https://myapps.secure.fedex.com/pricing/eprs`},
 
 NOTE:
 If no ePRS agreement is found and the one available doesn't provide helpful information using the Country Code, use Group Level Code or Sub-Group Level Code.`},
-6: { title:"Start Searching", text:`1. Once you have the correct level pricing loaded on, start searching for the agreement
+      6: { title:"Start Searching", text:`1. Once you have the correct level pricing loaded on, start searching for the agreement
 2. Change the Research Type: to Level ID
 3. Enter your Level number - Country Level code
 4. Click: Search / Find Next.`},
-7: { title:"Agreement Versions", text:`The ePRS screen will show the different versions of the agreement.
+      7: { title:"Agreement Versions", text:`The ePRS screen will show the different versions of the agreement.
 
 This screen will show the Freight pricing but also Ground and Express, all three can be included in “Combo” so you will have to open the Agreement to determine if Freight is included.
 
@@ -1041,211 +899,211 @@ Do NOT use the Dup Load version as this version may only have part of the agreem
 (10/14/2022) - DO NOT USE Dupe Load Successful agreement in verifying the Pricing exceptions of customers.
 
 This type of agreement is only loaded for internal use – meaning an error occurred when pricing was loaded in the backend and a dupe agreement was created to correct it.`},
-8: { title:"Agreement Version Logic", text:`Version numbers are included in the agreement number, however, version numbers are not necessarily an indication of the order the agreements were effective.
+      8: { title:"Agreement Version Logic", text:`Version numbers are included in the agreement number, however, version numbers are not necessarily an indication of the order the agreements were effective.
 
 Actual effective dates of the agreement version are based on when the customer signed the agreement, so if the customer signed version 102 after they signed 103, 102 is the current version.
 
 NOTE: Always select the agreement under the Customer Signed Agreement.
 
 If Customer Signed Agreement is not available or doesn't include the surcharge, you may review Legal Modified Agreement (e.g. 08497324)`},
-9: { title:"Search Using Agreement Number", text:`(2nd Option) - Using the actual agreement number
+      9: { title:"Search Using Agreement Number", text:`(2nd Option) - Using the actual agreement number
 
 A second option to pull an ePRS agreement is by hovering over “Research” to review the drop down menu and clicking Research.
 
 This is normally used when you are unable to find a specific agreement number`},
-10: { title:"Agreement Search Procedure", text:`1. Always update the Start Date at the bottom of the screen; if you do not update the date, your search will be very limited.
+      10: { title:"Agreement Search Procedure", text:`1. Always update the Start Date at the bottom of the screen; if you do not update the date, your search will be very limited.
 2. Adjust the date first (go all the way to 2013/2014)
 3. Click the circle next to the option you are going to search (Select Agreement # to search)
 4. Enter the agreement number
 5. Click Search at the top`},
-11: { title:"Important Agreement Notes", text:`The typed effective date in the agreement is not when the agreement becomes effective, the date the customer signs the agreement is the effective date.
+      11: { title:"Important Agreement Notes", text:`The typed effective date in the agreement is not when the agreement becomes effective, the date the customer signs the agreement is the effective date.
 
 - Current pricing can be affected by past versions of the agreement. For example, fuel surcharge and surcharge exceptions might pull from an older version published, but sales chose to keep those rules.
 - Wording in ePRS agreements are very specific. ePRS agreements are entered into the system by the system, so there is no Pricing Analyst to “interpret” what Sales intentions are.
 - ePRS agreements have hard cancel dates, while PRS and Contracts do not. You must pay attention to Term Dates
 - Surcharge Exceptions and AMC charges are often shown as discount off`},
-12: { title:"ePRS Agreement", text:`The Table of Contents at the top of the page list the different services the agreement is for.
+      12: { title:"ePRS Agreement", text:`The Table of Contents at the top of the page list the different services the agreement is for.
 - The typed EFFECTIVE DATE is not valid.
 - The CUSTOMER SIGNATURE DATE is the correct effective date if it's LATER than the effective date
 
 NOTE: The later date is the actual effective date
 - Note the AMC Discount off`},
-13: { title:"ePRS Surcharge Terms", text:`This agreement was signed by the customer on 8/13/2018.`, img:"images/snippet1.png"},
-14: { title:"Surcharge Term Rules", text:`The agreement includes Term 1 and Term 2 for the surcharge exceptions.
+      13: { title:"ePRS Surcharge Terms", text:`This agreement was signed by the customer on 8/13/2018.`, img:"images/snippet1.png"},
+      14: { title:"Surcharge Term Rules", text:`The agreement includes Term 1 and Term 2 for the surcharge exceptions.
 
 Term 1 is for the exceptions listed in the agreement. These surcharge exceptions will apply for the customer starting on 8/13/2018, but will end 12 months after that date.
 
 NOTE: If Term 1 start date is later than the customer signature date, Term 1 effective date is followed.
 Term 2 does not have an end date. Per the notes under Term 2, FXF Rules will apply to all surcharges.`, img:"images/snippet2.png"},
-15: { title:"US Export Pricing Example", text:`The pricing example below covers:
+      15: { title:"US Export Pricing Example", text:`The pricing example below covers:
 US Export Outbound prepaid (OP) shipping from Territory(US) to Geography(CA) with the 3P bill-to being a US Country (CY) Level.
 Third Party (3P) US Export from Territory(US) to Geography(CA) with the 3P bill-to being a US Country (CY) Level.`, img:"images/snippet3.png"},
-16: { title:"US Import Pricing Example", text:`The pricing example below covers:
+      16: { title:"US Import Pricing Example", text:`The pricing example below covers:
 US Import Inbound Collect (IC) shipping from Geography (CA) to Territory (US) with the 3P bill-to being a US Country (CY) Level.
 Third Party (3P) US Import shipping from Geography (CA) to Territory (US) with the 3P bill-to being a US Country (CY) Level.`, img:"images/snippet4.png"},
-17: { title:"CA Export Pricing Example", text:`The pricing example below covers:
+      17: { title:"CA Export Pricing Example", text:`The pricing example below covers:
 CA Export Outbound Prepaid (OP) shipping from Territory (CA) to Geography (US) the 3P bill-to being a CA Country (CY) Level.
 Third Party (3P) CA Export shipping from Territory (CA) to Geography (US) the 3P bill-to being a CA Country (CY) Level.`, img:"images/snippet5.png"},
-18: { title:"CA Import Pricing Example", text:`The pricing example below covers:
+      18: { title:"CA Import Pricing Example", text:`The pricing example below covers:
 CA Import Inbound Collect (IC) shipping from Geography (US) to Territory (CA) with the 3P bill-to being a CA Country (CY) Level.
 Third Party (3P) CA Import shipping from Geography (US) to Territory (CA) with the 3P bill-to being a CA Country (CY) Level.`, img:"images/snippet6.png"},
-19: { title:"Proposal ID Attachment", text:`Some contract documents/attachments are uploaded under Proposal ID
+      19: { title:"Proposal ID Attachment", text:`Some contract documents/attachments are uploaded under Proposal ID
 Example for Ryan Transportation fuel, cannot be located in XDRive but available under the proposal number
 
 RESOLUTION:
 Click Proposal ID > Click Attachments > Scroll all the way down and look for Attachments section`}
-};
+    };
 
-/* =========================
-   ELEMENTS
-========================= */
-let currentStep = 1;
-let stepHistory = [];
+    let currentStep = 1;
+    let stepHistory = [];
+    const stepOrder = Object.keys(steps).map(Number);
 
-const stepOrder = Object.keys(steps).map(Number);
+    const stepTitle = document.getElementById("stepTitle");
+    const stepContent = document.getElementById("stepContent");
+    const stepImages = document.getElementById("stepImages");
+    const stepCounter = document.getElementById("stepCounter");
+    const progressBar = document.getElementById("progressBar");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const stepDots = document.getElementById("stepDots");
+    const slideBody = document.getElementById("slideBody");
 
-const stepTitle = document.getElementById("stepTitle");
-const stepContent = document.getElementById("stepContent");
-const stepImages = document.getElementById("stepImages");
-const stepCounter = document.getElementById("stepCounter");
-const progressBar = document.getElementById("progressBar");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const stepDots = document.getElementById("stepDots");
-const decisionButtons = document.getElementById("decisionButtons");
+    function renderStep(){
+      const step = steps[currentStep];
+      const index = stepOrder.indexOf(currentStep);
 
-/* =========================
-   RENDER STEP
-========================= */
-function renderStep(){
-  const step = steps[currentStep];
-  const index = stepOrder.indexOf(currentStep);
+      stepTitle.textContent = step.title;
+      stepContent.textContent = step.text;
 
-  // Update text
-  stepTitle.textContent = step.title;
-  stepContent.innerHTML = step.text;
+      stepImages.innerHTML = "";
+      if(step.img){
+        const image = document.createElement("img");
+        image.src = step.img;
+        image.alt = step.title;
+        stepImages.appendChild(image);
+      }
 
-  // Update images
-  stepImages.innerHTML = "";
-  if(step.img){
-    const image = document.createElement("img");
-    image.src = step.img;
-    stepImages.appendChild(image);
-  }
+      stepCounter.textContent = `Step ${index + 1} of ${stepOrder.length}`;
+      progressBar.style.width = ((index + 1) / stepOrder.length * 100) + "%";
 
-  // Decision buttons
-  decisionButtons.innerHTML = "";
-  if(step.buttons){
-    decisionButtons.style.display = "flex";
-    decisionButtons.style.gap = "15px";
-    decisionButtons.style.justifyContent = "center";
-    nextBtn.style.display = "none";
-    step.buttons.forEach(btn => {
-      const button = document.createElement("button");
-      button.className = "btn";
-      button.textContent = btn.label;
-      button.onclick = () => { currentStep = btn.goto; renderStep(); };
-      decisionButtons.appendChild(button);
+      prevBtn.disabled = index === 0;
+
+      if(index === stepOrder.length - 1){
+        nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
+        nextBtn.classList.add("finish");
+      } else {
+        nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
+        nextBtn.classList.remove("finish");
+      }
+
+      renderDots();
+    }
+
+    nextBtn.onclick = () => {
+      const index = stepOrder.indexOf(currentStep);
+      stepHistory.push(currentStep);
+
+      if(index < stepOrder.length - 1){
+        currentStep = stepOrder[index + 1];
+      } else {
+        alert("Checking EPRS Guide Completed.");
+        currentStep = stepOrder[0];
+        stepHistory = [];
+      }
+
+      animateSlide("left");
+      renderStep();
+    };
+
+    prevBtn.onclick = () => {
+      if(stepHistory.length === 0) return;
+      currentStep = stepHistory.pop();
+      animateSlide("right");
+      renderStep();
+    };
+
+    function goToStep(stepNumber){
+      if(!steps[stepNumber]) return;
+      stepHistory.push(currentStep);
+      currentStep = stepNumber;
+      animateSlide("left");
+      renderStep();
+    }
+
+    function animateSlide(direction){
+      slideBody.classList.remove("animate-left","animate-right");
+      void slideBody.offsetWidth;
+      slideBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
+    }
+
+    function renderDots(){
+      stepDots.innerHTML = "";
+      stepOrder.forEach(key => {
+        const dot = document.createElement("div");
+        dot.className = "step-dot";
+        if(key === currentStep) dot.classList.add("active");
+        dot.onclick = () => {
+          stepHistory.push(currentStep);
+          currentStep = key;
+          animateSlide("left");
+          renderStep();
+        };
+        stepDots.appendChild(dot);
+      });
+    }
+
+    document.addEventListener("click", e => {
+      const previewModal = document.getElementById("imagePreviewModal");
+      const previewImage = document.getElementById("imagePreview");
+
+      if(e.target.matches(".step-images img")){
+        previewModal.style.display = "flex";
+        previewImage.src = e.target.src;
+        document.body.style.overflow = "hidden";
+      }
+
+      if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
+        previewModal.style.display = "none";
+        previewImage.src = "";
+        document.body.style.overflow = "";
+      }
     });
-  } else {
-    decisionButtons.style.display = "none";
-    nextBtn.style.display = "inline-flex";
-  }
 
-  // Counter & progress
-  stepCounter.textContent = `Step ${index + 1} of ${stepOrder.length}`;
-  progressBar.style.width = ((index + 1)/stepOrder.length*100)+"%";
+    document.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight") nextBtn.click();
+      if(e.key === "ArrowLeft") prevBtn.click();
 
-  // Buttons
-  prevBtn.disabled = index===0;
-  if(index === stepOrder.length-1){
-    nextBtn.textContent = "Finish";
-    nextBtn.classList.add("finish");
-  } else {
-    nextBtn.textContent = "Next";
-    nextBtn.classList.remove("finish");
-  }
+      if(e.key === "Escape"){
+        const previewModal = document.getElementById("imagePreviewModal");
+        const previewImage = document.getElementById("imagePreview");
+        previewModal.style.display = "none";
+        previewImage.src = "";
+        document.body.style.overflow = "";
+      }
+    });
 
-  // Dots
-  renderDots();
-}
+    function copyText(id, btn){
+      const el = document.getElementById(id);
+      if(!el) return;
 
-/* =========================
-   NEXT / PREV BUTTONS
-========================= */
-nextBtn.onclick = () => {
-  const index = stepOrder.indexOf(currentStep);
-  stepHistory.push(currentStep);
+      const text = el.innerText.trim();
+      if(!text) return;
 
-  if(index < stepOrder.length-1){
-    currentStep = stepOrder[index+1];
-  } else {
-    alert("Checking EPRS Guide Completed.");
-    currentStep = stepOrder[0];
-    stepHistory = [];
-  }
-  animateSlide("left");
-  renderStep();
-};
+      navigator.clipboard.writeText(text).then(() => {
+        const old = btn.textContent;
+        btn.classList.add("copied");
+        btn.textContent = "Copied ✓";
 
-prevBtn.onclick = () => {
-  if(stepHistory.length === 0) return;
-  currentStep = stepHistory.pop();
-  animateSlide("right");
-  renderStep();
-};
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.textContent = old;
+        }, 1400);
+      }).catch(() => {
+        alert("Copy failed. Please copy manually.");
+      });
+    }
 
-/* =========================
-   SLIDE ANIMATION
-========================= */
-function animateSlide(direction){
-  const slide = document.querySelector(".slide-body");
-  slide.classList.remove("animate-left","animate-right");
-  void slide.offsetWidth;
-  slide.classList.add(direction==="left"?"animate-left":"animate-right");
-}
-
-/* =========================
-   STEP DOTS
-========================= */
-function renderDots(){
-  stepDots.innerHTML="";
-  stepOrder.forEach((key,i)=>{
-    const dot = document.createElement("div");
-    dot.className="step-dot";
-    if(key===currentStep) dot.classList.add("active");
-    dot.onclick = ()=>{ currentStep = key; renderStep(); };
-    stepDots.appendChild(dot);
-  });
-}
-
-/* =========================
-   IMAGE PREVIEW
-========================= */
-document.addEventListener("click", e => {
-  const previewModal = document.getElementById("imagePreviewModal");
-  const previewImage = document.getElementById("imagePreview");
-  if(e.target.matches(".step-images img")){
-    previewModal.style.display = "flex";
-    previewImage.src = e.target.src;
-  }
-  if(e.target.matches(".image-preview-close") || e.target.id==="imagePreviewModal"){
-    previewModal.style.display = "none";
-  }
-});
-
-/* =========================
-   KEYBOARD CONTROLS
-========================= */
-document.addEventListener("keydown", e => {
-  if(e.key==="ArrowRight") nextBtn.click();
-  if(e.key==="ArrowLeft") prevBtn.click();
-});
-
-/* =========================
-   INITIALIZE
-========================= */
-renderStep();
-</script>
+    renderStep();
+  </script>
 </body>
 </html>
