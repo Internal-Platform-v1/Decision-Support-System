@@ -15,6 +15,10 @@
   <link rel="stylesheet" href="../assets/css/header-footer-style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+  <!-- Firebase required for shared header Feedback / Comments -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
   <style>
     :root{
       --purple:#4d148c;
@@ -33,6 +37,10 @@
     }
 
     *{box-sizing:border-box}
+
+    html{
+      scroll-behavior:smooth;
+    }
 
     body{
       margin:0;
@@ -394,42 +402,6 @@
       color:#6d28d9;
     }
 
-    .copy-card{
-      margin-top:12px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      padding:14px;
-      border-radius:18px;
-      background:#f8fafc;
-      border:1px dashed #cbd5e1;
-    }
-
-    .copy-text{
-      font-size:13px;
-      line-height:1.6;
-      font-weight:800;
-      color:#0f172a;
-      word-break:break-word;
-    }
-
-    .copy-btn{
-      border:0;
-      cursor:pointer;
-      border-radius:12px;
-      padding:9px 12px;
-      background:#111827;
-      color:#fff;
-      font-size:12px;
-      font-weight:900;
-      transition:.18s ease;
-      white-space:nowrap;
-    }
-
-    .copy-btn:hover{transform:translateY(-1px)}
-    .copy-btn.copied{background:#dcfce7;color:#166534}
-
     .side-panel{
       position:sticky;
       top:18px;
@@ -546,6 +518,173 @@
       color:#111827;
     }
 
+    /* Shared header modal compatibility from working guide */
+    #commentModal,
+    #allCommentsModal,
+    #helpModal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.52);
+      justify-content:center;
+      align-items:center;
+      padding:0 24px;
+      z-index:2147483647;
+      backdrop-filter:blur(8px);
+      overflow-y:auto;
+    }
+
+    #commentModal .modal-content,
+    #allCommentsModal .modal-content,
+    #helpModal .modal-content{
+      width:100%;
+      background:#fff;
+      border-radius:28px;
+      padding:26px;
+      box-shadow:0 24px 80px rgba(2,6,23,.18);
+      max-height:min(84vh, 900px);
+      overflow:auto;
+      border:1px solid rgba(148,163,184,.16);
+      margin:110px auto 32px;
+    }
+
+    #commentModal .feedback-modal{
+      max-width:640px;
+      border-radius:28px;
+      padding:20px 20px 22px;
+    }
+
+    #allCommentsModal .modal-content{
+      max-width:760px;
+    }
+
+    #helpModal .help-modal{
+      max-width:760px;
+      border-radius:30px;
+      padding:18px;
+    }
+
+    #commentModal .modal-header,
+    #allCommentsModal .modal-header,
+    #helpModal .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      margin-bottom:14px;
+      color:#0f172a;
+    }
+
+    #commentModal .modal-close,
+    #allCommentsModal .modal-close,
+    #helpModal .modal-close{
+      cursor:pointer;
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#64748b;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+      transition:.2s ease;
+      flex-shrink:0;
+      font-size:22px;
+      line-height:1;
+    }
+
+    #commentModal .modal-close:hover,
+    #allCommentsModal .modal-close:hover,
+    #helpModal .modal-close:hover{
+      color:#0f172a;
+      background:#eef2ff;
+    }
+
+    #commentModal .rating-container{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      margin:16px 0 18px;
+    }
+
+    #commentModal .rating-star{
+      cursor:pointer;
+      font-size:26px;
+      color:#d1d5db;
+      transition:transform .18s ease, color .18s ease;
+    }
+
+    #commentModal .rating-star:hover{
+      transform:translateY(-1px) scale(1.06);
+    }
+
+    #commentModal .rating-star.selected{
+      color:#ff6600;
+    }
+
+    #commentModal input,
+    #commentModal textarea{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+      padding:14px 16px;
+      color:#0f172a;
+      font-size:14px;
+      transition:.18s ease;
+      font-family:inherit;
+    }
+
+    #commentModal input{
+      margin-top:4px;
+      margin-bottom:10px;
+    }
+
+    #commentModal textarea{
+      min-height:120px;
+      resize:vertical;
+      margin-top:0;
+    }
+
+    #commentModal input:focus,
+    #commentModal textarea:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+    }
+
+    #commentModal .link-text{
+      color:#4d148c;
+      cursor:pointer;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    #commentModal .link-text:hover{
+      text-decoration:underline;
+    }
+
+    #allCommentsModal .comment-list-item{
+      padding:14px 0;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+
+    #allCommentsModal .comment-list-item:last-child{
+      border-bottom:none;
+    }
+
+    #allCommentsModal .stars{
+      color:#ff6600;
+      font-size:18px;
+      margin-bottom:6px;
+      display:block;
+    }
+
     @media(max-width:1100px){
       .hero-grid,
       .content{grid-template-columns:1fr}
@@ -559,8 +698,30 @@
       .content{padding:14px}
       .step{grid-template-columns:1fr}
       .section-head{align-items:flex-start;flex-direction:column}
-      .copy-card{flex-direction:column}
-      .copy-btn{width:100%}
+
+      #commentModal,
+      #allCommentsModal,
+      #helpModal{
+        padding:0 14px;
+      }
+
+      #commentModal .modal-content,
+      #allCommentsModal .modal-content,
+      #helpModal .modal-content{
+        padding:20px;
+        border-radius:22px;
+        margin:96px auto 20px;
+      }
+
+      #commentModal .feedback-modal{
+        padding:18px;
+        border-radius:24px;
+      }
+
+      #helpModal .help-modal{
+        padding:16px;
+        border-radius:24px;
+      }
     }
   </style>
 </head>
@@ -659,7 +820,7 @@
                     <p>
                       Open the CZAR Rater website and follow the instructions to create or change your password.
                     </p>
-                    <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank">
+                    <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="margin-top:14px;">
                       <i class="fa-solid fa-arrow-up-right-from-square"></i>
                       Open CZAR Rater
                     </a>
@@ -882,5 +1043,24 @@
   <script src="../assets/js/header-loader.js"></script>
   <script src="../assets/js/header.js"></script>
   <script src="../assets/js/footer-loader.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (typeof firebase !== "undefined") {
+        if (!firebase.apps.length) {
+          firebase.initializeApp({
+            apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+            authDomain: "bdgg-database.firebaseapp.com",
+            projectId: "bdgg-database",
+            storageBucket: "bdgg-database.appspot.com",
+            messagingSenderId: "43574975434",
+            appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+          });
+        }
+
+        window.db = firebase.firestore();
+      }
+    });
+  </script>
 </body>
 </html>
