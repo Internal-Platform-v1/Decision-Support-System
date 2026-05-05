@@ -1,771 +1,886 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Base Rater Guide</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Base Rater Guide</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    window.SITE_BASE = "../";
+  </script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-
-<style>
-
-:root{
-  --accent:#4D148C;
-  --accent-dark:#3a0f6b;
-  --fedex-orange:#FF6600;
-  --bg:#f4f7fb;
-}
-
-body{
-  margin:0;
-  font-family:Inter, system-ui;
-  background:linear-gradient(180deg,var(--bg),#eef6ff);
-}
-
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-header img{
-  height:40px;
-}
-
-.main{
-  padding:40px;
-  display:flex;
-  justify-content:center;
-}
-
-.container{
-  max-width:1100px;
-  width:100%;
-}
-
-.page-title{
-  background:linear-gradient(90deg,#4D148C,#FF6600);
-  color:white;
-  padding:25px;
-  border-radius:10px;
-  margin-bottom:25px;
-}
-
-.page-title h1{
-  margin:0;
-}
-
-.card{
-  background:white;
-  border-radius:10px;
-  padding:25px;
-  margin-bottom:20px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
-}
-
-.card h2{
-  margin-top:0;
-  color:var(--accent);
-}
-
-.step{
-  margin-bottom:15px;
-  padding-left:25px;
-  position:relative;
-}
-
-.step::before{
-  content:"✔";
-  position:absolute;
-  left:0;
-  color:var(--fedex-orange);
-  font-weight:bold;
-}
-
-.note{
-  background:#fff5eb;
-  border-left:5px solid var(--fedex-orange);
-  padding:15px;
-  border-radius:6px;
-  margin-top:15px;
-}
-
-.example{
-  background:#f8fafc;
-  border-left:5px solid var(--accent);
-  padding:15px;
-  border-radius:6px;
-  margin-top:15px;
-}
-
-.btn{
-  display:inline-block;
-  margin-top:10px;
-  padding:10px 18px;
-  background:var(--fedex-orange);
-  color:white;
-  text-decoration:none;
-  border-radius:6px;
-  font-weight:600;
-}
-
-.btn i{
-  margin-left:6px;
-}
-
-.btn:hover{
-  background:#e55a00;
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-}
-
-</style>
-</head>
-
-
-<!-- this is the header codes that can be used to other guides -->
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <header>
-    <div style="display:flex;align-items:center;gap:40px;">
-      <a href="../index.html">
-        <img src="../fedex.png" alt="FedEx Logo">
-      </a>
-      <nav class="nav-tabs">
-      <a href="../index.html" class="tab active">Home</a>
-      <a href="../case-directory.html" class="tab">Case Directory</a>
-      <a href="../ebs-response-template.html" class="tab">EBS Response</a>
-      <a href="../volume-application.html" class="tab">Volume Application</a> 
-      </nav>
-    </div>
-  
-    <div class="header-icons">
-    <div id="clockBtn">
-      <i class="fa-regular fa-clock"></i>
-      <span id="clockText">--:-- PM</span>
-    </div>
-    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
-    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
-  </div>
-  
-</header>
-
-<!-- HELP Modal -->
-<div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
-    <ul>
-      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
-      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
-      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
-      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
-    </ul>
-    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
-  </div>
-</div>
-
-<!-- COMMENT MODALS -->
-<div id="commentModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
-    </div>
-    <div class="rating-container">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-    <div class="comment-modal-footer">
-      <button class="btn" onclick="sendComment()">Send</button>
-      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-    </div>
-  </div>
-</div>
-
-<div id="allCommentsModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
-    </div>
-    <div id="commentsList"></div>
-  </div>
-</div>
-
-<!-- TIME & CALENDAR POPUP -->
-<div id="timeCalendarPopup">
-
-  <div class="popup-time" id="popupTime"></div>
-  <div class="popup-date" id="popupDate"></div>
-
-  <div class="calendar-header">
-    <span id="prevMonth">‹</span>
-    <div id="monthYear" class="calendar-title"></div>
-    <span id="nextMonth">›</span>
-  </div>
-
-  <div class="calendar-grid" id="calendarGrid"></div>
-
-</div>
-
-<script>
-/* =========================
-   CALENDAR LOGIC
-========================= */
-
-function updateClock(){
-  const now = new Date();
-
-  // HEADER TIME (Hour + Minute only)
-  const headerTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).format(now);
-
-  // POPUP TIME (Hour + Minute + Second)
-  const popupTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupDate = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(now);
-
-  // Update header
-  document.getElementById("clockText").textContent = headerTime;
-
-  // Update popup
-  document.getElementById("popupTime").textContent = popupTime;
-  document.getElementById("popupDate").textContent = popupDate;
-}
-// START CLOCK
-updateClock();
-setInterval(updateClock, 1000);
-
-
-const clockBtn = document.getElementById("clockBtn");
-const calendarPopup = document.getElementById("timeCalendarPopup");
-const calendarGrid = document.getElementById("calendarGrid");
-const monthYear = document.getElementById("monthYear");
-
-let currentDate = new Date();
-
-clockBtn.onclick = function(e){
-  e.stopPropagation();
-  calendarPopup.style.display =
-    calendarPopup.style.display === "block" ? "none" : "block";
-  renderCalendar(currentDate);
-};
-
-document.addEventListener("click", function(){
-  calendarPopup.style.display = "none";
-});
-
-document.getElementById("prevMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-};
-
-document.getElementById("nextMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-};
-
-function renderCalendar(date){
-  calendarGrid.innerHTML = "";
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  monthYear.textContent =
-    date.toLocaleString("en-PH", { month: "long", year: "numeric" });
-
-  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  dayNames.forEach(d=>{
-    const el = document.createElement("div");
-    el.className="day-name";
-    el.textContent=d;
-    calendarGrid.appendChild(el);
-  });
-
-  for(let i=0;i<firstDay;i++){
-    const empty=document.createElement("div");
-    calendarGrid.appendChild(empty);
-  }
-
- const today = new Date(
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date())
-);
-
-  for(let d=1; d<=daysInMonth; d++){
-    const day=document.createElement("div");
-    day.className="day";
-    day.textContent=d;
-
-    if(
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ){
-      day.classList.add("today");
+  <style>
+    :root{
+      --purple:#4d148c;
+      --purple2:#6d28d9;
+      --orange:#ff6600;
+      --dark:#07111f;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --soft:#f8fafc;
+      --success:#16a34a;
+      --shadow:0 24px 80px rgba(2,6,23,.16);
+      --shadow2:0 14px 35px rgba(15,23,42,.08);
+      --radius:28px;
+      font-family:"Inter",system-ui,sans-serif;
     }
 
-    calendarGrid.appendChild(day);
-  }
-}
-/* =========================
-   MODALS
-========================= */
-
-document.getElementById("helpIcon").onclick = () =>
-  document.getElementById("helpModal").style.display = "flex";
-
-document.getElementById("commentIcon").onclick = () => {
-  clearCommentForm();
-  document.getElementById("commentModal").style.display = "flex";
-};
-
-function closeHelp(){document.getElementById("helpModal").style.display="none";}
-function closeComment(){document.getElementById("commentModal").style.display="none";}
-function closeAllComments(){document.getElementById("allCommentsModal").style.display="none";}
-
-
-/* =========================
-   FEEDBACK SYSTEM
-========================= */
-
-let selectedRating = 0;
-
-document.querySelectorAll('.rating-star').forEach(star=>{
-  star.onclick=function(){
-    selectedRating=parseInt(this.dataset.value);
-    document.querySelectorAll('.rating-star').forEach(s=>
-      s.classList.toggle('selected', parseInt(s.dataset.value)<=selectedRating)
-    );
-  };
-});
-
-
-function sendComment(){
-  const name = document.getElementById('commentName').value.trim();
-  const comment = document.getElementById('commentText').value.trim();
-
-  if(selectedRating===0){
-    alert("Select a rating.");
-    return;
-  }
-
-  db.collection("feedback").add({
-    rating:selectedRating,
-    name:name||"Anonymous",
-    comment:comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>{
-    alert("Saved!");
-    clearCommentForm();
-  }).catch(()=>alert("Save failed."));
-}
-
-
-function clearCommentForm(){
-  selectedRating=0;
-  document.getElementById('commentName').value="";
-  document.getElementById('commentText').value="";
-  document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));
-}
-
-
-let unsubscribeListener=null;
-
-function showAllComments(){
-  const listEl=document.getElementById('commentsList');
-  listEl.innerHTML="Loading…";
-
-  if(unsubscribeListener) unsubscribeListener();
-
-  unsubscribeListener=db.collection("feedback")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snap=>{
-      listEl.innerHTML="";
-      if(snap.empty){
-        listEl.innerHTML="<p>No feedback yet.</p>";
-      }
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const div=document.createElement('div');
-        div.className="comment-list-item";
-        div.innerHTML=`
-          <div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div>
-          <strong>${d.name}</strong>
-          <p>${d.comment}</p>
-        `;
-        listEl.appendChild(div);
-      });
-      document.getElementById('allCommentsModal').style.display='flex';
-    });
-}
-</script>
-
-<style>
-/* =========================
-   PROFESSIONAL MODALS
-========================= */
-/* MODALS */
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  z-index:1000;
-}
-.modal-content {
-  background:white;
-  border-radius:10px;
-  padding:24px;
-  width:100%;
-  max-width:500px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-.modal-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-.modal-close {
-  font-size:22px;
-  cursor:pointer;
-  color:var(--muted);
-}
-.modal-close:hover {color:var(--accent);}
-
-/* STAR RATING */
-.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
-.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
-.rating-star:hover{transform:scale(1.3);}
-.rating-star.selected{color:var(--accent-dark);}
-
-/* COMMENTS */
-.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
-.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
-.comment-list-item:last-child{border:none;}
-input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
-
-/* TIME CALENDAR */
-#timeCalendarPopup {
-  display:none;
-  position:absolute;
-  top:60px; right:20px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  padding:16px;
-  width:310px;
-  z-index:900;
-}
-#timeCalendarPopup h3 {
-  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
-  margin-bottom:8px;
-}
-.calendar-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#f0f0f0;
-  padding:8px;
-  border-radius:6px;
-}
-.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
-.calendar-title{font-weight:700;}
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
-}
-.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
-.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
-.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
-.calendar-grid .day:hover{background:#f0f0f0;}
-
-/* COMMENT LINK */
-.link-text{
-  color:var(--accent-dark);
-  cursor:pointer;
-  text-decoration:underline;
-  font-size:14px;
-  margin-top:10px;
-  display:block;
-}
-
-/* STAR RATING COLORS */
-.rating-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.rating-star {
-  cursor: pointer;
-  font-size: 28px;
-  color: #ccc; /* default grey */
-  transition: color .2s, transform .2s;
-}
-
-.rating-star:hover {
-  transform: scale(1.3);
-}
-
-.rating-star.selected {
-  color: #FF6600; /* FedEx orange */
-}
-
-/* footer alignment */
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-/* COMMENT LIST STAR COLORS */
-#commentsList .stars {
-  color: #FF6600; /* FedEx orange */
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-  z-index:1;
-}
-header img{height:40px; animation:logoFlyIn 1s ease-out forwards; opacity:0;}
-.nav-tabs{display:flex; gap:30px;}
-.tab{color:white; text-decoration:none; font-weight:600; font-size:16px; position:relative; padding:6px 0; transition: opacity 0.2s;}
-.tab:hover{opacity:0.8;}
-.tab.active::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:3px;background:#ff6600;border-radius:3px;}
-
-.header-icons{display:flex;align-items:center;gap:20px;}
-#clockBtn{cursor:pointer; display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; color:white; position:relative;}
-#clockBtn:hover{transform:scale(1.1);}
-.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
-.header-icon:hover{transform:scale(1.3);}
-.header-icon.active{color:var(--accent-dark);}
-
-/* ---------- HEADER ANIMATIONS ---------- */
-@keyframes logoFlyIn {0%{opacity:0;transform:translateX(-50px) scale(0.8);}100%{opacity:1;transform:translateX(0) scale(1);}}
-header::after{
-  content:"";
-  position:absolute; top:0; left:-100%;
-  width:100%; height:100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform:skewX(-20deg);
-  animation:sweep 1s ease-out forwards;
-  z-index:0;
-  opacity:0.2;
-}
-@keyframes sweep{0%{left:-100%;}100%{left:100%;}}
-
-/*pop up time style*/
-/* POPUP TIME STYLE (Windows-like) */
-.popup-time{
-  font-size:34px;
-  font-weight:600;
-  text-align:left;
-  margin-bottom:4px;
-  color:#111;
-}
-
-#timeCalendarPopup {
-  background:white;}
-
-.popup-date{
-  font-size:14px;
-  color:#555;
-  margin-bottom:14px;
-  text-align:left;
-}
-</style>
-
-<!-- this is the end header codes that can be used to other guides -->
-
-
-<body>
-
-<div class="main">
-<div class="container">
-
-<div class="page-title">
-<h1><i class="fa-solid fa-calculator"></i> Base Rater Guide</h1>
-<p>How to access and use the CZAR Rater to verify base rates.</p>
-</div>
-
-<div class="card">
-
-<h2>Account Setup</h2>
-
-<div class="step">
-Check your email if you received a message from <strong>AdminManager@smc3.com</strong>.
-</div>
-
-<div class="step">
-Open the CZAR Rater website and follow the instructions to create your password.
-</div>
-
-<a class="btn" href="https://czarlite.smc3.com/Rater/" target="_blank">
-Open CZAR Rater <i class="fa-solid fa-arrow-up-right-from-square"></i>
-</a>
-
-<div class="step">
-Once the password is changed, try logging in using the new password.
-</div>
-
-<div class="step">
-After login, the website will bring you to the <strong>Czarlite Web Interface</strong>.
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h2>How to Use the CZAR Rater Website</h2>
-
-<div class="step">
-Open the PRO in <strong>FBI</strong> and identify the following information needed for the rater.
-</div>
-
-<h3>City Lookup</h3>
-
-<div class="step">
-<strong>Origin</strong> – Shipper's ZIP Code
-</div>
-
-<div class="step">
-<strong>Destination</strong> – Consignee's ZIP Code
-</div>
-
-
-<h3>Class</h3>
-
-<div class="step">
-If Pricing involves <strong>FAK Rates</strong>, enter the class that applies to the customer's class group.
-</div>
-
-<div class="example">
-Example:<br><br>
-If the agreement states that <strong>Class 100</strong> applies to shipments with<br>
-Class 055, 060, 077, and 090,<br><br>
-Enter <strong>Class 100</strong> instead of the actual class listed on the BOL.
-</div>
-
-
-<h3>Weight</h3>
-
-<div class="step">
-Enter the <strong>weight per line item</strong>.
-</div>
-
-<div class="note">
-If the shipment contains multiple line items, click <strong>"Add New Row"</strong> and itemize the weight and class per line item.
-</div>
-
-
-<h3>Rate Family</h3>
-
-<div class="step">
-Select <strong>LTL</strong> as the Rate Family.
-</div>
-
-
-<h3>Available Tariffs</h3>
-
-<div class="step">
-Select the rater used in the customer's agreement including the applicable year.
-</div>
-
-<div class="example">
-
-Examples:<br><br>
-
-FXF 1000 Eff 11/01/2010<br>
-or<br>
-CZARLITE Eff 02/01/2010
-
-</div>
-
-<div class="note">
-If the correct base rater is <strong>not available</strong>, send an email to the <strong>Training Team / SMEs</strong> and include all shipment details so they can verify the correct CWT rate.
-</div>
-
-</div>
-
-</div>
-</div>
-
-<footer style="display:flex; justify-content:space-between; align-items:center; padding:16px 28px; background:var(--accent); color:white; border-top:1px solid rgba(255,255,255,0.2);">
-  <span style="font-weight:600;">© 2025 EBS Operations</span>
-  <span style="font-size:12px; color:white; text-align:right; max-width:60%;">
-    "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
-  </span>
-</footer>
-
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.30), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.20), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(77,20,140,.18), transparent 30%),
+        linear-gradient(180deg,#08111f 0%,#0c1728 48%,#07111f 100%);
+      color:var(--ink);
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 43%);
+    }
+
+    a{text-decoration:none;color:inherit}
+
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    .shell{
+      width:min(calc(100% - 32px), 1500px);
+      margin:22px auto 28px;
+    }
+
+    .glass-frame{
+      background:rgba(255,255,255,.62);
+      border:1px solid rgba(255,255,255,.72);
+      border-radius:34px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      overflow:hidden;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      padding:30px;
+      color:white;
+      background:
+        radial-gradient(circle at right top, rgba(255,102,0,.34), transparent 32%),
+        linear-gradient(135deg,#4d148c 0%,#2f145a 58%,#ff6600 135%);
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-90px;
+      top:-110px;
+      width:280px;
+      height:280px;
+      border-radius:50%;
+      background:rgba(255,255,255,.12);
+    }
+
+    .hero-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:24px;
+      align-items:center;
+    }
+
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      padding:9px 13px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:16px;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(32px,4vw,58px);
+      line-height:.95;
+      font-weight:900;
+      letter-spacing:-.07em;
+      max-width:850px;
+    }
+
+    .hero p{
+      margin:16px 0 0;
+      max-width:850px;
+      color:rgba(255,255,255,.84);
+      line-height:1.75;
+      font-size:15px;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:24px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:48px;
+      padding:0 17px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.18);
+      color:white;
+      font-size:13px;
+      font-weight:900;
+      transition:.2s ease;
+      cursor:pointer;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.04);
+    }
+
+    .btn.white{
+      background:white;
+      color:var(--purple);
+      box-shadow:0 18px 36px rgba(0,0,0,.16);
+    }
+
+    .btn.orange{
+      background:linear-gradient(135deg,#ff6600,#f59e0b);
+      border:none;
+      color:white;
+      box-shadow:0 18px 34px rgba(255,102,0,.24);
+    }
+
+    .hero-card{
+      width:310px;
+      padding:18px;
+      border-radius:26px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.20);
+      backdrop-filter:blur(14px);
+      box-shadow:0 20px 50px rgba(0,0,0,.14);
+    }
+
+    .hero-card-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      margin-bottom:14px;
+    }
+
+    .hero-stat{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .stat{
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .stat b{
+      display:block;
+      font-size:24px;
+      letter-spacing:-.04em;
+    }
+
+    .stat span{
+      display:block;
+      margin-top:3px;
+      font-size:11px;
+      color:rgba(255,255,255,.78);
+      font-weight:800;
+    }
+
+    .content{
+      display:grid;
+      grid-template-columns:1fr 360px;
+      gap:20px;
+      padding:20px;
+    }
+
+    .main-panel,
+    .side-panel{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .section-card{
+      background:white;
+      border:1px solid #dbe4f0;
+      border-radius:28px;
+      box-shadow:var(--shadow2);
+      overflow:hidden;
+    }
+
+    .section-head{
+      padding:20px 22px;
+      border-bottom:1px solid #eef2f7;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      background:linear-gradient(180deg,#fff,#fbfdff);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .section-title i{
+      width:38px;
+      height:38px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg,var(--purple),var(--purple2));
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      color:#475569;
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      white-space:nowrap;
+    }
+
+    .timeline{
+      padding:20px;
+      display:grid;
+      gap:14px;
+    }
+
+    .step{
+      position:relative;
+      display:grid;
+      grid-template-columns:52px 1fr;
+      gap:16px;
+      padding:20px;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at top right, rgba(109,40,217,.06), transparent 30%),
+        linear-gradient(180deg,#fff,#fbfdff);
+      border:1px solid #e5edf7;
+      transition:.18s ease;
+    }
+
+    .step:hover{
+      transform:translateY(-2px);
+      box-shadow:0 16px 36px rgba(15,23,42,.07);
+      border-color:#d3def0;
+    }
+
+    .num{
+      width:48px;
+      height:48px;
+      border-radius:17px;
+      display:grid;
+      place-items:center;
+      color:white;
+      font-weight:900;
+      background:linear-gradient(135deg,var(--purple),var(--purple2));
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+    }
+
+    .step h3{
+      margin:0;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:-.04em;
+      color:#0f172a;
+    }
+
+    .step p{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .step ul{
+      margin:10px 0 0;
+      padding-left:20px;
+      color:#475569;
+      font-size:14px;
+      line-height:1.75;
+    }
+
+    .note{
+      margin-top:13px;
+      padding:15px 16px;
+      border-radius:18px;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      color:#7c2d12;
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .note strong{color:#431407}
+
+    .note-head{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-size:11px;
+      margin-bottom:6px;
+      color:#c2410c;
+    }
+
+    .example{
+      margin-top:13px;
+      padding:15px 16px;
+      border-radius:18px;
+      background:#f5f3ff;
+      border:1px solid #ddd6fe;
+      color:#3b0764;
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .example .note-head{
+      color:#6d28d9;
+    }
+
+    .copy-card{
+      margin-top:12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+    }
+
+    .copy-text{
+      font-size:13px;
+      line-height:1.6;
+      font-weight:800;
+      color:#0f172a;
+      word-break:break-word;
+    }
+
+    .copy-btn{
+      border:0;
+      cursor:pointer;
+      border-radius:12px;
+      padding:9px 12px;
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      transition:.18s ease;
+      white-space:nowrap;
+    }
+
+    .copy-btn:hover{transform:translateY(-1px)}
+    .copy-btn.copied{background:#dcfce7;color:#166534}
+
+    .side-panel{
+      position:sticky;
+      top:18px;
+      align-self:start;
+    }
+
+    .side-card{
+      background:white;
+      border:1px solid #dbe4f0;
+      border-radius:26px;
+      padding:18px;
+      box-shadow:var(--shadow2);
+    }
+
+    .side-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:14px;
+      font-weight:900;
+      margin-bottom:12px;
+    }
+
+    .side-title i{color:var(--purple2)}
+
+    .reminder-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .reminder{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:13px;
+      border-radius:17px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      color:#475569;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .reminder i{
+      color:var(--orange);
+      margin-top:3px;
+    }
+
+    .mini-progress{
+      display:grid;
+      gap:10px;
+    }
+
+    .mini-step{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px;
+      border-radius:15px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      color:#475569;
+      font-size:12px;
+      font-weight:800;
+      transition:.18s ease;
+    }
+
+    .mini-step:hover{
+      transform:translateY(-1px);
+      background:#eef4ff;
+      color:#1d4ed8;
+    }
+
+    .mini-step span{
+      width:24px;
+      height:24px;
+      border-radius:9px;
+      display:grid;
+      place-items:center;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:11px;
+      font-weight:900;
+    }
+
+    .final{
+      padding:24px;
+      border-radius:26px;
+      background:linear-gradient(180deg,#f0fdf4,#ffffff);
+      border:1px solid #bbf7d0;
+      box-shadow:0 16px 34px rgba(22,163,74,.08);
+    }
+
+    .final-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#dcfce7;
+      color:#166534;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+
+    .final-text{
+      margin:13px 0 0;
+      font-size:22px;
+      line-height:1.45;
+      letter-spacing:-.03em;
+      font-weight:900;
+      color:#111827;
+    }
+
+    @media(max-width:1100px){
+      .hero-grid,
+      .content{grid-template-columns:1fr}
+      .hero-card{width:100%}
+      .side-panel{position:relative;top:0}
+    }
+
+    @media(max-width:720px){
+      .shell{width:min(calc(100% - 20px),1500px);margin:16px auto}
+      .hero{padding:22px}
+      .content{padding:14px}
+      .step{grid-template-columns:1fr}
+      .section-head{align-items:flex-start;flex-direction:column}
+      .copy-card{flex-direction:column}
+      .copy-btn{width:100%}
+    }
+  </style>
+</head>
+
+<body data-page="">
+  <div class="page">
+    <div id="site-header"></div>
+
+    <div class="shell">
+      <div class="glass-frame">
+
+        <section class="hero">
+          <div class="hero-grid">
+            <div>
+              <div class="kicker">
+                <i class="fa-solid fa-calculator"></i>
+                Pricing Support
+              </div>
+
+              <h1>Base Rater Guide</h1>
+              <p>
+                Use this guide to access the CZAR Rater, identify the required shipment information, apply FAK class logic, itemize weight correctly, and select the correct tariff to verify base rates.
+              </p>
+
+              <div class="hero-actions">
+                <a class="btn white" href="https://czarlite.smc3.com/Rater/" target="_blank">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  Open CZAR Rater
+                </a>
+                <a class="btn orange" href="#available-tariffs">
+                  <i class="fa-solid fa-file-invoice-dollar"></i>
+                  View Tariff Steps
+                </a>
+              </div>
+            </div>
+
+            <div class="hero-card">
+              <div class="hero-card-title">
+                <i class="fa-solid fa-chart-simple"></i>
+                Guide Snapshot
+              </div>
+              <div class="hero-stat">
+                <div class="stat">
+                  <b>2</b>
+                  <span>Main Sections</span>
+                </div>
+                <div class="stat">
+                  <b>LTL</b>
+                  <span>Rate Family</span>
+                </div>
+                <div class="stat">
+                  <b>FAK</b>
+                  <span>Class Check</span>
+                </div>
+                <div class="stat">
+                  <b>CWT</b>
+                  <span>Rate Review</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="content">
+
+          <main class="main-panel">
+
+            <section class="section-card" id="account-setup">
+              <div class="section-head">
+                <div class="section-title">
+                  <i class="fa-solid fa-user-lock"></i>
+                  Account Setup
+                </div>
+                <div class="badge">
+                  <i class="fa-solid fa-circle-check"></i>
+                  First-time access
+                </div>
+              </div>
+
+              <div class="timeline">
+
+                <article class="step">
+                  <div class="num">1</div>
+                  <div>
+                    <h3>Check your setup email</h3>
+                    <p>
+                      Check your email for a message from <strong>AdminManager@smc3.com</strong>.
+                    </p>
+                  </div>
+                </article>
+
+                <article class="step">
+                  <div class="num">2</div>
+                  <div>
+                    <h3>Create your CZAR Rater password</h3>
+                    <p>
+                      Open the CZAR Rater website and follow the instructions to create or change your password.
+                    </p>
+                    <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank">
+                      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                      Open CZAR Rater
+                    </a>
+                  </div>
+                </article>
+
+                <article class="step">
+                  <div class="num">3</div>
+                  <div>
+                    <h3>Log in using the new password</h3>
+                    <p>
+                      Once the password is changed, log in using the new password.
+                    </p>
+                  </div>
+                </article>
+
+                <article class="step">
+                  <div class="num">4</div>
+                  <div>
+                    <h3>Confirm the web interface</h3>
+                    <p>
+                      After login, the website will bring you to the <strong>Czarlite Web Interface</strong>.
+                    </p>
+                  </div>
+                </article>
+
+              </div>
+            </section>
+
+            <section class="section-card" id="using-czar">
+              <div class="section-head">
+                <div class="section-title">
+                  <i class="fa-solid fa-list-check"></i>
+                  How to Use the CZAR Rater Website
+                </div>
+                <div class="badge">
+                  <i class="fa-solid fa-layer-group"></i>
+                  Rating inputs
+                </div>
+              </div>
+
+              <div class="timeline">
+
+                <article class="step" id="shipment-info">
+                  <div class="num">1</div>
+                  <div>
+                    <h3>Open the PRO in FBI</h3>
+                    <p>
+                      Open the PRO in <strong>FBI</strong> and identify the shipment information needed for the rater.
+                    </p>
+                  </div>
+                </article>
+
+                <article class="step" id="city-lookup">
+                  <div class="num">2</div>
+                  <div>
+                    <h3>Complete City Lookup</h3>
+                    <p>
+                      Enter the required ZIP codes:
+                    </p>
+                    <ul>
+                      <li><strong>Origin</strong> — Shipper's ZIP Code</li>
+                      <li><strong>Destination</strong> — Consignee's ZIP Code</li>
+                    </ul>
+                  </div>
+                </article>
+
+                <article class="step" id="class">
+                  <div class="num">3</div>
+                  <div>
+                    <h3>Enter the correct class</h3>
+                    <p>
+                      If Pricing involves <strong>FAK Rates</strong>, enter the class that applies to the customer's class group.
+                    </p>
+
+                    <div class="example">
+                      <div class="note-head">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        Example
+                      </div>
+                      If the agreement states that <strong>Class 100</strong> applies to shipments with
+                      Class 055, 060, 077, and 090, enter <strong>Class 100</strong> instead of the actual class listed on the BOL.
+                    </div>
+                  </div>
+                </article>
+
+                <article class="step" id="weight">
+                  <div class="num">4</div>
+                  <div>
+                    <h3>Enter the weight</h3>
+                    <p>
+                      Enter the <strong>weight per line item</strong>.
+                    </p>
+
+                    <div class="note">
+                      <div class="note-head">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Note
+                      </div>
+                      If the shipment contains multiple line items, click <strong>"Add New Row"</strong> and itemize the weight and class per line item.
+                    </div>
+                  </div>
+                </article>
+
+                <article class="step" id="rate-family">
+                  <div class="num">5</div>
+                  <div>
+                    <h3>Select the rate family</h3>
+                    <p>
+                      Select <strong>LTL</strong> as the Rate Family.
+                    </p>
+                  </div>
+                </article>
+
+                <article class="step" id="available-tariffs">
+                  <div class="num">6</div>
+                  <div>
+                    <h3>Select the available tariff</h3>
+                    <p>
+                      Select the rater used in the customer's agreement, including the applicable year.
+                    </p>
+
+                    <div class="example">
+                      <div class="note-head">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        Examples
+                      </div>
+                      FXF 1000 Eff 11/01/2010<br>
+                      or<br>
+                      CZARLITE Eff 02/01/2010
+                    </div>
+
+                    <div class="note">
+                      <div class="note-head">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Important
+                      </div>
+                      If the correct base rater is <strong>not available</strong>, send an email to the <strong>Training Team / SMEs</strong> and include all shipment details so they can verify the correct CWT rate.
+                    </div>
+                  </div>
+                </article>
+
+                <div class="final">
+                  <div class="final-badge">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Completed
+                  </div>
+                  <div class="final-text">
+                    Use the correct shipment ZIPs, class, itemized weight, rate family, and tariff year to verify the base rate accurately.
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+          </main>
+
+          <aside class="side-panel">
+            <section class="side-card">
+              <div class="side-title">
+                <i class="fa-solid fa-route"></i>
+                Quick Navigation
+              </div>
+
+              <div class="mini-progress">
+                <a class="mini-step" href="#account-setup"><span>1</span> Account Setup</a>
+                <a class="mini-step" href="#city-lookup"><span>2</span> City Lookup</a>
+                <a class="mini-step" href="#class"><span>3</span> Class / FAK</a>
+                <a class="mini-step" href="#weight"><span>4</span> Weight</a>
+                <a class="mini-step" href="#available-tariffs"><span>6</span> Tariffs</a>
+              </div>
+            </section>
+
+            <section class="side-card">
+              <div class="side-title">
+                <i class="fa-solid fa-circle-info"></i>
+                Quick Reminders
+              </div>
+
+              <div class="reminder-list">
+                <div class="reminder">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <span>Use the <strong>Shipper ZIP</strong> as Origin and <strong>Consignee ZIP</strong> as Destination.</span>
+                </div>
+                <div class="reminder">
+                  <i class="fa-solid fa-layer-group"></i>
+                  <span>For FAK pricing, enter the class assigned to the customer’s class group.</span>
+                </div>
+                <div class="reminder">
+                  <i class="fa-solid fa-weight-scale"></i>
+                  <span>For multiple line items, itemize each weight and class separately.</span>
+                </div>
+                <div class="reminder">
+                  <i class="fa-solid fa-envelope"></i>
+                  <span>If the rater is missing, email Training Team / SMEs with complete shipment details.</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="side-card">
+              <div class="side-title">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                CZAR Rater
+              </div>
+
+              <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="width:100%;">
+                <i class="fa-solid fa-calculator"></i>
+                Open CZAR Rater
+              </a>
+            </section>
+          </aside>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="site-footer"></div>
+  </div>
+
+  <script src="../assets/js/header-loader.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer-loader.js"></script>
 </body>
 </html>
