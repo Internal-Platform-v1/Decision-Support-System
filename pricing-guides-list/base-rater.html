@@ -37,9 +37,7 @@
 
     *{box-sizing:border-box}
 
-    html{
-      scroll-behavior:smooth;
-    }
+    html{scroll-behavior:smooth}
 
     body{
       margin:0;
@@ -62,6 +60,7 @@
         linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
       background-size:36px 36px;
       mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 43%);
+      z-index:0;
     }
 
     a{
@@ -375,9 +374,7 @@
       line-height:1.7;
     }
 
-    .note strong{
-      color:#431407;
-    }
+    .note strong{color:#431407}
 
     .note-head{
       display:flex;
@@ -402,9 +399,7 @@
       line-height:1.7;
     }
 
-    .example .note-head{
-      color:#6d28d9;
-    }
+    .example .note-head{color:#6d28d9}
 
     .side-panel{
       position:sticky;
@@ -429,9 +424,7 @@
       margin-bottom:12px;
     }
 
-    .side-title i{
-      color:var(--purple2);
-    }
+    .side-title i{color:var(--purple2)}
 
     .reminder-list{
       display:grid;
@@ -693,13 +686,9 @@
 
     @media(max-width:1100px){
       .hero-grid,
-      .content{
-        grid-template-columns:1fr;
-      }
+      .content{grid-template-columns:1fr}
 
-      .hero-card{
-        width:100%;
-      }
+      .hero-card{width:100%}
 
       .side-panel{
         position:relative;
@@ -713,17 +702,11 @@
         margin:16px auto;
       }
 
-      .hero{
-        padding:22px;
-      }
+      .hero{padding:22px}
 
-      .content{
-        padding:14px;
-      }
+      .content{padding:14px}
 
-      .step{
-        grid-template-columns:1fr;
-      }
+      .step{grid-template-columns:1fr}
 
       .section-head{
         align-items:flex-start;
@@ -1067,5 +1050,259 @@
   <script src="../assets/js/header-loader.js"></script>
   <script src="../assets/js/header.js"></script>
   <script src="../assets/js/footer-loader.js"></script>
+
+  <script>
+    /* =========================================================
+       BASE RATER HEADER FIX
+       Keeps shared clock from header.js, and forces Feedback
+       + Get Help to bind correctly on this page.
+    ========================================================= */
+    (function(){
+      const FEEDBACK_COLLECTION = "feedback";
+      let selectedRating = 0;
+      let commentsUnsubscribe = null;
+
+      function ensureFirebaseReady(){
+        if (typeof firebase === "undefined") return false;
+
+        if (!firebase.apps.length) {
+          firebase.initializeApp({
+            apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+            authDomain: "bdgg-database.firebaseapp.com",
+            projectId: "bdgg-database",
+            storageBucket: "bdgg-database.appspot.com",
+            messagingSenderId: "43574975434",
+            appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+          });
+        }
+
+        window.db = firebase.firestore();
+        return true;
+      }
+
+      function openModal(id){
+        const modal = document.getElementById(id);
+        if (!modal) return;
+
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeModal(id){
+        const modal = document.getElementById(id);
+        if (!modal) return;
+
+        modal.style.display = "none";
+        document.body.style.overflow = "";
+      }
+
+      window.closeHelp = function(){
+        closeModal("helpModal");
+      };
+
+      window.closeComment = function(){
+        closeModal("commentModal");
+      };
+
+      window.closeAllComments = function(){
+        closeModal("allCommentsModal");
+      };
+
+      function clearFeedbackForm(){
+        selectedRating = 0;
+
+        const name = document.getElementById("commentName");
+        const text = document.getElementById("commentText");
+
+        if (name) name.value = "";
+        if (text) text.value = "";
+
+        document.querySelectorAll(".rating-star").forEach(star => {
+          star.classList.remove("selected");
+        });
+      }
+
+      function initStars(){
+        document.querySelectorAll(".rating-star").forEach(star => {
+          if (star.dataset.baseRaterStarBound === "true") return;
+
+          star.dataset.baseRaterStarBound = "true";
+
+          star.addEventListener("click", function(){
+            selectedRating = Number(this.dataset.value || 0);
+
+            document.querySelectorAll(".rating-star").forEach(s => {
+              const value = Number(s.dataset.value || 0);
+              s.classList.toggle("selected", value <= selectedRating);
+            });
+          });
+        });
+      }
+
+      window.sendComment = async function(){
+        const firebaseReady = ensureFirebaseReady();
+
+        if (!firebaseReady || !window.db) {
+          alert("Feedback database is not connected on this page yet.");
+          return;
+        }
+
+        const name = document.getElementById("commentName")?.value.trim() || "Anonymous";
+        const comment = document.getElementById("commentText")?.value.trim() || "";
+
+        if (!selectedRating) {
+          alert("Select a rating.");
+          return;
+        }
+
+        try {
+          await window.db.collection(FEEDBACK_COLLECTION).add({
+            rating: selectedRating,
+            name,
+            comment,
+            page: document.title || "Base Rater Guide",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          alert("Saved!");
+          clearFeedbackForm();
+          closeModal("commentModal");
+        } catch (err) {
+          console.error(err);
+          alert("Save failed.");
+        }
+      };
+
+      window.showAllComments = function(){
+        const listEl = document.getElementById("commentsList");
+
+        if (!listEl) {
+          alert("Comments list is missing from the shared header modal.");
+          return;
+        }
+
+        const firebaseReady = ensureFirebaseReady();
+
+        if (!firebaseReady || !window.db) {
+          listEl.innerHTML = "<p>Feedback database is not connected on this page yet.</p>";
+          openModal("allCommentsModal");
+          return;
+        }
+
+        listEl.innerHTML = "Loading…";
+
+        if (commentsUnsubscribe) commentsUnsubscribe();
+
+        commentsUnsubscribe = window.db
+          .collection(FEEDBACK_COLLECTION)
+          .orderBy("createdAt", "desc")
+          .onSnapshot(snapshot => {
+            listEl.innerHTML = "";
+
+            if (snapshot.empty) {
+              listEl.innerHTML = "<p>No feedback yet.</p>";
+            }
+
+            snapshot.forEach(doc => {
+              const data = doc.data();
+              const rating = Number(data.rating || 0);
+
+              const item = document.createElement("div");
+              item.className = "comment-list-item";
+              item.innerHTML = `
+                <span class="stars">${"★".repeat(rating)}${"☆".repeat(5 - rating)}</span>
+                <strong>${data.name || "Anonymous"}</strong>
+                <p>${data.comment || ""}</p>
+              `;
+
+              listEl.appendChild(item);
+            });
+
+            openModal("allCommentsModal");
+          }, err => {
+            console.error(err);
+            listEl.innerHTML = "<p>Unable to load comments.</p>";
+            openModal("allCommentsModal");
+          });
+      };
+
+      function bindSharedHeaderIcons(){
+        const commentIcon = document.getElementById("commentIcon");
+        const helpIcon = document.getElementById("helpIcon");
+
+        if (commentIcon && commentIcon.dataset.baseRaterBound !== "true") {
+          commentIcon.dataset.baseRaterBound = "true";
+
+          commentIcon.addEventListener("click", function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            clearFeedbackForm();
+            initStars();
+            openModal("commentModal");
+          });
+        }
+
+        if (helpIcon && helpIcon.dataset.baseRaterBound !== "true") {
+          helpIcon.dataset.baseRaterBound = "true";
+
+          helpIcon.addEventListener("click", function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            openModal("helpModal");
+          });
+        }
+
+        document.querySelectorAll("#commentModal, #helpModal, #allCommentsModal").forEach(modal => {
+          if (modal.dataset.baseRaterModalBound === "true") return;
+
+          modal.dataset.baseRaterModalBound = "true";
+
+          modal.addEventListener("click", function(){
+            this.style.display = "none";
+            document.body.style.overflow = "";
+          });
+        });
+
+        document.querySelectorAll(
+          "#commentModal .modal-content, #helpModal .modal-content, #allCommentsModal .modal-content"
+        ).forEach(content => {
+          if (content.dataset.baseRaterModalContentBound === "true") return;
+
+          content.dataset.baseRaterModalContentBound = "true";
+
+          content.addEventListener("click", function(e){
+            e.stopPropagation();
+          });
+        });
+      }
+
+      function waitForHeaderAndBind(){
+        let tries = 0;
+
+        const timer = setInterval(() => {
+          tries++;
+
+          bindSharedHeaderIcons();
+          initStars();
+
+          const ready =
+            document.getElementById("commentIcon") &&
+            document.getElementById("helpIcon");
+
+          if (ready || tries >= 80) {
+            clearInterval(timer);
+          }
+        }, 100);
+      }
+
+      ensureFirebaseReady();
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", waitForHeaderAndBind);
+      } else {
+        waitForHeaderAndBind();
+      }
+    })();
+  </script>
 </body>
 </html>
