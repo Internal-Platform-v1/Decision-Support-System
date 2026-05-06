@@ -6,14 +6,14 @@
   <title>Base Rater Guide</title>
 
   <script>
-    window.SITE_BASE = "./";
+    window.SITE_BASE = "../";
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="./assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -23,30 +23,35 @@
     :root{
       --bg:#07111f;
       --bg-soft:#0c1728;
+      --panel:#0f1c31;
+      --panel-2:#12233d;
       --card:#ffffff;
+      --card-soft:#f8fafc;
       --text:#0f172a;
       --text-soft:#475569;
-      --muted:#64748b;
+      --muted:#94a3b8;
       --line:rgba(148,163,184,.18);
+      --white-line:rgba(255,255,255,.08);
       --accent:#6d28d9;
       --accent-2:#4d148c;
       --accent-3:#ff6600;
       --success:#16a34a;
       --warning:#f59e0b;
+      --danger:#ef4444;
       --shadow-xl:0 24px 80px rgba(2,6,23,.18);
       --shadow-lg:0 18px 48px rgba(2,6,23,.12);
       --shadow-md:0 10px 28px rgba(15,23,42,.10);
+      --shadow-card:0 16px 40px rgba(15,23,42,.06);
       --radius-xl:28px;
       --radius-lg:20px;
-      --max:1500px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --max:1720px;
       font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     *{box-sizing:border-box}
-
-    html{
-      scroll-behavior:smooth;
-    }
+    html{scroll-behavior:smooth}
 
     body{
       margin:0;
@@ -55,7 +60,7 @@
       background:
         radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
         radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
-        linear-gradient(180deg, #091120 0%, #0b1525 34%, #eef4fb 34%, #f5f8fc 100%);
+        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
       overflow-x:hidden;
     }
 
@@ -72,97 +77,266 @@
       z-index:0;
     }
 
-    a{
-      color:inherit;
-      text-decoration:none;
-    }
+    a{color:inherit;text-decoration:none}
+    button,input,textarea{font:inherit}
 
     .page{
       position:relative;
       z-index:1;
     }
 
-    .shell{
+    .app-shell{
       width:min(calc(100% - 32px), var(--max));
-      margin:22px auto 28px;
+      margin:22px auto 24px;
     }
 
-    .glass-frame{
-      background:rgba(255,255,255,.62);
-      border:1px solid rgba(255,255,255,.72);
+    .app-frame{
+      min-height:calc(100vh - 180px);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.68);
       border-radius:34px;
       box-shadow:var(--shadow-xl);
-      backdrop-filter:blur(18px);
       overflow:hidden;
-    }
-
-    .hero{
-      position:relative;
-      overflow:hidden;
-      padding:32px;
-      color:white;
-      background:
-        radial-gradient(circle at right top, rgba(255,102,0,.34), transparent 32%),
-        linear-gradient(135deg,#4d148c 0%,#2f145a 58%,#ff6600 135%);
-    }
-
-    .hero::after{
-      content:"";
-      position:absolute;
-      right:-90px;
-      top:-110px;
-      width:280px;
-      height:280px;
-      border-radius:50%;
-      background:rgba(255,255,255,.12);
-    }
-
-    .hero-grid{
-      position:relative;
-      z-index:1;
       display:grid;
-      grid-template-columns:1fr auto;
-      gap:24px;
-      align-items:center;
+      grid-template-columns:minmax(0,1.45fr) 380px 420px;
     }
 
-    .kicker{
+    .main{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-width:0;
+    }
+
+    .main-topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      padding:16px 18px;
+      border-radius:24px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(219,228,240,.9);
+      box-shadow:var(--shadow-md);
+    }
+
+    .page-title-block{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .page-title-block h1{
+      margin:0;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#0f172a;
+    }
+
+    .page-subtitle{
+      margin:0;
+      font-size:13px;
+      color:#64748b;
+      line-height:1.6;
+      max-width:760px;
+    }
+
+    .main-status{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
       display:inline-flex;
       align-items:center;
-      gap:9px;
-      padding:9px 13px;
+      gap:8px;
+      padding:11px 14px;
       border-radius:999px;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.18);
+      background:#fff;
+      border:1px solid #dbe4f0;
       font-size:12px;
+      font-weight:800;
+      color:#0f172a;
+      white-space:nowrap;
+    }
+
+    .pill.primary{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border:none;
+    }
+
+    .workspace{
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:16px;
+      min-height:0;
+    }
+
+    .progress-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:16px 18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .progress-title{
+      font-size:14px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .progress-status{
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .progress-bar{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:100%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+    }
+
+    .stage-area{
+      min-height:0;
+      display:grid;
+      grid-template-columns:1fr;
+    }
+
+    .stage-card{
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border:1px solid #dbe4f0;
+      border-radius:30px;
+      box-shadow:var(--shadow-card);
+      min-height:640px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    .stage-top{
+      padding:22px 22px 0;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .badge.alt{
+      background:#f8fafc;
+      color:#334155;
+    }
+
+    .content-wrap{
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      flex:1;
+    }
+
+    .hero-card-main{
+      position:relative;
+      padding:30px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+        linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid #e6edf7;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .hero-card-main::after{
+      content:"";
+      position:absolute;
+      right:-60px;
+      top:-60px;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:rgba(77,20,140,.07);
+      pointer-events:none;
+    }
+
+    .question-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
       font-weight:900;
-      letter-spacing:.12em;
       text-transform:uppercase;
-      margin-bottom:16px;
+      letter-spacing:.12em;
+      color:#334155;
+      position:relative;
+      z-index:1;
     }
 
-    .hero h1{
-      margin:0;
-      font-size:clamp(34px,4vw,58px);
-      line-height:.95;
+    .question-text{
+      margin:18px 0 0;
+      font-size:36px;
+      line-height:1.08;
+      letter-spacing:-.045em;
       font-weight:900;
-      letter-spacing:-.07em;
-      max-width:850px;
+      position:relative;
+      z-index:1;
     }
 
-    .hero p{
-      margin:16px 0 0;
-      max-width:840px;
-      color:rgba(255,255,255,.86);
+    .question-help{
+      margin:14px 0 0;
+      color:#64748b;
+      font-size:14px;
       line-height:1.75;
-      font-size:15px;
+      max-width:800px;
+      position:relative;
+      z-index:1;
     }
 
     .hero-actions{
       display:flex;
+      gap:10px;
       flex-wrap:wrap;
-      gap:12px;
-      margin-top:24px;
+      margin-top:22px;
+      position:relative;
+      z-index:1;
     }
 
     .btn{
@@ -170,111 +344,50 @@
       align-items:center;
       justify-content:center;
       gap:10px;
-      min-height:48px;
+      min-height:50px;
       padding:0 18px;
+      border:none;
       border-radius:16px;
-      border:1px solid rgba(255,255,255,.18);
-      color:white;
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
       font-size:13px;
-      font-weight:900;
-      transition:.2s ease;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+      transition:.22s ease;
       cursor:pointer;
     }
 
     .btn:hover{
       transform:translateY(-2px);
-      filter:brightness(1.04);
-    }
-
-    .btn.white{
-      background:white;
-      color:#4d148c;
-      box-shadow:0 18px 36px rgba(0,0,0,.16);
+      box-shadow:0 18px 30px rgba(77,20,140,.24);
     }
 
     .btn.orange{
       background:linear-gradient(135deg,#ff6600,#f59e0b);
-      border:none;
-      color:white;
-      box-shadow:0 18px 34px rgba(255,102,0,.24);
+      box-shadow:0 14px 24px rgba(255,102,0,.18);
     }
 
-    .hero-card{
-      width:310px;
-      padding:18px;
-      border-radius:26px;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.20);
-      backdrop-filter:blur(14px);
-      box-shadow:0 20px 50px rgba(0,0,0,.14);
+    .btn.dark{
+      background:#111827;
+      box-shadow:0 14px 24px rgba(17,24,39,.16);
     }
 
-    .hero-card-title{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:900;
-      margin-bottom:14px;
-    }
-
-    .hero-stat{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .stat{
-      padding:14px;
-      border-radius:18px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.12);
-    }
-
-    .stat b{
-      display:block;
-      font-size:24px;
-      letter-spacing:-.04em;
-    }
-
-    .stat span{
-      display:block;
-      margin-top:3px;
-      font-size:11px;
-      color:rgba(255,255,255,.78);
-      font-weight:800;
-    }
-
-    .content{
-      display:grid;
-      grid-template-columns:1fr 360px;
-      gap:20px;
-      padding:20px;
-    }
-
-    .main-panel,
-    .side-panel{
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      min-width:0;
-    }
-
-    .section-card,
-    .side-card{
+    .section-card{
       background:#fff;
       border:1px solid #dbe4f0;
-      border-radius:28px;
-      box-shadow:var(--shadow-md);
+      border-radius:24px;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
       overflow:hidden;
     }
 
     .section-head{
-      padding:20px 22px;
+      padding:18px 20px;
       border-bottom:1px solid #eef2f7;
       display:flex;
-      justify-content:space-between;
       align-items:center;
-      gap:14px;
+      justify-content:space-between;
+      gap:12px;
       background:linear-gradient(180deg,#fff,#fbfdff);
     }
 
@@ -282,9 +395,10 @@
       display:flex;
       align-items:center;
       gap:12px;
-      font-size:17px;
+      font-size:16px;
       font-weight:900;
       letter-spacing:-.03em;
+      color:#0f172a;
     }
 
     .section-title i{
@@ -297,24 +411,8 @@
       background:linear-gradient(135deg,#4d148c,#6d28d9);
     }
 
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      border-radius:999px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      color:#475569;
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      white-space:nowrap;
-    }
-
-    .timeline{
-      padding:20px;
+    .section-body{
+      padding:18px;
       display:grid;
       gap:14px;
     }
@@ -324,8 +422,8 @@
       display:grid;
       grid-template-columns:52px 1fr;
       gap:16px;
-      padding:20px;
-      border-radius:24px;
+      padding:18px;
+      border-radius:22px;
       background:
         radial-gradient(circle at top right, rgba(109,40,217,.06), transparent 30%),
         linear-gradient(180deg,#fff,#fbfdff);
@@ -353,7 +451,7 @@
 
     .step h3{
       margin:0;
-      font-size:20px;
+      font-size:19px;
       font-weight:900;
       letter-spacing:-.04em;
       color:#0f172a;
@@ -416,28 +514,165 @@
       color:#6d28d9;
     }
 
+    .final-card{
+      padding:24px;
+      border-radius:24px;
+      background:linear-gradient(180deg,#f0fdf4,#ffffff);
+      border:1px solid #dcfce7;
+      box-shadow:0 16px 34px rgba(22,163,74,.08);
+    }
+
+    .final-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#dcfce7;
+      color:#166534;
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+    }
+
+    .final-text{
+      margin:14px 0 0;
+      font-size:22px;
+      line-height:1.45;
+      letter-spacing:-.03em;
+      font-weight:900;
+      color:#111827;
+    }
+
     .side-panel{
-      position:sticky;
-      top:18px;
-      align-self:start;
+      padding:18px 14px 18px 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
     }
 
-    .side-card{
+    .template-panel{
+      padding:18px 18px 18px 0;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .summary-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
       padding:18px;
-      border-radius:26px;
+      box-shadow:var(--shadow-md);
     }
 
-    .side-title{
+    .summary-head{
       display:flex;
       align-items:center;
       gap:10px;
+      margin-bottom:12px;
       font-size:14px;
       font-weight:900;
-      margin-bottom:12px;
     }
 
-    .side-title i{
-      color:#6d28d9;
+    .summary-head i{color:#7c3aed}
+
+    .section-note{
+      font-size:12px;
+      color:#64748b;
+      line-height:1.6;
+      margin-top:-2px;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .metric{
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+    }
+
+    .metric-k{
+      display:block;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#64748b;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .metric-v{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      word-break:break-word;
+    }
+
+    .path-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:620px;
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .path-jump{
+      width:100%;
+      text-align:left;
+      padding:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      cursor:pointer;
+      transition:.18s ease;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:#0f172a;
+    }
+
+    .path-jump:hover{
+      transform:translateY(-1px);
+      background:#eef4ff;
+      border-color:#cfe0ff;
+      box-shadow:0 10px 22px rgba(37,99,235,.08);
+    }
+
+    .path-jump span{
+      width:26px;
+      height:26px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:11px;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .path-jump strong{
+      display:block;
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .path-jump small{
+      display:block;
+      margin-top:4px;
+      color:#64748b;
+      line-height:1.45;
+      font-weight:700;
     }
 
     .reminder-list{
@@ -463,72 +698,112 @@
       margin-top:3px;
     }
 
-    .mini-progress{
-      display:grid;
-      gap:10px;
+    .template-stack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:14px;
     }
 
-    .mini-step{
+    .template-card{
+      border:1px solid #e5ebf4;
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      overflow:hidden;
+    }
+
+    .template-card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px 14px 10px;
+    }
+
+    .template-title-wrap{
       display:flex;
       align-items:center;
       gap:10px;
-      padding:10px;
-      border-radius:15px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-      color:#475569;
-      font-size:12px;
-      font-weight:800;
-      transition:.18s ease;
+      min-width:0;
     }
 
-    .mini-step:hover{
-      transform:translateY(-1px);
-      background:#eef4ff;
-      color:#1d4ed8;
-    }
-
-    .mini-step span{
-      width:24px;
-      height:24px;
-      border-radius:9px;
+    .template-icon{
+      width:36px;
+      height:36px;
+      border-radius:12px;
       display:grid;
       place-items:center;
-      background:#eef4ff;
-      color:#1d4ed8;
-      font-size:11px;
+      background:#f3e8ff;
+      color:#7c3aed;
+      flex:0 0 auto;
+    }
+
+    .template-title{
+      font-size:14px;
       font-weight:900;
+      color:#0f172a;
     }
 
-    .final{
-      padding:24px;
-      border-radius:26px;
-      background:linear-gradient(180deg,#f0fdf4,#ffffff);
-      border:1px solid #bbf7d0;
-      box-shadow:0 16px 34px rgba(22,163,74,.08);
+    .template-sub{
+      font-size:12px;
+      color:#64748b;
+      margin-top:2px;
     }
 
-    .final-badge{
+    .template-body{
+      padding:0 14px 14px;
+    }
+
+    .template-box{
+      min-height:100px;
+      padding:14px;
+      border-radius:14px;
+      background:#f8fbff;
+      border:1px solid #e4ebf5;
+      font-size:13px;
+      line-height:1.7;
+      color:#334155;
+      white-space:pre-wrap;
+    }
+
+    .template-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:0 14px 14px;
+    }
+
+    .template-tag{
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding:9px 12px;
+      gap:6px;
+      padding:7px 10px;
       border-radius:999px;
-      background:#dcfce7;
-      color:#166534;
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.1em;
-      text-transform:uppercase;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:800;
+      color:#64748b;
     }
 
-    .final-text{
-      margin:13px 0 0;
-      font-size:22px;
-      line-height:1.45;
-      letter-spacing:-.03em;
-      font-weight:900;
-      color:#111827;
+    .template-copy{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius:12px;
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      transition:all .18s ease;
+    }
+
+    .template-copy.copied{
+      background:#dcfce7 !important;
+      color:#166534 !important;
+      border-color:#bbf7d0 !important;
     }
 
     /* Shared header modal compatibility */
@@ -704,34 +979,48 @@
       display:block;
     }
 
-    @media(max-width:1100px){
-      .hero-grid,
-      .content{
-        grid-template-columns:1fr;
-      }
-
-      .hero-card{
-        width:100%;
-      }
-
-      .side-panel{
-        position:relative;
-        top:0;
+    @media (max-width:1450px){
+      .app-frame{
+        grid-template-columns:minmax(0,1fr) 340px 360px;
       }
     }
 
-    @media(max-width:720px){
-      .shell{
+    @media (max-width:1220px){
+      .app-frame{
+        grid-template-columns:1fr;
+      }
+      .side-panel,
+      .template-panel{
+        padding:0 18px 18px;
+      }
+    }
+
+    @media (max-width:760px){
+      .app-shell{
         width:min(calc(100% - 20px), var(--max));
         margin:16px auto;
       }
 
-      .hero{
-        padding:22px;
+      .app-frame{
+        min-height:100vh;
+        border-radius:24px;
       }
 
-      .content{
-        padding:14px;
+      .main{
+        padding:18px;
+      }
+
+      .main-topbar{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .question-text{
+        font-size:28px;
+      }
+
+      .summary-grid{
+        grid-template-columns:1fr;
       }
 
       .step{
@@ -739,8 +1028,8 @@
       }
 
       .section-head{
-        align-items:flex-start;
         flex-direction:column;
+        align-items:flex-start;
       }
 
       #commentModal,
@@ -774,310 +1063,513 @@
   <div class="page">
     <div id="site-header"></div>
 
-    <div class="shell">
-      <div class="glass-frame">
-
-        <section class="hero">
-          <div class="hero-grid">
-            <div>
-              <div class="kicker">
-                <i class="fa-solid fa-calculator"></i>
-                Pricing Support
-              </div>
-
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+            <div class="page-title-block">
               <h1>Base Rater Guide</h1>
-              <p>
+              <p class="page-subtitle">
                 Use this guide to access the CZAR Rater, identify the required shipment information, apply FAK class logic, itemize weight correctly, and select the correct tariff to verify base rates.
               </p>
-
-              <div class="hero-actions">
-                <a class="btn white" href="https://czarlite.smc3.com/Rater/" target="_blank">
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                  Open CZAR Rater
-                </a>
-                <a class="btn orange" href="#available-tariffs">
-                  <i class="fa-solid fa-file-invoice-dollar"></i>
-                  View Tariff Steps
-                </a>
-              </div>
             </div>
 
-            <div class="hero-card">
-              <div class="hero-card-title">
-                <i class="fa-solid fa-chart-simple"></i>
-                Guide Snapshot
+            <div class="main-status">
+              <div class="pill primary">
+                <i class="fa-solid fa-calculator"></i>
+                Ready
               </div>
-              <div class="hero-stat">
-                <div class="stat">
-                  <b>2</b>
-                  <span>Main Sections</span>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Guide Progress</div>
+                <div class="progress-status">Static reference guide</div>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill"></div>
+              </div>
+            </section>
+
+            <section class="stage-area">
+              <div class="stage-card">
+                <div class="stage-top">
+                  <span class="badge">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    Pricing Support
+                  </span>
+                  <span class="badge alt">
+                    <i class="fa-solid fa-layer-group"></i>
+                    LTL / FAK / CWT
+                  </span>
                 </div>
-                <div class="stat">
-                  <b>LTL</b>
-                  <span>Rate Family</span>
+
+                <div class="content-wrap">
+                  <section class="hero-card-main">
+                    <div class="question-label">
+                      <i class="fa-solid fa-route"></i>
+                      Base Rater Workflow
+                    </div>
+
+                    <h2 class="question-text">Verify the shipment base rate using the correct CZAR Rater inputs.</h2>
+
+                    <p class="question-help">
+                      Follow the steps below to confirm account setup, identify shipment information, enter ZIP codes, apply class logic, itemize weight, select LTL rate family, and choose the correct tariff year.
+                    </p>
+
+                    <div class="hero-actions">
+                      <a class="btn" href="https://czarlite.smc3.com/Rater/" target="_blank">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        Open CZAR Rater
+                      </a>
+
+                      <a class="btn orange" href="#available-tariffs">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        View Tariff Steps
+                      </a>
+                    </div>
+                  </section>
+
+                  <section class="section-card" id="account-setup">
+                    <div class="section-head">
+                      <div class="section-title">
+                        <i class="fa-solid fa-user-lock"></i>
+                        Account Setup
+                      </div>
+
+                      <span class="badge alt">
+                        <i class="fa-solid fa-circle-check"></i>
+                        First-time access
+                      </span>
+                    </div>
+
+                    <div class="section-body">
+                      <article class="step">
+                        <div class="num">1</div>
+                        <div>
+                          <h3>Check your setup email</h3>
+                          <p>Check your email for a message from <strong>AdminManager@smc3.com</strong>.</p>
+                        </div>
+                      </article>
+
+                      <article class="step">
+                        <div class="num">2</div>
+                        <div>
+                          <h3>Create your CZAR Rater password</h3>
+                          <p>Open the CZAR Rater website and follow the instructions to create or change your password.</p>
+
+                          <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="margin-top:14px;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            Open CZAR Rater
+                          </a>
+                        </div>
+                      </article>
+
+                      <article class="step">
+                        <div class="num">3</div>
+                        <div>
+                          <h3>Log in using the new password</h3>
+                          <p>Once the password is changed, log in using the new password.</p>
+                        </div>
+                      </article>
+
+                      <article class="step">
+                        <div class="num">4</div>
+                        <div>
+                          <h3>Confirm the web interface</h3>
+                          <p>After login, the website will bring you to the <strong>Czarlite Web Interface</strong>.</p>
+                        </div>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section class="section-card" id="using-czar">
+                    <div class="section-head">
+                      <div class="section-title">
+                        <i class="fa-solid fa-list-check"></i>
+                        How to Use the CZAR Rater Website
+                      </div>
+
+                      <span class="badge alt">
+                        <i class="fa-solid fa-keyboard"></i>
+                        Rating Inputs
+                      </span>
+                    </div>
+
+                    <div class="section-body">
+                      <article class="step" id="shipment-info">
+                        <div class="num">1</div>
+                        <div>
+                          <h3>Open the PRO in FBI</h3>
+                          <p>Open the PRO in <strong>FBI</strong> and identify the shipment information needed for the rater.</p>
+                        </div>
+                      </article>
+
+                      <article class="step" id="city-lookup">
+                        <div class="num">2</div>
+                        <div>
+                          <h3>Complete City Lookup</h3>
+                          <p>Enter the required ZIP codes:</p>
+                          <ul>
+                            <li><strong>Origin</strong> — Shipper's ZIP Code</li>
+                            <li><strong>Destination</strong> — Consignee's ZIP Code</li>
+                          </ul>
+                        </div>
+                      </article>
+
+                      <article class="step" id="class">
+                        <div class="num">3</div>
+                        <div>
+                          <h3>Enter the correct class</h3>
+                          <p>If Pricing involves <strong>FAK Rates</strong>, enter the class that applies to the customer's class group.</p>
+
+                          <div class="example">
+                            <div class="note-head">
+                              <i class="fa-solid fa-lightbulb"></i>
+                              Example
+                            </div>
+                            If the agreement states that <strong>Class 100</strong> applies to shipments with Class 055, 060, 077, and 090, enter <strong>Class 100</strong> instead of the actual class listed on the BOL.
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="step" id="weight">
+                        <div class="num">4</div>
+                        <div>
+                          <h3>Enter the weight</h3>
+                          <p>Enter the <strong>weight per line item</strong>.</p>
+
+                          <div class="note">
+                            <div class="note-head">
+                              <i class="fa-solid fa-circle-info"></i>
+                              Note
+                            </div>
+                            If the shipment contains multiple line items, click <strong>"Add New Row"</strong> and itemize the weight and class per line item.
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="step" id="rate-family">
+                        <div class="num">5</div>
+                        <div>
+                          <h3>Select the rate family</h3>
+                          <p>Select <strong>LTL</strong> as the Rate Family.</p>
+                        </div>
+                      </article>
+
+                      <article class="step" id="available-tariffs">
+                        <div class="num">6</div>
+                        <div>
+                          <h3>Select the available tariff</h3>
+                          <p>Select the rater used in the customer's agreement, including the applicable year.</p>
+
+                          <div class="example">
+                            <div class="note-head">
+                              <i class="fa-solid fa-lightbulb"></i>
+                              Examples
+                            </div>
+                            FXF 1000 Eff 11/01/2010<br>
+                            or<br>
+                            CZARLITE Eff 02/01/2010
+                          </div>
+
+                          <div class="note">
+                            <div class="note-head">
+                              <i class="fa-solid fa-triangle-exclamation"></i>
+                              Important
+                            </div>
+                            If the correct base rater is <strong>not available</strong>, send an email to the <strong>Training Team / SMEs</strong> and include all shipment details so they can verify the correct CWT rate.
+                          </div>
+                        </div>
+                      </article>
+
+                      <div class="final-card">
+                        <div class="final-badge">
+                          <i class="fa-solid fa-circle-check"></i>
+                          Completed
+                        </div>
+
+                        <div class="final-text">
+                          Use the correct shipment ZIPs, class, itemized weight, rate family, and tariff year to verify the base rate accurately.
+                        </div>
+                      </div>
+                    </div>
+                  </section>
                 </div>
-                <div class="stat">
-                  <b>FAK</b>
-                  <span>Class Check</span>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-route"></i>
+              Quick Navigation
+            </div>
+
+            <div class="path-list">
+              <a class="path-jump" href="#account-setup">
+                <span>1</span>
+                <div>
+                  <strong>Account Setup</strong>
+                  <small>Create or confirm CZAR Rater access.</small>
                 </div>
-                <div class="stat">
-                  <b>CWT</b>
-                  <span>Rate Review</span>
+              </a>
+
+              <a class="path-jump" href="#city-lookup">
+                <span>2</span>
+                <div>
+                  <strong>City Lookup</strong>
+                  <small>Use shipper ZIP and consignee ZIP.</small>
+                </div>
+              </a>
+
+              <a class="path-jump" href="#class">
+                <span>3</span>
+                <div>
+                  <strong>Class / FAK</strong>
+                  <small>Apply the customer’s class group logic.</small>
+                </div>
+              </a>
+
+              <a class="path-jump" href="#weight">
+                <span>4</span>
+                <div>
+                  <strong>Weight</strong>
+                  <small>Itemize by line item when needed.</small>
+                </div>
+              </a>
+
+              <a class="path-jump" href="#rate-family">
+                <span>5</span>
+                <div>
+                  <strong>Rate Family</strong>
+                  <small>Select LTL as the rate family.</small>
+                </div>
+              </a>
+
+              <a class="path-jump" href="#available-tariffs">
+                <span>6</span>
+                <div>
+                  <strong>Tariffs</strong>
+                  <small>Select the correct tariff and year.</small>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-chart-simple"></i>
+              Quick Snapshot
+            </div>
+
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Sections</span>
+                <span class="metric-v">2</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Rate Family</span>
+                <span class="metric-v">LTL</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Class Logic</span>
+                <span class="metric-v">FAK</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Rate Review</span>
+                <span class="metric-v">CWT</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              CZAR Rater
+            </div>
+
+            <p class="section-note" style="margin-bottom:14px;">
+              Open the CZAR Rater website when you are ready to enter shipment rating details.
+            </p>
+
+            <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="width:100%;">
+              <i class="fa-solid fa-calculator"></i>
+              Open CZAR Rater
+            </a>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-lightbulb"></i>
+              Quick Reminders
+            </div>
+
+            <div class="reminder-list">
+              <div class="reminder">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Use the <strong>Shipper ZIP</strong> as Origin and <strong>Consignee ZIP</strong> as Destination.</span>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>For FAK pricing, enter the class assigned to the customer’s class group.</span>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-weight-scale"></i>
+                <span>For multiple line items, itemize each weight and class separately.</span>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-envelope"></i>
+                <span>If the rater is missing, email Training Team / SMEs with complete shipment details.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              Suggested Note
+            </div>
+
+            <div class="section-note">
+              Use this internal note when documenting the base rate validation.
+            </div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon">
+                      <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div>
+                      <div class="template-title">Case Comment</div>
+                      <div class="template-sub">Internal documentation</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="baseRaterComment" class="template-box">Base rate reviewed using CZAR Rater. Verified origin ZIP, destination ZIP, class/FAK applicability, itemized weight, LTL rate family, and applicable tariff/year based on the customer agreement.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag">
+                    <i class="fa-solid fa-file-lines"></i>
+                    Case comment
+                  </span>
+
+                  <button class="template-copy" type="button" onclick="copyTemplateText('baseRaterComment', this)">
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon">
+                      <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <div>
+                      <div class="template-title">Training Team Note</div>
+                      <div class="template-sub">Use when rater is missing</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="trainingTeamNote" class="template-box">Correct base rater is not available in CZAR Rater. Please verify the correct CWT rate using the shipment details, customer agreement, applicable tariff, class, weight, origin ZIP, and destination ZIP.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Email note
+                  </span>
+
+                  <button class="template-copy" type="button" onclick="copyTemplateText('trainingTeamNote', this)">
+                    Copy
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-
-        <div class="content">
-          <main class="main-panel">
-
-            <section class="section-card" id="account-setup">
-              <div class="section-head">
-                <div class="section-title">
-                  <i class="fa-solid fa-user-lock"></i>
-                  Account Setup
-                </div>
-                <div class="badge">
-                  <i class="fa-solid fa-circle-check"></i>
-                  First-time access
-                </div>
-              </div>
-
-              <div class="timeline">
-                <article class="step">
-                  <div class="num">1</div>
-                  <div>
-                    <h3>Check your setup email</h3>
-                    <p>Check your email for a message from <strong>AdminManager@smc3.com</strong>.</p>
-                  </div>
-                </article>
-
-                <article class="step">
-                  <div class="num">2</div>
-                  <div>
-                    <h3>Create your CZAR Rater password</h3>
-                    <p>Open the CZAR Rater website and follow the instructions to create or change your password.</p>
-                    <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="margin-top:14px;">
-                      <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                      Open CZAR Rater
-                    </a>
-                  </div>
-                </article>
-
-                <article class="step">
-                  <div class="num">3</div>
-                  <div>
-                    <h3>Log in using the new password</h3>
-                    <p>Once the password is changed, log in using the new password.</p>
-                  </div>
-                </article>
-
-                <article class="step">
-                  <div class="num">4</div>
-                  <div>
-                    <h3>Confirm the web interface</h3>
-                    <p>After login, the website will bring you to the <strong>Czarlite Web Interface</strong>.</p>
-                  </div>
-                </article>
-              </div>
-            </section>
-
-            <section class="section-card" id="using-czar">
-              <div class="section-head">
-                <div class="section-title">
-                  <i class="fa-solid fa-list-check"></i>
-                  How to Use the CZAR Rater Website
-                </div>
-                <div class="badge">
-                  <i class="fa-solid fa-layer-group"></i>
-                  Rating Inputs
-                </div>
-              </div>
-
-              <div class="timeline">
-                <article class="step" id="shipment-info">
-                  <div class="num">1</div>
-                  <div>
-                    <h3>Open the PRO in FBI</h3>
-                    <p>Open the PRO in <strong>FBI</strong> and identify the shipment information needed for the rater.</p>
-                  </div>
-                </article>
-
-                <article class="step" id="city-lookup">
-                  <div class="num">2</div>
-                  <div>
-                    <h3>Complete City Lookup</h3>
-                    <p>Enter the required ZIP codes:</p>
-                    <ul>
-                      <li><strong>Origin</strong> — Shipper's ZIP Code</li>
-                      <li><strong>Destination</strong> — Consignee's ZIP Code</li>
-                    </ul>
-                  </div>
-                </article>
-
-                <article class="step" id="class">
-                  <div class="num">3</div>
-                  <div>
-                    <h3>Enter the correct class</h3>
-                    <p>If Pricing involves <strong>FAK Rates</strong>, enter the class that applies to the customer's class group.</p>
-
-                    <div class="example">
-                      <div class="note-head">
-                        <i class="fa-solid fa-lightbulb"></i>
-                        Example
-                      </div>
-                      If the agreement states that <strong>Class 100</strong> applies to shipments with
-                      Class 055, 060, 077, and 090, enter <strong>Class 100</strong> instead of the actual class listed on the BOL.
-                    </div>
-                  </div>
-                </article>
-
-                <article class="step" id="weight">
-                  <div class="num">4</div>
-                  <div>
-                    <h3>Enter the weight</h3>
-                    <p>Enter the <strong>weight per line item</strong>.</p>
-
-                    <div class="note">
-                      <div class="note-head">
-                        <i class="fa-solid fa-circle-info"></i>
-                        Note
-                      </div>
-                      If the shipment contains multiple line items, click <strong>"Add New Row"</strong> and itemize the weight and class per line item.
-                    </div>
-                  </div>
-                </article>
-
-                <article class="step" id="rate-family">
-                  <div class="num">5</div>
-                  <div>
-                    <h3>Select the rate family</h3>
-                    <p>Select <strong>LTL</strong> as the Rate Family.</p>
-                  </div>
-                </article>
-
-                <article class="step" id="available-tariffs">
-                  <div class="num">6</div>
-                  <div>
-                    <h3>Select the available tariff</h3>
-                    <p>Select the rater used in the customer's agreement, including the applicable year.</p>
-
-                    <div class="example">
-                      <div class="note-head">
-                        <i class="fa-solid fa-lightbulb"></i>
-                        Examples
-                      </div>
-                      FXF 1000 Eff 11/01/2010<br>
-                      or<br>
-                      CZARLITE Eff 02/01/2010
-                    </div>
-
-                    <div class="note">
-                      <div class="note-head">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        Important
-                      </div>
-                      If the correct base rater is <strong>not available</strong>, send an email to the <strong>Training Team / SMEs</strong> and include all shipment details so they can verify the correct CWT rate.
-                    </div>
-                  </div>
-                </article>
-
-                <div class="final">
-                  <div class="final-badge">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Completed
-                  </div>
-                  <div class="final-text">
-                    Use the correct shipment ZIPs, class, itemized weight, rate family, and tariff year to verify the base rate accurately.
-                  </div>
-                </div>
-              </div>
-            </section>
-
-          </main>
-
-          <aside class="side-panel">
-            <section class="side-card">
-              <div class="side-title">
-                <i class="fa-solid fa-route"></i>
-                Quick Navigation
-              </div>
-
-              <div class="mini-progress">
-                <a class="mini-step" href="#account-setup"><span>1</span> Account Setup</a>
-                <a class="mini-step" href="#city-lookup"><span>2</span> City Lookup</a>
-                <a class="mini-step" href="#class"><span>3</span> Class / FAK</a>
-                <a class="mini-step" href="#weight"><span>4</span> Weight</a>
-                <a class="mini-step" href="#available-tariffs"><span>6</span> Tariffs</a>
-              </div>
-            </section>
-
-            <section class="side-card">
-              <div class="side-title">
-                <i class="fa-solid fa-circle-info"></i>
-                Quick Reminders
-              </div>
-
-              <div class="reminder-list">
-                <div class="reminder">
-                  <i class="fa-solid fa-location-dot"></i>
-                  <span>Use the <strong>Shipper ZIP</strong> as Origin and <strong>Consignee ZIP</strong> as Destination.</span>
-                </div>
-                <div class="reminder">
-                  <i class="fa-solid fa-layer-group"></i>
-                  <span>For FAK pricing, enter the class assigned to the customer’s class group.</span>
-                </div>
-                <div class="reminder">
-                  <i class="fa-solid fa-weight-scale"></i>
-                  <span>For multiple line items, itemize each weight and class separately.</span>
-                </div>
-                <div class="reminder">
-                  <i class="fa-solid fa-envelope"></i>
-                  <span>If the rater is missing, email Training Team / SMEs with complete shipment details.</span>
-                </div>
-              </div>
-            </section>
-
-            <section class="side-card">
-              <div class="side-title">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                CZAR Rater
-              </div>
-
-              <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="width:100%;">
-                <i class="fa-solid fa-calculator"></i>
-                Open CZAR Rater
-              </a>
-            </section>
-          </aside>
-        </div>
+        </aside>
       </div>
     </div>
 
     <div id="site-footer"></div>
   </div>
 
-  <script src="./assets/js/header-loader.js"></script>
-  <script src="./assets/js/header.js"></script>
-  <script src="./assets/js/footer-loader.js"></script>
+  <script>
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+        authDomain: "bdgg-database.firebaseapp.com",
+        projectId: "bdgg-database",
+        storageBucket: "bdgg-database.appspot.com",
+        messagingSenderId: "43574975434",
+        appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+      });
+    }
+
+    window.auth = firebase.auth();
+    window.db = firebase.firestore();
+  </script>
+
+  <script src="../assets/js/header-loader.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer-loader.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      if (!firebase.apps.length) {
-        firebase.initializeApp({
-          apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-          authDomain: "bdgg-database.firebaseapp.com",
-          projectId: "bdgg-database",
-          storageBucket: "bdgg-database.appspot.com",
-          messagingSenderId: "43574975434",
-          appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-        });
-      }
+    function copyTemplateText(id, btn){
+      const el = document.getElementById(id);
+      if(!el) return;
 
-      window.auth = firebase.auth();
-      window.db = firebase.firestore();
-    });
+      const text = el.innerText || el.textContent || "";
+
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = "Copied ✓";
+        btn.classList.add("copied");
+
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove("copied");
+        }, 1400);
+      }).catch(() => {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+
+        const original = btn.textContent;
+        btn.textContent = "Copied ✓";
+        btn.classList.add("copied");
+
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove("copied");
+        }, 1400);
+      });
+    }
   </script>
 </body>
 </html>
