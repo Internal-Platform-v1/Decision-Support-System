@@ -6,48 +6,56 @@
   <title>Base Rater Guide</title>
 
   <script>
-    window.SITE_BASE = "../";
+    window.SITE_BASE = "./";
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="./assets/css/header-footer-style.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <style>
     :root{
-      --purple:#4d148c;
-      --purple2:#6d28d9;
-      --orange:#ff6600;
-      --dark:#07111f;
-      --ink:#0f172a;
+      --bg:#07111f;
+      --bg-soft:#0c1728;
+      --card:#ffffff;
+      --text:#0f172a;
+      --text-soft:#475569;
       --muted:#64748b;
-      --line:#e2e8f0;
-      --soft:#f8fafc;
+      --line:rgba(148,163,184,.18);
+      --accent:#6d28d9;
+      --accent-2:#4d148c;
+      --accent-3:#ff6600;
       --success:#16a34a;
-      --shadow:0 24px 80px rgba(2,6,23,.16);
-      --shadow2:0 14px 35px rgba(15,23,42,.08);
-      --radius:28px;
-      font-family:"Inter",system-ui,sans-serif;
+      --warning:#f59e0b;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10);
+      --radius-xl:28px;
+      --radius-lg:20px;
+      --max:1500px;
+      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     *{box-sizing:border-box}
 
-    html{scroll-behavior:smooth}
+    html{
+      scroll-behavior:smooth;
+    }
 
     body{
       margin:0;
       min-height:100vh;
+      color:var(--text);
       background:
-        radial-gradient(circle at top left, rgba(109,40,217,.30), transparent 28%),
-        radial-gradient(circle at top right, rgba(255,102,0,.20), transparent 24%),
-        radial-gradient(circle at bottom left, rgba(77,20,140,.18), transparent 30%),
-        linear-gradient(180deg,#08111f 0%,#0c1728 48%,#07111f 100%);
-      color:var(--ink);
+        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+        linear-gradient(180deg, #091120 0%, #0b1525 34%, #eef4fb 34%, #f5f8fc 100%);
+      overflow-x:hidden;
     }
 
     body::before{
@@ -56,16 +64,16 @@
       inset:0;
       pointer-events:none;
       background:
-        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
       background-size:36px 36px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 43%);
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
       z-index:0;
     }
 
     a{
-      text-decoration:none;
       color:inherit;
+      text-decoration:none;
     }
 
     .page{
@@ -74,7 +82,7 @@
     }
 
     .shell{
-      width:min(calc(100% - 32px), 1500px);
+      width:min(calc(100% - 32px), var(--max));
       margin:22px auto 28px;
     }
 
@@ -82,7 +90,7 @@
       background:rgba(255,255,255,.62);
       border:1px solid rgba(255,255,255,.72);
       border-radius:34px;
-      box-shadow:var(--shadow);
+      box-shadow:var(--shadow-xl);
       backdrop-filter:blur(18px);
       overflow:hidden;
     }
@@ -90,7 +98,7 @@
     .hero{
       position:relative;
       overflow:hidden;
-      padding:30px;
+      padding:32px;
       color:white;
       background:
         radial-gradient(circle at right top, rgba(255,102,0,.34), transparent 32%),
@@ -134,7 +142,7 @@
 
     .hero h1{
       margin:0;
-      font-size:clamp(32px,4vw,58px);
+      font-size:clamp(34px,4vw,58px);
       line-height:.95;
       font-weight:900;
       letter-spacing:-.07em;
@@ -143,8 +151,8 @@
 
     .hero p{
       margin:16px 0 0;
-      max-width:850px;
-      color:rgba(255,255,255,.84);
+      max-width:840px;
+      color:rgba(255,255,255,.86);
       line-height:1.75;
       font-size:15px;
     }
@@ -162,7 +170,7 @@
       justify-content:center;
       gap:10px;
       min-height:48px;
-      padding:0 17px;
+      padding:0 18px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,.18);
       color:white;
@@ -179,7 +187,7 @@
 
     .btn.white{
       background:white;
-      color:var(--purple);
+      color:#4d148c;
       box-shadow:0 18px 36px rgba(0,0,0,.16);
     }
 
@@ -247,13 +255,15 @@
       display:flex;
       flex-direction:column;
       gap:16px;
+      min-width:0;
     }
 
-    .section-card{
-      background:white;
+    .section-card,
+    .side-card{
+      background:#fff;
       border:1px solid #dbe4f0;
       border-radius:28px;
-      box-shadow:var(--shadow2);
+      box-shadow:var(--shadow-md);
       overflow:hidden;
     }
 
@@ -283,7 +293,7 @@
       display:grid;
       place-items:center;
       color:#fff;
-      background:linear-gradient(135deg,var(--purple),var(--purple2));
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
     }
 
     .badge{
@@ -336,7 +346,7 @@
       place-items:center;
       color:white;
       font-weight:900;
-      background:linear-gradient(135deg,var(--purple),var(--purple2));
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
       box-shadow:0 14px 24px rgba(77,20,140,.18);
     }
 
@@ -350,7 +360,7 @@
 
     .step p{
       margin:8px 0 0;
-      color:var(--muted);
+      color:#64748b;
       font-size:14px;
       line-height:1.7;
     }
@@ -374,7 +384,9 @@
       line-height:1.7;
     }
 
-    .note strong{color:#431407}
+    .note strong{
+      color:#431407;
+    }
 
     .note-head{
       display:flex;
@@ -399,7 +411,9 @@
       line-height:1.7;
     }
 
-    .example .note-head{color:#6d28d9}
+    .example .note-head{
+      color:#6d28d9;
+    }
 
     .side-panel{
       position:sticky;
@@ -408,11 +422,8 @@
     }
 
     .side-card{
-      background:white;
-      border:1px solid #dbe4f0;
-      border-radius:26px;
       padding:18px;
-      box-shadow:var(--shadow2);
+      border-radius:26px;
     }
 
     .side-title{
@@ -424,7 +435,9 @@
       margin-bottom:12px;
     }
 
-    .side-title i{color:var(--purple2)}
+    .side-title i{
+      color:#6d28d9;
+    }
 
     .reminder-list{
       display:grid;
@@ -445,7 +458,7 @@
     }
 
     .reminder i{
-      color:var(--orange);
+      color:#ff6600;
       margin-top:3px;
     }
 
@@ -656,6 +669,12 @@
       box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
     }
 
+    #commentModal .feedback-submit-btn{
+      margin:16px 0 8px;
+      min-height:54px;
+      border-radius:18px;
+    }
+
     #commentModal .link-text{
       color:#4d148c;
       cursor:pointer;
@@ -686,9 +705,13 @@
 
     @media(max-width:1100px){
       .hero-grid,
-      .content{grid-template-columns:1fr}
+      .content{
+        grid-template-columns:1fr;
+      }
 
-      .hero-card{width:100%}
+      .hero-card{
+        width:100%;
+      }
 
       .side-panel{
         position:relative;
@@ -698,15 +721,21 @@
 
     @media(max-width:720px){
       .shell{
-        width:min(calc(100% - 20px),1500px);
+        width:min(calc(100% - 20px), var(--max));
         margin:16px auto;
       }
 
-      .hero{padding:22px}
+      .hero{
+        padding:22px;
+      }
 
-      .content{padding:14px}
+      .content{
+        padding:14px;
+      }
 
-      .step{grid-template-columns:1fr}
+      .step{
+        grid-template-columns:1fr;
+      }
 
       .section-head{
         align-items:flex-start;
@@ -861,7 +890,7 @@
                 </div>
                 <div class="badge">
                   <i class="fa-solid fa-layer-group"></i>
-                  Rating inputs
+                  Rating Inputs
                 </div>
               </div>
 
@@ -1026,12 +1055,18 @@
     </div>
 
     <div id="site-footer"></div>
+
+    <script>
+      window.SITE_BASE = "./";
+    </script>
   </div>
 
-  <script>
-    window.SITE_BASE = "../";
+  <script src="./assets/js/header-loader.js"></script>
+  <script src="./assets/js/header.js"></script>
+  <script src="./assets/js/footer-loader.js"></script>
 
-    if (typeof firebase !== "undefined") {
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
       if (!firebase.apps.length) {
         firebase.initializeApp({
           apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
@@ -1044,265 +1079,7 @@
       }
 
       window.db = firebase.firestore();
-    }
-  </script>
-
-  <script src="../assets/js/header-loader.js"></script>
-  <script src="../assets/js/header.js"></script>
-  <script src="../assets/js/footer-loader.js"></script>
-
-  <script>
-    /* =========================================================
-       BASE RATER HEADER FIX
-       Keeps shared clock from header.js, and forces Feedback
-       + Get Help to bind correctly on this page.
-    ========================================================= */
-    (function(){
-      const FEEDBACK_COLLECTION = "feedback";
-      let selectedRating = 0;
-      let commentsUnsubscribe = null;
-
-      function ensureFirebaseReady(){
-        if (typeof firebase === "undefined") return false;
-
-        if (!firebase.apps.length) {
-          firebase.initializeApp({
-            apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-            authDomain: "bdgg-database.firebaseapp.com",
-            projectId: "bdgg-database",
-            storageBucket: "bdgg-database.appspot.com",
-            messagingSenderId: "43574975434",
-            appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-          });
-        }
-
-        window.db = firebase.firestore();
-        return true;
-      }
-
-      function openModal(id){
-        const modal = document.getElementById(id);
-        if (!modal) return;
-
-        modal.style.display = "flex";
-        document.body.style.overflow = "hidden";
-      }
-
-      function closeModal(id){
-        const modal = document.getElementById(id);
-        if (!modal) return;
-
-        modal.style.display = "none";
-        document.body.style.overflow = "";
-      }
-
-      window.closeHelp = function(){
-        closeModal("helpModal");
-      };
-
-      window.closeComment = function(){
-        closeModal("commentModal");
-      };
-
-      window.closeAllComments = function(){
-        closeModal("allCommentsModal");
-      };
-
-      function clearFeedbackForm(){
-        selectedRating = 0;
-
-        const name = document.getElementById("commentName");
-        const text = document.getElementById("commentText");
-
-        if (name) name.value = "";
-        if (text) text.value = "";
-
-        document.querySelectorAll(".rating-star").forEach(star => {
-          star.classList.remove("selected");
-        });
-      }
-
-      function initStars(){
-        document.querySelectorAll(".rating-star").forEach(star => {
-          if (star.dataset.baseRaterStarBound === "true") return;
-
-          star.dataset.baseRaterStarBound = "true";
-
-          star.addEventListener("click", function(){
-            selectedRating = Number(this.dataset.value || 0);
-
-            document.querySelectorAll(".rating-star").forEach(s => {
-              const value = Number(s.dataset.value || 0);
-              s.classList.toggle("selected", value <= selectedRating);
-            });
-          });
-        });
-      }
-
-      window.sendComment = async function(){
-        const firebaseReady = ensureFirebaseReady();
-
-        if (!firebaseReady || !window.db) {
-          alert("Feedback database is not connected on this page yet.");
-          return;
-        }
-
-        const name = document.getElementById("commentName")?.value.trim() || "Anonymous";
-        const comment = document.getElementById("commentText")?.value.trim() || "";
-
-        if (!selectedRating) {
-          alert("Select a rating.");
-          return;
-        }
-
-        try {
-          await window.db.collection(FEEDBACK_COLLECTION).add({
-            rating: selectedRating,
-            name,
-            comment,
-            page: document.title || "Base Rater Guide",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-
-          alert("Saved!");
-          clearFeedbackForm();
-          closeModal("commentModal");
-        } catch (err) {
-          console.error(err);
-          alert("Save failed.");
-        }
-      };
-
-      window.showAllComments = function(){
-        const listEl = document.getElementById("commentsList");
-
-        if (!listEl) {
-          alert("Comments list is missing from the shared header modal.");
-          return;
-        }
-
-        const firebaseReady = ensureFirebaseReady();
-
-        if (!firebaseReady || !window.db) {
-          listEl.innerHTML = "<p>Feedback database is not connected on this page yet.</p>";
-          openModal("allCommentsModal");
-          return;
-        }
-
-        listEl.innerHTML = "Loading…";
-
-        if (commentsUnsubscribe) commentsUnsubscribe();
-
-        commentsUnsubscribe = window.db
-          .collection(FEEDBACK_COLLECTION)
-          .orderBy("createdAt", "desc")
-          .onSnapshot(snapshot => {
-            listEl.innerHTML = "";
-
-            if (snapshot.empty) {
-              listEl.innerHTML = "<p>No feedback yet.</p>";
-            }
-
-            snapshot.forEach(doc => {
-              const data = doc.data();
-              const rating = Number(data.rating || 0);
-
-              const item = document.createElement("div");
-              item.className = "comment-list-item";
-              item.innerHTML = `
-                <span class="stars">${"★".repeat(rating)}${"☆".repeat(5 - rating)}</span>
-                <strong>${data.name || "Anonymous"}</strong>
-                <p>${data.comment || ""}</p>
-              `;
-
-              listEl.appendChild(item);
-            });
-
-            openModal("allCommentsModal");
-          }, err => {
-            console.error(err);
-            listEl.innerHTML = "<p>Unable to load comments.</p>";
-            openModal("allCommentsModal");
-          });
-      };
-
-      function bindSharedHeaderIcons(){
-        const commentIcon = document.getElementById("commentIcon");
-        const helpIcon = document.getElementById("helpIcon");
-
-        if (commentIcon && commentIcon.dataset.baseRaterBound !== "true") {
-          commentIcon.dataset.baseRaterBound = "true";
-
-          commentIcon.addEventListener("click", function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            clearFeedbackForm();
-            initStars();
-            openModal("commentModal");
-          });
-        }
-
-        if (helpIcon && helpIcon.dataset.baseRaterBound !== "true") {
-          helpIcon.dataset.baseRaterBound = "true";
-
-          helpIcon.addEventListener("click", function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            openModal("helpModal");
-          });
-        }
-
-        document.querySelectorAll("#commentModal, #helpModal, #allCommentsModal").forEach(modal => {
-          if (modal.dataset.baseRaterModalBound === "true") return;
-
-          modal.dataset.baseRaterModalBound = "true";
-
-          modal.addEventListener("click", function(){
-            this.style.display = "none";
-            document.body.style.overflow = "";
-          });
-        });
-
-        document.querySelectorAll(
-          "#commentModal .modal-content, #helpModal .modal-content, #allCommentsModal .modal-content"
-        ).forEach(content => {
-          if (content.dataset.baseRaterModalContentBound === "true") return;
-
-          content.dataset.baseRaterModalContentBound = "true";
-
-          content.addEventListener("click", function(e){
-            e.stopPropagation();
-          });
-        });
-      }
-
-      function waitForHeaderAndBind(){
-        let tries = 0;
-
-        const timer = setInterval(() => {
-          tries++;
-
-          bindSharedHeaderIcons();
-          initStars();
-
-          const ready =
-            document.getElementById("commentIcon") &&
-            document.getElementById("helpIcon");
-
-          if (ready || tries >= 80) {
-            clearInterval(timer);
-          }
-        }, 100);
-      }
-
-      ensureFirebaseReady();
-
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", waitForHeaderAndBind);
-      } else {
-        waitForHeaderAndBind();
-      }
-    })();
+    });
   </script>
 </body>
 </html>
