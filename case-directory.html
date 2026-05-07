@@ -898,7 +898,25 @@ mark.search-highlight{
   <div id="toast">Copied!</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script>
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    });
+  }
+
+  window.auth = firebase.auth();
+  window.db = firebase.firestore();
+</script>
+
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
@@ -1180,17 +1198,6 @@ window.addEventListener("click", (e) => {
 function initCaseDirectoryPage() {
   if (caseDirectoryInitialized) return;
   caseDirectoryInitialized = true;
-
-  if (!firebase.apps.length) {
-    firebase.initializeApp({
-      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-      authDomain: "bdgg-database.firebaseapp.com",
-      projectId: "bdgg-database",
-      storageBucket: "bdgg-database.appspot.com",
-      messagingSenderId: "43574975434",
-      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    });
-  }
 
   const rowsEl = document.getElementById("rows");
   const searchInput = document.getElementById("directorySearch");
