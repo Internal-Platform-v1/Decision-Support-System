@@ -2262,6 +2262,8 @@ body::after{
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
+window.SITE_BASE = "./";
+
 if (!firebase.apps.length) {
   firebase.initializeApp({
     apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
@@ -2282,6 +2284,11 @@ window.db = firebase.firestore();
 <script src="assets/js/footer-loader.js"></script>
 
 <script>
+/* =========================================================
+   SHARED HEADER MODAL CONTROLLER
+   Keeps Feedback, Get Help, View Comments, Profile, Logout.
+========================================================= */
+
 let selectedRating = 0;
 let commentsUnsubscribe = null;
 let ratingStars = [];
@@ -2290,13 +2297,13 @@ function initRatingStars() {
   ratingStars = Array.from(document.querySelectorAll(".rating-star"));
 
   ratingStars.forEach(star => {
-    star.addEventListener("click", () => {
+    star.onclick = () => {
       selectedRating = Number(star.dataset.value);
 
       ratingStars.forEach(s => {
         s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
       });
-    });
+    };
   });
 }
 
@@ -2328,29 +2335,23 @@ function closeAnimatedModal(modal, onClosed) {
 }
 
 function openComment() {
-  const modal = document.getElementById("commentModal");
-  openAnimatedModal(modal);
+  openAnimatedModal(document.getElementById("commentModal"));
 }
 
 function closeComment() {
-  const modal = document.getElementById("commentModal");
-  closeAnimatedModal(modal);
+  closeAnimatedModal(document.getElementById("commentModal"));
 }
 
 function openHelp() {
-  const modal = document.getElementById("helpModal");
-  openAnimatedModal(modal);
+  openAnimatedModal(document.getElementById("helpModal"));
 }
 
 function closeHelp() {
-  const modal = document.getElementById("helpModal");
-  closeAnimatedModal(modal);
+  closeAnimatedModal(document.getElementById("helpModal"));
 }
 
 function closeAllComments() {
-  const modal = document.getElementById("allCommentsModal");
-
-  closeAnimatedModal(modal, () => {
+  closeAnimatedModal(document.getElementById("allCommentsModal"), () => {
     if (commentsUnsubscribe) {
       commentsUnsubscribe();
       commentsUnsubscribe = null;
@@ -2359,9 +2360,12 @@ function closeAllComments() {
 }
 
 async function sendComment() {
-  const name = document.getElementById("commentName")?.value.trim() || "";
-  const comment = document.getElementById("commentText")?.value.trim() || "";
+  const nameInput = document.getElementById("commentName");
+  const commentInput = document.getElementById("commentText");
   const message = document.getElementById("feedbackMessage");
+
+  const name = nameInput ? nameInput.value.trim() : "";
+  const comment = commentInput ? commentInput.value.trim() : "";
 
   if (!selectedRating) {
     if (message) {
@@ -2377,7 +2381,7 @@ async function sendComment() {
   try {
     await window.db.collection("feedback").add({
       rating: selectedRating,
-      name,
+      name: name || "Anonymous",
       comment,
       page: "FBC Comments Guide",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2388,9 +2392,6 @@ async function sendComment() {
       message.style.color = "#16a34a";
       message.textContent = "Thank you. Your feedback has been submitted.";
     }
-
-    const nameInput = document.getElementById("commentName");
-    const commentInput = document.getElementById("commentText");
 
     if (nameInput) nameInput.value = "";
     if (commentInput) commentInput.value = "";
@@ -2422,7 +2423,7 @@ function showAllComments() {
 
   if (!modal || !list) return;
 
-  list.innerHTML = "<p>Loading comments.</p>";
+  list.innerHTML = "<p>Loading comments...</p>";
 
   if (commentsUnsubscribe) {
     commentsUnsubscribe();
@@ -2450,8 +2451,8 @@ function showAllComments() {
           html += `
             <div class="comment-list-item">
               <span class="stars">${stars}</span>
-              <strong>${item.name || "Anonymous"}</strong>
-              <p style="margin:6px 0 0;">${item.comment || "No comment provided."}</p>
+              <strong>${escapeHtml(item.name || "Anonymous")}</strong>
+              <p style="margin:6px 0 0;">${escapeHtml(item.comment || "No comment provided.")}</p>
             </div>
           `;
         });
@@ -2470,6 +2471,14 @@ function showAllComments() {
   }
 }
 
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
+
 window.addEventListener("click", e => {
   const commentModal = document.getElementById("commentModal");
   const allCommentsModal = document.getElementById("allCommentsModal");
@@ -2482,118 +2491,676 @@ window.addEventListener("click", e => {
 
 document.addEventListener("DOMContentLoaded", initRatingStars);
 document.addEventListener("headerLoaded", initRatingStars);
+setTimeout(initRatingStars, 300);
 </script>
 
 <script>
+/* =========================================================
+   FBC COMMENT BUILDER
+   Loads FBC-comment.xlsx and powers the builder.
+========================================================= */
+
 let fbcInitialized = false;
 
-  window.auth = firebase.auth();
-  window.db = firebase.firestore();
-</script>
+function showToast(message = "Copied!") {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
 
-<script src="assets/js/header-loader.js"></script>
-<script src="assets/js/header.js"></script>
-<script src="assets/js/footer-loader.js"></script>
-<script>
-let fbcInitialized = false;
-function showToast(message = 'Copied!') { const toast = document.getElementById('toast'); if (!toast) return; toast.textContent = message; toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(10px)'; }, 1500); }
-function scrollToBuilder() { const target = document.getElementById('fbcBuilder'); if (!target) return; const y = target.getBoundingClientRect().top + window.scrollY - 20; window.scrollTo({ top: y, behavior: 'smooth' }); }
-function initFbcCommentsPage() {
-  if (fbcInitialized) return; fbcInitialized = true;
-  const queueTypeSelect = document.getElementById('queueTypeSelect'); const actionTakenSelect = document.getElementById('actionTakenSelect'); const caseNumberInput = document.getElementById('caseNumberInput'); const aiContextInput = document.getElementById('aiContextInput'); const autoCopyToggle = document.getElementById('autoCopyToggle'); const editModeToggle = document.getElementById('editModeToggle'); const includeContextToggle = document.getElementById('includeContextToggle'); const generatedCommentBox = document.getElementById('generatedCommentBox'); const highlightPreview = document.getElementById('highlightPreview'); const copiedBadge = document.getElementById('copiedBadge'); const statusPill = document.getElementById('statusPill'); const selectedQueueValue = document.getElementById('selectedQueueValue'); const selectedActionValue = document.getElementById('selectedActionValue'); const selectedCodeValue = document.getElementById('selectedCodeValue'); const generatorStatusValue = document.getElementById('generatorStatusValue'); const heroQueueCount = document.getElementById('heroQueueCount'); const heroActionCount = document.getElementById('heroActionCount'); const assistantChecks = document.getElementById('assistantChecks'); const aiSuggestions = document.getElementById('aiSuggestions'); const generatedMiniStatus = document.getElementById('generatedMiniStatus'); const caseWarning = document.getElementById('caseWarning'); const recentCommentsList = document.getElementById('recentCommentsList');
-  let DATA = [];
-  function setStatus(label){ if(statusPill) statusPill.textContent = label; }
-  function showCopiedBadge(){ if(!copiedBadge) return; copiedBadge.classList.add('show'); clearTimeout(showCopiedBadge.timer); showCopiedBadge.timer = setTimeout(() => copiedBadge.classList.remove('show'), 1600); }
-  function autoResizeTextarea(el){ if(!el) return; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
-  function getCell(row, possibleNames){ const keys = Object.keys(row); for(const name of possibleNames){ const exactKey = keys.find(k => k.trim().toLowerCase() === name.trim().toLowerCase()); if(exactKey) return row[exactKey]; } return ''; }
-  function normalizeRows(rows){ return rows.map(row => ({ queueType:String(getCell(row,['Queue Type','Queue','QueueType'])).trim(), action:String(getCell(row,['Action','Action Taken','Type'])).trim(), code:String(getCell(row,['2x4 Comment','2x4 Comment ','2x4','Code'])).trim(), recommendedComment:String(getCell(row,['Recommended Comment','Recommended comment','Recommended Comments','Comment','Recommendation'])).trim() })).filter(row => row.queueType && row.action); }
-  function cleanText(text){ return String(text || '').replace(/\s+/g,' ').replace(/\s+([.,;:])/g,'$1').trim(); }
-  function trimEndingPeriod(text){ return cleanText(text).replace(/[.\s]+$/g,''); }
-  function escapeHtml(text){ return String(text || '').replace(/[&<>\"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[char])); }
-  function updateHighlightPreview(code, caseNumber, comment){ if(!highlightPreview) return; if(!code && !caseNumber && !comment){ highlightPreview.classList.remove("show"); highlightPreview.innerHTML = ""; return; } const fullGeneratedComment = `${code}-${caseNumber}-${comment}`; highlightPreview.classList.add("show"); highlightPreview.innerHTML = `<div class="highlight-line"><span class="comment-text-main">${escapeHtml(fullGeneratedComment)}</span></div>`; }
-  function populateQueueTypes(){ const queueTypes = [...new Set(DATA.map(item => item.queueType))].sort(); queueTypeSelect.innerHTML = '<option value="">Select Queue Type</option>'; queueTypes.forEach(queue => { const option = document.createElement('option'); option.value = queue; option.textContent = queue; queueTypeSelect.appendChild(option); }); heroQueueCount.textContent = queueTypes.length || '—'; }
-  function populateActions(queueType){ actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>'; if(!queueType){ actionTakenSelect.disabled = true; heroActionCount.textContent = '—'; return; } const actions = [...new Set(DATA.filter(item => item.queueType === queueType).map(item => item.action))].sort(); actions.forEach(action => { const option = document.createElement('option'); option.value = action; option.textContent = action; actionTakenSelect.appendChild(option); }); actionTakenSelect.disabled = false; heroActionCount.textContent = actions.length || '—'; const savedAction = localStorage.getItem('fbc_last_action_' + queueType); if(savedAction && actions.includes(savedAction)) actionTakenSelect.value = savedAction; }
-  function getSelectedRow(){ const queueType = queueTypeSelect.value; const action = actionTakenSelect.value; return DATA.find(item => item.queueType === queueType && item.action === action) || null; }
-  function getRecentComments(){ try{return JSON.parse(localStorage.getItem('fbc_recent_comments') || '[]');}catch{return [];} }
-  function saveRecentComment(comment){ if(!comment) return; const row = getSelectedRow(); let list = getRecentComments().filter(item => item.comment !== comment); list.unshift({ comment, queue:queueTypeSelect.value || 'FBC', action:actionTakenSelect.value || 'Generated', code:row?.code || 'VS-BLER', caseNumber:caseNumberInput.value.trim(), recommendedComment:row?.recommendedComment || '', createdAt:new Date().toISOString() }); list = list.slice(0,5); localStorage.setItem('fbc_recent_comments', JSON.stringify(list)); renderRecentComments(); }
-  function renderRecentComments(){ const list = getRecentComments(); if(!recentCommentsList) return; if(!list.length){ recentCommentsList.innerHTML = '<div class="helper-text">Generated comments will appear here for quick reuse during this browser session.</div>'; return; } recentCommentsList.innerHTML = list.map((item,index) => `<div class="recent-item" data-index="${index}"><strong>${item.code || 'FBC'} • ${item.action || 'Generated'}</strong><span>${item.comment}</span></div>`).join(''); recentCommentsList.querySelectorAll('.recent-item').forEach(item => { item.addEventListener('click', () => { const selected = list[Number(item.dataset.index)]; if(!selected) return; if(selected.queue){ queueTypeSelect.value = selected.queue; populateActions(selected.queue); } if(selected.action){ actionTakenSelect.value = selected.action; } caseNumberInput.value = selected.caseNumber || ''; generatedCommentBox.value = selected.comment || ''; autoResizeTextarea(generatedCommentBox); updateGeneratedStatus(Boolean(selected.comment)); updateHighlightPreview(selected.code || 'FBC', selected.caseNumber || '—', selected.recommendedComment || selected.comment); updateState(); showToast('Previous comment loaded for editing.'); }); }); }
-  function updateGeneratedStatus(isReady){ if(!generatedMiniStatus) return; generatedMiniStatus.classList.toggle('ready', Boolean(isReady)); generatedMiniStatus.innerHTML = isReady ? '<i class="fa-solid fa-circle-check"></i> Comment Ready' : '<i class="fa-solid fa-circle"></i> Waiting'; }
-  function validateCaseNumber(showWarning = true){ const value = caseNumberInput.value.trim(); const valid = !value || /^\d+$/.test(value); if(caseWarning) caseWarning.classList.toggle('show', showWarning && !valid); return valid; }
-  function updateAssistantChecks(){ const row = getSelectedRow(); const caseNumber = caseNumberInput.value.trim(); const hasValidCase = /^\d+$/.test(caseNumber); const checks = []; const suggestions = []; if(queueTypeSelect.value) checks.push('Queue type selected.'); else suggestions.push('Select the queue type first so the assistant can load the correct action list.'); if(actionTakenSelect.value) checks.push('Action taken selected.'); else suggestions.push('Choose the exact action taken before generating the comment.'); if(caseNumber && hasValidCase) checks.push('Case number format looks valid.'); else if(caseNumber && !hasValidCase) suggestions.push('Case # should be numeric only to avoid an invalid FBC comment.'); else suggestions.push('Enter the actual case number you are currently working.'); if(row?.recommendedComment) checks.push('Workbook recommendation loaded.'); if(includeContextToggle.checked && aiContextInput.value.trim()) checks.push('Optional case context ready.'); assistantChecks.innerHTML = checks.length ? checks.map(item => `<div><i class="fa-solid fa-circle-check" style="color:#16a34a;"></i> ${item}</div>`).join('') : 'Select Queue Type, Action Taken, and Case # to view smart checks.'; aiSuggestions.innerHTML = suggestions.slice(0,3).map(item => `<div class="ai-suggestion"><i class="fa-solid fa-lightbulb"></i><span>${item}</span></div>`).join(''); }
-  function updateState(){ const row = getSelectedRow(); const caseNumber = caseNumberInput.value.trim(); validateCaseNumber(Boolean(caseNumber)); selectedQueueValue.textContent = queueTypeSelect.value || '—'; selectedActionValue.textContent = actionTakenSelect.value || '—'; selectedCodeValue.textContent = row?.code || '—'; if(!queueTypeSelect.value){ generatorStatusValue.textContent = 'Waiting'; setStatus('Ready'); } else if(!actionTakenSelect.value){ generatorStatusValue.textContent = 'Waiting for Action'; setStatus('Select Action Taken'); } else if(!caseNumber){ generatorStatusValue.textContent = 'Waiting for Case #'; setStatus('Enter Case #'); } else if(!validateCaseNumber(false)){ generatorStatusValue.textContent = 'Invalid Case #'; setStatus('Fix Case #'); } else { generatorStatusValue.textContent = generatedCommentBox.value.trim() ? 'Generated' : 'Ready to Generate'; setStatus(generatedCommentBox.value.trim() ? 'Comment Ready' : 'Ready to Generate'); } updateAssistantChecks(); updateGeneratedStatus(Boolean(generatedCommentBox.value.trim())); }
-  function buildAssistantComment(row, caseNumber){ const code = row.code || 'VS-BLER'; const base = trimEndingPeriod(row.recommendedComment || 'NO RECOMMENDED COMMENT FOUND'); const context = cleanText(aiContextInput.value); let finalText = base; if(includeContextToggle.checked && context){ finalText = `${base}. Additional case context: ${trimEndingPeriod(context)}`; } return { code, caseNumber, finalText, fullComment:`${code}-${caseNumber}-${finalText}` }; }
-  window.generateFbcComment = function(){ const row = getSelectedRow(); const caseNumber = caseNumberInput.value.trim(); if(!queueTypeSelect.value || !actionTakenSelect.value || !caseNumber){ showToast('Complete Queue Type, Action Taken, and Case # first.'); updateState(); return; } if(!validateCaseNumber(true)){ showToast('Case # should only contain numbers.'); updateState(); return; } if(!row){ showToast('No matching comment found.'); generatorStatusValue.textContent = 'No Match'; setStatus('No Match'); return; } localStorage.setItem('fbc_last_action_' + queueTypeSelect.value, actionTakenSelect.value); setStatus('Generating...'); const result = buildAssistantComment(row, caseNumber); const finalComment = result.fullComment; generatedCommentBox.value = finalComment; autoResizeTextarea(generatedCommentBox); updateHighlightPreview(result.code, result.caseNumber, result.finalText); generatorStatusValue.textContent = 'Generated'; setStatus('Comment Ready'); updateGeneratedStatus(true); saveRecentComment(finalComment); if(autoCopyToggle.checked){ navigator.clipboard.writeText(finalComment).then(() => { showCopiedBadge(); showToast('Generated & copied!'); }); } else { showToast('FBC comment generated!'); } };
-  window.copyGeneratedComment = function(){ const text = generatedCommentBox.value.trim(); if(!text){ showToast('Generate a comment first.'); return; } navigator.clipboard.writeText(text).then(() => { showCopiedBadge(); showToast('FBC comment copied!'); }); };
-  window.clearRecentComments = function(){ localStorage.removeItem('fbc_recent_comments'); renderRecentComments(); showToast('Recent comments cleared.'); };
-  window.clearFbcBuilder = function(){ queueTypeSelect.value = ''; actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>'; actionTakenSelect.disabled = true; caseNumberInput.value = ''; aiContextInput.value = ''; generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); selectedQueueValue.textContent = '—'; selectedActionValue.textContent = '—'; selectedCodeValue.textContent = '—'; generatorStatusValue.textContent = 'Waiting'; heroActionCount.textContent = '—'; setStatus('Ready'); updateState(); };
-  queueTypeSelect.addEventListener('change', () => { populateActions(queueTypeSelect.value); generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); updateState(); }); actionTakenSelect.addEventListener('change', () => { generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); updateState(); }); caseNumberInput.addEventListener('input', () => { generatedCommentBox.value = ''; autoResizeTextarea(generatedCommentBox); updateHighlightPreview('', '', ''); updateState(); }); aiContextInput.addEventListener('input', updateState); includeContextToggle.addEventListener('change', updateState); editModeToggle.addEventListener('change', () => { generatedCommentBox.readOnly = !editModeToggle.checked; showToast(editModeToggle.checked ? 'Edit mode enabled.' : 'Edit mode locked.'); });
-  const workbookPaths = ['FBC-comment(1).xlsx', 'FBC-comment.xlsx'];
-  (async function loadWorkbook(){ let buffer = null; for(const path of workbookPaths){ try{ const response = await fetch(path); if(response.ok){ buffer = await response.arrayBuffer(); break; } }catch(error){} } if(!buffer){ setStatus('Workbook Missing'); generatorStatusValue.textContent = 'Workbook Missing'; generatedCommentBox.value = 'Unable to load FBC-comment.xlsx. Make sure the workbook is saved in the same folder as this page.'; autoResizeTextarea(generatedCommentBox); updateGeneratedStatus(false); return; } const workbook = XLSX.read(buffer, { type:'array' }); const sheet = workbook.Sheets[workbook.SheetNames[0]]; const rawRows = XLSX.utils.sheet_to_json(sheet, { defval:'' }); DATA = normalizeRows(rawRows); populateQueueTypes(); renderRecentComments(); generatorStatusValue.textContent = 'Ready'; setStatus('Ready'); updateState(); })();
+  toast.textContent = message;
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0)";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(10px)";
+  }, 1500);
 }
-document.addEventListener('DOMContentLoaded', initFbcCommentsPage); document.addEventListener('headerLoaded', initFbcCommentsPage);
+
+function scrollToBuilder() {
+  const target = document.getElementById("fbcBuilder");
+  if (!target) return;
+
+  const y = target.getBoundingClientRect().top + window.scrollY - 20;
+  window.scrollTo({ top: y, behavior: "smooth" });
+}
+
+function escapeHtml(text) {
+  return String(text || "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (error) {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      document.execCommand("copy");
+      return true;
+    } catch (fallbackError) {
+      console.error(fallbackError);
+      return false;
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+}
+
+function initFbcCommentsPage() {
+  if (fbcInitialized) return;
+  fbcInitialized = true;
+
+  const queueTypeSelect = document.getElementById("queueTypeSelect");
+  const actionTakenSelect = document.getElementById("actionTakenSelect");
+  const caseNumberInput = document.getElementById("caseNumberInput");
+  const aiContextInput = document.getElementById("aiContextInput");
+  const autoCopyToggle = document.getElementById("autoCopyToggle");
+  const editModeToggle = document.getElementById("editModeToggle");
+  const includeContextToggle = document.getElementById("includeContextToggle");
+  const generatedCommentBox = document.getElementById("generatedCommentBox");
+  const copiedBadge = document.getElementById("copiedBadge");
+  const statusPill = document.getElementById("statusPill");
+  const selectedQueueValue = document.getElementById("selectedQueueValue");
+  const selectedActionValue = document.getElementById("selectedActionValue");
+  const selectedCodeValue = document.getElementById("selectedCodeValue");
+  const generatorStatusValue = document.getElementById("generatorStatusValue");
+  const heroQueueCount = document.getElementById("heroQueueCount");
+  const heroActionCount = document.getElementById("heroActionCount");
+  const assistantChecks = document.getElementById("assistantChecks");
+  const aiSuggestions = document.getElementById("aiSuggestions");
+  const generatedMiniStatus = document.getElementById("generatedMiniStatus");
+  const caseWarning = document.getElementById("caseWarning");
+  const recentCommentsList = document.getElementById("recentCommentsList");
+
+  if (!queueTypeSelect || !actionTakenSelect || !generatedCommentBox) {
+    console.warn("FBC Builder elements were not found.");
+    return;
+  }
+
+  let DATA = [];
+
+  function setStatus(label) {
+    if (statusPill) statusPill.textContent = label;
+  }
+
+  function showCopiedBadge() {
+    if (!copiedBadge) return;
+
+    copiedBadge.classList.add("show");
+    clearTimeout(showCopiedBadge.timer);
+
+    showCopiedBadge.timer = setTimeout(() => {
+      copiedBadge.classList.remove("show");
+    }, 1600);
+  }
+
+  function autoResizeTextarea(el) {
+    if (!el) return;
+
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 140) + "px";
+  }
+
+  function getCell(row, possibleNames) {
+    const keys = Object.keys(row);
+
+    for (const name of possibleNames) {
+      const exactKey = keys.find(k => k.trim().toLowerCase() === name.trim().toLowerCase());
+      if (exactKey) return row[exactKey];
+    }
+
+    return "";
+  }
+
+  function normalizeRows(rows) {
+    return rows.map(row => ({
+      queueType: String(getCell(row, ["Queue Type", "Queue", "QueueType"])).trim(),
+      action: String(getCell(row, ["Action", "Action Taken", "Type"])).trim(),
+      code: String(getCell(row, ["2x4 Comment", "2x4 Comment ", "2x4", "Code"])).trim(),
+      recommendedComment: String(getCell(row, [
+        "Recommended Comment",
+        "Recommended comment",
+        "Recommended Comments",
+        "Comment",
+        "Recommendation"
+      ])).trim()
+    })).filter(row => row.queueType && row.action);
+  }
+
+  function cleanText(text) {
+    return String(text || "")
+      .replace(/\s+/g, " ")
+      .replace(/\s+([.,;:])/g, "$1")
+      .trim();
+  }
+
+  function trimEndingPeriod(text) {
+    return cleanText(text).replace(/[.\s]+$/g, "");
+  }
+
+  function populateQueueTypes() {
+    const queueTypes = [...new Set(DATA.map(item => item.queueType))].sort();
+
+    queueTypeSelect.innerHTML = '<option value="">Select Queue Type</option>';
+
+    queueTypes.forEach(queue => {
+      const option = document.createElement("option");
+      option.value = queue;
+      option.textContent = queue;
+      queueTypeSelect.appendChild(option);
+    });
+
+    if (heroQueueCount) heroQueueCount.textContent = queueTypes.length || "—";
+  }
+
+  function populateActions(queueType) {
+    actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>';
+
+    if (!queueType) {
+      actionTakenSelect.disabled = true;
+      if (heroActionCount) heroActionCount.textContent = "—";
+      return;
+    }
+
+    const actions = [...new Set(
+      DATA.filter(item => item.queueType === queueType).map(item => item.action)
+    )].sort();
+
+    actions.forEach(action => {
+      const option = document.createElement("option");
+      option.value = action;
+      option.textContent = action;
+      actionTakenSelect.appendChild(option);
+    });
+
+    actionTakenSelect.disabled = false;
+    if (heroActionCount) heroActionCount.textContent = actions.length || "—";
+
+    const savedAction = localStorage.getItem("fbc_last_action_" + queueType);
+    if (savedAction && actions.includes(savedAction)) {
+      actionTakenSelect.value = savedAction;
+    }
+  }
+
+  function getSelectedRow() {
+    const queueType = queueTypeSelect.value;
+    const action = actionTakenSelect.value;
+
+    return DATA.find(item => item.queueType === queueType && item.action === action) || null;
+  }
+
+  function getRecentComments() {
+    try {
+      return JSON.parse(localStorage.getItem("fbc_recent_comments") || "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function saveRecentComment(comment) {
+    if (!comment) return;
+
+    const row = getSelectedRow();
+    let list = getRecentComments().filter(item => item.comment !== comment);
+
+    list.unshift({
+      comment,
+      queue: queueTypeSelect.value || "FBC",
+      action: actionTakenSelect.value || "Generated",
+      code: row?.code || "VS-BLER",
+      caseNumber: caseNumberInput.value.trim(),
+      recommendedComment: row?.recommendedComment || "",
+      createdAt: new Date().toISOString()
+    });
+
+    list = list.slice(0, 5);
+    localStorage.setItem("fbc_recent_comments", JSON.stringify(list));
+    renderRecentComments();
+  }
+
+  function renderRecentComments() {
+    const list = getRecentComments();
+
+    if (!recentCommentsList) return;
+
+    if (!list.length) {
+      recentCommentsList.innerHTML = '<div class="helper-text">Generated comments will appear here for quick reuse during this browser session.</div>';
+      return;
+    }
+
+    recentCommentsList.innerHTML = list.map((item, index) => `
+      <div class="recent-item" data-index="${index}">
+        <strong>${escapeHtml(item.code || "FBC")} • ${escapeHtml(item.action || "Generated")}</strong>
+        <span>${escapeHtml(item.comment || "")}</span>
+      </div>
+    `).join("");
+
+    recentCommentsList.querySelectorAll(".recent-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const selected = list[Number(item.dataset.index)];
+        if (!selected) return;
+
+        if (selected.queue) {
+          queueTypeSelect.value = selected.queue;
+          populateActions(selected.queue);
+        }
+
+        if (selected.action) {
+          actionTakenSelect.value = selected.action;
+        }
+
+        caseNumberInput.value = selected.caseNumber || "";
+        generatedCommentBox.value = selected.comment || "";
+
+        autoResizeTextarea(generatedCommentBox);
+        updateGeneratedStatus(Boolean(selected.comment));
+        updateState();
+
+        showToast("Previous comment loaded.");
+      });
+    });
+  }
+
+  function updateGeneratedStatus(isReady) {
+    if (!generatedMiniStatus) return;
+
+    generatedMiniStatus.classList.toggle("ready", Boolean(isReady));
+    generatedMiniStatus.innerHTML = isReady
+      ? '<i class="fa-solid fa-circle-check"></i> Comment Ready'
+      : '<i class="fa-solid fa-circle"></i> Waiting';
+  }
+
+  function validateCaseNumber(showWarning = true) {
+    const value = caseNumberInput.value.trim();
+    const valid = !value || /^\d+$/.test(value);
+
+    if (caseWarning) {
+      caseWarning.classList.toggle("show", showWarning && !valid);
+    }
+
+    return valid;
+  }
+
+  function updateAssistantChecks() {
+    if (!assistantChecks || !aiSuggestions) return;
+
+    const row = getSelectedRow();
+    const caseNumber = caseNumberInput.value.trim();
+    const hasValidCase = /^\d+$/.test(caseNumber);
+    const checks = [];
+    const suggestions = [];
+
+    if (queueTypeSelect.value) checks.push("Queue type selected.");
+    else suggestions.push("Select the queue type first so the assistant can load the correct action list.");
+
+    if (actionTakenSelect.value) checks.push("Action taken selected.");
+    else suggestions.push("Choose the exact action taken before generating the comment.");
+
+    if (caseNumber && hasValidCase) checks.push("Case number format looks valid.");
+    else if (caseNumber && !hasValidCase) suggestions.push("Case # should be numeric only to avoid an invalid FBC comment.");
+    else suggestions.push("Enter the actual case number you are currently working.");
+
+    if (row?.recommendedComment) checks.push("Workbook recommendation loaded.");
+
+    if (includeContextToggle && includeContextToggle.checked && aiContextInput.value.trim()) {
+      checks.push("Optional case context ready.");
+    }
+
+    assistantChecks.innerHTML = checks.length
+      ? checks.map(item => `<div><i class="fa-solid fa-circle-check" style="color:#16a34a;"></i> ${escapeHtml(item)}</div>`).join("")
+      : "Select Queue Type, Action Taken, and Case # to view smart checks.";
+
+    aiSuggestions.innerHTML = suggestions.slice(0, 3).map(item => `
+      <div class="ai-suggestion">
+        <i class="fa-solid fa-lightbulb"></i>
+        <span>${escapeHtml(item)}</span>
+      </div>
+    `).join("");
+  }
+
+  function updateState() {
+    const row = getSelectedRow();
+    const caseNumber = caseNumberInput.value.trim();
+
+    validateCaseNumber(Boolean(caseNumber));
+
+    if (selectedQueueValue) selectedQueueValue.textContent = queueTypeSelect.value || "—";
+    if (selectedActionValue) selectedActionValue.textContent = actionTakenSelect.value || "—";
+    if (selectedCodeValue) selectedCodeValue.textContent = row?.code || "—";
+
+    if (!queueTypeSelect.value) {
+      if (generatorStatusValue) generatorStatusValue.textContent = "Waiting";
+      setStatus("Ready");
+    } else if (!actionTakenSelect.value) {
+      if (generatorStatusValue) generatorStatusValue.textContent = "Waiting for Action";
+      setStatus("Select Action Taken");
+    } else if (!caseNumber) {
+      if (generatorStatusValue) generatorStatusValue.textContent = "Waiting for Case #";
+      setStatus("Enter Case #");
+    } else if (!validateCaseNumber(false)) {
+      if (generatorStatusValue) generatorStatusValue.textContent = "Invalid Case #";
+      setStatus("Fix Case #");
+    } else {
+      if (generatorStatusValue) {
+        generatorStatusValue.textContent = generatedCommentBox.value.trim() ? "Generated" : "Ready to Generate";
+      }
+
+      setStatus(generatedCommentBox.value.trim() ? "Comment Ready" : "Ready to Generate");
+    }
+
+    updateAssistantChecks();
+    updateGeneratedStatus(Boolean(generatedCommentBox.value.trim()));
+  }
+
+  function buildAssistantComment(row, caseNumber) {
+    const code = row.code || "VS-BLER";
+    const base = trimEndingPeriod(row.recommendedComment || "NO RECOMMENDED COMMENT FOUND");
+    const context = aiContextInput ? cleanText(aiContextInput.value) : "";
+
+    let finalText = base;
+
+    if (includeContextToggle && includeContextToggle.checked && context) {
+      finalText = `${base}. Additional case context: ${trimEndingPeriod(context)}`;
+    }
+
+    return {
+      code,
+      caseNumber,
+      finalText,
+      fullComment: `${code}-${caseNumber}-${finalText}`
+    };
+  }
+
+  window.generateFbcComment = async function () {
+    const row = getSelectedRow();
+    const caseNumber = caseNumberInput.value.trim();
+
+    if (!queueTypeSelect.value || !actionTakenSelect.value || !caseNumber) {
+      showToast("Complete Queue Type, Action Taken, and Case # first.");
+      updateState();
+      return;
+    }
+
+    if (!validateCaseNumber(true)) {
+      showToast("Case # should only contain numbers.");
+      updateState();
+      return;
+    }
+
+    if (!row) {
+      showToast("No matching comment found.");
+      if (generatorStatusValue) generatorStatusValue.textContent = "No Match";
+      setStatus("No Match");
+      return;
+    }
+
+    localStorage.setItem("fbc_last_action_" + queueTypeSelect.value, actionTakenSelect.value);
+
+    setStatus("Generating...");
+
+    const result = buildAssistantComment(row, caseNumber);
+    generatedCommentBox.value = result.fullComment;
+
+    autoResizeTextarea(generatedCommentBox);
+
+    if (generatorStatusValue) generatorStatusValue.textContent = "Generated";
+
+    setStatus("Comment Ready");
+    updateGeneratedStatus(true);
+    saveRecentComment(result.fullComment);
+
+    if (autoCopyToggle && autoCopyToggle.checked) {
+      const copied = await copyToClipboard(result.fullComment);
+      if (copied) {
+        showCopiedBadge();
+        showToast("Generated & copied!");
+      } else {
+        showToast("Generated. Copy failed.");
+      }
+    } else {
+      showToast("FBC comment generated!");
+    }
+  };
+
+  window.copyGeneratedComment = async function () {
+    const text = generatedCommentBox.value.trim();
+
+    if (!text) {
+      showToast("Generate a comment first.");
+      return;
+    }
+
+    const copied = await copyToClipboard(text);
+
+    if (copied) {
+      showCopiedBadge();
+      showToast("FBC comment copied!");
+    } else {
+      showToast("Unable to copy comment.");
+    }
+  };
+
+  window.clearRecentComments = function () {
+    localStorage.removeItem("fbc_recent_comments");
+    renderRecentComments();
+    showToast("Recent comments cleared.");
+  };
+
+  window.clearFbcBuilder = function () {
+    queueTypeSelect.value = "";
+    actionTakenSelect.innerHTML = '<option value="">Select Action Taken</option>';
+    actionTakenSelect.disabled = true;
+
+    caseNumberInput.value = "";
+    if (aiContextInput) aiContextInput.value = "";
+    generatedCommentBox.value = "";
+
+    autoResizeTextarea(generatedCommentBox);
+
+    if (selectedQueueValue) selectedQueueValue.textContent = "—";
+    if (selectedActionValue) selectedActionValue.textContent = "—";
+    if (selectedCodeValue) selectedCodeValue.textContent = "—";
+    if (generatorStatusValue) generatorStatusValue.textContent = "Waiting";
+    if (heroActionCount) heroActionCount.textContent = "—";
+
+    setStatus("Ready");
+    updateState();
+  };
+
+  queueTypeSelect.addEventListener("change", () => {
+    populateActions(queueTypeSelect.value);
+    generatedCommentBox.value = "";
+    autoResizeTextarea(generatedCommentBox);
+    updateState();
+  });
+
+  actionTakenSelect.addEventListener("change", () => {
+    generatedCommentBox.value = "";
+    autoResizeTextarea(generatedCommentBox);
+    updateState();
+  });
+
+  caseNumberInput.addEventListener("input", () => {
+    generatedCommentBox.value = "";
+    autoResizeTextarea(generatedCommentBox);
+    updateState();
+  });
+
+  if (aiContextInput) aiContextInput.addEventListener("input", updateState);
+  if (includeContextToggle) includeContextToggle.addEventListener("change", updateState);
+
+  if (editModeToggle) {
+    editModeToggle.addEventListener("change", () => {
+      generatedCommentBox.readOnly = !editModeToggle.checked;
+      showToast(editModeToggle.checked ? "Edit mode enabled." : "Edit mode locked.");
+    });
+  }
+
+  const workbookPaths = [
+    "FBC-comment.xlsx",
+    "FBC-comment(1).xlsx",
+    "./FBC-comment.xlsx",
+    "./FBC-comment(1).xlsx"
+  ];
+
+  (async function loadWorkbook() {
+    let buffer = null;
+    let loadedPath = "";
+
+    for (const path of workbookPaths) {
+      try {
+        const response = await fetch(path, { cache: "no-store" });
+
+        if (response.ok) {
+          buffer = await response.arrayBuffer();
+          loadedPath = path;
+          break;
+        }
+      } catch (error) {
+        console.warn("Unable to load workbook path:", path, error);
+      }
+    }
+
+    if (!buffer) {
+      setStatus("Workbook Missing");
+
+      if (generatorStatusValue) generatorStatusValue.textContent = "Workbook Missing";
+
+      generatedCommentBox.value = "Unable to load FBC-comment.xlsx. Make sure the workbook is saved in the same folder as this page.";
+      autoResizeTextarea(generatedCommentBox);
+      updateGeneratedStatus(false);
+
+      return;
+    }
+
+    try {
+      const workbook = XLSX.read(buffer, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+      DATA = normalizeRows(rawRows);
+
+      populateQueueTypes();
+      renderRecentComments();
+
+      if (generatorStatusValue) generatorStatusValue.textContent = "Ready";
+
+      setStatus("Ready");
+      updateState();
+
+      console.log("FBC workbook loaded:", loadedPath, DATA.length, "rows");
+    } catch (error) {
+      console.error("Unable to parse FBC workbook:", error);
+
+      setStatus("Workbook Error");
+
+      if (generatorStatusValue) generatorStatusValue.textContent = "Workbook Error";
+
+      generatedCommentBox.value = "The workbook was found, but it could not be read. Please check the FBC-comment.xlsx file.";
+      autoResizeTextarea(generatedCommentBox);
+      updateGeneratedStatus(false);
+    }
+  })();
+}
+
+document.addEventListener("DOMContentLoaded", initFbcCommentsPage);
+document.addEventListener("headerLoaded", initFbcCommentsPage);
+setTimeout(initFbcCommentsPage, 300);
+</script>
+
+<script>
+/* =========================================================
+   FBI INSTRUCTION MODAL CONTROLLER
+   Keep the modal HTML below this script.
+========================================================= */
+
 let currentFbiStep = 0;
 let fbiAutoPlayTimer = null;
 
-function getFbiSteps(){
-  return Array.from(document.querySelectorAll('#fbiModal .fbi-step'));
+function getFbiSteps() {
+  return Array.from(document.querySelectorAll("#fbiModal .fbi-step"));
 }
 
-function updateFbiProgress(){
+function updateFbiProgress() {
   const steps = getFbiSteps();
   const total = steps.length || 1;
   const current = currentFbiStep + 1;
   const percent = Math.round((current / total) * 100);
 
-  const stepText = document.getElementById('fbiStepCounter');
-  const progressText = document.getElementById('fbiProgressPercent');
-  const progressFill = document.getElementById('fbiProgressFill');
-  const prevBtn = document.getElementById('fbiPrevBtn');
-  const nextBtn = document.getElementById('fbiNextBtn');
-  const dots = Array.from(document.querySelectorAll('.fbi-dot'));
+  const stepText = document.getElementById("fbiStepCounter");
+  const progressText = document.getElementById("fbiProgressPercent");
+  const progressFill = document.getElementById("fbiProgressFill");
+  const prevBtn = document.getElementById("fbiPrevBtn");
+  const nextBtn = document.getElementById("fbiNextBtn");
+  const dots = Array.from(document.querySelectorAll(".fbi-dot"));
 
-  if(stepText) stepText.textContent = `Step ${current} of ${total}`;
-  if(progressText) progressText.textContent = `${percent}% Complete`;
-  if(progressFill) progressFill.style.width = `${percent}%`;
-  if(prevBtn) prevBtn.disabled = currentFbiStep === 0;
-  if(nextBtn) nextBtn.innerHTML = currentFbiStep === total - 1 ? '<i class="fa-solid fa-check"></i> Finish' : 'Next <i class="fa-solid fa-arrow-right"></i>';
+  if (stepText) stepText.textContent = `Step ${current} of ${total}`;
+  if (progressText) progressText.textContent = `${percent}% Complete`;
+  if (progressFill) progressFill.style.width = `${percent}%`;
+  if (prevBtn) prevBtn.disabled = currentFbiStep === 0;
 
-  dots.forEach((dot, index) => dot.classList.toggle('active', index === currentFbiStep));
+  if (nextBtn) {
+    nextBtn.innerHTML = currentFbiStep === total - 1
+      ? '<i class="fa-solid fa-check"></i> Finish'
+      : 'Next <i class="fa-solid fa-arrow-right"></i>';
+  }
+
+  dots.forEach((dot, index) => {
+    dot.classList.toggle("active", index === currentFbiStep);
+  });
 }
 
-function showFbiStep(index){
+function showFbiStep(index) {
   const steps = getFbiSteps();
-  if(!steps.length) return;
+  if (!steps.length) return;
 
   currentFbiStep = Math.max(0, Math.min(index, steps.length - 1));
+
   steps.forEach((step, stepIndex) => {
-    step.classList.toggle('active', stepIndex === currentFbiStep);
+    step.classList.toggle("active", stepIndex === currentFbiStep);
   });
 
   updateFbiProgress();
 }
 
-function openFbiModal(){
-  const modal = document.getElementById('fbiModal');
-  if(!modal) return;
-  modal.classList.add('show');
-  document.body.classList.add('modal-open');
+function openFbiModal() {
+  const modal = document.getElementById("fbiModal");
+  if (!modal) return;
+
+  modal.classList.add("show");
+  document.body.classList.add("modal-open");
+
   stopFbiAutoPlay();
   showFbiStep(0);
 }
 
-function closeFbiModal(){
-  const modal = document.getElementById('fbiModal');
-  if(!modal) return;
-  modal.classList.remove('show');
-  document.body.classList.remove('modal-open');
+function closeFbiModal() {
+  const modal = document.getElementById("fbiModal");
+  if (!modal) return;
+
+  modal.classList.remove("show");
+  document.body.classList.remove("modal-open");
+
   stopFbiAutoPlay();
 }
 
-function nextFbiStep(){
+function nextFbiStep() {
   const steps = getFbiSteps();
-  if(!steps.length) return;
+  if (!steps.length) return;
 
-  if(currentFbiStep >= steps.length - 1){
+  if (currentFbiStep >= steps.length - 1) {
     closeFbiModal();
     return;
   }
@@ -2601,71 +3168,86 @@ function nextFbiStep(){
   showFbiStep(currentFbiStep + 1);
 }
 
-function prevFbiStep(){
+function prevFbiStep() {
   showFbiStep(currentFbiStep - 1);
 }
 
-function goToFbiStep(index){
+function goToFbiStep(index) {
   stopFbiAutoPlay();
   showFbiStep(index);
 }
 
-function toggleFbiAutoPlay(){
-  const autoBtn = document.getElementById('fbiAutoBtn');
+function toggleFbiAutoPlay() {
+  const autoBtn = document.getElementById("fbiAutoBtn");
 
-  if(fbiAutoPlayTimer){
+  if (fbiAutoPlayTimer) {
     stopFbiAutoPlay();
     return;
   }
 
-  if(autoBtn) autoBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+  if (autoBtn) autoBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+
   fbiAutoPlayTimer = setInterval(() => {
     const steps = getFbiSteps();
-    if(currentFbiStep >= steps.length - 1){
+
+    if (currentFbiStep >= steps.length - 1) {
       stopFbiAutoPlay();
       return;
     }
+
     showFbiStep(currentFbiStep + 1);
   }, 3000);
 }
 
-function stopFbiAutoPlay(){
-  if(fbiAutoPlayTimer){
+function stopFbiAutoPlay() {
+  if (fbiAutoPlayTimer) {
     clearInterval(fbiAutoPlayTimer);
     fbiAutoPlayTimer = null;
   }
-  const autoBtn = document.getElementById('fbiAutoBtn');
-  if(autoBtn) autoBtn.innerHTML = '<i class="fa-solid fa-play"></i> Auto';
+
+  const autoBtn = document.getElementById("fbiAutoBtn");
+  if (autoBtn) autoBtn.innerHTML = '<i class="fa-solid fa-play"></i> Auto';
 }
 
-function zoomFbiImage(img){
-  const modal = document.getElementById('imageZoomModal');
-  const zoomed = document.getElementById('zoomedFbiImage');
-  if(!modal || !zoomed || !img) return;
+function zoomFbiImage(img) {
+  const modal = document.getElementById("imageZoomModal");
+  const zoomed = document.getElementById("zoomedFbiImage");
+
+  if (!modal || !zoomed || !img) return;
+
   zoomed.src = img.src;
-  zoomed.alt = img.alt || 'FBI instruction image';
-  modal.classList.add('show');
+  zoomed.alt = img.alt || "FBI instruction image";
+  modal.classList.add("show");
 }
 
-function closeFbiZoom(){
-  const modal = document.getElementById('imageZoomModal');
-  if(modal) modal.classList.remove('show');
+function closeFbiZoom() {
+  const modal = document.getElementById("imageZoomModal");
+  if (modal) modal.classList.remove("show");
 }
 
-document.addEventListener('keydown', (event) => {
-  const modal = document.getElementById('fbiModal');
-  const zoom = document.getElementById('imageZoomModal');
+window.openFbiModal = openFbiModal;
+window.closeFbiModal = closeFbiModal;
+window.nextFbiStep = nextFbiStep;
+window.prevFbiStep = prevFbiStep;
+window.goToFbiStep = goToFbiStep;
+window.toggleFbiAutoPlay = toggleFbiAutoPlay;
+window.zoomFbiImage = zoomFbiImage;
+window.closeFbiZoom = closeFbiZoom;
 
-  if(zoom?.classList.contains('show') && event.key === 'Escape'){
+document.addEventListener("keydown", event => {
+  const modal = document.getElementById("fbiModal");
+  const zoom = document.getElementById("imageZoomModal");
+
+  if (zoom?.classList.contains("show") && event.key === "Escape") {
     closeFbiZoom();
     return;
   }
 
-  if(!modal?.classList.contains('show')) return;
+  if (!modal?.classList.contains("show")) return;
 
-  if(event.key === 'Escape') closeFbiModal();
-  if(event.key === 'ArrowRight') nextFbiStep();
-  if(event.key === 'ArrowLeft') prevFbiStep();
+  if (event.key === "Escape") closeFbiModal();
+  if (event.key === "ArrowRight") nextFbiStep();
+  if (event.key === "ArrowLeft") prevFbiStep();
 });
 </script>
 <div id="fbiModal" class="fbi-modal" onclick="if(event.target === this) closeFbiModal();">
