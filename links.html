@@ -199,6 +199,10 @@ body > *{
   box-shadow:0 14px 28px rgba(255,102,0,.20);
 }
 
+.ai-action:hover{
+  transform:translateY(-2px);
+}
+
 .ai-suggestion{
   margin-top:12px;
   padding:13px 15px;
@@ -281,26 +285,21 @@ body > *{
 }
 
 .card.active::after{
-  content:"\f00c"; /* Font Awesome check */
+  content:"\f00c";
   font-family:"Font Awesome 6 Free";
   font-weight:900;
-
   position:absolute;
   bottom:12px;
   right:12px;
-
   width:30px;
   height:30px;
   border-radius:50%;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   background:#22c55e;
   color:#fff;
   font-size:13px;
-
   box-shadow:0 6px 16px rgba(34,197,94,.35);
 }
 
@@ -364,7 +363,6 @@ body > *{
   color:#fed7aa;
 }
 
-  
 .btn{
   border:none;
   height:42px;
@@ -540,6 +538,221 @@ body > *{
   font-size:13px;
 }
 
+/* ===== Shared Header Modals — Case Directory / EBS / FBC compatible ===== */
+
+#commentModal,
+#allCommentsModal,
+#helpModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.52);
+  justify-content:center;
+  align-items:center;
+  padding:0 24px;
+  z-index:2147483647;
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
+}
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content{
+  width:100%;
+  background:#fff;
+  color:#0f172a;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  border:1px solid rgba(148,163,184,.16);
+  margin:110px auto 32px;
+}
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content{
+  max-width:760px;
+}
+
+#helpModal .help-modal{
+  max-width:760px;
+  border-radius:30px;
+  padding:18px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close{
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  min-height:40px;
+  padding:0;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
+  border:none;
+}
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .rating-container{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:16px 0 18px;
+}
+
+#commentModal .rating-star{
+  cursor:pointer;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
+}
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
+  color:#ff6600;
+}
+
+#commentModal input,
+#commentModal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  transition:.18s ease;
+  font-family:inherit;
+}
+
+#commentModal input{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+
+#commentModal textarea{
+  min-height:120px;
+  resize:vertical;
+  margin-top:0;
+}
+
+#commentModal input:focus,
+#commentModal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#commentModal .btn,
+#allCommentsModal .btn,
+#helpModal .btn,
+#commentModal button:not(.modal-close),
+#allCommentsModal button:not(.modal-close),
+#helpModal button:not(.modal-close){
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:50px;
+  padding:0 18px;
+  border-radius:17px;
+  text-decoration:none;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  transition:.22s ease;
+  width:100%;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+  color:#fff;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+}
+
+#commentModal .btn:hover,
+#allCommentsModal .btn:hover,
+#helpModal .btn:hover,
+#commentModal button:not(.modal-close):hover,
+#allCommentsModal button:not(.modal-close):hover,
+#helpModal button:not(.modal-close):hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+
+.comment-modal-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.link-text{
+  color:#4d148c;
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+
+.link-text:hover{
+  text-decoration:underline;
+}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{
+  border-bottom:none;
+}
+
+#allCommentsModal .stars,
+#commentsList .stars{
+  color:#ff6600;
+  font-size:18px;
+  margin-bottom:6px;
+  display:block;
+}
+
 @media(max-width:1050px){
   .workspace{grid-template-columns:1fr}
   .preview{position:relative;top:auto}
@@ -549,6 +762,25 @@ body > *{
   .search-row{grid-template-columns:1fr}
   .ai-action{width:100%}
   .hero{padding:24px;border-radius:26px}
+
+  #commentModal,
+  #allCommentsModal,
+  #helpModal{
+    padding:0 14px;
+  }
+
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+
+  .comment-modal-footer{
+    flex-direction:column;
+    align-items:stretch;
+  }
 }
 </style>
 </head>
@@ -609,11 +841,247 @@ body > *{
 <div id="site-footer"></div>
 <div id="toast">Copied!</div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script>
+window.SITE_BASE = "./";
+
+if (!firebase.apps.length) {
+  firebase.initializeApp({
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  });
+}
+
+window.auth = firebase.auth();
+window.db = firebase.firestore();
+</script>
+
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
 
 <script>
+/* =========================================================
+   SHARED HEADER MODAL CONTROLLER
+========================================================= */
+
+let selectedRating = 0;
+let commentsUnsubscribe = null;
+let ratingStars = [];
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+
+  ratingStars.forEach(star => {
+    star.onclick = () => {
+      selectedRating = Number(star.dataset.value);
+
+      ratingStars.forEach(s => {
+        s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
+      });
+    };
+  });
+}
+
+function openAnimatedModal(modal) {
+  if (!modal) return;
+
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
+
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
+
+function closeAnimatedModal(modal, onClosed) {
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
+
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+
+    if (typeof onClosed === "function") {
+      onClosed();
+    }
+  }, 220);
+}
+
+function openComment() {
+  openAnimatedModal(document.getElementById("commentModal"));
+}
+
+function closeComment() {
+  closeAnimatedModal(document.getElementById("commentModal"));
+}
+
+function openHelp() {
+  openAnimatedModal(document.getElementById("helpModal"));
+}
+
+function closeHelp() {
+  closeAnimatedModal(document.getElementById("helpModal"));
+}
+
+function closeAllComments() {
+  closeAnimatedModal(document.getElementById("allCommentsModal"), () => {
+    if (commentsUnsubscribe) {
+      commentsUnsubscribe();
+      commentsUnsubscribe = null;
+    }
+  });
+}
+
+async function sendComment() {
+  const nameInput = document.getElementById("commentName");
+  const commentInput = document.getElementById("commentText");
+  const message = document.getElementById("feedbackMessage");
+
+  const name = nameInput ? nameInput.value.trim() : "";
+  const comment = commentInput ? commentInput.value.trim() : "";
+
+  if (!selectedRating) {
+    if (message) {
+      message.style.display = "block";
+      message.style.color = "#ef4444";
+      message.textContent = "Please select a star rating first.";
+    } else {
+      alert("Please select a star rating first.");
+    }
+    return;
+  }
+
+  try {
+    await window.db.collection("feedback").add({
+      rating: selectedRating,
+      name: name || "Anonymous",
+      comment,
+      page: "Tools & Links Hub",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (message) {
+      message.style.display = "block";
+      message.style.color = "#16a34a";
+      message.textContent = "Thank you. Your feedback has been submitted.";
+    }
+
+    if (nameInput) nameInput.value = "";
+    if (commentInput) commentInput.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(s => s.classList.remove("selected"));
+
+    setTimeout(() => {
+      if (message) message.style.display = "none";
+      closeComment();
+    }, 1200);
+  } catch (error) {
+    console.error(error);
+
+    if (message) {
+      message.style.display = "block";
+      message.style.color = "#ef4444";
+      message.textContent = "Something went wrong while sending feedback.";
+    } else {
+      alert("Something went wrong while sending feedback.");
+    }
+  }
+}
+
+function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const modal = document.getElementById("allCommentsModal");
+  const list = document.getElementById("commentsList");
+
+  if (!modal || !list) return;
+
+  list.innerHTML = "<p>Loading comments...</p>";
+
+  if (commentsUnsubscribe) {
+    commentsUnsubscribe();
+    commentsUnsubscribe = null;
+  }
+
+  const loadComments = () => {
+    openAnimatedModal(modal);
+
+    commentsUnsubscribe = window.db.collection("feedback")
+      .orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        if (snapshot.empty) {
+          list.innerHTML = "<p>No comments yet.</p>";
+          return;
+        }
+
+        let html = "";
+
+        snapshot.forEach(doc => {
+          const item = doc.data();
+          const rating = Number(item.rating || 0);
+          const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+
+          html += `
+            <div class="comment-list-item">
+              <span class="stars">${stars}</span>
+              <strong>${escapeHtml(item.name || "Anonymous")}</strong>
+              <p style="margin:6px 0 0;">${escapeHtml(item.comment || "No comment provided.")}</p>
+            </div>
+          `;
+        });
+
+        list.innerHTML = html;
+      }, error => {
+        console.error(error);
+        list.innerHTML = "<p>Unable to load comments right now.</p>";
+      });
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeAnimatedModal(commentModal, loadComments);
+  } else {
+    loadComments();
+  }
+}
+
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
+
+window.addEventListener("click", e => {
+  const commentModal = document.getElementById("commentModal");
+  const allCommentsModal = document.getElementById("allCommentsModal");
+  const helpModal = document.getElementById("helpModal");
+
+  if (e.target === commentModal) closeComment();
+  if (e.target === allCommentsModal) closeAllComments();
+  if (e.target === helpModal) closeHelp();
+});
+
+document.addEventListener("DOMContentLoaded", initRatingStars);
+document.addEventListener("headerLoaded", initRatingStars);
+setTimeout(initRatingStars, 300);
+</script>
+
+<script>
+/* =========================================================
+   TOOLS & LINKS HUB
+========================================================= */
+
 const LINKS = [
   {
     name:"iSPI",
@@ -734,7 +1202,11 @@ let currentCategory = "all";
 let selectedLink = LINKS[0];
 
 function getFavs(){
-  return JSON.parse(localStorage.getItem("linkHubFavs") || "[]");
+  try{
+    return JSON.parse(localStorage.getItem("linkHubFavs") || "[]");
+  }catch{
+    return [];
+  }
 }
 
 function setFavs(favs){
@@ -773,7 +1245,8 @@ function scoreLink(item, query){
 }
 
 function getFilteredLinks(){
-  const query = document.getElementById("search").value;
+  const searchInput = document.getElementById("search");
+  const query = searchInput ? searchInput.value : "";
   const favs = getFavs();
 
   return LINKS
@@ -793,6 +1266,8 @@ function getFilteredLinks(){
 
 function render(){
   const grid = document.getElementById("grid");
+  if(!grid) return;
+
   const links = getFilteredLinks();
   const favs = getFavs();
 
@@ -800,11 +1275,20 @@ function render(){
 
   if(!links.length){
     grid.innerHTML = `<div class="no-results">No matching tools found.</div>`;
-    document.getElementById("aiStatus").textContent = "No Match";
+
+    const aiStatus = document.getElementById("aiStatus");
+    if(aiStatus) aiStatus.textContent = "No Match";
+
+    renderPreview();
     return;
   }
 
-  document.getElementById("aiStatus").textContent = `${links.length} Result${links.length > 1 ? "s" : ""}`;
+  const aiStatus = document.getElementById("aiStatus");
+  if(aiStatus) aiStatus.textContent = `${links.length} Result${links.length > 1 ? "s" : ""}`;
+
+  if(!selectedLink || !links.some(item => item.name === selectedLink.name)){
+    selectedLink = LINKS.find(x => x.name === links[0].name) || links[0];
+  }
 
   links.forEach(item => {
     const card = document.createElement("div");
@@ -836,6 +1320,7 @@ function render(){
 
 function renderPreview(){
   const preview = document.getElementById("preview");
+  if(!preview) return;
 
   if(!selectedLink){
     preview.innerHTML = `
@@ -898,8 +1383,11 @@ function renderPreview(){
 }
 
 function updateAiSuggestion(best){
-  const input = document.getElementById("search").value.trim();
+  const searchInput = document.getElementById("search");
   const box = document.getElementById("aiSuggestion");
+  if(!searchInput || !box) return;
+
+  const input = searchInput.value.trim();
 
   if(!input){
     box.innerHTML = `AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.`;
@@ -912,7 +1400,8 @@ function updateAiSuggestion(best){
 }
 
 function runAiCommand(){
-  const query = normalize(document.getElementById("search").value);
+  const searchInput = document.getElementById("search");
+  const query = normalize(searchInput ? searchInput.value : "");
   const matches = getFilteredLinks();
 
   if(!matches.length){
@@ -924,19 +1413,21 @@ function runAiCommand(){
   selectedLink = LINKS.find(x => x.name === best.name);
   render();
 
+  const suggestion = document.getElementById("aiSuggestion");
+
   if(query.includes("copy")){
     copySelectedLink();
-    document.getElementById("aiSuggestion").innerHTML = `AI action completed: copied <strong>${escapeHtml(best.name)}</strong>.`;
+    if(suggestion) suggestion.innerHTML = `AI action completed: copied <strong>${escapeHtml(best.name)}</strong>.`;
     return;
   }
 
   if(query.includes("open") || query.includes("launch") || query.includes("go to")){
     openSelectedLink();
-    document.getElementById("aiSuggestion").innerHTML = `AI action completed: opening <strong>${escapeHtml(best.name)}</strong>.`;
+    if(suggestion) suggestion.innerHTML = `AI action completed: opening <strong>${escapeHtml(best.name)}</strong>.`;
     return;
   }
 
-  document.getElementById("aiSuggestion").innerHTML = `AI preview ready: selected <strong>${escapeHtml(best.name)}</strong>.`;
+  if(suggestion) suggestion.innerHTML = `AI preview ready: selected <strong>${escapeHtml(best.name)}</strong>.`;
 }
 
 function selectLink(name){
@@ -948,8 +1439,8 @@ function openSelectedLink(){
   if(!selectedLink) return;
 
   if(selectedLink.internal){
-    showToast("Internal path copied");
     copyText(selectedLink.url);
+    showToast("Internal path copied");
     alert("This is an internal shared drive path. I copied it for you. Open it through the company network.");
     return;
   }
@@ -959,30 +1450,41 @@ function openSelectedLink(){
 
 function copySelectedLink(){
   if(!selectedLink || !selectedLink.url) return;
+
   copyText(selectedLink.url);
   showToast("Link copied ✓");
 }
 
-function openLinkByName(name, event){
-  event.stopPropagation();
-  selectedLink = LINKS.find(x => x.name === name);
-  openSelectedLink();
-  render();
-}
-
-function copyLinkByName(name, event){
-  event.stopPropagation();
-  selectedLink = LINKS.find(x => x.name === name);
-  copySelectedLink();
-  render();
-}
-
 function copyText(text){
-  navigator.clipboard.writeText(text);
+  if(!text) return;
+
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).catch(() => fallbackCopyText(text));
+  }else{
+    fallbackCopyText(text);
+  }
+}
+
+function fallbackCopyText(text){
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try{
+    document.execCommand("copy");
+  }catch(error){
+    console.error(error);
+  }
+
+  document.body.removeChild(textarea);
 }
 
 function toggleFav(name, event){
   event.stopPropagation();
+
   let favs = getFavs();
 
   if(favs.includes(name)){
@@ -999,16 +1501,24 @@ function toggleFav(name, event){
 
 function filterCategory(cat, event){
   currentCategory = cat;
+
   document.querySelectorAll(".filter button").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
+
+  if(event && event.target){
+    event.target.classList.add("active");
+  }
+
   render();
 }
 
 function showToast(message){
   const toast = document.getElementById("toast");
+  if(!toast) return;
+
   toast.textContent = message;
   toast.style.opacity = "1";
   toast.style.transform = "translateY(0)";
+
   setTimeout(() => {
     toast.style.opacity = "0";
     toast.style.transform = "translateY(10px)";
@@ -1028,15 +1538,36 @@ function escapeAttr(str){
   return escapeHtml(str).replaceAll("\\","\\\\");
 }
 
-document.getElementById("search").addEventListener("input", () => {
-  const matches = getFilteredLinks();
-  if(matches.length){
-    selectedLink = LINKS.find(x => x.name === matches[0].name);
-  }
-  render();
-});
+function initLinksPage(){
+  const searchInput = document.getElementById("search");
 
-render();
+  if(searchInput && !searchInput.dataset.bound){
+    searchInput.dataset.bound = "true";
+
+    searchInput.addEventListener("input", () => {
+      const matches = getFilteredLinks();
+
+      if(matches.length){
+        selectedLink = LINKS.find(x => x.name === matches[0].name);
+      }
+
+      render();
+    });
+  }
+
+  render();
+}
+
+window.runAiCommand = runAiCommand;
+window.filterCategory = filterCategory;
+window.openSelectedLink = openSelectedLink;
+window.copySelectedLink = copySelectedLink;
+window.toggleFav = toggleFav;
+window.selectLink = selectLink;
+
+document.addEventListener("DOMContentLoaded", initLinksPage);
+document.addEventListener("headerLoaded", initLinksPage);
+setTimeout(initLinksPage, 300);
 </script>
 
 </body>
