@@ -3,33 +3,71 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tools & Links Hub</title>
+<title>BD Tools — Links Hub</title>
 
+<script>
+  window.SITE_BASE = "./";
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="assets/css/header-footer-style.css">
 
 <style>
 :root{
-  --purple:#4d148c;
-  --purple2:#6d28d9;
-  --orange:#ff6600;
-  --dark:#0f172a;
-  --soft:#64748b;
-  --line:#e2e8f0;
-  --bg:#eef4fb;
+  --bg:#07111f;
+  --bg-soft:#0c1728;
+  --panel:#0f1c31;
+  --panel-2:#12233d;
+  --card:#ffffff;
+  --card-soft:#f8fafc;
+  --text:#0f172a;
+  --text-soft:#475569;
+  --muted:#94a3b8;
+  --line:rgba(148,163,184,.18);
+  --white-line:rgba(255,255,255,.08);
+  --accent:#6d28d9;
+  --accent-2:#4d148c;
+  --accent-3:#ff6600;
+  --success:#16a34a;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+  --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+  --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+  --shadow-md:0 10px 28px rgba(15,23,42,.10);
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --radius-md:16px;
+  --radius-sm:12px;
+  --max:1440px;
+  font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
+a{color:inherit}
+button,input,textarea,select{font:inherit}
 
 body{
   margin:0;
-  font-family:"Inter",sans-serif;
-  color:#e2e8f0;
+  min-height:100vh;
+  color:var(--text);
+  overflow-x:hidden;
+  background:#eef4fb;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
   background:
-    radial-gradient(circle at top left, rgba(109,40,217,.25), transparent 30%),
-    radial-gradient(circle at top right, rgba(255,102,0,.15), transparent 25%),
-    linear-gradient(180deg,#091120 0%, #0b1525 100%);
+    radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+    linear-gradient(180deg, #091120 0%, #0b1525 100%, #eef4fb 100%, #f5f8fc 100%);
+  pointer-events:none;
 }
 
 body::after{
@@ -41,430 +79,783 @@ body::after{
     linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
   background-size:36px 36px;
-  mask-image:linear-gradient(to bottom, rgba(0,0,0,.5), transparent 45%);
-  z-index:0;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
 }
 
-body > *{
+.page{position:relative;z-index:1;}
+.container{width:min(calc(100% - 32px), var(--max));margin:0 auto;}
+
+.hero-wrap{padding:28px 0 22px;}
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:36px;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255,102,0,.22), transparent 18%),
+    radial-gradient(circle at 15% 18%, rgba(255,255,255,.18), transparent 20%),
+    linear-gradient(135deg, #4d148c 0%, #5b1aae 48%, #1e293b 100%);
+  padding:34px;
+  box-shadow:var(--shadow-xl);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.hero::before,
+.hero::after{
+  content:"";
+  position:absolute;
+  border-radius:999px;
+  pointer-events:none;
+}
+
+.hero::before{
+  width:420px;
+  height:420px;
+  top:-220px;
+  right:-120px;
+  background:radial-gradient(circle, rgba(255,255,255,.18), transparent 62%);
+}
+
+.hero::after{
+  width:280px;
+  height:280px;
+  bottom:-160px;
+  left:-80px;
+  background:radial-gradient(circle, rgba(255,102,0,.18), transparent 65%);
+}
+
+.hero-grid{
   position:relative;
   z-index:1;
+  display:grid;
+  grid-template-columns:minmax(0,1.3fr) minmax(320px,.9fr);
+  gap:24px;
+  align-items:stretch;
 }
 
-.container{
-  width:min(1380px, calc(100% - 32px));
-  margin:auto;
-}
-
-.hero{
-  margin:28px 0 22px;
-  padding:34px;
-  border-radius:34px;
-  background:
-    radial-gradient(circle at 90% 20%, rgba(255,102,0,.22), transparent 20%),
-    linear-gradient(135deg,#4d148c,#6d28d9,#1e293b);
-  color:#fff;
-  box-shadow:0 24px 70px rgba(15,23,42,.18);
-}
-
-.hero-badge{
+.eyebrow{
   display:inline-flex;
   align-items:center;
   gap:8px;
   padding:9px 14px;
   border-radius:999px;
-  background:rgba(255,255,255,.13);
+  background:rgba(255,255,255,.12);
+  color:#fff;
   font-size:12px;
-  font-weight:900;
-  letter-spacing:.08em;
+  font-weight:700;
+  letter-spacing:.10em;
   text-transform:uppercase;
-  margin-bottom:14px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+  margin-bottom:18px;
 }
 
 .hero h1{
   margin:0;
-  font-size:clamp(2rem,4vw,3.4rem);
+  color:#fff;
+  font-size:clamp(2rem, 4vw, 3.5rem);
+  line-height:.98;
   letter-spacing:-.05em;
-  line-height:1;
+  max-width:780px;
 }
 
 .hero p{
-  margin:14px 0 0;
+  margin:16px 0 22px;
   color:rgba(255,255,255,.82);
-  max-width:780px;
+  font-size:16px;
   line-height:1.7;
+  max-width:760px;
 }
 
-.ai-panel{
-  margin-bottom:22px;
-  padding:18px;
+.hero-stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-top:22px;
+}
+
+.stat-card{
+  border-radius:20px;
+  padding:18px 18px 16px;
+  background:rgba(255,255,255,.10);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  backdrop-filter:blur(10px);
+}
+
+.stat-value{
+  color:#fff;
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:-.04em;
+  margin-bottom:6px;
+}
+
+.stat-label{
+  color:rgba(255,255,255,.7);
+  font-size:13px;
+  line-height:1.45;
+}
+
+.hero-cta{
+  border:none;
+  padding:14px 22px;
+  border-radius:999px;
+  background:#ffffff;
+  color:#4d148c;
+  font-weight:800;
+  font-size:14px;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.15);
+  transition:all .2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  animation:fadeUp .6s ease;
+}
+
+.hero-cta:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 30px rgba(0,0,0,.2);
+}
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.hero-side{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  min-width:0;
+}
+
+.quick-panel{
+  background:rgba(255,255,255,.10);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
   border-radius:28px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 18px 44px rgba(2,6,23,.22);
-  backdrop-filter:blur(16px);
+  padding:22px;
+  backdrop-filter:blur(12px);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
-.ai-top{
+.panel-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  color:#fff;
+  font-weight:700;
+  font-size:18px;
+  margin-bottom:14px;
+}
+
+.panel-title span:last-child{
+  color:rgba(255,255,255,.6);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.quick-list{
+  display:grid;
+  gap:12px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.quick-item{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,.08);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+
+.quick-icon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+  color:#fff;
+  flex-shrink:0;
+}
+
+.quick-item strong{
+  display:block;
+  color:#fff;
+  font-size:14px;
+  margin-bottom:4px;
+}
+
+.quick-item span{
+  display:block;
+  color:rgba(255,255,255,.7);
+  font-size:13px;
+  line-height:1.45;
+}
+
+.live-strip{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:14px;
-  flex-wrap:wrap;
-  margin-bottom:14px;
-}
-
-.ai-title{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.ai-icon{
-  width:46px;
-  height:46px;
-  border-radius:16px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,#4d148c,#7c3aed);
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:rgba(7,17,31,.24);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
   color:#fff;
-  box-shadow:0 12px 24px rgba(77,20,140,.20);
 }
 
-.ai-title h2{
-  margin:0;
-  font-size:21px;
-  letter-spacing:-.03em;
+.live-strip strong{
+  display:block;
+  font-size:14px;
+  margin-bottom:4px;
 }
 
-.ai-title p{
-  margin:3px 0 0;
-  color:#94a3b8;
+.live-strip span{
+  color:rgba(255,255,255,.68);
   font-size:13px;
 }
 
-.ai-status{
+.pulse{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#22c55e;
+  box-shadow:0 0 0 0 rgba(34,197,94,.55);
+  animation:pulse 1.9s infinite;
+  flex-shrink:0;
+}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.55);}
+  70%{box-shadow:0 0 0 16px rgba(34,197,94,0);}
+  100%{box-shadow:0 0 0 0 rgba(34,197,94,0);}
+}
+
+.search-wrap{margin-top:0;margin-bottom:24px;}
+.search-card{
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:var(--shadow-lg);
+  border-radius:28px;
+  padding:18px;
+}
+
+.search-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.search-copy h2{
+  margin:0 0 6px;
+  font-size:24px;
+  letter-spacing:-.03em;
+  color:#0f172a;
+}
+
+.search-copy p{
+  margin:0;
+  color:var(--text-soft);
+  font-size:14px;
+  line-height:1.6;
+}
+
+.chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
   padding:10px 14px;
   border-radius:999px;
-  background:#f5f3ff;
-  color:#5b21b6;
-  font-size:12px;
-  font-weight:900;
+  background:#eef2ff;
+  color:#4338ca;
+  font-size:13px;
+  font-weight:700;
+  border:1px solid #e0e7ff;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:.2s ease;
 }
 
-.search-row{
+.chip:hover,
+.chip.active{
+  transform:translateY(-1px);
+  background:#ede9fe;
+  color:#4d148c;
+}
+
+.search-bar{
   display:grid;
   grid-template-columns:1fr auto;
-  gap:12px;
+  gap:14px;
+  align-items:center;
 }
 
-.search-wrap{
-  position:relative;
-}
+.search-input-wrap{position:relative;}
 
-.search-wrap i{
+.search-input-wrap i{
   position:absolute;
   left:18px;
   top:50%;
   transform:translateY(-50%);
   color:#64748b;
+  font-size:16px;
+  pointer-events:none;
 }
 
-#search{
+#linkSearch{
   width:100%;
-  height:62px;
   border:none;
   outline:none;
-  border-radius:19px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.25);
-  padding:0 18px 0 50px;
-  font-size:16px;
-  font-weight:700;
-}
-
-#search:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(77,20,140,.18),0 0 0 6px rgba(77,20,140,.07);
-}
-
-.ai-action{
-  border:none;
-  min-height:62px;
-  padding:0 20px;
-  border-radius:19px;
-  background:linear-gradient(135deg,#ff6600,#ff7a1a);
-  color:#fff;
-  font-weight:900;
-  cursor:pointer;
-  box-shadow:0 14px 28px rgba(255,102,0,.20);
-}
-
-.ai-action:hover{
-  transform:translateY(-2px);
-}
-
-.ai-suggestion{
-  margin-top:12px;
-  padding:13px 15px;
   border-radius:18px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
-  color:#cbd5e1;
-  font-size:13px;
-  line-height:1.6;
+  background:#f8fafc;
+  min-height:60px;
+  padding:0 54px 0 50px;
+  font-size:16px;
+  font-weight:600;
+  color:#0f172a;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.22);
+  transition:.2s ease;
 }
 
-.filter{
-  display:flex;
-  gap:9px;
-  flex-wrap:wrap;
-  margin:18px 0;
+#linkSearch:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.18), 0 0 0 6px rgba(77,20,140,.08);
 }
 
-.filter button{
+#linkSearch::placeholder{
+  color:#94a3b8;
+  font-weight:500;
+}
+
+#clearSearchBtn{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  width:32px;
+  height:32px;
   border:none;
-  padding:10px 15px;
   border-radius:999px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
+  background:#e2e8f0;
+  color:#475569;
+  font-size:18px;
+  font-weight:700;
   cursor:pointer;
-  font-weight:900;
-  color:#cbd5e1;
+  display:none;
+  transition:.2s ease;
 }
 
-.filter button.active{
-  background:linear-gradient(135deg,#4d148c,#6d28d9);
+#clearSearchBtn:hover{
+  background:#cbd5e1;
+  color:#0f172a;
+}
+
+.search-btn{
+  border:none;
+  min-height:60px;
+  padding:0 22px;
+  border-radius:18px;
+  background:linear-gradient(135deg, #ff6600, #ff7b22);
   color:#fff;
-  border-color:transparent;
-}
-
-.workspace{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 390px;
-  gap:22px;
-  align-items:start;
-  padding-bottom:60px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
-  gap:18px;
-}
-
-.card{
-  position:relative;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:24px;
-  padding:18px;
-  box-shadow:0 14px 30px rgba(2,6,23,.20);
-  transition:.22s ease;
+  font-weight:800;
+  letter-spacing:.01em;
   cursor:pointer;
-  overflow:hidden;
-  color:#e2e8f0;
+  box-shadow:0 16px 28px rgba(255,102,0,.22);
+  transition:.22s ease;
 }
 
-.card::before{
+.search-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 20px 34px rgba(255,102,0,.28);
+}
+
+.workspace-wrap{
+  padding:8px 0 58px;
+  position:relative;
+  z-index:1;
+  scroll-margin-top:120px;
+}
+
+.workspace-wrap::before{
   content:"";
   position:absolute;
-  top:0;
+  top:22px;
+  left:50%;
+  width:min(1280px, calc(100% - 80px));
+  height:92%;
+  transform:translateX(-50%);
+  border-radius:42px;
+  background:radial-gradient(circle at top center, rgba(109,40,217,.12), transparent 38%), linear-gradient(180deg, rgba(255,255,255,.62), rgba(248,250,252,.42));
+  filter:blur(8px);
+  z-index:-1;
+}
+
+.library-panel{
+  background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(248,250,252,.96));
+  border:1px solid rgba(226,232,240,.96);
+  border-radius:36px;
+  padding:32px;
+  box-shadow:0 26px 60px rgba(15,23,42,.08);
+}
+
+.section-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:26px;
+  flex-wrap:wrap;
+}
+
+.section-head-left{
+  flex:1 1 700px;
+  min-width:280px;
+}
+
+.section-overline{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:12px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #f5f3ff, #ede9fe);
+  border:1px solid #e9ddff;
+  color:#5b21b6;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.section-head-left h3{
+  margin:0 0 10px;
+  font-size:38px;
+  letter-spacing:-.055em;
+  color:#0f172a !important;
+  font-weight:900;
+  line-height:1;
+}
+
+.section-head-left p{
+  margin:0;
+  color:#64748b !important;
+  font-size:15px;
+  line-height:1.75;
+  max-width:760px;
+}
+
+.section-note{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 18px;
+  border-radius:18px;
+  background:linear-gradient(180deg, #ffffff, #f8fafc);
+  border:1px solid rgba(203,213,225,.92);
+  box-shadow:0 14px 30px rgba(15,23,42,.06);
+  color:#334155;
+  font-weight:800;
+  font-size:13px;
+  flex:0 0 auto;
+}
+
+.content-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) 360px;
+  gap:22px;
+  align-items:start;
+}
+
+.work-card,
+.side-card{
+  position:relative;
+  background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border:1px solid rgba(226,232,240,.96);
+  border-radius:28px;
+  padding:18px 18px 20px;
+  box-shadow:0 14px 30px rgba(15,23,42,.08);
+  overflow:hidden;
+}
+
+.work-card::before,
+.side-card::before{
+  content:"";
+  position:absolute;
   left:18px;
   right:18px;
+  top:0;
   height:4px;
-  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
   border-radius:0 0 999px 999px;
+  background:linear-gradient(90deg, #4d148c, #7c3aed, #ff6600);
+  opacity:.98;
 }
 
-.card:hover,
-.card.active{
-  transform:translateY(-4px);
-  box-shadow:0 22px 50px rgba(77,20,140,.28);
-  border:2px solid #6d28d9;
-  background:rgba(255,255,255,.10);
-}
-
-.card.active::after{
-  content:"\f00c";
-  font-family:"Font Awesome 6 Free";
-  font-weight:900;
-  position:absolute;
-  bottom:12px;
-  right:12px;
-  width:30px;
-  height:30px;
-  border-radius:50%;
+.work-top{
   display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#22c55e;
-  color:#fff;
-  font-size:13px;
-  box-shadow:0 6px 16px rgba(34,197,94,.35);
-}
-
-.card-top{
-  display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:space-between;
   gap:12px;
+  margin-bottom:18px;
 }
 
-.icon{
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:linear-gradient(180deg, #f8f6ff, #f1ecff);
+  color:#5b21b6;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.02em;
+  border:1px solid #ece5ff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+.guide-icon{
   width:46px;
   height:46px;
   border-radius:16px;
   display:grid;
   place-items:center;
-  background:#f3f0ff;
   color:#5b21b6;
-}
-
-.star{
-  color:#cbd5e1;
-  cursor:pointer;
-}
-
-.star.active{
-  color:#ff6600;
-}
-
-.card h3{
-  margin:14px 0 7px;
-  font-size:18px;
-  letter-spacing:-.03em;
-}
-
-.card p{
-  margin:0;
-  color:#94a3b8;
-  font-size:13px;
-  line-height:1.6;
-}
-
-.badges{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-
-.badge{
-  padding:7px 10px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:900;
-  background:rgba(255,255,255,.10);
-  color:#cbd5e1;
-}
-
-.badge.orange{
-  background:rgba(255,102,0,.14);
-  color:#fed7aa;
-}
-
-.btn{
-  border:none;
-  height:42px;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:900;
-  font-size:12px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-}
-
-.btn-open{
-  background:linear-gradient(135deg,#4d148c,#6d28d9);
-  color:#fff;
-}
-
-.btn-copy{
-  background:rgba(255,255,255,.10);
-  color:#e2e8f0;
-  border:1px solid rgba(255,255,255,.12);
-}
-
-.preview{
-  position:sticky;
-  top:22px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:28px;
-  padding:20px;
-  box-shadow:0 18px 44px rgba(2,6,23,.24);
-  overflow:hidden;
-  backdrop-filter:blur(16px);
-  color:#e2e8f0;
-}
-
-.preview::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:20px;
-  right:20px;
-  height:4px;
-  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
-  border-radius:0 0 999px 999px;
-}
-
-.preview-empty{
-  min-height:360px;
-  display:grid;
-  place-items:center;
-  text-align:center;
-  color:#64748b;
-}
-
-.preview-empty i{
-  font-size:42px;
-  color:#7c3aed;
-  margin-bottom:12px;
-}
-
-.preview-head{
-  display:flex;
-  align-items:flex-start;
-  gap:14px;
-  margin-bottom:16px;
-}
-
-.preview-icon{
-  width:52px;
-  height:52px;
-  border-radius:18px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,#4d148c,#7c3aed);
-  color:#fff;
+  background:linear-gradient(180deg, rgba(91,33,182,.08), rgba(255,102,0,.08));
+  box-shadow:inset 0 0 0 1px rgba(91,33,182,.08);
+  font-size:17px;
   flex-shrink:0;
 }
 
-.preview h3{
-  margin:0 0 5px;
-  font-size:22px;
-  letter-spacing:-.04em;
+.work-card h4,
+.side-card h4{
+  margin:0 0 10px;
+  font-size:18px;
+  letter-spacing:-.03em;
+  line-height:1.25;
+  color:#111827;
 }
 
-.preview p{
-  margin:0;
-  color:#94a3b8;
+.lead{
+  margin:0 0 18px;
+  color:#516173;
   font-size:14px;
-  line-height:1.65;
+  line-height:1.72;
 }
+
+.links-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
+}
+
+.link-card{
+  position:relative;
+  border:1px solid #e4ebf5;
+  border-radius:20px;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+  padding:16px;
+  cursor:pointer;
+  transition:.2s ease;
+  overflow:hidden;
+}
+
+.link-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 30px rgba(15,23,42,.10);
+  border-color:#d8c7ff;
+}
+
+.link-card.active{
+  border:2px solid #4d148c;
+  box-shadow:0 16px 34px rgba(77,20,140,.14);
+}
+
+.link-card.active::after{
+  content:"\f00c";
+  font-family:"Font Awesome 6 Free";
+  font-weight:900;
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:#22c55e;
+  color:#fff;
+  font-size:12px;
+  box-shadow:0 8px 18px rgba(34,197,94,.24);
+}
+
+.link-card-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.link-icon{
+  width:42px;
+  height:42px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  color:#5b21b6;
+  background:linear-gradient(180deg, rgba(91,33,182,.08), rgba(255,102,0,.08));
+  box-shadow:inset 0 0 0 1px rgba(91,33,182,.08);
+}
+
+.favorite-star{
+  border:none;
+  background:#f8fafc;
+  color:#cbd5e1;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.favorite-star:hover,
+.favorite-star.active{
+  color:#ff6600;
+  background:#fff7ed;
+}
+
+.link-card h5{
+  margin:0 0 7px;
+  color:#0f172a;
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:-.02em;
+}
+
+.link-card p{
+  margin:0;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.55;
+}
+
+.link-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px;
+}
+
+.link-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  color:#64748b;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.link-tag.orange{
+  background:#fff7ed;
+  border-color:rgba(255,102,0,.20);
+  color:#c2410c;
+}
+
+.no-results{
+  padding:26px;
+  border-radius:20px;
+  border:1px dashed #cbd5e1;
+  background:#f8fafc;
+  text-align:center;
+  color:#64748b;
+  font-weight:800;
+}
+
+.side-stack{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.quick-stat{
+  padding:14px;
+  border-radius:18px;
+  background:#f8fafc;
+  border:1px solid #e7edf4;
+}
+
+.quick-stat + .quick-stat{margin-top:10px;}
+
+.quick-label{
+  display:block;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:#64748b;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.quick-value{
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:-.03em;
+  word-break:break-word;
+}
+
+.helper-text{
+  font-size:13px;
+  color:#64748b;
+  line-height:1.7;
+}
+
+.helper-list{
+  margin:0;
+  padding-left:18px;
+  color:#475569;
+  line-height:1.8;
+  font-size:14px;
+}
+
+.helper-list li + li{margin-top:4px;}
 
 .preview-url{
   margin-top:14px;
   padding:14px;
   border-radius:18px;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
+  background:#f8fafc;
+  border:1px solid #e4ebf5;
   word-break:break-all;
+  color:#334155;
   font-size:12px;
-  color:#e2e8f0;
   line-height:1.6;
 }
 
@@ -472,27 +863,59 @@ body > *{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
-  margin-top:15px;
+  margin-top:14px;
 }
 
-.ai-result{
-  margin-top:15px;
-  padding:14px;
-  border-radius:18px;
-  background:rgba(109,40,217,.14);
-  border:1px solid rgba(167,139,250,.18);
-  color:#ddd6fe;
+.link-action-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:50px;
+  padding:0 16px;
+  border-radius:17px;
+  text-decoration:none;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  transition:.22s ease;
+}
+
+.link-action-btn.primary{
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+  color:#fff;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+}
+
+.link-action-btn.dark{
+  background:#111827;
+  color:#fff;
+  box-shadow:0 8px 20px rgba(17,24,39,.14);
+}
+
+.link-action-btn:hover{
+  transform:translateY(-2px);
+}
+
+.ai-note{
+  margin-top:14px;
+  padding:14px 16px;
+  border-radius:16px;
+  background:#f5f3ff;
+  border:1px solid #e9ddff;
+  color:#4c1d95;
   font-size:13px;
-  line-height:1.6;
+  line-height:1.7;
+  font-weight:700;
 }
 
 .preview-frame{
-  margin-top:15px;
+  margin-top:14px;
+  height:220px;
   border-radius:18px;
   overflow:hidden;
-  border:1px solid #e2e8f0;
+  border:1px solid #e4ebf5;
   background:#f8fafc;
-  height:230px;
 }
 
 .preview-frame iframe{
@@ -504,20 +927,24 @@ body > *{
 
 .frame-note{
   margin-top:10px;
+  color:#64748b;
   font-size:12px;
-  color:#94a3b8;
-  line-height:1.5;
+  line-height:1.6;
 }
 
-.no-results{
-  grid-column:1/-1;
-  padding:30px;
-  text-align:center;
-  border-radius:24px;
-  background:rgba(255,255,255,.06);
-  border:1px dashed rgba(255,255,255,.18);
-  color:#94a3b8;
-  font-weight:800;
+.side-card.reminder-card{
+  background:linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  border:1px solid rgba(255,102,0,.25);
+}
+
+.side-card.reminder-card .badge{
+  background:#fff1e6;
+  border:1px solid rgba(255,102,0,.25);
+  color:#c2410c;
+}
+
+.side-card.reminder-card .work-top i{
+  color:#ff6600;
 }
 
 #toast{
@@ -527,18 +954,18 @@ body > *{
   z-index:99999;
   background:#111827;
   color:#fff;
-  padding:13px 17px;
-  border-radius:15px;
-  box-shadow:0 16px 34px rgba(15,23,42,.22);
+  padding:12px 16px;
+  border-radius:14px;
+  box-shadow:0 16px 34px rgba(15,23,42,.18);
   opacity:0;
   transform:translateY(10px);
-  transition:.22s ease;
   pointer-events:none;
-  font-weight:900;
+  transition:.22s ease;
   font-size:13px;
+  font-weight:800;
 }
 
-/* ===== Shared Header Modals — Case Directory / EBS / FBC compatible ===== */
+/* Shared modal/button styling — same pattern as EBS/FBC/Case Directory */
 
 #commentModal,
 #allCommentsModal,
@@ -560,7 +987,6 @@ body > *{
 #helpModal .modal-content{
   width:100%;
   background:#fff;
-  color:#0f172a;
   border-radius:28px;
   padding:26px;
   box-shadow:0 24px 80px rgba(2,6,23,.18);
@@ -618,7 +1044,6 @@ body > *{
   flex-shrink:0;
   font-size:22px;
   line-height:1;
-  border:none;
 }
 
 #commentModal .modal-close:hover,
@@ -626,6 +1051,40 @@ body > *{
 #helpModal .modal-close:hover{
   color:#0f172a;
   background:#eef2ff;
+}
+
+#commentModal .btn,
+#allCommentsModal .btn,
+#helpModal .btn,
+#commentModal button:not(.modal-close),
+#allCommentsModal button:not(.modal-close),
+#helpModal button:not(.modal-close){
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:50px;
+  padding:0 18px;
+  border-radius:17px;
+  text-decoration:none;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  transition:.22s ease;
+  width:100%;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+  color:#fff;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+}
+
+#commentModal .btn:hover,
+#allCommentsModal .btn:hover,
+#helpModal .btn:hover,
+#commentModal button:not(.modal-close):hover,
+#allCommentsModal button:not(.modal-close):hover,
+#helpModal button:not(.modal-close):hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
 }
 
 #commentModal .rating-container{
@@ -682,40 +1141,6 @@ body > *{
   box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
 }
 
-#commentModal .btn,
-#allCommentsModal .btn,
-#helpModal .btn,
-#commentModal button:not(.modal-close),
-#allCommentsModal button:not(.modal-close),
-#helpModal button:not(.modal-close){
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  min-height:50px;
-  padding:0 18px;
-  border-radius:17px;
-  text-decoration:none;
-  font-weight:800;
-  border:none;
-  cursor:pointer;
-  transition:.22s ease;
-  width:100%;
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-  color:#fff;
-  box-shadow:0 14px 24px rgba(77,20,140,.16);
-}
-
-#commentModal .btn:hover,
-#allCommentsModal .btn:hover,
-#helpModal .btn:hover,
-#commentModal button:not(.modal-close):hover,
-#allCommentsModal button:not(.modal-close):hover,
-#helpModal button:not(.modal-close):hover{
-  transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.22);
-}
-
 .comment-modal-footer{
   display:flex;
   align-items:center;
@@ -753,16 +1178,108 @@ body > *{
   display:block;
 }
 
-@media(max-width:1050px){
-  .workspace{grid-template-columns:1fr}
-  .preview{position:relative;top:auto}
+#timeCalendarPopup .settings-btn,
+#timeCalendarPopup .time-settings-btn,
+#timeCalendarPopup button:last-of-type{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100% !important;
+  min-height:50px;
+  padding:0 18px;
+  border:none;
+  border-radius:17px;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;
+  color:#fff !important;
+  font-weight:800;
+  text-decoration:none;
+  cursor:pointer;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+  transition:.22s ease;
 }
 
-@media(max-width:700px){
-  .search-row{grid-template-columns:1fr}
-  .ai-action{width:100%}
-  .hero{padding:24px;border-radius:26px}
+#timeCalendarPopup .settings-btn:hover,
+#timeCalendarPopup .time-settings-btn:hover,
+#timeCalendarPopup button:last-of-type:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
 
+#timeSettingsModal select,
+#timezoneModal select,
+#dateTimeSettingsModal select{
+  width:100%;
+  min-height:46px;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:0 16px;
+  color:#0f172a;
+  font-size:14px;
+  appearance:auto;
+}
+
+#timeSettingsModal select:focus,
+#timezoneModal select:focus,
+#dateTimeSettingsModal select:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#timeSettingsModal .btn,
+#timezoneModal .btn,
+#dateTimeSettingsModal .btn,
+#timeSettingsModal button:not(.modal-close),
+#timezoneModal button:not(.modal-close),
+#dateTimeSettingsModal button:not(.modal-close){
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  width:100% !important;
+  min-height:50px;
+  padding:0 18px;
+  border:none;
+  border-radius:17px;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;
+  color:#fff !important;
+  font-weight:800;
+  text-decoration:none;
+  cursor:pointer;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+  transition:.22s ease;
+  margin-top:18px;
+}
+
+#timeSettingsModal .btn:hover,
+#timezoneModal .btn:hover,
+#dateTimeSettingsModal .btn:hover,
+#timeSettingsModal button:not(.modal-close):hover,
+#timezoneModal button:not(.modal-close):hover,
+#dateTimeSettingsModal button:not(.modal-close):hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+
+@media (max-width:1180px){
+  .hero-grid{grid-template-columns:1fr;}
+  .hero-stats{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .content-grid{grid-template-columns:1fr;}
+}
+
+@media (max-width:720px){
+  .container{width:min(calc(100% - 20px), var(--max));}
+  .hero{padding:24px;border-radius:28px;}
+  .hero h1{font-size:2.2rem;}
+  .hero-stats{grid-template-columns:1fr;}
+  .search-bar{grid-template-columns:1fr;}
+  .search-btn{width:100%;}
+  .library-panel{padding:20px;border-radius:28px;}
+  .section-head-left h3{font-size:30px;}
+  .section-note{width:100%;justify-content:center;border-radius:16px;}
+  .preview-actions{grid-template-columns:1fr;}
   #commentModal,
   #allCommentsModal,
   #helpModal{
@@ -781,73 +1298,298 @@ body > *{
     flex-direction:column;
     align-items:stretch;
   }
+
+  #timeCalendarPopup .settings-btn,
+  #timeCalendarPopup .time-settings-btn,
+  #timeCalendarPopup button:last-of-type{
+    width:100% !important;
+  }
 }
 </style>
 </head>
 
 <body data-page="links">
-<div id="site-header"></div>
+  <div class="page">
+    <div id="site-header"></div>
 
-<main class="container">
-  <section class="hero">
-    <div class="hero-badge"><i class="fa-solid fa-sparkles"></i> AI-powered link workspace</div>
-    <h1>Tools & Links Hub</h1>
-    <p>Search naturally, preview the selected tool, copy links instantly, or open the correct system faster.</p>
-  </section>
+    <main>
+      <section class="hero-wrap reveal-up">
+        <div class="container">
+          <div class="hero">
+            <div class="hero-grid">
+              <div class="hero-copy">
+                <div class="eyebrow">
+                  <i class="fa-solid fa-link"></i>
+                  Premium tools workspace
+                </div>
 
-  <section class="ai-panel">
-    <div class="ai-top">
-      <div class="ai-title">
-        <div class="ai-icon"><i class="fa-solid fa-robot"></i></div>
-        <div>
-          <h2>AI Link Assistant</h2>
-          <p>Try: “open racf”, “copy ispi”, “service center”, “dashboard”, or “tools that need iSPI browser”.</p>
+                <h1>Find the right tool faster and open the right link with less effort.</h1>
+                <p>
+                  Use this page to search tools, preview link details, copy system URLs, save favorites, and quickly identify which resources require the iSPI browser.
+                </p>
+
+                <div class="hero-stats">
+                  <div class="stat-card">
+                    <div class="stat-value" id="heroLinkCount">—</div>
+                    <div class="stat-label">Available tools and links ready for quick access.</div>
+                  </div>
+
+                  <div class="stat-card">
+                    <div class="stat-value" id="heroFavoriteCount">—</div>
+                    <div class="stat-label">Saved favorites stored in this browser.</div>
+                  </div>
+
+                  <div class="stat-card">
+                    <div class="stat-value">Live</div>
+                    <div class="stat-label">Search, copy, preview, feedback, and time tools stay available.</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:18px;">
+                  <button class="hero-cta" onclick="scrollToLinksBuilder()">
+                    Explore Links Hub <i class="fa-solid fa-arrow-down"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="hero-side">
+                <div class="quick-panel">
+                  <div>
+                    <div class="panel-title">
+                      <span>How to use</span>
+                      <span>4 steps</span>
+                    </div>
+
+                    <ul class="quick-list">
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div>
+                          <strong>Search naturally</strong>
+                          <span>Search by tool name, system, category, or action like copy/open.</span>
+                        </div>
+                      </li>
+
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-filter"></i></div>
+                        <div>
+                          <strong>Filter by category</strong>
+                          <span>Use chips to narrow down system, tools, dashboard, directory, or favorites.</span>
+                        </div>
+                      </li>
+
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-eye"></i></div>
+                        <div>
+                          <strong>Review the preview</strong>
+                          <span>Check description, tags, link path, and opening instructions before launching.</span>
+                        </div>
+                      </li>
+
+                      <li class="quick-item">
+                        <div class="quick-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+                        <div>
+                          <strong>Open or copy</strong>
+                          <span>Open web tools directly or copy internal paths when preview is not available.</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="live-strip">
+                    <div>
+                      <strong>Workspace ready</strong>
+                      <span>Links, feedback, and time tools are available.</span>
+                    </div>
+                    <div class="pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
+
+      <section class="search-wrap reveal-up stagger-1">
+        <div class="container">
+          <div class="search-card">
+            <div class="search-top">
+              <div class="search-copy">
+                <h2>Search Links</h2>
+                <p>Type a tool name, keyword, or command like “open racf”, “copy ispi”, or “service center”.</p>
+              </div>
+
+              <div class="chip-row">
+                <button class="chip active" type="button" onclick="filterCategory('all', event)">
+                  <i class="fa-solid fa-layer-group"></i> All
+                </button>
+                <button class="chip" type="button" onclick="filterCategory('favorites', event)">
+                  <i class="fa-solid fa-star"></i> Favorites
+                </button>
+                <button class="chip" type="button" onclick="filterCategory('system', event)">
+                  <i class="fa-solid fa-server"></i> System
+                </button>
+                <button class="chip" type="button" onclick="filterCategory('tools', event)">
+                  <i class="fa-solid fa-toolbox"></i> Tools
+                </button>
+                <button class="chip" type="button" onclick="filterCategory('directory', event)">
+                  <i class="fa-solid fa-address-book"></i> Directory
+                </button>
+                <button class="chip" type="button" onclick="filterCategory('dashboard', event)">
+                  <i class="fa-solid fa-chart-line"></i> Dashboard
+                </button>
+                <button class="chip" type="button" onclick="filterCategory('ispi', event)">
+                  <i class="fa-solid fa-globe"></i> Needs iSPI
+                </button>
+              </div>
+            </div>
+
+            <div class="search-bar">
+              <div class="search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="linkSearch" type="text" placeholder="Search or ask for a tool...">
+                <button id="clearSearchBtn" type="button" onclick="clearLinkSearch()">×</button>
+              </div>
+
+              <button class="search-btn" type="button" onclick="runAiCommand()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Run AI Action
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="linksBuilder" class="workspace-wrap reveal-up stagger-2">
+        <div class="container">
+          <div class="library-panel reveal-up stagger-3">
+            <div class="section-head">
+              <div class="section-head-left">
+                <div class="section-overline"><i class="fa-solid fa-link"></i> Links workspace</div>
+                <h3>Tools & Links Hub</h3>
+                <p>
+                  Select a tool from the list. The preview panel will show the system description, category, URL/path, and the safest next action.
+                </p>
+              </div>
+
+              <div class="section-note">
+                <i class="fa-solid fa-bolt"></i>
+                <span id="statusPill">Ready</span>
+              </div>
+            </div>
+
+            <div class="content-grid">
+              <div class="work-card">
+                <div class="work-top">
+                  <div>
+                    <div class="badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Link library</div>
+                  </div>
+                  <div class="guide-icon"><i class="fa-solid fa-link"></i></div>
+                </div>
+
+                <p class="lead" id="aiSuggestion">
+                  AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.
+                </p>
+
+                <div id="linksGrid" class="links-grid"></div>
+              </div>
+
+              <div class="side-stack">
+
+  <!-- PREVIEW CARD — MOVED TO TOP -->
+  <div class="side-card">
+    <div class="work-top">
+      <div>
+        <div class="badge"><i class="fa-solid fa-eye"></i> Preview</div>
+        <h4 id="previewTitle">Select a link</h4>
       </div>
-      <div class="ai-status" id="aiStatus">Ready</div>
+      <div class="guide-icon" id="previewIcon"><i class="fa-solid fa-link"></i></div>
     </div>
 
-    <div class="search-row">
-      <div class="search-wrap">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input id="search" type="text" placeholder="Ask or search for a tool...">
-      </div>
-      <button class="ai-action" type="button" onclick="runAiCommand()">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Action
+    <div class="helper-text" id="previewDesc">
+      Choose a tool from the list to preview details and actions.
+    </div>
+
+    <div id="previewTags" class="link-badges"></div>
+
+    <div id="previewUrl" class="preview-url">
+      No link selected.
+    </div>
+
+    <div class="preview-actions">
+      <button class="link-action-btn primary" type="button" onclick="openSelectedLink()">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
+      </button>
+
+      <button class="link-action-btn dark" type="button" onclick="copySelectedLink()">
+        <i class="fa-solid fa-copy"></i> Copy
       </button>
     </div>
 
-    <div class="ai-suggestion" id="aiSuggestion">
-      AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.
+    <div class="ai-note" id="previewAiNote">
+      AI recommendation will appear after you search or select a link.
     </div>
-  </section>
 
-  <div class="filter">
-    <button class="active" onclick="filterCategory('all', event)">All</button>
-    <button onclick="filterCategory('favorites', event)">Favorites</button>
-    <button onclick="filterCategory('system', event)">System</button>
-    <button onclick="filterCategory('tools', event)">Tools</button>
-    <button onclick="filterCategory('directory', event)">Directory</button>
-    <button onclick="filterCategory('dashboard', event)">Dashboard</button>
-    <button onclick="filterCategory('ispi', event)">Needs iSPI Browser</button>
+    <div id="previewFrameWrap"></div>
   </div>
 
-  <section class="workspace">
-    <div class="grid" id="grid"></div>
-    <aside class="preview" id="preview"></aside>
-  </section>
-</main>
+  <!-- OPENING INTERNAL TOOLS REMINDER -->
+  <div class="side-card reminder-card">
+    <div class="work-top">
+      <div>
+        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
+        <h4>Opening internal tools</h4>
+      </div>
+      <div class="guide-icon"><i class="fa-solid fa-circle-info"></i></div>
+    </div>
 
-<div id="site-footer"></div>
-<div id="toast">Copied!</div>
+    <ul class="helper-list">
+      <li>Some tools may require iSPI Browser or company network access.</li>
+      <li>Internal shared-drive paths are copied instead of opened directly.</li>
+      <li>If preview does not load, use the Open button.</li>
+      <li>Favorites are saved only in your current browser.</li>
+    </ul>
+  </div>
+
+  <!-- SNAPSHOT CARD -->
+  <div class="side-card">
+    <div class="work-top">
+      <div>
+        <div class="badge"><i class="fa-solid fa-chart-simple"></i> Snapshot</div>
+        <h4>Quick status</h4>
+      </div>
+      <div class="guide-icon"><i class="fa-solid fa-chart-pie"></i></div>
+    </div>
+
+    <div class="quick-stat">
+      <span class="quick-label">Selected Tool</span>
+      <span class="quick-value" id="selectedToolValue">—</span>
+    </div>
+
+    <div class="quick-stat">
+      <span class="quick-label">Category</span>
+      <span class="quick-value" id="selectedCategoryValue">—</span>
+    </div>
+
+    <div class="quick-stat">
+      <span class="quick-label">Result Status</span>
+      <span class="quick-value" id="resultStatusValue">Waiting</span>
+    </div>
+  </div>
+
+</div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+  </div>
+
+  <div id="toast">Copied!</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
-window.SITE_BASE = "./";
-
 if (!firebase.apps.length) {
   firebase.initializeApp({
     apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
@@ -868,10 +1610,7 @@ window.db = firebase.firestore();
 <script src="assets/js/footer-loader.js"></script>
 
 <script>
-/* =========================================================
-   SHARED HEADER MODAL CONTROLLER
-========================================================= */
-
+let linksPageInitialized = false;
 let selectedRating = 0;
 let commentsUnsubscribe = null;
 let ratingStars = [];
@@ -880,19 +1619,17 @@ function initRatingStars() {
   ratingStars = Array.from(document.querySelectorAll(".rating-star"));
 
   ratingStars.forEach(star => {
-    star.onclick = () => {
+    star.addEventListener("click", () => {
       selectedRating = Number(star.dataset.value);
-
       ratingStars.forEach(s => {
         s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
       });
-    };
+    });
   });
 }
 
 function openAnimatedModal(modal) {
   if (!modal) return;
-
   modal.style.display = "flex";
   modal.classList.remove("is-closing");
 
@@ -910,10 +1647,7 @@ function closeAnimatedModal(modal, onClosed) {
   setTimeout(() => {
     modal.style.display = "none";
     modal.classList.remove("is-closing");
-
-    if (typeof onClosed === "function") {
-      onClosed();
-    }
+    if (typeof onClosed === "function") onClosed();
   }, 220);
 }
 
@@ -943,12 +1677,9 @@ function closeAllComments() {
 }
 
 async function sendComment() {
-  const nameInput = document.getElementById("commentName");
-  const commentInput = document.getElementById("commentText");
+  const name = document.getElementById("commentName")?.value.trim() || "";
+  const comment = document.getElementById("commentText")?.value.trim() || "";
   const message = document.getElementById("feedbackMessage");
-
-  const name = nameInput ? nameInput.value.trim() : "";
-  const comment = commentInput ? commentInput.value.trim() : "";
 
   if (!selectedRating) {
     if (message) {
@@ -975,6 +1706,9 @@ async function sendComment() {
       message.style.color = "#16a34a";
       message.textContent = "Thank you. Your feedback has been submitted.";
     }
+
+    const nameInput = document.getElementById("commentName");
+    const commentInput = document.getElementById("commentText");
 
     if (nameInput) nameInput.value = "";
     if (commentInput) commentInput.value = "";
@@ -1006,12 +1740,9 @@ function showAllComments() {
 
   if (!modal || !list) return;
 
-  list.innerHTML = "<p>Loading comments...</p>";
+  list.innerHTML = "<p>Loading comments.</p>";
 
-  if (commentsUnsubscribe) {
-    commentsUnsubscribe();
-    commentsUnsubscribe = null;
-  }
+  if (commentsUnsubscribe) commentsUnsubscribe();
 
   const loadComments = () => {
     openAnimatedModal(modal);
@@ -1062,7 +1793,7 @@ window.showAllComments = showAllComments;
 window.closeAllComments = closeAllComments;
 window.sendComment = sendComment;
 
-window.addEventListener("click", e => {
+window.addEventListener("click", (e) => {
   const commentModal = document.getElementById("commentModal");
   const allCommentsModal = document.getElementById("allCommentsModal");
   const helpModal = document.getElementById("helpModal");
@@ -1071,17 +1802,9 @@ window.addEventListener("click", e => {
   if (e.target === allCommentsModal) closeAllComments();
   if (e.target === helpModal) closeHelp();
 });
-
-document.addEventListener("DOMContentLoaded", initRatingStars);
-document.addEventListener("headerLoaded", initRatingStars);
-setTimeout(initRatingStars, 300);
 </script>
 
 <script>
-/* =========================================================
-   TOOLS & LINKS HUB
-========================================================= */
-
 const LINKS = [
   {
     name:"iSPI",
@@ -1245,8 +1968,8 @@ function scoreLink(item, query){
 }
 
 function getFilteredLinks(){
-  const searchInput = document.getElementById("search");
-  const query = searchInput ? searchInput.value : "";
+  const input = document.getElementById("linkSearch");
+  const query = input ? input.value : "";
   const favs = getFavs();
 
   return LINKS
@@ -1264,27 +1987,26 @@ function getFilteredLinks(){
     .sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
 }
 
-function render(){
-  const grid = document.getElementById("grid");
+function renderLinks(){
+  const grid = document.getElementById("linksGrid");
   if(!grid) return;
 
   const links = getFilteredLinks();
   const favs = getFavs();
 
+  document.getElementById("heroLinkCount").textContent = LINKS.length;
+  document.getElementById("heroFavoriteCount").textContent = favs.length;
+  document.getElementById("statusPill").textContent = links.length ? `${links.length} Result${links.length > 1 ? "s" : ""}` : "No Match";
+
   grid.innerHTML = "";
 
   if(!links.length){
+    selectedLink = null;
     grid.innerHTML = `<div class="no-results">No matching tools found.</div>`;
-
-    const aiStatus = document.getElementById("aiStatus");
-    if(aiStatus) aiStatus.textContent = "No Match";
-
     renderPreview();
+    updateSnapshot();
     return;
   }
-
-  const aiStatus = document.getElementById("aiStatus");
-  if(aiStatus) aiStatus.textContent = `${links.length} Result${links.length > 1 ? "s" : ""}`;
 
   if(!selectedLink || !links.some(item => item.name === selectedLink.name)){
     selectedLink = LINKS.find(x => x.name === links[0].name) || links[0];
@@ -1292,22 +2014,24 @@ function render(){
 
   links.forEach(item => {
     const card = document.createElement("div");
-    card.className = "card" + (selectedLink && selectedLink.name === item.name ? " active" : "");
+    card.className = "link-card" + (selectedLink && selectedLink.name === item.name ? " active" : "");
     card.onclick = () => selectLink(item.name);
 
     card.innerHTML = `
-      <div class="card-top">
-        <div class="icon"><i class="fa-solid ${item.icon}"></i></div>
-        <i class="fa-solid fa-star star ${favs.includes(item.name) ? "active" : ""}" onclick="toggleFav('${escapeAttr(item.name)}', event)"></i>
+      <div class="link-card-top">
+        <div class="link-icon"><i class="fa-solid ${item.icon}"></i></div>
+        <button class="favorite-star ${favs.includes(item.name) ? "active" : ""}" type="button" onclick="toggleFav('${escapeAttr(item.name)}', event)">
+          <i class="fa-solid fa-star"></i>
+        </button>
       </div>
 
-      <h3>${escapeHtml(item.name)}</h3>
+      <h5>${escapeHtml(item.name)}</h5>
       <p>${escapeHtml(item.desc)}</p>
 
-      <div class="badges">
-        <span class="badge">${escapeHtml(item.cat.toUpperCase())}</span>
-        ${item.ispi ? `<span class="badge orange">USE iSPI BROWSER</span>` : ""}
-        ${item.internal ? `<span class="badge orange">INTERNAL PATH</span>` : ""}
+      <div class="link-badges">
+        <span class="link-tag">${escapeHtml(item.cat)}</span>
+        ${item.ispi ? `<span class="link-tag orange">iSPI</span>` : ""}
+        ${item.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
       </div>
     `;
 
@@ -1315,93 +2039,88 @@ function render(){
   });
 
   renderPreview();
-  updateAiSuggestion(links[0]);
+  updateSnapshot();
 }
 
 function renderPreview(){
-  const preview = document.getElementById("preview");
-  if(!preview) return;
+  const previewTitle = document.getElementById("previewTitle");
+  const previewIcon = document.getElementById("previewIcon");
+  const previewDesc = document.getElementById("previewDesc");
+  const previewTags = document.getElementById("previewTags");
+  const previewUrl = document.getElementById("previewUrl");
+  const previewAiNote = document.getElementById("previewAiNote");
+  const previewFrameWrap = document.getElementById("previewFrameWrap");
 
   if(!selectedLink){
-    preview.innerHTML = `
-      <div class="preview-empty">
-        <div>
-          <i class="fa-solid fa-link"></i>
-          <h3>Select a link</h3>
-          <p>Choose a tool from the list to preview details and actions.</p>
-        </div>
-      </div>
-    `;
+    previewTitle.textContent = "Select a link";
+    previewIcon.innerHTML = `<i class="fa-solid fa-link"></i>`;
+    previewDesc.textContent = "Choose a tool from the list to preview details and actions.";
+    previewTags.innerHTML = "";
+    previewUrl.textContent = "No link selected.";
+    previewAiNote.textContent = "AI recommendation will appear after you search or select a link.";
+    previewFrameWrap.innerHTML = "";
     return;
   }
 
   const canFrame = selectedLink.url && !selectedLink.internal && selectedLink.url.startsWith("https://");
 
-  preview.innerHTML = `
-    <div class="preview-head">
-      <div class="preview-icon"><i class="fa-solid ${selectedLink.icon}"></i></div>
-      <div>
-        <h3>${escapeHtml(selectedLink.name)}</h3>
-        <p>${escapeHtml(selectedLink.desc)}</p>
-      </div>
-    </div>
+  previewTitle.textContent = selectedLink.name;
+  previewIcon.innerHTML = `<i class="fa-solid ${selectedLink.icon}"></i>`;
+  previewDesc.textContent = selectedLink.desc;
+  previewUrl.textContent = selectedLink.url || "No link available.";
 
-    <div class="badges">
-      <span class="badge">${escapeHtml(selectedLink.cat.toUpperCase())}</span>
-      ${selectedLink.ispi ? `<span class="badge orange">USE iSPI BROWSER</span>` : ""}
-      ${selectedLink.internal ? `<span class="badge orange">INTERNAL PATH</span>` : ""}
-    </div>
+  previewTags.innerHTML = `
+    <span class="link-tag">${escapeHtml(selectedLink.cat)}</span>
+    ${selectedLink.ispi ? `<span class="link-tag orange">Use iSPI Browser</span>` : ""}
+    ${selectedLink.internal ? `<span class="link-tag orange">Internal Path</span>` : ""}
+  `;
 
-    <div class="preview-url">${escapeHtml(selectedLink.url || "No link available")}</div>
+  previewAiNote.innerHTML = selectedLink.internal
+    ? "AI recommendation: This is an internal path. Copy it and open it through the company network."
+    : selectedLink.ispi
+      ? "AI recommendation: This tool may require iSPI Browser or internal network access."
+      : "AI recommendation: This link can be opened directly if you have access.";
 
-    <div class="preview-actions">
-      <button class="btn btn-open" onclick="openSelectedLink()">
-        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open
-      </button>
-      <button class="btn btn-copy" onclick="copySelectedLink()">
-        <i class="fa-solid fa-copy"></i> Copy Link
-      </button>
-    </div>
-
-    <div class="ai-result" id="previewAiNote">
-      AI recommendation: This looks like the best match for your current search.
-    </div>
-
-    ${canFrame ? `
+  previewFrameWrap.innerHTML = canFrame
+    ? `
       <div class="preview-frame">
         <iframe src="${escapeAttr(selectedLink.url)}"></iframe>
       </div>
-      <div class="frame-note">
-        Preview may be blocked by some internal systems. If it does not load, use the Open button.
-      </div>
-    ` : `
-      <div class="frame-note">
-        Live preview is not available for internal paths, non-HTTPS links, or systems that block embedded preview. Use Open or Copy Link instead.
-      </div>
-    `}
-  `;
+      <div class="frame-note">Preview may be blocked by some internal systems. If it does not load, use the Open button.</div>
+    `
+    : `
+      <div class="frame-note">Live preview is not available for internal paths, non-HTTPS links, or systems that block embedded preview. Use Open or Copy instead.</div>
+    `;
+}
+
+function updateSnapshot(){
+  document.getElementById("selectedToolValue").textContent = selectedLink?.name || "—";
+  document.getElementById("selectedCategoryValue").textContent = selectedLink?.cat || "—";
+  document.getElementById("resultStatusValue").textContent = selectedLink ? "Ready" : "No Match";
 }
 
 function updateAiSuggestion(best){
-  const searchInput = document.getElementById("search");
+  const input = document.getElementById("linkSearch");
   const box = document.getElementById("aiSuggestion");
-  if(!searchInput || !box) return;
+  if(!input || !box) return;
 
-  const input = searchInput.value.trim();
+  const text = input.value.trim();
 
-  if(!input){
+  if(!text){
     box.innerHTML = `AI tip: Search normally, or use action words like <strong>open</strong>, <strong>copy</strong>, <strong>find</strong>, and <strong>show</strong>.`;
     return;
   }
 
   if(best){
     box.innerHTML = `AI found: <strong>${escapeHtml(best.name)}</strong>. Press <strong>Run AI Action</strong> to follow your command.`;
+  }else{
+    box.innerHTML = `No matching tool found. Try a different keyword.`;
   }
 }
 
 function runAiCommand(){
-  const searchInput = document.getElementById("search");
-  const query = normalize(searchInput ? searchInput.value : "");
+  const input = document.getElementById("linkSearch");
+  const query = normalize(input ? input.value : "");
   const matches = getFilteredLinks();
 
   if(!matches.length){
@@ -1411,28 +2130,24 @@ function runAiCommand(){
 
   const best = matches[0];
   selectedLink = LINKS.find(x => x.name === best.name);
-  render();
-
-  const suggestion = document.getElementById("aiSuggestion");
+  renderLinks();
 
   if(query.includes("copy")){
     copySelectedLink();
-    if(suggestion) suggestion.innerHTML = `AI action completed: copied <strong>${escapeHtml(best.name)}</strong>.`;
     return;
   }
 
   if(query.includes("open") || query.includes("launch") || query.includes("go to")){
     openSelectedLink();
-    if(suggestion) suggestion.innerHTML = `AI action completed: opening <strong>${escapeHtml(best.name)}</strong>.`;
     return;
   }
 
-  if(suggestion) suggestion.innerHTML = `AI preview ready: selected <strong>${escapeHtml(best.name)}</strong>.`;
+  showToast(`${best.name} selected`);
 }
 
 function selectLink(name){
   selectedLink = LINKS.find(x => x.name === name);
-  render();
+  renderLinks();
 }
 
 function openSelectedLink(){
@@ -1441,7 +2156,7 @@ function openSelectedLink(){
   if(selectedLink.internal){
     copyText(selectedLink.url);
     showToast("Internal path copied");
-    alert("This is an internal shared drive path. I copied it for you. Open it through the company network.");
+    alert("This is an internal shared-drive path. I copied it for you. Open it through the company network.");
     return;
   }
 
@@ -1449,10 +2164,9 @@ function openSelectedLink(){
 }
 
 function copySelectedLink(){
-  if(!selectedLink || !selectedLink.url) return;
-
+  if(!selectedLink?.url) return;
   copyText(selectedLink.url);
-  showToast("Link copied ✓");
+  showToast("Link copied!");
 }
 
 function copyText(text){
@@ -1496,26 +2210,46 @@ function toggleFav(name, event){
   }
 
   setFavs(favs);
-  render();
+  renderLinks();
 }
 
 function filterCategory(cat, event){
   currentCategory = cat;
 
-  document.querySelectorAll(".filter button").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".chip").forEach(btn => btn.classList.remove("active"));
+  if(event?.currentTarget) event.currentTarget.classList.add("active");
 
-  if(event && event.target){
-    event.target.classList.add("active");
-  }
+  const matches = getFilteredLinks();
+  if(matches.length) selectedLink = LINKS.find(x => x.name === matches[0].name);
 
-  render();
+  renderLinks();
 }
 
-function showToast(message){
+function clearLinkSearch(){
+  const input = document.getElementById("linkSearch");
+  const btn = document.getElementById("clearSearchBtn");
+
+  if(input) input.value = "";
+  if(btn) btn.style.display = "none";
+
+  selectedLink = LINKS[0];
+  renderLinks();
+  updateAiSuggestion(selectedLink);
+}
+
+function scrollToLinksBuilder(){
+  const target = document.getElementById("linksBuilder");
+  if(!target) return;
+
+  const y = target.getBoundingClientRect().top + window.scrollY - 20;
+  window.scrollTo({top:y, behavior:"smooth"});
+}
+
+function showToast(msg = "Copied!"){
   const toast = document.getElementById("toast");
   if(!toast) return;
 
-  toast.textContent = message;
+  toast.textContent = msg;
   toast.style.opacity = "1";
   toast.style.transform = "translateY(0)";
 
@@ -1539,23 +2273,26 @@ function escapeAttr(str){
 }
 
 function initLinksPage(){
-  const searchInput = document.getElementById("search");
+  if(linksPageInitialized) return;
+  linksPageInitialized = true;
 
-  if(searchInput && !searchInput.dataset.bound){
-    searchInput.dataset.bound = "true";
+  const input = document.getElementById("linkSearch");
+  const clearBtn = document.getElementById("clearSearchBtn");
 
-    searchInput.addEventListener("input", () => {
+  if(input){
+    input.addEventListener("input", () => {
+      if(clearBtn) clearBtn.style.display = input.value.trim() ? "block" : "none";
+
       const matches = getFilteredLinks();
+      if(matches.length) selectedLink = LINKS.find(x => x.name === matches[0].name);
 
-      if(matches.length){
-        selectedLink = LINKS.find(x => x.name === matches[0].name);
-      }
-
-      render();
+      renderLinks();
+      updateAiSuggestion(matches[0]);
     });
   }
 
-  render();
+  renderLinks();
+  updateAiSuggestion(selectedLink);
 }
 
 window.runAiCommand = runAiCommand;
@@ -1564,11 +2301,18 @@ window.openSelectedLink = openSelectedLink;
 window.copySelectedLink = copySelectedLink;
 window.toggleFav = toggleFav;
 window.selectLink = selectLink;
+window.clearLinkSearch = clearLinkSearch;
+window.scrollToLinksBuilder = scrollToLinksBuilder;
 
-document.addEventListener("DOMContentLoaded", initLinksPage);
-document.addEventListener("headerLoaded", initLinksPage);
-setTimeout(initLinksPage, 300);
+document.addEventListener("DOMContentLoaded", () => {
+  initRatingStars();
+  initLinksPage();
+});
+
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+  initLinksPage();
+});
 </script>
-
 </body>
 </html>
