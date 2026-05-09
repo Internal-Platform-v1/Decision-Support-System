@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     /*
       Important:
       guide-registry.js must load BEFORE ai-assistant.js
-      because ai-assistant.js reads window.GUIDE_REGISTRY.
+      because the assistant uses window.GUIDE_REGISTRY.
     */
     await loadScriptOnce(`${folder}guide-registry.js`, "registry");
     await loadScriptOnce(`${folder}ai-assistant.js`, "main");
