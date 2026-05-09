@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Canadian Surcharge Guide</title>
+  <title>Canadian Surcharge</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1137,7 +1137,7 @@
           <div class="main-topbar">
             <div>
 <div class="page-title-block">
-  <h1>Canadian Surcharge Guide</h1>
+  <h1>Canadian Surcharge</h1>
   <p class="page-subtitle">
     Follow this guide to accurately resolve Canadian Surcharge disputes by validating ZIP eligibility, reviewing tariff conditions, and applying the correct action—whether removal, rebill, or escalation.
   </p>
@@ -1371,50 +1371,65 @@ document.addEventListener("DOMContentLoaded", () => {
 const NODES = {
 
   start: {
-    text: "What is the dispute of the customer?",
+    text: "Canadian Surcharge - Handling Guide",
+    help: "Use this guide to review Canadian surcharge disputes, validate ZIP eligibility, check tariff conditions, and determine the correct action.",
+    note: "Always review the shipment year, Shipper ZIP, Consignee ZIP, Canadian surcharge ZIP list, BRAP details, and applicable FXF Rules Tariff before making a decision.",
+    choices: [
+      {
+        label: "Continue",
+        next: "start_dispute_type",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the Canadian Surcharge decision flow."
+      }
+    ]
+  },
+
+  start_dispute_type: {
+    text: "What is the customer's dispute?",
+    help: "Select the type of Canadian surcharge dispute being reviewed.",
     choices: [
       {
         label: "Rebill",
-        next: "rebill",
+        next: "final_rebill",
         icon: "fa-solid fa-rotate",
-        desc: "Customer is requesting rebill."
+        desc: "Customer is requesting the fee to be rebilled."
       },
       {
         label: "Validity",
         next: "validity_check",
         icon: "fa-solid fa-circle-check",
-        desc: "Check if the fee is valid."
+        desc: "Review whether the Canadian surcharge is valid."
       },
       {
         label: "Rates",
-        next: "rates",
+        next: "final_rates",
         icon: "fa-solid fa-percent",
-        desc: "Rate-related dispute."
+        desc: "Customer is disputing the rate."
       }
     ]
   },
 
   /* ================= REBILL ================= */
 
-  rebill: {
-    text: "Rebill",
-    action: "Advise the customer that we cannot rebill the fee to a different debtor since the Canadian surcharge will follow the Freight term."
+  final_rebill: {
+    text: "Advise the customer that the Canadian surcharge cannot be rebilled to a different debtor because it follows the freight terms.",
+    choices: []
   },
 
   /* ================= RATES ================= */
 
-  rates: {
-    text: "Rates",
-    action: "Move the case to Pricing Small for further review. Make sure to put complete internal comment."
+  final_rates: {
+    text: "Move the case to Pricing Small for further review. Make sure to include a complete internal comment.",
+    choices: []
   },
 
   /* ================= VALIDITY ================= */
 
-validity_check: {
-  text: "Check if the Shipper/Consignee ZIP is included on below link:",
-  help: "Review the official Canadian surcharge ZIP reference before proceeding.",
-  note: `
-If the shipment is not 2026, use the FXF Rules Tariff effective at the time of Shipment.
+  validity_check: {
+    text: "Check if the Shipper or Consignee ZIP is included in the Canadian surcharge ZIP list.",
+    help: "Review the official Canadian surcharge ZIP reference before proceeding.",
+    note: `
+If the shipment is not from 2026, use the FXF Rules Tariff that was effective at the time of shipment.
 
 <a href="https://www.fedex.com/content/dam/fedex/us-united-states/services/Freight_Canadian_surcharge_2026.pdf" 
    target="_blank"
@@ -1427,7 +1442,7 @@ If the shipment is not 2026, use the FXF Rules Tariff effective at the time of S
      font-weight:800;
      color:#fff;
      text-decoration:none;
-     padding:1px 12px; /* 🔥 reduced height */
+     padding:1px 12px;
      border-radius:10px;
      background:linear-gradient(135deg,#4d148c,#6d28d9);
      box-shadow:0 6px 14px rgba(77,20,140,.18);
@@ -1436,73 +1451,74 @@ If the shipment is not 2026, use the FXF Rules Tariff effective at the time of S
    View Canadian Surcharge ZIP List
 </a>
 `,
-  choices: [
-    {
-      label: "Continue",
-      next: "zip_in_list",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Proceed after reviewing the Canadian surcharge ZIP list."
-    }
-  ]
-},
+    choices: [
+      {
+        label: "Continue",
+        next: "zip_in_list",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed after reviewing the Canadian surcharge ZIP list."
+      }
+    ]
+  },
 
   zip_in_list: {
-    text: "Does the Shipper/Consignee ZIP included on the list?",
+    text: "Is the Shipper or Consignee ZIP included in the list?",
+    help: "Choose Yes if either the Shipper ZIP or Consignee ZIP is included in the official Canadian surcharge ZIP list.",
     choices: [
       {
         label: "Yes",
         next: "brap_check",
         icon: "fa-solid fa-circle-check",
-        desc: "ZIP is included."
+        desc: "The ZIP is included in the list."
       },
       {
         label: "No",
-        next: "remove_surcharge",
+        next: "final_remove_surcharge",
         icon: "fa-solid fa-circle-xmark",
-        desc: "ZIP is NOT included."
+        desc: "The ZIP is not included in the list."
       }
     ]
   },
 
   /* ================= NO PATH ================= */
 
-  remove_surcharge: {
-    text: "Remove Canadian Surcharge",
-    action: "Remove the Canadian Surcharge per the Shipper/Consignee ZIP is not included on the Canadian surcharge ZIP list."
+  final_remove_surcharge: {
+    text: "Remove the Canadian surcharge because the Shipper or Consignee ZIP is not included in the Canadian surcharge ZIP list.",
+    choices: []
   },
 
   /* ================= YES PATH ================= */
 
   brap_check: {
-    text: "Does the BRAP in the body of the bill shows FXF PZONE or FXF EZONE, or FXF 1100 rate tariffs?",
+    text: "Does the BRAP in the body of the bill show FXF PZONE, FXF EZONE, or FXF 1100 rate tariffs?",
+    help: "Review the BRAP details in the body of the bill before deciding if the fee should be removed or remain valid.",
     choices: [
       {
         label: "Yes",
-        next: "remove_fee",
+        next: "final_remove_fee",
         icon: "fa-solid fa-circle-check",
-        desc: "Valid tariff condition."
+        desc: "The bill shows FXF PZONE, FXF EZONE, or FXF 1100."
       },
       {
         label: "No",
-        next: "fee_valid",
+        next: "final_fee_valid",
         icon: "fa-solid fa-circle-xmark",
-        desc: "Fee remains valid."
+        desc: "The fee remains valid."
       }
     ]
   },
 
-  remove_fee: {
-    text: "Remove Fee",
-    action: "Remove the fee per FXF Rules Tariff Item 751."
+  final_remove_fee: {
+    text: "Remove the fee per FXF Rules Tariff Item 751.",
+    choices: []
   },
 
-  fee_valid: {
-    text: "Fee is Valid",
-    action: "Advise the customer that fee is valid since the Shipper/Consignee ZIP is included on the Canadian surcharge ZIP list."
+  final_fee_valid: {
+    text: "Advise the customer that the fee is valid because the Shipper or Consignee ZIP is included in the Canadian surcharge ZIP list.",
+    choices: []
   }
 
 };
-
   function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
