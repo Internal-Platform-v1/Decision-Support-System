@@ -1,1688 +1,1708 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Steps on How to Create an Account</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<style>
-:root{
-  --bg:#f4f7fb;
-  --card:#ffffff;
-  --muted:#64748b;
-  --accent:#4d148c;
-  --accent-dark:#3a0f6b;
-  --orange:#ff6600;
-  font-family: Inter, ui-sans-serif, system-ui;
-}
-
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  background:linear-gradient(180deg,var(--bg),#eef6ff);
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-}
-
-header img{height:40px;}
-
-.nav-tabs{display:flex; gap:30px;}
-.tab{
-  color:white;
-  text-decoration:none;
-  font-weight:600;
-  font-size:16px;
-  position:relative;
-  padding:6px 0;
-}
-.tab.active::after{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:-6px;
-  width:100%;
-  height:3px;
-  background:var(--orange);
-  border-radius:3px;
-}
-
-/* ---------- BANNER ---------- */
-.welcome-section{
-  background: linear-gradient(90deg,#4D148C 0%,#330d5e 50%,#FF6600 100%);
-  background-size:200% 200%;
-  animation: shimmer 15s ease infinite;
-  color:white;
-  padding:20px 40px;
-}
-
-@keyframes shimmer{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
-
-.welcome-content h1{
-  margin:0;
-  font-size:2rem;
-  font-weight:800;
-}
-
-.welcome-content p{
-  margin-top:6px;
-  opacity:0.9;
-}
-
-/* ---------- MAIN CARD ---------- */
-.main{
-  flex:1;
-  padding:40px;
-  display:flex;
-  justify-content:center;
-}
-
-.step-card{
-  background:white;
-  width:100%;
-  max-width:900px;
-  padding:40px;
-  border-radius:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.08);
-  position:relative;
-  overflow:hidden;
-}
-
-.step-counter{
-  font-size:14px;
-  font-weight:600;
-  color:var(--muted);
-  margin-bottom:15px;
-}
-
-.step-title{
-  font-size:22px;
-  font-weight:700;
-  margin-bottom:20px;
-  color:var(--accent-dark);
-}
-
-.step-content{
-  font-size:16px;
-  line-height:1.6;
-  white-space:pre-line;
-  margin-bottom:30px;
-}
-
-/* Progress Bar */
-.progress-container{
-  height:6px;
-  background:#e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
-  margin-bottom:30px;
-}
-
-.progress-bar{
-  height:100%;
-  background:linear-gradient(90deg,var(--accent),var(--orange));
-  width:0%;
-  transition:width 0.4s ease;
-}
-
-/* Navigation */
-.nav-buttons{
-  display:flex;
-  justify-content:space-between;
-}
-
-
-/* Fade animation */
-.fade{
-  animation:fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateX(10px);}
-  to{opacity:1; transform:translateX(0);}
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  text-align:center;
-  padding:16px;
-}
-
-/* =========================
-   PROFESSIONAL MODALS
-========================= */
-/* MODALS */
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  z-index:1000;
-}
-.modal-content {
-  background:white;
-  border-radius:10px;
-  padding:24px;
-  width:100%;
-  max-width:500px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-.modal-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-.modal-close {
-  font-size:22px;
-  cursor:pointer;
-  color:var(--muted);
-}
-.modal-close:hover {color:var(--accent);}
-
-/* STAR RATING */
-.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
-.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
-.rating-star:hover{transform:scale(1.3);}
-.rating-star.selected{color:var(--accent-dark);}
-
-/* COMMENTS */
-.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
-.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
-.comment-list-item:last-child{border:none;}
-input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
-
-/* TIME CALENDAR */
-#timeCalendarPopup {
-  display:none;
-  position:absolute;
-  top:60px; right:20px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  padding:16px;
-  width:310px;
-  z-index:900;
-}
-#timeCalendarPopup h3 {
-  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
-  margin-bottom:8px;
-}
-.calendar-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#f0f0f0;
-  padding:8px;
-  border-radius:6px;
-}
-.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
-.calendar-title{font-weight:700;}
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
-}
-.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
-.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
-.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
-.calendar-grid .day:hover{background:#f0f0f0;}
-
-/* COMMENT LINK */
-.link-text{
-  color:var(--accent-dark);
-  cursor:pointer;
-  text-decoration:underline;
-  font-size:14px;
-  margin-top:10px;
-  display:block;
-}
-
-/* STAR RATING COLORS */
-.rating-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.rating-star {
-  cursor: pointer;
-  font-size: 28px;
-  color: #ccc; /* default grey */
-  transition: color .2s, transform .2s;
-}
-
-.rating-star:hover {
-  transform: scale(1.3);
-}
-
-.rating-star.selected {
-  color: #FF6600; /* FedEx orange */
-}
-
-/* footer alignment */
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-/* COMMENT LIST STAR COLORS */
-#commentsList .stars {
-  color: #FF6600; /* FedEx orange */
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-  z-index:1;
-}
-header img{height:40px; animation:logoFlyIn 1s ease-out forwards; opacity:0;}
-.nav-tabs{display:flex; gap:30px;}
-.tab{color:white; text-decoration:none; font-weight:600; font-size:16px; position:relative; padding:6px 0; transition: opacity 0.2s;}
-.tab:hover{opacity:0.8;}
-.tab.active::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:3px;background:#ff6600;border-radius:3px;}
-
-.header-icons{display:flex;align-items:center;gap:20px;}
-#clockBtn{cursor:pointer; display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; color:white; position:relative;}
-#clockBtn:hover{transform:scale(1.1);}
-.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
-.header-icon:hover{transform:scale(1.3);}
-.header-icon.active{color:var(--accent-dark);}
-
-/* ---------- HEADER ANIMATIONS ---------- */
-@keyframes logoFlyIn {0%{opacity:0;transform:translateX(-50px) scale(0.8);}100%{opacity:1;transform:translateX(0) scale(1);}}
-header::after{
-  content:"";
-  position:absolute; top:0; left:-100%;
-  width:100%; height:100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform:skewX(-20deg);
-  animation:sweep 1s ease-out forwards;
-  z-index:0;
-  opacity:0.2;
-}
-@keyframes sweep{0%{left:-100%;}100%{left:100%;}}
-
-
-/* ---------- FED-EX ORANGE & PURPLE BANNER ---------- */
-.welcome-section {
-  background: linear-gradient(90deg, #4D148C 0%, #330d5e 50%, #FF6600 100%);
-  background-size: 200% 200%;
-  animation: fedexShimmer 15s ease infinite; /* slow shimmer */
-  color: white;
-  border-bottom:1px solid var(--border);
-  padding:26px 10px;  /* compact height */
-  text-align: left;     /* left-aligned text */
-  margin-bottom: 20px;
-  box-shadow: 0 5px 15px rgba(77, 20, 140, 0.15); /* subtle shadow */
-  border-radius: 0;     /* straight edges */
-}
-
-/* Shimmer animation */
-@keyframes fedexShimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.welcome-content h1 {
-  font-size: 2rem;  /* compact heading */
-  margin-bottom: 6px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.welcome-content p {
-  font-size: 1rem;  /* smaller subtitle */
-  max-width: 600px;
-  margin: 0;
-  opacity: 0.9;
-  line-height: 1.5;
-}
-/* ---------- MAIN ---------- */
-.message-box{
-  background:white;
-  padding:40px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-
-  max-width:900px;
-  width:100%;
-  margin:auto;
-}
-
-.btn{
-  background:var(--accent);
-  color:white;
-  border:none;
-  padding:10px 18px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-.btn:hover{background:var(--accent-dark);}
-
-/* ---------- VOLUME STEP BACKGROUND ---------- */
-.volume-content-wrapper{
-  background:#f1f5f9; /* same soft grey used in directory table */
-  border-radius:12px;
-  padding:30px;
-  margin-top:30px;
-  margin-bottom:30px;
-}
-
-/*pop up time style*/
-/* POPUP TIME STYLE (Windows-like) */
-.popup-time{
-  font-size:34px;
-  font-weight:600;
-  text-align:left;
-  margin-bottom:4px;
-  color:#111;
-}
-
-#timeCalendarPopup {
-  background:white;}
-
-.popup-date{
-  font-size:14px;
-  color:#555;
-  margin-bottom:14px;
-  text-align:left;
-}
-/* =================================
-   PROFESSIONAL STEP IMAGE DISPLAY
-================================= */
-
-.step-images{
-  grid-template-columns:1fr;
-  gap:22px;
-  margin:30px 0;
-  width:100%;
-}
-
-
-/* IMAGE STYLE */
-.step-images img{
-  max-width:100%;
-  height:auto;
-  max-height:420px;
-  border-radius:12px;
-  box-shadow:0 15px 35px rgba(0,0,0,0.15);
-  border:1px solid #e5e7eb;
-
-  transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease,
-    opacity 0.4s ease;
-  animation: imageFadeIn 0.5s ease;
-}
-
-/* Hover zoom animation */
-.step-images img:hover{
-  transform:scale(1.03);
-  box-shadow:0 20px 50px rgba(0,0,0,0.25);
-}
-
-/* Image appear animation */
-@keyframes imageFadeIn{
-  from{
-    opacity:0;
-    transform:translateY(15px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-/* =========================
-   IMAGE FULLSCREEN PREVIEW
-========================= */
-
-.image-preview-modal{
-  display:none;
-  position:fixed;
-  z-index:2000;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.9);
-  justify-content:center;
-  align-items:center;
-  animation:fadeIn 0.3s ease;
-}
-
-.image-preview-modal img{
-  max-width:90%;
-  max-height:90%;
-  border-radius:10px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-.image-preview-close{
-  position:absolute;
-  top:20px;
-  right:40px;
-  font-size:40px;
-  color:white;
-  cursor:pointer;
-  font-weight:bold;
-}
-/* STEP NAVIGATION */
-.step-nav{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  justify-content:center;
-  margin-bottom:20px;
-}
-
-.step-dot{
-  width:32px;
-  height:32px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:8px;
-  background:#e5e7eb;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:600;
-  transition:all 0.2s ease;
-}
-
-.step-dot:hover{
-  background:#4d148c;
-  color:white;
-}
-
-.step-dot.active{
-  background:#ff6600;
-  color:white;
-}
-
-/* NAVIGATION BUTTONS */
-.nav-buttons{
-  display:flex;
-  justify-content:space-between;
-  margin-top:30px;
-}
-
-.nav-buttons button{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 22px;
-  border:none;
-  border-radius:10px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.25s ease;
-}
-
-/* PREVIOUS BUTTON */
-#prevBtn{
-  background:#e5e7eb;
-  color:#374151;
-}
-
-#prevBtn:hover{
-  background:#d1d5db;
-}
-
-/* NEXT BUTTON */
-#nextBtn{
-  background:#4d148c;
-  color:white;
-}
-
-#nextBtn:hover{
-  background:#3a0f6b;
-  transform:translateY(-1px);
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-}
-
-/* FINISH BUTTON */
-#nextBtn.finish{
-  background:#10b981;
-}
-
-#nextBtn.finish:hover{
-  background:#059669;
-}
-
-/* DISABLED STATE */
-.nav-buttons button:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  box-shadow:none;
-  transform:none;
-}
-
-
-/* =========================
-   PRESENTATION STYLE
-========================= */
-
-.slide-wrapper{
-  max-width:850px;
-  margin:auto;
-}
-
-/* TOP AREA */
-
-.slide-top{
-  margin-bottom:25px;
-}
-
-/* TITLE */
-
-.step-title{
-  font-size:30px;
-  font-weight:800;
-  color:#4d148c;
-  margin-bottom:18px;
-}
-
-/* BODY */
-
-.slide-body{
-  padding:10px 0;
-}
-
-/* TEXT */
-
-.step-content{
-  font-size:17px;
-  line-height:1.7;
-  margin-bottom:30px;
-}
-
-/* IMAGE STACK */
-
-.step-images{
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
-
-/* =========================
-   SLIDE TRANSITION SYSTEM
-========================= */
-
-.slide-body{
-  position:relative;
-  overflow:hidden;
-  min-height:260px;
-}
-
-/* default state */
-
-.slide-body.animate-left{
-  animation:slideLeft .45s ease;
-}
-
-.slide-body.animate-right{
-  animation:slideRight .45s ease;
-}
-
-/* NEXT slide */
-
-@keyframes slideLeft{
-
-  from{
-    opacity:0;
-    transform:translateX(60px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-
-}
-
-/* PREVIOUS slide */
-
-@keyframes slideRight{
-
-  from{
-    opacity:0;
-    transform:translateX(-60px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-
-}
-
-/* NAVIGATION */
-
-.slide-navigation{
-  display:flex;
-  justify-content:space-between;
-  margin-top:40px;
-}
-
-.slide-navigation button{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 26px;
-  border-radius:10px;
-  border:none;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .25s ease;
-}
-
-/* PREVIOUS */
-
-#prevBtn{
-  background:#e5e7eb;
-  color:#374151;
-}
-
-#prevBtn:hover{
-  background:#d1d5db;
-}
-
-/* NEXT */
-
-#nextBtn{
-  background:#4d148c;
-  color:white;
-}
-
-#nextBtn:hover{
-  background:#3a0f6b;
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* FINISH BUTTON */
-
-#nextBtn.finish{
-  background:#10b981;
-}
-
-#nextBtn.finish:hover{
-  background:#059669;
-}
-
-/* =========================
-   STEP PROGRESS DOTS
-========================= */
-
-.step-dots{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-  margin-top:14px;
-}
-
-.step-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:#d1d5db;
-  transition:all .25s ease;
-}
-
-.step-dot.active{
-  background:#ff6600;
-  transform:scale(1.3);
-}
-
-/* =========================
-   PRESENTATION MODE
-========================= */
-
-.presentation-mode .header-icons,
-.presentation-mode nav,
-.presentation-mode footer{
-  display:none;
-}
-
-.presentation-mode .main{
-  padding:10px;
-}
-
-.presentation-mode .message-box{
-  max-width:1100px;
-  box-shadow:none;
-}
-
-.presentation-mode .step-title{
-  font-size:36px;
-}
-
-.presentation-mode .step-content{
-  font-size:20px;
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  padding:4px 28px;   /* reduce height */
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  font-size:15px;
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Steps on How to Create an Account</title>
+
+  <script>
+    window.SITE_BASE = "./";
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root{
+      --bg:#07111f;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#dbe4f0;
+      --accent:#6d28d9;
+      --accent-2:#4d148c;
+      --accent-3:#ff6600;
+      --success:#16a34a;
+      --danger:#ef4444;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10);
+      --shadow-card:0 16px 40px rgba(15,23,42,.06);
+      --max:1720px;
+      font-family:"Inter",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+        linear-gradient(180deg,#091120 0%,#0b1525 32%,#eef4fb 32%,#f5f8fc 100%);
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
+      z-index:0;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button,input,textarea{font:inherit}
+
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    .app-shell{
+      width:min(calc(100% - 32px), var(--max));
+      margin:22px auto 24px;
+    }
+
+    .app-frame{
+      min-height:calc(100vh - 180px);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.68);
+      border-radius:34px;
+      box-shadow:var(--shadow-xl);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:minmax(0,1.45fr) 380px 420px;
+    }
+
+    .main{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-width:0;
+    }
+
+    .main-topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      padding:16px 18px;
+      border-radius:24px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(219,228,240,.9);
+      box-shadow:var(--shadow-md);
+    }
+
+    .page-title-block{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .page-title-block h1{
+      margin:0;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#0f172a;
+    }
+
+    .page-subtitle{
+      margin:0;
+      font-size:13px;
+      color:#64748b;
+      line-height:1.6;
+      max-width:820px;
+    }
+
+    .main-status{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 14px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid #dbe4f0;
+      font-size:12px;
+      font-weight:800;
+      color:#0f172a;
+      white-space:nowrap;
+    }
+
+    .pill.primary{
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      color:#fff;
+      border:none;
+    }
+
+    .workspace{
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:16px;
+      min-height:0;
+    }
+
+    .progress-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:16px 18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .progress-title{
+      font-size:14px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .progress-status{
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .progress-bar-shell{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#4d148c 0%,#6d28d9 55%,#ff6600 100%);
+      transition:width .35s ease;
+    }
+
+    .stage-card{
+      background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
+      border:1px solid #dbe4f0;
+      border-radius:30px;
+      box-shadow:var(--shadow-card);
+      min-height:640px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    .stage-top{
+      padding:22px 22px 0;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:#f3e8ff;
+      color:#6d28d9;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .badge.alt{
+      background:#f8fafc;
+      color:#334155;
+    }
+
+    .content-wrap{
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      flex:1;
+    }
+
+    .hero-card-main{
+      position:relative;
+      padding:30px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at top right, rgba(109,40,217,.10), transparent 30%),
+        linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid #e6edf7;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .hero-card-main::after{
+      content:"";
+      position:absolute;
+      right:-60px;
+      top:-60px;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:rgba(255,102,0,.08);
+      pointer-events:none;
+    }
+
+    .question-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#334155;
+      position:relative;
+      z-index:1;
+    }
+
+    .question-text{
+      margin:18px 0 0;
+      font-size:36px;
+      line-height:1.08;
+      letter-spacing:-.045em;
+      font-weight:900;
+      position:relative;
+      z-index:1;
+    }
+
+    .question-help{
+      margin:14px 0 0;
+      color:#64748b;
+      font-size:14px;
+      line-height:1.75;
+      max-width:880px;
+      position:relative;
+      z-index:1;
+    }
+
+    .section-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:24px;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .section-head{
+      padding:18px 20px;
+      border-bottom:1px solid #eef2f7;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background:linear-gradient(180deg,#fff,#fbfdff);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#0f172a;
+    }
+
+    .section-title i{
+      width:38px;
+      height:38px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+    }
+
+    .slide-shell{
+      padding:18px;
+    }
+
+    .slide-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+
+    .step-counter{
+      font-size:12px;
+      font-weight:900;
+      color:#475569;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+
+    .mini-progress-bar{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+      flex:1;
+      min-width:230px;
+    }
+
+    .mini-progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#4d148c 0%,#6d28d9 48%,#ff6600 100%);
+      transition:width .35s ease;
+    }
+
+    .slide-body{
+      position:relative;
+      min-height:520px;
+      padding:26px;
+      border-radius:26px;
+      border:1px solid #e5edf7;
+      background:
+        radial-gradient(circle at top right, rgba(109,40,217,.08), transparent 30%),
+        linear-gradient(180deg,#fff,#fbfdff);
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .slide-body::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:5px;
+      background:linear-gradient(180deg,#4d148c,#ff6600);
+    }
+
+    .step-title{
+      margin:0;
+      font-size:clamp(28px,3vw,44px);
+      line-height:1.05;
+      letter-spacing:-.06em;
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .step-content{
+      margin-top:18px;
+      font-size:15px;
+      line-height:1.85;
+      color:#475569;
+      white-space:pre-line;
+      max-width:960px;
+    }
+
+    .step-images{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      margin-top:24px;
+    }
+
+    .step-images img{
+      width:100%;
+      max-height:460px;
+      object-fit:contain;
+      border-radius:20px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      box-shadow:0 18px 45px rgba(15,23,42,.14);
+      cursor:zoom-in;
+      transition:.25s ease;
+    }
+
+    .step-images img:hover{
+      transform:scale(1.015);
+      box-shadow:0 24px 60px rgba(15,23,42,.22);
+    }
+
+    .decision-buttons{
+      display:none;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+      justify-content:center;
+    }
+
+    .decision-btn{
+      border:none;
+      cursor:pointer;
+      min-height:50px;
+      padding:0 18px;
+      border-radius:16px;
+      color:#fff;
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      font-size:13px;
+      font-weight:900;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+      transition:.2s ease;
+    }
+
+    .decision-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 30px rgba(77,20,140,.24);
+    }
+
+    .decision-btn.orange{
+      background:linear-gradient(135deg,#ff6600,#f59e0b);
+      box-shadow:0 14px 24px rgba(255,102,0,.18);
+    }
+
+    .slide-body.animate-left{
+      animation:slideLeft .38s ease;
+    }
+
+    .slide-body.animate-right{
+      animation:slideRight .38s ease;
+    }
+
+    @keyframes slideLeft{
+      from{opacity:0;transform:translateX(40px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+
+    @keyframes slideRight{
+      from{opacity:0;transform:translateX(-40px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+
+    .slide-navigation{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .nav-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 20px;
+      border:none;
+      border-radius:16px;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .nav-btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .nav-btn.prev{
+      background:#f8fafc;
+      color:#334155;
+      border:1px solid #dbe4f0;
+    }
+
+    .nav-btn.next{
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      color:#fff;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+    }
+
+    .nav-btn.finish{
+      background:linear-gradient(135deg,#16a34a,#22c55e);
+    }
+
+    .nav-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+
+    .step-dots{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
+      margin-top:16px;
+    }
+
+    .step-dot{
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:#d1d5db;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .step-dot:hover{
+      transform:scale(1.3);
+      background:#6d28d9;
+    }
+
+    .step-dot.active{
+      width:30px;
+      background:#ff6600;
+    }
+
+    .side-panel,
+    .template-panel{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .side-panel{
+      padding:18px 14px 18px 0;
+    }
+
+    .template-panel{
+      padding:18px 18px 18px 0;
+    }
+
+    .summary-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .summary-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+      font-size:14px;
+      font-weight:900;
+    }
+
+    .summary-head i{
+      color:#7c3aed;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .metric{
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+    }
+
+    .metric-k{
+      display:block;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#64748b;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .metric-v{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      word-break:break-word;
+    }
+
+    .path-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:620px;
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .path-jump{
+      width:100%;
+      text-align:left;
+      padding:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      cursor:pointer;
+      transition:.18s ease;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:#0f172a;
+    }
+
+    .path-jump:hover{
+      transform:translateY(-1px);
+      background:#eef4ff;
+      border-color:#cfe0ff;
+      box-shadow:0 10px 22px rgba(37,99,235,.08);
+    }
+
+    .path-jump.active{
+      border:2px solid #6d28d9;
+      box-shadow:0 0 0 4px rgba(109,40,217,.10);
+    }
+
+    .path-jump span{
+      width:26px;
+      height:26px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:#f3e8ff;
+      color:#6d28d9;
+      font-size:11px;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .path-jump strong{
+      display:block;
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .path-jump small{
+      display:block;
+      margin-top:4px;
+      color:#64748b;
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .reminder-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .reminder{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:13px;
+      border-radius:17px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      color:#475569;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .reminder i{
+      color:#ff6600;
+      margin-top:3px;
+    }
+
+    .template-stack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .template-card{
+      border:1px solid #e5ebf4;
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
+      overflow:hidden;
+    }
+
+    .template-card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px 14px 10px;
+    }
+
+    .template-title-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .template-icon{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#f3e8ff;
+      color:#7c3aed;
+      flex:0 0 auto;
+    }
+
+    .template-title{
+      font-size:14px;
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .template-sub{
+      font-size:12px;
+      color:#64748b;
+      margin-top:2px;
+    }
+
+    .template-body{
+      padding:0 14px 14px;
+    }
+
+    .template-box{
+      min-height:100px;
+      padding:14px;
+      border-radius:14px;
+      background:#f8fbff;
+      border:1px solid #e4ebf5;
+      font-size:13px;
+      line-height:1.7;
+      color:#334155;
+      white-space:pre-wrap;
+    }
+
+    .template-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:0 14px 14px;
+    }
+
+    .template-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .template-copy{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius:12px;
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      transition:all .18s ease;
+    }
+
+    .template-copy.copied{
+      background:#dcfce7 !important;
+      color:#166534 !important;
+    }
+
+    .image-preview-modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      background:rgba(2,6,23,.88);
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      backdrop-filter:blur(8px);
+    }
+
+    .image-preview-modal img{
+      max-width:94vw;
+      max-height:90vh;
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 30px 80px rgba(0,0,0,.45);
+    }
+
+    .image-preview-close{
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:30px;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .image-preview-close:hover{
+      background:rgba(255,255,255,.2);
+    }
+
+    /* Shared header modal compatibility */
+    #commentModal,
+    #allCommentsModal,
+    #helpModal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.52);
+      justify-content:center;
+      align-items:center;
+      padding:0 24px;
+      z-index:2147483647;
+      backdrop-filter:blur(8px);
+      overflow-y:auto;
+    }
+
+    #commentModal .modal-content,
+    #allCommentsModal .modal-content,
+    #helpModal .modal-content{
+      width:100%;
+      background:#fff;
+      border-radius:28px;
+      padding:26px;
+      box-shadow:0 24px 80px rgba(2,6,23,.18);
+      max-height:min(84vh,900px);
+      overflow:auto;
+      border:1px solid rgba(148,163,184,.16);
+      margin:110px auto 32px;
+    }
+
+    #commentModal .feedback-modal{
+      max-width:640px;
+      border-radius:28px;
+      padding:20px 20px 22px;
+    }
+
+    #allCommentsModal .modal-content{
+      max-width:760px;
+    }
+
+    #helpModal .help-modal{
+      max-width:760px;
+      border-radius:30px;
+      padding:18px;
+    }
+
+    @media (max-width:1450px){
+      .app-frame{
+        grid-template-columns:minmax(0,1fr) 340px 360px;
+      }
+    }
+
+    @media (max-width:1220px){
+      .app-frame{
+        grid-template-columns:1fr;
+      }
+
+      .side-panel,
+      .template-panel{
+        padding:0 18px 18px;
+      }
+    }
+
+    @media (max-width:760px){
+      .app-shell{
+        width:min(calc(100% - 20px), var(--max));
+        margin:16px auto;
+      }
+
+      .app-frame{
+        min-height:100vh;
+        border-radius:24px;
+      }
+
+      .main{
+        padding:18px;
+      }
+
+      .main-topbar{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .question-text{
+        font-size:28px;
+      }
+
+      .summary-grid{
+        grid-template-columns:1fr;
+      }
+
+      .section-head{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .slide-body{
+        padding:22px;
+        min-height:460px;
+      }
+    }
+  </style>
 </head>
-<body>
 
-<header>
-  <div style="display:flex;align-items:center;gap:40px;">
-    <a href="../index.html">
-      <img src="../fedex.png" alt="FedEx Logo">
-    </a>
-    <nav class="nav-tabs">
-   	<a href="../index.html" class="tab active">Home</a>
-	<a href="../case-directory.html" class="tab">Case Directory</a>
-	<a href="../ebs-response-template.html" class="tab">EBS Response</a>
-	<a href="../volume-application.html" class="tab">Volume Application</a>  
-    </nav>
-  </div>
-  
-    <div class="header-icons">
-    <div id="clockBtn">
-      <i class="fa-regular fa-clock"></i>
-      <span id="clockText">--:-- PM</span>
-    </div>
-    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
-    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
-  </div>
-  
-</header>
+<body data-page="">
+  <div class="page">
+    <div id="site-header"></div>
 
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+            <div class="page-title-block">
+              <h1>Steps on How to Create an Account</h1>
+              <p class="page-subtitle">
+                Use this guided walkthrough to create a temporary Shipper, Consignee, or Bill-To account, update the customer details correctly, validate the new profile, update the print group, and enter the proper correction request.
+              </p>
+            </div>
 
-<div class="main">
-  <div class="message-box">
+            <div class="main-status">
+              <div class="pill primary">
+                <i class="fa-solid fa-user-plus"></i>
+                Ready
+              </div>
+            </div>
+          </div>
 
-    <div class="welcome-section">
-      <div class="welcome-content">
-        <h1>Steps on How to Create an Account</h1>
-        <p>Follow the guided process to correctly create a new customer account.</p>
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Guide Progress</div>
+                <div class="progress-status" id="topProgressText">Step 1 of 18</div>
+              </div>
+              <div class="progress-bar-shell">
+                <div class="progress-fill" id="topProgressFill"></div>
+              </div>
+            </section>
+
+            <section class="stage-area">
+              <div class="stage-card">
+                <div class="stage-top">
+                  <span class="badge">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Account Creation
+                  </span>
+                  <span class="badge alt">
+                    <i class="fa-solid fa-keyboard"></i>
+                    Arrow Keys Supported
+                  </span>
+                </div>
+
+                <div class="content-wrap">
+                  <section class="hero-card-main">
+                    <div class="question-label">
+                      <i class="fa-solid fa-route"></i>
+                      Customer Account Workflow
+                    </div>
+
+                    <h2 class="question-text">Create the customer account carefully without changing the customer address incorrectly.</h2>
+
+                    <p class="question-help">
+                      Follow each step to remove the existing account code, enter the customer name and complete address, create the temporary account, wait for profile population, update the print group, and complete the correction request.
+                    </p>
+                  </section>
+
+                  <section class="section-card">
+                    <div class="section-head">
+                      <div class="section-title">
+                        <i class="fa-solid fa-display"></i>
+                        Guided Account Creation Walkthrough
+                      </div>
+
+                      <span class="badge alt">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Interactive guide
+                      </span>
+                    </div>
+
+                    <div class="slide-shell">
+                      <div class="slide-top">
+                        <div class="step-counter" id="stepCounter"></div>
+
+                        <div class="mini-progress-bar">
+                          <div class="mini-progress-fill" id="progressBar"></div>
+                        </div>
+                      </div>
+
+                      <div class="slide-body" id="slideBody">
+                        <h2 class="step-title" id="stepTitle"></h2>
+                        <div class="step-content" id="stepContent"></div>
+                        <div class="step-images" id="stepImages"></div>
+                      </div>
+
+                      <div id="decisionButtons" class="decision-buttons"></div>
+
+                      <div class="slide-navigation">
+                        <button class="nav-btn prev" id="prevBtn" type="button">
+                          <i class="fa-solid fa-arrow-left"></i>
+                          Previous
+                        </button>
+
+                        <button class="nav-btn next" id="nextBtn" type="button">
+                          Next
+                          <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                      </div>
+
+                      <div id="stepDots" class="step-dots"></div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-route"></i>
+              Quick Jump
+            </div>
+
+            <div class="path-list">
+              <button class="path-jump" type="button" data-jump="step1" onclick="goToStep('step1')">
+                <span>1</span>
+                <div>
+                  <strong>Update the Account</strong>
+                  <small>Remove the account number and update the name.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="step5" onclick="goToStep('step5')">
+                <span>5</span>
+                <div>
+                  <strong>Complete Address</strong>
+                  <small>Enter full address details and avoid PO Box.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="step8" onclick="goToStep('step8')">
+                <span>8</span>
+                <div>
+                  <strong>Create Temporary Account</strong>
+                  <small>Confirm temporary account creation.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="step9_check" onclick="goToStep('step9_check')">
+                <span>11</span>
+                <div>
+                  <strong>Customer Profile Check</strong>
+                  <small>Verify if FBC populates the new account details.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="step10" onclick="goToStep('step10')">
+                <span>13</span>
+                <div>
+                  <strong>Update Print Group</strong>
+                  <small>Select personal/residential or company/corporate.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="correction_request" onclick="goToStep('correction_request')">
+                <span>18</span>
+                <div>
+                  <strong>Correction Request</strong>
+                  <small>Enter the final correction request comment.</small>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-chart-simple"></i>
+              Quick Snapshot
+            </div>
+
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v" id="metricSteps">18</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Images</span>
+                <span class="metric-v">13</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Decision Points</span>
+                <span class="metric-v">2</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Flow</span>
+                <span class="metric-v">Account</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Important Reminders
+            </div>
+
+            <div class="reminder-list">
+              <div class="reminder">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div>Never update the address when removing the old account number at the start of the process.</div>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div>Do not use a PO Box when entering the customer address.</div>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div>If the new account does not populate right away, wait 5–10 minutes and do not create another account.</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-clipboard-list"></i>
+              Copy Templates
+            </div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon">
+                      <i class="fa-solid fa-print"></i>
+                    </div>
+                    <div>
+                      <div class="template-title">Print Group Comment</div>
+                      <div class="template-sub">Use after updating PG</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="pgComment" class="template-box">VS-BLER-CASE#-UPDATED PG TO REGI/BADA TO REMOVE FROM TEMP AUDIT</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag">
+                    <i class="fa-solid fa-comment"></i>
+                    Comment
+                  </span>
+
+                  <button class="template-copy" type="button" onclick="copyText('pgComment', this)">
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon">
+                      <i class="fa-solid fa-file-pen"></i>
+                    </div>
+                    <div>
+                      <div class="template-title">Correction Request</div>
+                      <div class="template-sub">Use final correction entry</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="correctionComment" class="template-box">VS-BLER-CASE#-CREATED SHIPPER/CONSIGNEE/BT ACCOUNT AS THIS WAS A 6 DIGIT CENTER CODE
+
+CORR ACCR</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    Final
+                  </span>
+
+                  <button class="template-copy" type="button" onclick="copyText('correctionComment', this)">
+                    Copy
+                  </button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon">
+                      <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div>
+                      <div class="template-title">Manual Invoice Reminder</div>
+                      <div class="template-sub">Personal / Residential path</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="manualInvoiceNote" class="template-box">Manually send an invoice using:
+
+REGI – Shipping Code
+BADA – Billing Code
+
+Include this in your comment.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Reminder
+                  </span>
+
+                  <button class="template-copy" type="button" onclick="copyText('manualInvoiceNote', this)">
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
 
-   <div class="volume-content-wrapper">
-
-<div class="slide-wrapper">
-
-<div class="slide-top">
-
-<div class="step-counter" id="stepCounter"></div>
-
-<div class="progress-container">
-<div class="progress-bar" id="progressBar"></div>
-
-</div>
-
-
-</div>
-
-<div class="slide-body fade">
-
-<h2 class="step-title" id="stepTitle"></h2>
-
-<div class="step-content" id="stepContent"></div>
-
-<div class="step-images" id="stepImages"></div>
-
-</div>
-
-<div id="decisionButtons" style="display:none; margin-top:25px; text-align:center;"></div>
-
-<div class="slide-navigation">
-
-<button id="prevBtn">
-<i class="fa-solid fa-arrow-left"></i>
-Previous
-</button>
-
-<button id="nextBtn">
-Next
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-
-<div id="stepDots" class="step-dots"></div>
-</div>
-
-</div>
-</div>
-</div>
-
-<footer>
-  <p><span style="font-weight:600;">© 2025 EBS Operations</span></p>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:12px;color:white;">
-      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
-    </span>
-  </div>
-</footer>
-
-<!-- HELP Modal -->
-<div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
-    <ul>
-      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
-      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
-      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
-      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
-    </ul>
-    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
-  </div>
-</div>
-
-<!-- COMMENT MODALS -->
-<div id="commentModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
-    </div>
-    <div class="rating-container">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-    <div class="comment-modal-footer">
-      <button class="btn" onclick="sendComment()">Send</button>
-      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-    </div>
-  </div>
-</div>
-
-<div id="allCommentsModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
-    </div>
-    <div id="commentsList"></div>
-  </div>
-</div>
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-<!-- TIME & CALENDAR POPUP -->
-<div id="timeCalendarPopup">
-
-  <div class="popup-time" id="popupTime"></div>
-  <div class="popup-date" id="popupDate"></div>
-
-  <div class="calendar-header">
-    <span id="prevMonth">‹</span>
-    <div id="monthYear" class="calendar-title"></div>
-    <span id="nextMonth">›</span>
+    <div id="site-footer"></div>
   </div>
 
-  <div class="calendar-grid" id="calendarGrid"></div>
+  <div id="imagePreviewModal" class="image-preview-modal">
+    <span class="image-preview-close">×</span>
+    <img id="imagePreview" src="" alt="Preview">
+  </div>
 
-</div>
+  <script>
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+        authDomain: "bdgg-database.firebaseapp.com",
+        projectId: "bdgg-database",
+        storageBucket: "bdgg-database.appspot.com",
+        messagingSenderId: "43574975434",
+        appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+      });
+    }
 
+    window.auth = firebase.auth();
+    window.db = firebase.firestore();
+  </script>
 
-<script>
-const steps = {
+  <script src="./assets/js/header-loader.js"></script>
+  <script src="./assets/js/header.js"></script>
+  <script src="./assets/js/footer-loader.js"></script>
 
-step1:{
-title:"Update the Account",
-images:["steps-images/step1.png"],
-content:`Remove the account number and update the name to the Shipper / Consignee / BT account.
+  <script>
+    const steps = {
+      step1:{
+        title:"Update the Account",
+        images:["steps-images/step1.png"],
+        content:`Remove the account number and update the name to the Shipper / Consignee / BT account.
 
 ⚠ NEVER UPDATE THE ADDRESS.`,
-next:"step2"
-},
+        next:"step2"
+      },
 
-step2:{
-title:"Place Cursor in Account Field",
-images:["steps-images/step2.png"],
-content:`Place the cursor in the Shipper / Consignee / BT number field.`,
-next:"step3"
-},
+      step2:{
+        title:"Place Cursor in Account Field",
+        images:["steps-images/step2.png"],
+        content:`Place the cursor in the Shipper / Consignee / BT number field.`,
+        next:"step3"
+      },
 
-step3:{
-title:"Remove the Account Code",
-images:["steps-images/step3.png"],
-content:`Use the SPACE BAR to remove the account code.`,
-next:"step4"
-},
+      step3:{
+        title:"Remove the Account Code",
+        images:["steps-images/step3.png"],
+        content:`Use the SPACE BAR to remove the account code.`,
+        next:"step4"
+      },
 
-step4:{
-title:"Enter the Customer Name",
-images:["steps-images/step4.png"],
-content:`Enter the name for the Shipper / Consignee / BT.`,
-next:"step5"
-},
+      step4:{
+        title:"Enter the Customer Name",
+        images:["steps-images/step4.png"],
+        content:`Enter the name for the Shipper / Consignee / BT.`,
+        next:"step5"
+      },
 
-step5:{
-title:"Enter Complete Address",
-images:["steps-images/step5.png"],
-content:`Ensure address includes street, city, state, ZIP and country (US).
+      step5:{
+        title:"Enter Complete Address",
+        images:["steps-images/step5.png"],
+        content:`Ensure address includes street, city, state, ZIP and country (US).
 
 ⚠ Do NOT use a PO BOX.`,
-next:"step6"
-},
+        next:"step6"
+      },
 
-step6:{
-title:"Remove Extra Numbers",
-images:["steps-images/step6.png"],
-content:`Remove any numbers after the Country field.`,
-next:"step7"
-},
+      step6:{
+        title:"Remove Extra Numbers",
+        images:["steps-images/step6.png"],
+        content:`Remove any numbers after the Country field.`,
+        next:"step7"
+      },
 
-step7:{
-title:"Accept Changes",
-images:["steps-images/step7.png"],
-content:`Click Accept All or press F6.`,
-next:"step8"
-},
+      step7:{
+        title:"Accept Changes",
+        images:["steps-images/step7.png"],
+        content:`Click Accept All or press F6.`,
+        next:"step8"
+      },
 
-step8:{
-title:"Confirm Temporary Account",
-images:["steps-images/step8.png"],
-content:`Click YES to create the temporary account.`,
-next:"step9"
-},
+      step8:{
+        title:"Confirm Temporary Account",
+        images:["steps-images/step8.png"],
+        content:`Click YES to create the temporary account.`,
+        next:"step9"
+      },
 
-step9:{
-title:"Temporary Account Created",
-images:["steps-images/step9.png"],
-content:`A new Shipper / Consignee / BT account will appear.
+      step9:{
+        title:"Temporary Account Created",
+        images:["steps-images/step9.png"],
+        content:`A new Shipper / Consignee / BT account will appear.
 
 Allow 2–3 minutes for processing.`,
-next:"step9_copy"
-},
+        next:"step9_copy"
+      },
 
+      step9_copy:{
+        title:"Copy the Account Number",
+        images:["steps-images/step9_copy.png"],
+        content:`Copy the newly created account number and paste it in your tracker.`,
+        next:"step9_check"
+      },
 
-step9_copy:{
-title:"Copy the Account Number",
-images:["steps-images/step9_copy.png"],
-content:`Copy the newly created account number and paste it in your tracker.`,
-next:"step9_check"
-},
+      step9_check:{
+        title:"Check Customer Profile",
+        content:`Does FBC populate the newly created account details when you click the Customer Profile?`,
+        buttons:[
+          {label:"YES", goto:"step10"},
+          {label:"NO", goto:"step9_wait"}
+        ]
+      },
 
-step9_check:{
-title:"Check Customer Profile",
-content:`Does FBC populate the newly created account details when you click the Customer Profile?`,
-buttons:[
-{label:"YES", goto:"step10"},
-{label:"NO", goto:"step9_wait"}
-]
-},
-
-step9_wait:{
-title:"Account Still Processing",
-content:`Skip the PRO or place it on pending.
+      step9_wait:{
+        title:"Account Still Processing",
+        content:`Skip the PRO or place it on pending.
 
 Go back after 5–10 minutes.
 
 ⚠ DO NOT ATTEMPT TO CREATE ANOTHER ACCOUNT.`,
-next:"step9_check"
-},
+        next:"step9_check"
+      },
 
-/* DECISION STEP */
-
-step10:{
-title:"Update Print Group",
-/* images:["account-steps/Step10.jpg"],*/
-content:`Update the PRINT GROUP of the newly created account.
+      step10:{
+        title:"Update Print Group",
+        content:`Update the PRINT GROUP of the newly created account.
 
 Is the account:`,
+        buttons:[
+          {label:"Personal / Residential", goto:"personal_invoice"},
+          {label:"Company / Corporate", goto:"corp_invoice_profile"}
+        ]
+      },
 
-buttons:[
-{label:"Personal / Residential", goto:"personal_invoice"},
-{label:"Company / Corporate", goto:"corp_invoice_profile"}
-]
-},
-
-/* PERSONAL FLOW */
-
-personal_invoice:{
-title:"Send Invoice Manually",
-/* images:["account-steps/Step11.jpg"],*/
-content:`Manually send an invoice using:
+      personal_invoice:{
+        title:"Send Invoice Manually",
+        content:`Manually send an invoice using:
 
 REGI – Shipping Code
 BADA – Billing Code
 
 Include this in your comment.`,
-next:"refresh_pro"
-},
+        next:"refresh_pro"
+      },
 
-/* CORPORATE FLOW */
+      corp_invoice_profile:{
+        title:"Open Invoice Profile",
+        images:["steps-images/stepA.png"],
+        content:`Click Invoice Profile.`,
+        next:"corp_print_group"
+      },
 
-corp_invoice_profile:{
-title:"Open Invoice Profile",
-images:["steps-images/stepA.png"],
-content:`Click Invoice Profile.`,
-next:"corp_print_group"
-},
-
-corp_print_group:{
-title:"Enter Invoice / Print Group",
-images:["steps-images/stepB.png"],
-content:`Enter the new Invoice / Print Group:
+      corp_print_group:{
+        title:"Enter Invoice / Print Group",
+        images:["steps-images/stepB.png"],
+        content:`Enter the new Invoice / Print Group:
 
 REGI (Shipping Code)
 BADA (Billing Code)`,
-next:"corp_save"
-},
+        next:"corp_save"
+      },
 
-corp_save:{
-title:"Save the Update",
-images:["steps-images/stepC.png"],
-content:`Click ✓ to save.`,
-next:"corp_comment"
-},
+      corp_save:{
+        title:"Save the Update",
+        images:["steps-images/stepC.png"],
+        content:`Click ✓ to save.`,
+        next:"corp_comment"
+      },
 
-corp_comment:{
-title:"Add Comment",
-images:["steps-images/stepD.jpg"],
-content:`Click Comments → Add Comment
+      corp_comment:{
+        title:"Add Comment",
+        images:["steps-images/stepD.jpg"],
+        content:`Click Comments → Add Comment
 
 Comment Type: General Information
 
 Enter:
 
 VS-BLER-CASE#-UPDATED PG TO REGI/BADA TO REMOVE FROM TEMP AUDIT`,
-next:"refresh_pro"
-},
+        next:"refresh_pro"
+      },
 
-/* MERGE POINT */
-
-refresh_pro:{
-title:"Refresh the PRO",
-/* images:["account-steps/Step16.jpg"], */
-content:`Go back to the PRO and refresh the account by updating the terms.
+      refresh_pro:{
+        title:"Refresh the PRO",
+        content:`Go back to the PRO and refresh the account by updating the terms.
 
 Add BT back if there is one so the new print group will reflect.`,
-next:"correction_request"
-},
+        next:"correction_request"
+      },
 
-correction_request:{
-title:"Enter Correction Request",
-content:`Enter the correction request:
+      correction_request:{
+        title:"Enter Correction Request",
+        content:`Enter the correction request:
 
 VS-BLER-CASE#-CREATED SHIPPER/CONSIGNEE/BT ACCOUNT AS THIS WAS A 6 DIGIT CENTER CODE
 
 CORR ACCR`
-}
-
-};
-
-let currentStep = "step1";
-let stepHistory = [];
-
-/* STEP ORDER */
-const stepOrder = Object.keys(steps);
-
-const stepTitle = document.getElementById("stepTitle");
-const stepContent = document.getElementById("stepContent");
-const stepImages = document.getElementById("stepImages");
-const stepCounter = document.getElementById("stepCounter");
-const progressBar = document.getElementById("progressBar");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const stepDots = document.getElementById("stepDots");
-const decisionButtons = document.getElementById("decisionButtons");
-
-/* =========================
-   RENDER STEP
-========================= */
-
-function renderStep(){
-
-  const step = steps[currentStep];
-  const index = stepOrder.indexOf(currentStep);
-
-  stepTitle.textContent = step.title;
-  stepContent.innerHTML = step.content;
-
-  /* IMAGES */
-
-  stepImages.innerHTML = "";
-
-  if(step.images){
-
-    step.images.forEach(img => {
-
-      const image = document.createElement("img");
-      image.src = img;
-
-      stepImages.appendChild(image);
-
-    });
-
-  }
-
-  /* DECISION BUTTONS */
-
-  decisionButtons.innerHTML = "";
-
-  if(step.buttons){
-
-    decisionButtons.style.display = "flex";
-    decisionButtons.style.gap = "15px";
-    decisionButtons.style.justifyContent = "center";
-
-    nextBtn.style.display = "none";
-
-    step.buttons.forEach(btn => {
-
-      const button = document.createElement("button");
-
-      button.className = "btn";
-      button.textContent = btn.label;
-
-      button.onclick = () => {
-
-        currentStep = btn.goto;
-        renderStep();
-
-      };
-
-      decisionButtons.appendChild(button);
-
-    });
-
-  }else{
-
-    decisionButtons.style.display = "none";
-    nextBtn.style.display = "inline-flex";
-
-  }
-
-  /* COUNTER */
-
-  stepCounter.textContent = `Step ${index + 1} of ${stepOrder.length}`;
-
-  progressBar.style.width = ((index + 1) / stepOrder.length * 100) + "%";
-
-  prevBtn.disabled = index === 0;
-
-  if(index === stepOrder.length - 1){
-
-    nextBtn.textContent = "Finish";
-    nextBtn.classList.add("finish");
-
-  }else{
-
-    nextBtn.textContent = "Next";
-    nextBtn.classList.remove("finish");
-
-  }
-
-  renderDots();
-
-}
-
-/* =========================
-   NEXT BUTTON
-========================= */
-
-nextBtn.onclick = () => {
-
-  const step = steps[currentStep];
-  const slide = document.querySelector(".slide-body");
-
-  slide.classList.remove("animate-left","animate-right");
-  void slide.offsetWidth;
-  slide.classList.add("animate-left");
-
-  stepHistory.push(currentStep);
-
-  if(step.next){
-
-    currentStep = step.next;
-
-  }else{
-
-    const index = stepOrder.indexOf(currentStep);
-
-    if(index < stepOrder.length - 1){
-      currentStep = stepOrder[index + 1];
-    }else{
-      alert("Account Creation Guide Completed.");
-      currentStep = "step1";
-      stepHistory = [];
-    }
-
-  }
-
-  renderStep();
-
-};
-
-/* =========================
-   PREVIOUS BUTTON
-========================= */
-
-prevBtn.onclick = () => {
-
-  if(stepHistory.length === 0) return;
-
-  const slide = document.querySelector(".slide-body");
-
-  slide.classList.remove("animate-left","animate-right");
-  void slide.offsetWidth;
-  slide.classList.add("animate-right");
-
-  currentStep = stepHistory.pop();
-
-  renderStep();
-
-};
-
-/* =========================
-   KEYBOARD CONTROLS
-========================= */
-
-document.addEventListener("keydown", function(e){
-
-  if(e.key === "ArrowRight") nextBtn.click();
-  if(e.key === "ArrowLeft") prevBtn.click();
-  if(e.key === "p" || e.key === "P") togglePresentation();
-
-});
-
-/* =========================
-   STEP DOTS
-========================= */
-
-function renderDots(){
-
-  stepDots.innerHTML="";
-
-  stepOrder.forEach((key,i)=>{
-
-    const dot=document.createElement("div");
-
-    dot.className="step-dot";
-
-    if(key===currentStep){
-      dot.classList.add("active");
-    }
-
-    dot.onclick = () => {
-
-      currentStep = key;
-      renderStep();
-
+      }
     };
 
-    stepDots.appendChild(dot);
+    let currentStep = "step1";
+    let stepHistory = [];
 
-  });
+    const stepOrder = Object.keys(steps);
 
-}
+    const stepTitle = document.getElementById("stepTitle");
+    const stepContent = document.getElementById("stepContent");
+    const stepImages = document.getElementById("stepImages");
+    const stepCounter = document.getElementById("stepCounter");
+    const progressBar = document.getElementById("progressBar");
+    const topProgressFill = document.getElementById("topProgressFill");
+    const topProgressText = document.getElementById("topProgressText");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const stepDots = document.getElementById("stepDots");
+    const decisionButtons = document.getElementById("decisionButtons");
+    const slideBody = document.getElementById("slideBody");
 
-/* =========================
-   IMAGE PREVIEW
-========================= */
-
-document.addEventListener("click", function(e){
-
-  const previewModal = document.getElementById("imagePreviewModal");
-  const previewImage = document.getElementById("imagePreview");
-
-  if(e.target.matches(".step-images img")){
-
-    previewModal.style.display = "flex";
-    previewImage.src = e.target.src;
-
-  }
-
-  if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
-
-    previewModal.style.display = "none";
-
-  }
-
-});
-
-/* =========================
-   PRESENTATION MODE
-========================= */
-
-let presentationMode = false;
-
-function togglePresentation(){
-
-  if(!presentationMode){
-
-    document.body.classList.add("presentation-mode");
-    document.documentElement.requestFullscreen();
-    presentationMode = true;
-
-  }else{
-
-    document.body.classList.remove("presentation-mode");
-    document.exitFullscreen();
-    presentationMode = false;
-
-  }
-
-}
-
-/* INITIAL LOAD */
-
-renderStep();
-
-/* IMAGE PREVIEW */
-
-document.addEventListener("click", function(e){
-
-  const previewModal = document.getElementById("imagePreviewModal");
-  const previewImage = document.getElementById("imagePreview");
-
-  if(e.target.matches(".step-images img")){
-
-    previewModal.style.display = "flex";
-    previewImage.src = e.target.src;
-
-  }
-
-  if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
-
-    previewModal.style.display = "none";
-
-  }
-
-});
-
-
-/* =========================
-   CALENDAR LOGIC
-========================= */
-
-function updateClock(){
-  const now = new Date();
-
-  // HEADER TIME (Hour + Minute only)
-  const headerTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).format(now);
-
-  // POPUP TIME (Hour + Minute + Second)
-  const popupTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupDate = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(now);
-
-  // Update header
-  document.getElementById("clockText").textContent = headerTime;
-
-  // Update popup
-  document.getElementById("popupTime").textContent = popupTime;
-  document.getElementById("popupDate").textContent = popupDate;
-}
-// START CLOCK
-updateClock();
-setInterval(updateClock, 1000);
-
-
-const clockBtn = document.getElementById("clockBtn");
-const calendarPopup = document.getElementById("timeCalendarPopup");
-const calendarGrid = document.getElementById("calendarGrid");
-const monthYear = document.getElementById("monthYear");
-
-let currentDate = new Date();
-
-clockBtn.onclick = function(e){
-  e.stopPropagation();
-  calendarPopup.style.display =
-    calendarPopup.style.display === "block" ? "none" : "block";
-  renderCalendar(currentDate);
-};
-
-document.addEventListener("click", function(){
-  calendarPopup.style.display = "none";
-});
-
-document.getElementById("prevMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-};
-
-document.getElementById("nextMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-};
-
-function renderCalendar(date){
-  calendarGrid.innerHTML = "";
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  monthYear.textContent =
-    date.toLocaleString("en-PH", { month: "long", year: "numeric" });
-
-  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  dayNames.forEach(d=>{
-    const el = document.createElement("div");
-    el.className="day-name";
-    el.textContent=d;
-    calendarGrid.appendChild(el);
-  });
-
-  for(let i=0;i<firstDay;i++){
-    const empty=document.createElement("div");
-    calendarGrid.appendChild(empty);
-  }
-
- const today = new Date(
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date())
-);
-
-  for(let d=1; d<=daysInMonth; d++){
-    const day=document.createElement("div");
-    day.className="day";
-    day.textContent=d;
-
-    if(
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ){
-      day.classList.add("today");
+    function getStepIndex(key){
+      return stepOrder.indexOf(key);
     }
 
-    calendarGrid.appendChild(day);
-  }
-}
-/* =========================
-   MODALS
-========================= */
+    function animateSlide(direction){
+      slideBody.classList.remove("animate-left","animate-right");
+      void slideBody.offsetWidth;
+      slideBody.classList.add(direction === "back" ? "animate-right" : "animate-left");
+    }
 
-document.getElementById("helpIcon").onclick = () =>
-  document.getElementById("helpModal").style.display = "flex";
+    function renderStep(){
+      const step = steps[currentStep];
+      const index = getStepIndex(currentStep);
+      const total = stepOrder.length;
+      const progress = ((index + 1) / total) * 100;
 
-document.getElementById("commentIcon").onclick = () => {
-  clearCommentForm();
-  document.getElementById("commentModal").style.display = "flex";
-};
+      stepTitle.textContent = step.title;
+      stepContent.innerHTML = step.content || "";
 
-function closeHelp(){document.getElementById("helpModal").style.display="none";}
-function closeComment(){document.getElementById("commentModal").style.display="none";}
-function closeAllComments(){document.getElementById("allCommentsModal").style.display="none";}
-
-
-/* =========================
-   FEEDBACK SYSTEM
-========================= */
-
-let selectedRating = 0;
-
-document.querySelectorAll('.rating-star').forEach(star=>{
-  star.onclick=function(){
-    selectedRating=parseInt(this.dataset.value);
-    document.querySelectorAll('.rating-star').forEach(s=>
-      s.classList.toggle('selected', parseInt(s.dataset.value)<=selectedRating)
-    );
-  };
-});
-
-
-function sendComment(){
-  const name = document.getElementById('commentName').value.trim();
-  const comment = document.getElementById('commentText').value.trim();
-
-  if(selectedRating===0){
-    alert("Select a rating.");
-    return;
-  }
-
-  db.collection("feedback").add({
-    rating:selectedRating,
-    name:name||"Anonymous",
-    comment:comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>{
-    alert("Saved!");
-    clearCommentForm();
-  }).catch(()=>alert("Save failed."));
-}
-
-
-function clearCommentForm(){
-  selectedRating=0;
-  document.getElementById('commentName').value="";
-  document.getElementById('commentText').value="";
-  document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));
-}
-
-
-let unsubscribeListener=null;
-
-function showAllComments(){
-  const listEl=document.getElementById('commentsList');
-  listEl.innerHTML="Loading…";
-
-  if(unsubscribeListener) unsubscribeListener();
-
-  unsubscribeListener=db.collection("feedback")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snap=>{
-      listEl.innerHTML="";
-      if(snap.empty){
-        listEl.innerHTML="<p>No feedback yet.</p>";
+      stepImages.innerHTML = "";
+      if(step.images){
+        step.images.forEach(img => {
+          const image = document.createElement("img");
+          image.src = img;
+          image.alt = step.title;
+          stepImages.appendChild(image);
+        });
       }
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const div=document.createElement('div');
-        div.className="comment-list-item";
-        div.innerHTML=`
-          <div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div>
-          <strong>${d.name}</strong>
-          <p>${d.comment}</p>
-        `;
-        listEl.appendChild(div);
+
+      decisionButtons.innerHTML = "";
+      if(step.buttons){
+        decisionButtons.style.display = "flex";
+        step.buttons.forEach((button, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "decision-btn" + (idx === 1 ? " orange" : "");
+          btn.type = "button";
+          btn.textContent = button.label;
+          btn.onclick = () => {
+            stepHistory.push(currentStep);
+            currentStep = button.goto;
+            animateSlide("next");
+            renderStep();
+          };
+          decisionButtons.appendChild(btn);
+        });
+        nextBtn.style.display = "none";
+      }else{
+        decisionButtons.style.display = "none";
+        nextBtn.style.display = "inline-flex";
+      }
+
+      stepCounter.textContent = `Step ${index + 1} of ${total}`;
+      topProgressText.textContent = `Step ${index + 1} of ${total}`;
+      progressBar.style.width = `${progress}%`;
+      topProgressFill.style.width = `${progress}%`;
+
+      prevBtn.disabled = stepHistory.length === 0;
+
+      const isLast = !step.next && !step.buttons;
+      nextBtn.classList.toggle("finish", isLast);
+      nextBtn.innerHTML = isLast
+        ? `Finish <i class="fa-solid fa-circle-check"></i>`
+        : `Next <i class="fa-solid fa-arrow-right"></i>`;
+
+      renderDots();
+      updateQuickJumpActive();
+    }
+
+    nextBtn.onclick = () => {
+      const step = steps[currentStep];
+
+      animateSlide("next");
+
+      if(step.next){
+        stepHistory.push(currentStep);
+        currentStep = step.next;
+      }else{
+        alert("Account Creation Guide Completed.");
+        currentStep = "step1";
+        stepHistory = [];
+      }
+
+      renderStep();
+    };
+
+    prevBtn.onclick = () => {
+      if(stepHistory.length === 0) return;
+
+      animateSlide("back");
+      currentStep = stepHistory.pop();
+      renderStep();
+    };
+
+    function renderDots(){
+      stepDots.innerHTML = "";
+
+      stepOrder.forEach((key) => {
+        const dot = document.createElement("div");
+        dot.className = "step-dot";
+
+        if(key === currentStep){
+          dot.classList.add("active");
+        }
+
+        dot.onclick = () => {
+          stepHistory.push(currentStep);
+          currentStep = key;
+          animateSlide("next");
+          renderStep();
+        };
+
+        stepDots.appendChild(dot);
       });
-      document.getElementById('allCommentsModal').style.display='flex';
+    }
+
+    function goToStep(stepKey){
+      if(!steps[stepKey]) return;
+      if(stepKey !== currentStep){
+        stepHistory.push(currentStep);
+      }
+      currentStep = stepKey;
+      animateSlide("next");
+      renderStep();
+    }
+
+    function updateQuickJumpActive(){
+      document.querySelectorAll(".path-jump").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.jump === currentStep);
+      });
+    }
+
+    function copyText(elementId, button){
+      const el = document.getElementById(elementId);
+      if(!el) return;
+
+      const text = el.innerText || el.textContent || "";
+
+      navigator.clipboard.writeText(text).then(() => {
+        const original = button.textContent;
+        button.textContent = "Copied ✓";
+        button.classList.add("copied");
+
+        setTimeout(() => {
+          button.textContent = original;
+          button.classList.remove("copied");
+        }, 1300);
+      });
+    }
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "ArrowRight" && nextBtn.style.display !== "none") nextBtn.click();
+      if(e.key === "ArrowLeft") prevBtn.click();
     });
-}
 
+    document.addEventListener("click", function(e){
+      const previewModal = document.getElementById("imagePreviewModal");
+      const previewImage = document.getElementById("imagePreview");
 
-</script>
-<!-- IMAGE PREVIEW MODAL -->
-<div id="imagePreviewModal" class="image-preview-modal">
-  <span class="image-preview-close">&times;</span>
-  <img id="imagePreview" src="">
-</div>
+      if(e.target.matches(".step-images img")){
+        previewModal.style.display = "flex";
+        previewImage.src = e.target.src;
+      }
+
+      if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
+        previewModal.style.display = "none";
+      }
+    });
+
+    renderStep();
+  </script>
 </body>
 </html>
