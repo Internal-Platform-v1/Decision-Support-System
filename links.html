@@ -1485,6 +1485,62 @@ body::after{
 
 .oneclick-remove-btn:hover{transform:translateY(-1px);background:#fecaca;}
 
+.oneclick-option{
+  position:relative;
+}
+
+.oneclick-option.manual-option{
+  padding-right:52px;
+}
+
+.oneclick-manual-delete-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:32px;
+  height:32px;
+  min-height:32px;
+  border:none;
+  border-radius:12px;
+  background:#fee2e2;
+  color:#b91c1c;
+  font-size:13px;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  transition:.18s ease;
+  box-shadow:0 8px 18px rgba(185,28,28,.10);
+}
+
+.oneclick-manual-delete-btn:hover{
+  background:#fecaca;
+  transform:translateY(-1px);
+}
+
+.oneclick-selected-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+}
+
+.oneclick-delete-manual-btn{
+  width:34px;
+  height:34px;
+  border:none;
+  border-radius:12px;
+  background:#fee2e2;
+  color:#b91c1c;
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.oneclick-delete-manual-btn:hover{
+  background:#fecaca;
+  transform:translateY(-1px);
+}
+
+
 .oneclick-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -2899,7 +2955,7 @@ function renderOneclickOptions(){
           const active = selectedIds.includes(item.id);
 
           return `
-            <div class="oneclick-option ${active ? "active" : ""}" onclick="toggleOneclickLink('${escapeAttr(item.id)}')">
+            <div class="oneclick-option ${item.manual ? "manual-option" : ""} ${active ? "active" : ""}" onclick="toggleOneclickLink('${escapeAttr(item.id)}')">
               <div class="oneclick-check">
                 ${active ? `<i class="fa-solid fa-check"></i>` : ""}
               </div>
@@ -2910,6 +2966,17 @@ function renderOneclickOptions(){
                   ${escapeHtml(item.name)}
                 </strong>
                 <span>${escapeHtml(item.desc || item.url)}</span>
+
+                ${item.manual ? `
+                  <button
+                    class="oneclick-manual-delete-btn"
+                    type="button"
+                    title="Delete this manual link permanently"
+                    onclick="deleteManualOneclickLink('${escapeAttr(item.id)}', event)"
+                  >
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                ` : ""}
               </div>
             </div>
           `;
@@ -2940,9 +3007,27 @@ function renderOneclickSelected(){
         <span>${escapeHtml(item.url)}</span>
       </div>
 
-      <button class="oneclick-remove-btn" type="button" onclick="removeOneclickLink('${escapeAttr(item.id)}')">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+      <div class="oneclick-selected-actions">
+        ${item.manual ? `
+          <button
+            class="oneclick-delete-manual-btn"
+            type="button"
+            title="Delete manual link permanently"
+            onclick="deleteManualOneclickLink('${escapeAttr(item.id)}', event)"
+          >
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        ` : ""}
+
+        <button
+          class="oneclick-remove-btn"
+          type="button"
+          title="Remove from Oneclick list"
+          onclick="removeOneclickLink('${escapeAttr(item.id)}')"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
     </div>
   `).join("");
 }
@@ -2983,6 +3068,35 @@ function removeOneclickLink(id){
   renderOneclickOptions();
   renderOneclickSelected();
   showToast("Removed from Oneclick");
+}
+
+function deleteManualOneclickLink(id, event){
+  if(event){
+    event.stopPropagation();
+  }
+
+  const manualLinks = getManualOneclickLinks();
+  const target = manualLinks.find(item => item.id === id);
+
+  if(!target){
+    showToast("Manual link not found");
+    return;
+  }
+
+  if(!confirm(`Delete "${target.name}" permanently from this browser?`)){
+    return;
+  }
+
+  const updatedManualLinks = manualLinks.filter(item => item.id !== id);
+  setManualOneclickLinks(updatedManualLinks);
+
+  const updatedSelectedLinks = getOneclickSelected().filter(item => item.id !== id);
+  setOneclickSelected(updatedSelectedLinks);
+
+  renderOneclickOptions();
+  renderOneclickSelected();
+
+  showToast("Manual link deleted");
 }
 
 function clearOneclickLinks(){
@@ -3160,6 +3274,7 @@ window.closeOneclickModal = closeOneclickModal;
 window.setOneclickTab = setOneclickTab;
 window.toggleOneclickLink = toggleOneclickLink;
 window.removeOneclickLink = removeOneclickLink;
+window.deleteManualOneclickLink = deleteManualOneclickLink;
 window.clearOneclickLinks = clearOneclickLinks;
 window.addManualOneclickLink = addManualOneclickLink;
 window.openOneclickLinks = openOneclickLinks;
