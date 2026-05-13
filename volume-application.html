@@ -329,7 +329,7 @@
       z-index:1;
     }
 
-    .btn{
+    .guide-btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
@@ -348,12 +348,12 @@
       cursor:pointer;
     }
 
-    .btn:hover{
+    .guide-btn:hover{
       transform:translateY(-2px);
       box-shadow:0 18px 30px rgba(77,20,140,.24);
     }
 
-    .btn.orange{
+    .guide-btn.orange{
       background:linear-gradient(135deg,#ff6600,#f59e0b);
       box-shadow:0 14px 24px rgba(255,102,0,.18);
     }
@@ -1129,19 +1129,14 @@
                     </p>
 
                     <div class="hero-actions">
-                      <button class="btn" type="button" onclick="goToStep(0)">
-                        <i class="fa-solid fa-play"></i>
-                        Start from Step 1
-                      </button>
-
-                      <button class="btn orange" type="button" onclick="goToStep(11)">
-                        <i class="fa-solid fa-code"></i>
-                        Jump to Correction Code
+                      <button class="guide-btn" type="button" onclick="exploreSteps()">
+                        Explore Steps
+                        <i class="fa-solid fa-arrow-right"></i>
                       </button>
                     </div>
                   </section>
 
-                  <section class="section-card">
+                  <section class="section-card" id="stepsSection">
                     <div class="section-head">
                       <div class="section-title">
                         <i class="fa-solid fa-display"></i>
@@ -1618,6 +1613,19 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
     const slideBody = document.getElementById("slideBody");
     const quickJumpList = document.getElementById("quickJumpList");
     const snapshotSteps = document.getElementById("snapshotSteps");
+
+
+    function exploreSteps(){
+      goToStep(0);
+
+      const stepsSection = document.getElementById("stepsSection");
+      if(stepsSection){
+        stepsSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    }
 
     function renderQuickJump(){
       if(!quickJumpList) return;
