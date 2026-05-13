@@ -12,8 +12,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -77,13 +77,10 @@
       z-index:0;
     }
 
-    a{color:inherit;text-decoration:none}
+    a{color:inherit}
     button,input,textarea{font:inherit}
 
-    .page{
-      position:relative;
-      z-index:1;
-    }
+    .page{position:relative;z-index:1}
 
     .app-shell{
       width:min(calc(100% - 32px), var(--max));
@@ -122,11 +119,7 @@
       box-shadow:var(--shadow-md);
     }
 
-    .page-title-block{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
+    .page-title-block{display:flex;flex-direction:column;gap:6px}
 
     .page-title-block h1{
       margin:0;
@@ -141,14 +134,10 @@
       font-size:13px;
       color:#64748b;
       line-height:1.6;
-      max-width:780px;
+      max-width:720px;
     }
 
-    .main-status{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+    .main-status{display:flex;gap:10px;flex-wrap:wrap}
 
     .pill{
       display:inline-flex;
@@ -193,17 +182,8 @@
       margin-bottom:10px;
     }
 
-    .progress-title{
-      font-size:14px;
-      font-weight:800;
-      color:#0f172a;
-    }
-
-    .progress-status{
-      font-size:12px;
-      font-weight:800;
-      color:#64748b;
-    }
+    .progress-title{font-size:14px;font-weight:800;color:#0f172a}
+    .progress-status{font-size:12px;font-weight:800;color:#64748b}
 
     .progress-bar{
       height:12px;
@@ -214,15 +194,10 @@
 
     .progress-fill{
       height:100%;
-      width:100%;
+      width:0%;
       border-radius:inherit;
       background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
-    }
-
-    .stage-area{
-      min-height:0;
-      display:grid;
-      grid-template-columns:1fr;
+      transition:width .28s ease;
     }
 
     .stage-card{
@@ -256,12 +231,9 @@
       font-weight:800;
     }
 
-    .badge.alt{
-      background:#f8fafc;
-      color:#334155;
-    }
+    .badge.alt{background:#f8fafc;color:#334155}
 
-    .content-wrap{
+    .question-wrap{
       padding:22px;
       display:flex;
       flex-direction:column;
@@ -269,7 +241,7 @@
       flex:1;
     }
 
-    .hero-card-main{
+    .question-card{
       position:relative;
       padding:30px;
       border-radius:28px;
@@ -281,16 +253,13 @@
       overflow:hidden;
     }
 
-    .hero-card-main::after{
+    .question-card::after{
       content:"";
       position:absolute;
-      right:-60px;
-      top:-60px;
-      width:180px;
-      height:180px;
-      border-radius:50%;
-      background:rgba(77,20,140,.07);
+      inset:0;
+      border-radius:inherit;
       pointer-events:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
     }
 
     .question-label{
@@ -325,25 +294,27 @@
       color:#64748b;
       font-size:14px;
       line-height:1.75;
-      max-width:840px;
+      max-width:800px;
       position:relative;
       z-index:1;
     }
 
-    .hero-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+    .step-actions{
       margin-top:22px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
       position:relative;
       z-index:1;
     }
 
+    /* Shared header/modal buttons rely on this .btn style, same as Rate & Volume page */
     .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:10px;
+      margin:0;
       min-height:50px;
       padding:0 18px;
       border:none;
@@ -352,9 +323,9 @@
       color:#fff;
       text-decoration:none;
       font-weight:800;
-      font-size:13px;
       box-shadow:0 14px 24px rgba(77,20,140,.18);
       transition:.22s ease;
+      width:100%;
       cursor:pointer;
     }
 
@@ -363,17 +334,32 @@
       box-shadow:0 18px 30px rgba(77,20,140,.24);
     }
 
-    .btn.orange{
-      background:linear-gradient(135deg,#ff6600,#f59e0b);
-      box-shadow:0 14px 24px rgba(255,102,0,.18);
+    .volume-btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 18px;
+      border-radius:16px;
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      color:#fff;
+      font-size:13px;
+      font-weight:900;
+      text-decoration:none;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+      transition:transform .18s ease, box-shadow .18s ease;
     }
 
-    .btn.dark{
-      background:#111827;
-      box-shadow:0 14px 24px rgba(17,24,39,.16);
+    .volume-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 30px rgba(77,20,140,.24);
     }
 
-    .section-card{
+    .step-viewer{
       background:#fff;
       border:1px solid #dbe4f0;
       border-radius:24px;
@@ -381,7 +367,7 @@
       overflow:hidden;
     }
 
-    .section-head{
+    .step-viewer-head{
       padding:18px 20px;
       border-bottom:1px solid #eef2f7;
       display:flex;
@@ -391,7 +377,7 @@
       background:linear-gradient(180deg,#fff,#fbfdff);
     }
 
-    .section-title{
+    .step-viewer-title{
       display:flex;
       align-items:center;
       gap:12px;
@@ -401,7 +387,7 @@
       color:#0f172a;
     }
 
-    .section-title i{
+    .step-viewer-title i{
       width:38px;
       height:38px;
       border-radius:14px;
@@ -411,148 +397,179 @@
       background:linear-gradient(135deg,#4d148c,#6d28d9);
     }
 
-    .section-body{
-      padding:18px;
-      display:grid;
+    .step-shell{padding:18px}
+
+    .step-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap:14px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
     }
 
-    .step{
+    .step-counter{
+      font-size:12px;
+      font-weight:900;
+      color:#475569;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+
+    .mini-progress-bar{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+      flex:1;
+      min-width:230px;
+    }
+
+    .mini-progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#4d148c 0%, #6d28d9 48%, #ff6600 100%);
+      transition:width .35s ease;
+    }
+
+    .step-body{
       position:relative;
-      display:grid;
-      grid-template-columns:52px 1fr;
-      gap:16px;
-      padding:18px;
-      border-radius:22px;
-      background:
-        radial-gradient(circle at top right, rgba(109,40,217,.06), transparent 30%),
-        linear-gradient(180deg,#fff,#fbfdff);
+      min-height:520px;
+      padding:26px;
+      border-radius:26px;
       border:1px solid #e5edf7;
-      transition:.18s ease;
+      background:
+        radial-gradient(circle at top right, rgba(109,40,217,.08), transparent 30%),
+        linear-gradient(180deg,#fff,#fbfdff);
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
     }
 
-    .step:hover{
-      transform:translateY(-2px);
-      box-shadow:0 16px 36px rgba(15,23,42,.07);
-      border-color:#d3def0;
+    .step-body::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:5px;
+      background:linear-gradient(180deg,#4d148c,#ff6600);
     }
 
-    .num{
-      width:48px;
-      height:48px;
-      border-radius:17px;
-      display:grid;
-      place-items:center;
-      color:white;
-      font-weight:900;
-      background:linear-gradient(135deg,#4d148c,#6d28d9);
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-    }
-
-    .step h3{
+    .step-title{
       margin:0;
-      font-size:19px;
+      font-size:clamp(28px,3vw,44px);
+      line-height:1.05;
+      letter-spacing:-.06em;
       font-weight:900;
-      letter-spacing:-.04em;
       color:#0f172a;
     }
 
-    .step p{
-      margin:8px 0 0;
-      color:#64748b;
-      font-size:14px;
-      line-height:1.7;
-    }
-
-    .step ul{
-      margin:10px 0 0;
-      padding-left:20px;
+    .step-content{
+      margin-top:18px;
+      font-size:15px;
+      line-height:1.85;
       color:#475569;
-      font-size:14px;
-      line-height:1.75;
+      white-space:pre-line;
+      max-width:960px;
     }
 
-    .note{
-      margin-top:13px;
-      padding:15px 16px;
-      border-radius:18px;
-      background:#fff7ed;
-      border:1px solid #fed7aa;
-      color:#7c2d12;
-      font-size:13px;
-      line-height:1.7;
-    }
-
-    .note strong{
-      color:#431407;
-    }
-
-    .note-head{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      font-size:11px;
-      margin-bottom:6px;
-      color:#c2410c;
-    }
-
-    .example{
-      margin-top:13px;
-      padding:15px 16px;
-      border-radius:18px;
-      background:#f5f3ff;
-      border:1px solid #ddd6fe;
-      color:#3b0764;
-      font-size:13px;
-      line-height:1.7;
-    }
-
-    .example .note-head{
-      color:#6d28d9;
-    }
-
-    .final-card{
-      padding:24px;
-      border-radius:24px;
-      background:linear-gradient(180deg,#f0fdf4,#ffffff);
-      border:1px solid #dcfce7;
-      box-shadow:0 16px 34px rgba(22,163,74,.08);
-    }
-
-    .final-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      border-radius:999px;
-      background:#dcfce7;
-      color:#166534;
-      font-size:12px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-    }
-
-    .final-text{
-      margin:14px 0 0;
-      font-size:22px;
-      line-height:1.45;
-      letter-spacing:-.03em;
-      font-weight:900;
-      color:#111827;
-    }
-
-    .side-panel{
-      padding:18px 14px 18px 0;
+    .step-images{
       display:flex;
       flex-direction:column;
-      gap:14px;
-      min-width:0;
+      gap:18px;
+      margin-top:24px;
     }
 
+    .step-images img{
+      width:100%;
+      max-height:460px;
+      object-fit:contain;
+      border-radius:20px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      box-shadow:0 18px 45px rgba(15,23,42,.14);
+      cursor:zoom-in;
+      transition:.25s ease;
+    }
+
+    .step-images img:hover{
+      transform:scale(1.015);
+      box-shadow:0 24px 60px rgba(15,23,42,.22);
+    }
+
+    .step-body.animate-left{animation:slideLeft .38s ease}
+    .step-body.animate-right{animation:slideRight .38s ease}
+
+    @keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+
+    .step-navigation{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .step-nav-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 20px;
+      border:none;
+      border-radius:16px;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .step-nav-btn:hover{transform:translateY(-2px)}
+
+    .step-nav-btn.prev{
+      background:#f8fafc;
+      color:#334155;
+      border:1px solid #dbe4f0;
+    }
+
+    .step-nav-btn.next{
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      color:#fff;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+    }
+
+    .step-nav-btn.finish{background:linear-gradient(135deg,#16a34a,#22c55e)}
+
+    .step-nav-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+
+    .step-dots{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
+      margin-top:16px;
+    }
+
+    .step-dot{
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:#d1d5db;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .step-dot:hover{transform:scale(1.3);background:#6d28d9}
+    .step-dot.active{width:30px;background:#ff6600}
+
+    .side-panel,
     .template-panel{
       padding:18px 18px 18px 0;
       display:flex;
@@ -560,6 +577,8 @@
       gap:14px;
       min-width:0;
     }
+
+    .side-panel{padding-right:14px}
 
     .summary-card{
       background:#fff;
@@ -579,13 +598,6 @@
     }
 
     .summary-head i{color:#7c3aed}
-
-    .section-note{
-      font-size:12px;
-      color:#64748b;
-      line-height:1.6;
-      margin-top:-2px;
-    }
 
     .summary-grid{
       display:grid;
@@ -620,23 +632,23 @@
     .path-list{
       display:flex;
       flex-direction:column;
-      gap:10px;
-      max-height:620px;
-      overflow:auto;
-      padding-right:4px;
+      gap:6px;
+      overflow:visible;
+      max-height:none;
+      padding-right:0;
     }
 
     .path-jump{
       width:100%;
       text-align:left;
-      padding:12px;
-      border-radius:16px;
+      padding:8px 9px;
+      border-radius:13px;
       background:#f8fafc;
       border:1px solid #e7edf4;
       cursor:pointer;
       transition:.18s ease;
       display:flex;
-      gap:10px;
+      gap:8px;
       align-items:flex-start;
       color:#0f172a;
     }
@@ -645,40 +657,38 @@
       transform:translateY(-1px);
       background:#eef4ff;
       border-color:#cfe0ff;
-      box-shadow:0 10px 22px rgba(37,99,235,.08);
+      box-shadow:0 8px 18px rgba(37,99,235,.08);
+    }
+
+    .path-jump.active{
+      border:2px solid #2563eb;
+      box-shadow:0 0 0 3px rgba(37,99,235,.10);
     }
 
     .path-jump span{
-      width:26px;
-      height:26px;
-      border-radius:10px;
+      width:22px;
+      height:22px;
+      border-radius:8px;
       display:grid;
       place-items:center;
       background:#eef4ff;
       color:#1d4ed8;
-      font-size:11px;
+      font-size:10px;
       font-weight:900;
       flex:0 0 auto;
     }
 
-    .path-jump strong{
-      display:block;
-      font-size:13px;
-      line-height:1.35;
-    }
+    .path-jump strong{display:block;font-size:11px;line-height:1.25}
+    .path-jump small{display:block;margin-top:2px;color:#64748b;line-height:1.25;font-size:10px;font-weight:700}
 
-    .path-jump small{
-      display:block;
-      margin-top:4px;
+    .section-note{
+      font-size:12px;
       color:#64748b;
-      line-height:1.45;
-      font-weight:700;
+      line-height:1.6;
+      margin-top:-2px;
     }
 
-    .reminder-list{
-      display:grid;
-      gap:10px;
-    }
+    .reminder-list{display:grid;gap:10px}
 
     .reminder{
       display:flex;
@@ -693,17 +703,9 @@
       line-height:1.6;
     }
 
-    .reminder i{
-      color:#ff6600;
-      margin-top:3px;
-    }
+    .reminder i{color:#ff6600;margin-top:3px}
 
-    .template-stack{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-top:14px;
-    }
+    .template-stack{display:flex;flex-direction:column;gap:12px;margin-top:14px}
 
     .template-card{
       border:1px solid #e5ebf4;
@@ -720,12 +722,7 @@
       padding:14px 14px 10px;
     }
 
-    .template-title-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-    }
+    .template-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
 
     .template-icon{
       width:36px;
@@ -738,21 +735,9 @@
       flex:0 0 auto;
     }
 
-    .template-title{
-      font-size:14px;
-      font-weight:900;
-      color:#0f172a;
-    }
-
-    .template-sub{
-      font-size:12px;
-      color:#64748b;
-      margin-top:2px;
-    }
-
-    .template-body{
-      padding:0 14px 14px;
-    }
+    .template-title{font-size:14px;font-weight:900;color:#0f172a}
+    .template-sub{font-size:12px;color:#64748b;margin-top:2px}
+    .template-body{padding:0 14px 14px}
 
     .template-box{
       min-height:100px;
@@ -800,55 +785,46 @@
       transition:all .18s ease;
     }
 
-    .template-copy.copied{
-      background:#dcfce7 !important;
-      color:#166534 !important;
-      border-color:#bbf7d0 !important;
+    .template-copy.copied{background:#dcfce7 !important;color:#166534 !important;border-color:#bbf7d0 !important}
+
+    .image-preview-modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      background:rgba(2,6,23,.88);
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      backdrop-filter:blur(8px);
     }
 
-    .copy-card{
-      margin-top:12px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      padding:14px;
+    .image-preview-modal img{
+      max-width:94vw;
+      max-height:90vh;
       border-radius:18px;
-      background:#f8fafc;
-      border:1px dashed #cbd5e1;
+      background:#fff;
+      box-shadow:0 30px 80px rgba(0,0,0,.45);
     }
 
-    .copy-text{
-      font-size:13px;
-      line-height:1.6;
-      font-weight:800;
-      color:#0f172a;
-      word-break:break-word;
-    }
-
-    .copy-btn{
-      border:0;
-      cursor:pointer;
-      border-radius:12px;
-      padding:9px 12px;
-      background:#111827;
+    .image-preview-close{
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.12);
       color:#fff;
-      font-size:12px;
-      font-weight:900;
-      transition:.18s ease;
-      white-space:nowrap;
+      font-size:30px;
+      cursor:pointer;
+      transition:.2s ease;
     }
 
-    .copy-btn:hover{
-      transform:translateY(-1px);
-    }
+    .image-preview-close:hover{background:rgba(255,255,255,.2)}
 
-    .copy-btn.copied{
-      background:#dcfce7;
-      color:#166534;
-    }
-
-    /* Shared header modal compatibility */
     #commentModal,
     #allCommentsModal,
     #helpModal{
@@ -878,21 +854,9 @@
       margin:110px auto 32px;
     }
 
-    #commentModal .feedback-modal{
-      max-width:640px;
-      border-radius:28px;
-      padding:20px 20px 22px;
-    }
-
-    #allCommentsModal .modal-content{
-      max-width:760px;
-    }
-
-    #helpModal .help-modal{
-      max-width:760px;
-      border-radius:30px;
-      padding:18px;
-    }
+    #commentModal .feedback-modal{max-width:640px;border-radius:28px;padding:20px 20px 22px}
+    #allCommentsModal .modal-content{max-width:760px}
+    #helpModal .help-modal{max-width:760px;border-radius:30px;padding:18px}
 
     #commentModal .modal-header,
     #allCommentsModal .modal-header,
@@ -928,32 +892,12 @@
 
     #commentModal .modal-close:hover,
     #allCommentsModal .modal-close:hover,
-    #helpModal .modal-close:hover{
-      color:#0f172a;
-      background:#eef2ff;
-    }
+    #helpModal .modal-close:hover{color:#0f172a;background:#eef2ff}
 
-    #commentModal .rating-container{
-      display:flex;
-      justify-content:center;
-      gap:14px;
-      margin:16px 0 18px;
-    }
-
-    #commentModal .rating-star{
-      cursor:pointer;
-      font-size:26px;
-      color:#d1d5db;
-      transition:transform .18s ease, color .18s ease;
-    }
-
-    #commentModal .rating-star:hover{
-      transform:translateY(-1px) scale(1.06);
-    }
-
-    #commentModal .rating-star.selected{
-      color:#ff6600;
-    }
+    #commentModal .rating-container{display:flex;justify-content:center;gap:14px;margin:16px 0 18px}
+    #commentModal .rating-star{cursor:pointer;font-size:26px;color:#d1d5db;transition:transform .18s ease, color .18s ease}
+    #commentModal .rating-star:hover{transform:translateY(-1px) scale(1.06)}
+    #commentModal .rating-star.selected{color:#ff6600}
 
     #commentModal input,
     #commentModal textarea{
@@ -967,149 +911,45 @@
       color:#0f172a;
       font-size:14px;
       transition:.18s ease;
-      font-family:inherit;
     }
 
-    #commentModal input{
-      margin-top:4px;
-      margin-bottom:10px;
-    }
+    #commentModal input{margin-top:4px;margin-bottom:10px}
+    #commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
+    #commentModal input:focus,#commentModal textarea:focus{background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06)}
+    #commentModal .feedback-submit-btn{margin:16px 0 8px;min-height:54px;border-radius:18px}
+    #commentModal .link-text{color:#4d148c;cursor:pointer;text-decoration:none;font-size:14px;font-weight:700}
+    #commentModal .link-text:hover{text-decoration:underline}
+    #allCommentsModal .comment-list-item{padding:14px 0;border-bottom:1px solid rgba(148,163,184,.18)}
+    #allCommentsModal .comment-list-item:last-child{border-bottom:none}
+    #allCommentsModal .stars{color:#ff6600;font-size:18px;margin-bottom:6px;display:block}
 
-    #commentModal textarea{
-      min-height:120px;
-      resize:vertical;
-      margin-top:0;
-    }
-
-    #commentModal input:focus,
-    #commentModal textarea:focus{
-      background:#fff;
-      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
-    }
-
-    #commentModal .feedback-submit-btn{
-      margin:16px 0 8px;
-      min-height:54px;
-      border-radius:18px;
-    }
-
-    #commentModal .link-text{
-      color:#4d148c;
-      cursor:pointer;
-      text-decoration:none;
-      font-size:14px;
-      font-weight:700;
-    }
-
-    #commentModal .link-text:hover{
-      text-decoration:underline;
-    }
-
-    #allCommentsModal .comment-list-item{
-      padding:14px 0;
-      border-bottom:1px solid rgba(148,163,184,.18);
-    }
-
-    #allCommentsModal .comment-list-item:last-child{
-      border-bottom:none;
-    }
-
-    #allCommentsModal .stars{
-      color:#ff6600;
-      font-size:18px;
-      margin-bottom:6px;
-      display:block;
-    }
-
-    @media (max-width:1450px){
-      .app-frame{
-        grid-template-columns:minmax(0,1fr) 340px 360px;
-      }
-    }
+    @media (max-width:1450px){.app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}}
 
     @media (max-width:1220px){
-      .app-frame{
-        grid-template-columns:1fr;
-      }
-      .side-panel,
-      .template-panel{
-        padding:0 18px 18px;
-      }
+      .app-frame{grid-template-columns:1fr}
+      .side-panel,.template-panel{padding:0 18px 18px}
     }
 
     @media (max-width:760px){
-      .app-shell{
-        width:min(calc(100% - 20px), var(--max));
-        margin:16px auto;
-      }
-
-      .app-frame{
-        min-height:100vh;
-        border-radius:24px;
-      }
-
-      .main{
-        padding:18px;
-      }
-
-      .main-topbar{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-
-      .question-text{
-        font-size:28px;
-      }
-
-      .summary-grid{
-        grid-template-columns:1fr;
-      }
-
-      .step{
-        grid-template-columns:1fr;
-      }
-
-      .section-head{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-
-      .copy-card{
-        flex-direction:column;
-      }
-
-      .copy-btn{
-        width:100%;
-      }
-
-      #commentModal,
-      #allCommentsModal,
-      #helpModal{
-        padding:0 14px;
-      }
-
-      #commentModal .modal-content,
-      #allCommentsModal .modal-content,
-      #helpModal .modal-content{
-        padding:20px;
-        border-radius:22px;
-        margin:96px auto 20px;
-      }
-
-      #commentModal .feedback-modal{
-        padding:18px;
-        border-radius:24px;
-      }
-
-      #helpModal .help-modal{
-        padding:16px;
-        border-radius:24px;
-      }
+      .app-shell{width:min(calc(100% - 20px), var(--max));margin:16px auto}
+      .app-frame{min-height:100vh;border-radius:24px}
+      .main{padding:18px}
+      .main-topbar{flex-direction:column;align-items:flex-start}
+      .question-text{font-size:28px}
+      .summary-grid{grid-template-columns:1fr}
+      .step-viewer-head{flex-direction:column;align-items:flex-start}
+      .step-body{padding:22px;min-height:460px}
+      .path-list{gap:8px}
+      .path-jump{padding:10px 11px}
+      .path-jump strong{font-size:12px}
+      .path-jump small{font-size:10px}
+      #commentModal,#allCommentsModal,#helpModal{padding:0 14px}
+      #commentModal .modal-content,#allCommentsModal .modal-content,#helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
     }
   </style>
 </head>
 
-<body data-page="">
+<body data-page="eprt-submission">
   <div class="page">
     <div id="site-header"></div>
 
@@ -1120,12 +960,12 @@
             <div class="page-title-block">
               <h1>ePRT Submission Guide</h1>
               <p class="page-subtitle">
-                Use this guide to submit an ePRT ticket correctly in iSell, complete required case details, add supporting documents, and avoid delays caused by missing or incorrect information.
+                Follow this clean Rate & Volume style guide to submit an ePRT ticket correctly in iSell, complete required case details, add supporting documents, and avoid delays caused by missing or incorrect information.
               </p>
             </div>
 
             <div class="main-status">
-              <div class="pill primary">
+              <div class="pill primary" id="statusPill">
                 <i class="fa-solid fa-ticket"></i>
                 Ready
               </div>
@@ -1136,28 +976,28 @@
             <section class="progress-card">
               <div class="progress-head">
                 <div class="progress-title">Guide Progress</div>
-                <div class="progress-status">Static reference guide</div>
+                <div class="progress-status" id="progressText">Step 1 of 15</div>
               </div>
               <div class="progress-bar">
-                <div class="progress-fill"></div>
+                <div class="progress-fill" id="progressFill"></div>
               </div>
             </section>
 
             <section class="stage-area">
-              <div class="stage-card">
+              <div class="stage-card" id="stageCard">
                 <div class="stage-top">
                   <span class="badge">
                     <i class="fa-solid fa-ticket"></i>
-                    Pricing Support
+                    ePRT Submission
                   </span>
                   <span class="badge alt">
-                    <i class="fa-solid fa-file-circle-check"></i>
-                    iSell / Salesforce Case
+                    <i class="fa-solid fa-keyboard"></i>
+                    Arrow Keys Supported
                   </span>
                 </div>
 
-                <div class="content-wrap">
-                  <section class="hero-card-main">
+                <div class="question-wrap">
+                  <section class="question-card">
                     <div class="question-label">
                       <i class="fa-solid fa-route"></i>
                       ePRT Submission Workflow
@@ -1166,242 +1006,58 @@
                     <h2 class="question-text">Submit the ePRT request with complete case details and proper documentation.</h2>
 
                     <p class="question-help">
-                      Follow the steps below to open iSell, create a Pricing case, choose the correct issue type, enter the customer details, provide AWB or PRO examples, upload support files, request updates, and document the ePRT ticket number.
+                      Use the steps below to open iSell, create a Pricing case, choose the correct issue type, enter the customer details, provide AWB or PRO examples, upload support files, request updates, and document the ePRT ticket number.
                     </p>
 
-                    <div class="hero-actions">
-                      <a class="btn" href="https://isell.my.salesforce.com" target="_blank">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        Open iSell
-                      </a>
-
-                      <a class="btn orange" href="#profile-note">
-                        <i class="fa-solid fa-note-sticky"></i>
-                        Copy Profile Note
-                      </a>
+                    <div class="step-actions">
+                      <button class="volume-btn" type="button" onclick="exploreSteps()">
+                        Explore Steps
+                        <i class="fa-solid fa-arrow-right"></i>
+                      </button>
                     </div>
                   </section>
 
-                  <section class="section-card" id="submission-steps">
-                    <div class="section-head">
-                      <div class="section-title">
-                        <i class="fa-solid fa-list-check"></i>
-                        Submission Steps
+                  <section class="step-viewer" id="stepsSection">
+                    <div class="step-viewer-head">
+                      <div class="step-viewer-title">
+                        <i class="fa-solid fa-display"></i>
+                        Guided ePRT Submission Walkthrough
                       </div>
 
                       <span class="badge alt">
                         <i class="fa-solid fa-circle-check"></i>
-                        Follow in order
+                        Interactive guide
                       </span>
                     </div>
 
-                    <div class="section-body">
-                      <article class="step" id="step-1">
-                        <div class="num">1</div>
-                        <div>
-                          <h3>Open iSell</h3>
-                          <p>Go to the iSell portal to begin creating the ePRT ticket.</p>
+                    <div class="step-shell">
+                      <div class="step-top">
+                        <div class="step-counter" id="stepCounter"></div>
 
-                          <a class="btn orange" href="https://isell.my.salesforce.com" target="_blank" style="margin-top:14px;">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            Open iSell
-                          </a>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">2</div>
-                        <div>
-                          <h3>Navigate to My Cases</h3>
-                          <p>Click <strong>My Cases</strong> from the top dashboard in iSell.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">3</div>
-                        <div>
-                          <h3>Create a New Case</h3>
-                          <p>Click <strong>New Case</strong> to start the request.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">4</div>
-                        <div>
-                          <h3>Select Pricing Option</h3>
-                          <p>Choose <strong>Pricing</strong>. Hovering over the option will show the issues it applies to.</p>
-                        </div>
-                      </article>
-
-                      <article class="step" id="issue-type">
-                        <div class="num">5</div>
-                        <div>
-                          <h3>Choose the Correct Issue Type</h3>
-                          <p>Select the applicable radio button, then click <strong>Next</strong>.</p>
-
-                          <div class="note">
-                            <div class="note-head">
-                              <i class="fa-solid fa-triangle-exclamation"></i>
-                              Important
-                            </div>
-                            Do <strong>not</strong> select <strong>Non-Sales Pricing Request</strong> unless you are a non-sales user.
-                          </div>
-
-                          <p>In most cases, select <strong>Customer Discount Loss or Incorrect Pricing</strong>.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">6</div>
-                        <div>
-                          <h3>Confirm Employee ID</h3>
-                          <p>Your employee ID should appear automatically. Confirm it, then click <strong>Next</strong>.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">7</div>
-                        <div>
-                          <h3>Enter Customer EAN</h3>
-                          <p>Enter the <strong>Customer EAN</strong> related to the issue, then click <strong>Next</strong>.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">8</div>
-                        <div>
-                          <h3>Complete the Case Form</h3>
-                          <p>Fill out the form using the information from the <strong>ePRT Ticket Support Form</strong>.</p>
-
-                          <div class="note">
-                            <div class="note-head">
-                              <i class="fa-solid fa-circle-info"></i>
-                              Reminder
-                            </div>
-                            All fields marked with <strong>*</strong> are mandatory. Select the most accurate option available.
-                          </div>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">9</div>
-                        <div>
-                          <h3>Add the Issue Description</h3>
-                          <p>Provide clear details about the pricing issue, expected discount, missing exception, or expected surcharge handling.</p>
-
-                          <div class="example">
-                            <div class="note-head">
-                              <i class="fa-solid fa-lightbulb"></i>
-                              Example
-                            </div>
-                            Customer AWBs for Express SO shipments are not receiving the expected volume discount.
-                          </div>
-
-                          <ul>
-                            <li>Expected ED percentage</li>
-                            <li>Expected surcharge exception</li>
-                            <li>Other agreement details that support the request</li>
-                          </ul>
-
-                          <div class="note">
-                            <div class="note-head">
-                              <i class="fa-solid fa-ban"></i>
-                              Do Not
-                            </div>
-                            Do not request full invoice spreadsheet audits through iSell. Provide only a few AWB or PRO examples.
-                          </div>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">10</div>
-                        <div>
-                          <h3>Submit the Case</h3>
-                          <p>After submission, choose <strong>View Case</strong>. You can then upload files and finish the process.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">11</div>
-                        <div>
-                          <h3>Add Additional Case Details</h3>
-                          <p>Complete the added case details so the ePRT Team can review the request properly.</p>
-
-                          <ul>
-                            <li><strong>Proposal Number</strong> — valid proposal number of the agreement</li>
-                            <li><strong>Tracking Numbers</strong> — AWBs or PRO numbers, maximum of 5</li>
-                            <li><strong>Issue Description</strong> — add more detail if needed</li>
-                            <li><strong>Files</strong> — upload screenshots, PDFs, XLS files, or other support</li>
-                          </ul>
-
-                          <div class="note">
-                            <div class="note-head">
-                              <i class="fa-solid fa-ban"></i>
-                              Important
-                            </div>
-                            Do <strong>not</strong> enter invoice numbers. Use AWB or PRO tracking numbers only.
-                          </div>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">12</div>
-                        <div>
-                          <h3>ePRT Case Review</h3>
-                          <p>The GPRT team will review the case and may request additional details in the case comments.</p>
-                          <p>Once all details are provided, the case will be worked or escalated if needed.</p>
-                        </div>
-                      </article>
-
-                      <article class="step" id="updates">
-                        <div class="num">13</div>
-                        <div>
-                          <h3>Request Updates</h3>
-                          <p>To request updates, send an email from OSV and include the Salesforce Case Number.</p>
-
-                          <div class="copy-card">
-                            <div class="copy-text" id="eprtEmail">pricing_ePRT@corp.ds.fedex.com</div>
-                            <button class="copy-btn" type="button" onclick="copyText('eprtEmail', this)">Copy</button>
-                          </div>
-                        </div>
-                      </article>
-
-                      <article class="step" id="profile-note">
-                        <div class="num">14</div>
-                        <div>
-                          <h3>Add a Customer Profile Note</h3>
-                          <p>Add a Customer Profile note using the format below.</p>
-
-                          <div class="copy-card">
-                            <div class="copy-text" id="profileFormat">DATE – VS-PRIC-###### – EPRT TCKT # XXXXX – REASON</div>
-                            <button class="copy-btn" type="button" onclick="copyText('profileFormat', this)">Copy</button>
-                          </div>
-
-                          <div class="copy-card">
-                            <div class="copy-text" id="profileExample">09/22/22 – VS-PRIC-14599820 – EPRT TCKT #47103 – RVW NOST WAIVED PER AGREEMENT</div>
-                            <button class="copy-btn" type="button" onclick="copyText('profileExample', this)">Copy</button>
-                          </div>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">15</div>
-                        <div>
-                          <h3>Pend the Salesforce Case</h3>
-                          <p>Pend the Salesforce case and include the <strong>ePRT Ticket Number</strong> in the Internal Comments.</p>
-                        </div>
-                      </article>
-
-                      <div class="final-card">
-                        <div class="final-badge">
-                          <i class="fa-solid fa-circle-check"></i>
-                          Completed
-                        </div>
-
-                        <div class="final-text">
-                          Submit the ePRT request with complete and accurate details, then document the ticket number properly so the case can be tracked without delays.
+                        <div class="mini-progress-bar">
+                          <div class="mini-progress-fill" id="miniProgressFill"></div>
                         </div>
                       </div>
+
+                      <div class="step-body" id="stepBody">
+                        <h2 class="step-title" id="stepTitle"></h2>
+                        <div class="step-content" id="stepContent"></div>
+                        <div class="step-images" id="stepImages"></div>
+                      </div>
+
+                      <div class="step-navigation">
+                        <button class="step-nav-btn prev" id="prevBtn" type="button">
+                          <i class="fa-solid fa-arrow-left"></i>
+                          Previous
+                        </button>
+
+                        <button class="step-nav-btn next" id="nextBtn" type="button">
+                          Next
+                          <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                      </div>
+
+                      <div id="stepDots" class="step-dots"></div>
                     </div>
                   </section>
                 </div>
@@ -1413,96 +1069,8 @@
         <aside class="side-panel">
           <div class="summary-card">
             <div class="summary-head">
-              <i class="fa-solid fa-route"></i>
-              Quick Navigation
-            </div>
-
-            <div class="path-list">
-              <a class="path-jump" href="#step-1">
-                <span>1</span>
-                <div>
-                  <strong>Open iSell</strong>
-                  <small>Start the ePRT ticket flow.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#issue-type">
-                <span>5</span>
-                <div>
-                  <strong>Issue Type</strong>
-                  <small>Select the correct pricing issue.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#updates">
-                <span>13</span>
-                <div>
-                  <strong>Request Updates</strong>
-                  <small>Use the pricing ePRT email.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#profile-note">
-                <span>14</span>
-                <div>
-                  <strong>Profile Note</strong>
-                  <small>Copy the customer profile note format.</small>
-                </div>
-              </a>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-chart-simple"></i>
-              Quick Snapshot
-            </div>
-
-            <div class="summary-grid">
-              <div class="metric">
-                <span class="metric-k">Steps</span>
-                <span class="metric-v">15</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Max AWB / PRO</span>
-                <span class="metric-v">5</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Ticket Flow</span>
-                <span class="metric-v">1</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Invoice #</span>
-                <span class="metric-v">No</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              iSell Portal
-            </div>
-
-            <p class="section-note" style="margin-bottom:14px;">
-              Open iSell when you are ready to create or review the ePRT Salesforce case.
-            </p>
-
-            <a class="btn orange" href="https://isell.my.salesforce.com" target="_blank" style="width:100%;">
-              <i class="fa-solid fa-ticket"></i>
-              Open iSell
-            </a>
-          </div>
-        </aside>
-
-        <aside class="template-panel">
-          <div class="summary-card">
-            <div class="summary-head">
               <i class="fa-solid fa-lightbulb"></i>
-              Quick Reminders
+              Key Reminders
             </div>
 
             <div class="reminder-list">
@@ -1530,13 +1098,111 @@
 
           <div class="summary-card">
             <div class="summary-head">
+              <i class="fa-solid fa-chart-simple"></i>
+              Quick Snapshot
+            </div>
+
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v" id="metricSteps">15</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Max AWB / PRO</span>
+                <span class="metric-v">5</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Ticket Flow</span>
+                <span class="metric-v">iSell</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Invoice #</span>
+                <span class="metric-v">No</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-route"></i>
+              Quick Jump
+            </div>
+
+            <div class="path-list" id="quickJumpList"></div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              iSell Portal
+            </div>
+
+            <div class="section-note">
+              Open iSell when you are ready to create or review the ePRT Salesforce case.
+            </div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-ticket"></i></div>
+                    <div>
+                      <div class="template-title">iSell Portal</div>
+                      <div class="template-sub">Salesforce case</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="isellLink" class="template-box">https://isell.my.salesforce.com</div>
+                </div>
+
+                <div class="template-foot">
+                  <a class="template-tag" href="https://isell.my.salesforce.com" target="_blank" rel="noopener">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    Open
+                  </a>
+                  <button class="template-copy" type="button" onclick="copyText('isellLink', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
               <i class="fa-solid fa-envelope"></i>
               Update Email
             </div>
 
-            <div class="copy-card" style="margin-top:0;">
-              <div class="copy-text" id="sideEmail">pricing_ePRT@corp.ds.fedex.com</div>
-              <button class="copy-btn" type="button" onclick="copyText('sideEmail', this)">Copy</button>
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                      <div class="template-title">Pricing ePRT</div>
+                      <div class="template-sub">Update request</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="eprtEmail" class="template-box">pricing_ePRT@corp.ds.fedex.com</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag">
+                    <i class="fa-solid fa-envelope"></i>
+                    Email
+                  </span>
+                  <button class="template-copy" type="button" onclick="copyText('eprtEmail', this)">Copy</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1554,9 +1220,7 @@
               <div class="template-card">
                 <div class="template-card-head">
                   <div class="template-title-wrap">
-                    <div class="template-icon">
-                      <i class="fa-solid fa-file-lines"></i>
-                    </div>
+                    <div class="template-icon"><i class="fa-solid fa-file-lines"></i></div>
                     <div>
                       <div class="template-title">Internal Case Note</div>
                       <div class="template-sub">Use after submitting ePRT</div>
@@ -1573,19 +1237,14 @@
                     <i class="fa-solid fa-file-lines"></i>
                     Case comment
                   </span>
-
-                  <button class="template-copy" type="button" onclick="copyText('internalNote', this)">
-                    Copy
-                  </button>
+                  <button class="template-copy" type="button" onclick="copyText('internalNote', this)">Copy</button>
                 </div>
               </div>
 
               <div class="template-card">
                 <div class="template-card-head">
                   <div class="template-title-wrap">
-                    <div class="template-icon">
-                      <i class="fa-solid fa-note-sticky"></i>
-                    </div>
+                    <div class="template-icon"><i class="fa-solid fa-note-sticky"></i></div>
                     <div>
                       <div class="template-title">Customer Profile Format</div>
                       <div class="template-sub">Profile documentation</div>
@@ -1602,10 +1261,31 @@
                     <i class="fa-solid fa-note-sticky"></i>
                     Profile note
                   </span>
+                  <button class="template-copy" type="button" onclick="copyText('profileNoteSide', this)">Copy</button>
+                </div>
+              </div>
 
-                  <button class="template-copy" type="button" onclick="copyText('profileNoteSide', this)">
-                    Copy
-                  </button>
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-note-sticky"></i></div>
+                    <div>
+                      <div class="template-title">Profile Note Example</div>
+                      <div class="template-sub">Sample format</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="profileExample" class="template-box">09/22/22 – VS-PRIC-14599820 – EPRT TCKT #47103 – RVW NOST WAIVED PER AGREEMENT</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag">
+                    <i class="fa-solid fa-note-sticky"></i>
+                    Example
+                  </span>
+                  <button class="template-copy" type="button" onclick="copyText('profileExample', this)">Copy</button>
                 </div>
               </div>
             </div>
@@ -1617,8 +1297,22 @@
     <div id="site-footer"></div>
   </div>
 
+  <div id="imagePreviewModal" class="image-preview-modal">
+    <span class="image-preview-close">×</span>
+    <img id="imagePreview" src="" alt="Preview">
+  </div>
+
+  <script src="../assets/js/header-loader.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer-loader.js"></script>
+
   <script>
-    if (!firebase.apps.length) {
+    /* =========================================================
+       FIREBASE + FEEDBACK / HEADER MODAL FUNCTIONS
+       Matched to working Volume Application reference
+    ========================================================= */
+
+    if (window.firebase && !firebase.apps.length) {
       firebase.initializeApp({
         apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
         authDomain: "bdgg-database.firebaseapp.com",
@@ -1629,20 +1323,613 @@
       });
     }
 
-    window.auth = firebase.auth();
-    window.db = firebase.firestore();
+    const db = firebase.firestore();
+    const FEEDBACK_COLLECTION = "feedback";
+
+    let selectedRating = 0;
+    let ratingStars = [];
+    let commentsUnsubscribe = null;
+
+    function escapeHtml(value){
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function openModalAnimated(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+
+      modal.style.display = "flex";
+      modal.classList.remove("is-closing");
+
+      requestAnimationFrame(() => {
+        modal.classList.add("is-open");
+      });
+
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModalAnimated(id, onClosed) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+
+      modal.classList.remove("is-open");
+      modal.classList.add("is-closing");
+
+      setTimeout(() => {
+        modal.style.display = "none";
+        modal.classList.remove("is-closing");
+        document.body.style.overflow = "";
+
+        if (typeof onClosed === "function") {
+          onClosed();
+        }
+      }, 220);
+    }
+
+    function openComment() {
+      selectedRating = 0;
+      openModalAnimated("commentModal");
+      setTimeout(initRatingStars, 80);
+    }
+
+    function closeComment() {
+      closeModalAnimated("commentModal");
+    }
+
+    function openHelp() {
+      openModalAnimated("helpModal");
+    }
+
+    function closeHelp() {
+      closeModalAnimated("helpModal");
+    }
+
+    function closeAllComments() {
+      closeModalAnimated("allCommentsModal", () => {
+        if (typeof commentsUnsubscribe === "function") {
+          commentsUnsubscribe();
+          commentsUnsubscribe = null;
+        }
+      });
+    }
+
+    function initRatingStars() {
+      ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+      if (!ratingStars.length) return;
+
+      ratingStars.forEach(star => {
+        star.onclick = function (e) {
+          e.stopPropagation();
+
+          selectedRating = Number(this.dataset.value || this.dataset.rating || 0);
+
+          ratingStars.forEach(s => {
+            const value = Number(s.dataset.value || s.dataset.rating || 0);
+            s.classList.toggle("selected", value <= selectedRating);
+          });
+        };
+      });
+    }
+
+    async function sendComment() {
+      const nameEl = document.getElementById("commentName");
+      const textEl = document.getElementById("commentText");
+      const feedbackMessage = document.getElementById("feedbackMessage");
+
+      const name = (nameEl?.value || "").trim();
+      const comment = (textEl?.value || "").trim();
+
+      if (!selectedRating) {
+        if (feedbackMessage) {
+          feedbackMessage.style.display = "block";
+          feedbackMessage.style.color = "#ef4444";
+          feedbackMessage.textContent = "Please select a rating first.";
+        }
+        return;
+      }
+
+      if (!comment) {
+        if (feedbackMessage) {
+          feedbackMessage.style.display = "block";
+          feedbackMessage.style.color = "#ef4444";
+          feedbackMessage.textContent = "Please enter your feedback.";
+        }
+        return;
+      }
+
+      try {
+        await db.collection(FEEDBACK_COLLECTION).add({
+          name: name || "Anonymous",
+          comment,
+          rating: selectedRating,
+          page: document.body.dataset.page || "eprt-submission",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        if (feedbackMessage) {
+          feedbackMessage.style.display = "block";
+          feedbackMessage.style.color = "#16a34a";
+          feedbackMessage.textContent = "Feedback sent successfully.";
+        }
+
+        if (nameEl) nameEl.value = "";
+        if (textEl) textEl.value = "";
+
+        selectedRating = 0;
+        ratingStars.forEach(star => star.classList.remove("selected"));
+
+        setTimeout(() => {
+          closeComment();
+
+          if (feedbackMessage) {
+            feedbackMessage.style.display = "none";
+            feedbackMessage.textContent = "";
+          }
+        }, 900);
+      } catch (err) {
+        console.error("Unable to send feedback:", err);
+
+        if (feedbackMessage) {
+          feedbackMessage.style.display = "block";
+          feedbackMessage.style.color = "#ef4444";
+          feedbackMessage.textContent = "Unable to send feedback right now.";
+        }
+      }
+    }
+
+    async function showAllComments() {
+      const commentModal = document.getElementById("commentModal");
+
+      const commentsList =
+        document.getElementById("commentsList") ||
+        document.getElementById("allCommentsList");
+
+      if (!commentsList) {
+        openModalAnimated("allCommentsModal");
+        return;
+      }
+
+      commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+      const loadComments = () => {
+        try {
+          if (typeof commentsUnsubscribe === "function") {
+            commentsUnsubscribe();
+            commentsUnsubscribe = null;
+          }
+
+          commentsUnsubscribe = db
+            .collection(FEEDBACK_COLLECTION)
+            .orderBy("createdAt", "desc")
+            .limit(40)
+            .onSnapshot(snapshot => {
+              if (!snapshot.size) {
+                commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+                return;
+              }
+
+              commentsList.innerHTML = "";
+
+              snapshot.forEach(doc => {
+                const data = doc.data() || {};
+                const rating = Number(data.rating || 0);
+                const safeRating = Math.max(0, Math.min(5, rating));
+                const stars = "★".repeat(safeRating) + "☆".repeat(5 - safeRating);
+
+                const item = document.createElement("div");
+                item.className = "comment-list-item";
+                item.innerHTML = `
+                  <span class="stars">${stars}</span>
+                  <strong style="display:block; color:#0f172a; margin-bottom:4px;">
+                    ${escapeHtml(data.name || "Anonymous")}
+                  </strong>
+                  <div style="color:#475569; line-height:1.7;">
+                    ${escapeHtml(data.comment || "No comment provided.")}
+                  </div>
+                `;
+
+                commentsList.appendChild(item);
+              });
+            }, err => {
+              console.error("Unable to load comments:", err);
+              commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+            });
+
+          openModalAnimated("allCommentsModal");
+        } catch (err) {
+          console.error("Unable to load comments:", err);
+          commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+          openModalAnimated("allCommentsModal");
+        }
+      };
+
+      if (commentModal && commentModal.style.display === "flex") {
+        closeModalAnimated("commentModal", loadComments);
+      } else {
+        loadComments();
+      }
+    }
+
+    function viewAllComments() {
+      showAllComments();
+    }
+
+    window.openComment = openComment;
+    window.closeComment = closeComment;
+    window.openHelp = openHelp;
+    window.closeHelp = closeHelp;
+    window.closeAllComments = closeAllComments;
+    window.showAllComments = showAllComments;
+    window.viewAllComments = viewAllComments;
+    window.sendComment = sendComment;
+
+    document.addEventListener("headerLoaded", () => {
+      initRatingStars();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initRatingStars();
+    });
+
+    setTimeout(initRatingStars, 300);
   </script>
 
-  <script src="../assets/js/header-loader.js"></script>
-  <script src="../assets/js/header.js"></script>
-  <script src="../assets/js/footer-loader.js"></script>
-
   <script>
+    /* =========================================================
+       ePRT SUBMISSION STEPS
+    ========================================================= */
+
+    const steps = [
+      {
+        title:"Open iSell",
+        content:`Go to the iSell portal to begin creating the ePRT ticket.
+
+https://isell.my.salesforce.com`
+      },
+      {
+        title:"Navigate to My Cases",
+        content:`Click My Cases from the top dashboard in iSell.`
+      },
+      {
+        title:"Create a New Case",
+        content:`Click New Case to start the request.`
+      },
+      {
+        title:"Select Pricing Option",
+        content:`Choose Pricing.
+
+Hovering over the option will show the issues it applies to.`
+      },
+      {
+        title:"Choose the Correct Issue Type",
+        content:`Select the applicable radio button, then click Next.
+
+IMPORTANT:
+Do not select Non-Sales Pricing Request unless you are a non-sales user.
+
+In most cases, select Customer Discount Loss or Incorrect Pricing.`
+      },
+      {
+        title:"Confirm Employee ID",
+        content:`Your employee ID should appear automatically.
+
+Confirm it, then click Next.`
+      },
+      {
+        title:"Enter Customer EAN",
+        content:`Enter the Customer EAN related to the issue, then click Next.`
+      },
+      {
+        title:"Complete the Case Form",
+        content:`Fill out the form using the information from the ePRT Ticket Support Form.
+
+REMINDER:
+All fields marked with * are mandatory. Select the most accurate option available.`
+      },
+      {
+        title:"Add the Issue Description",
+        content:`Provide clear details about the pricing issue, expected discount, missing exception, or expected surcharge handling.
+
+Example:
+Customer AWBs for Express SO shipments are not receiving the expected volume discount.
+
+Include:
+• Expected ED percentage
+• Expected surcharge exception
+• Other agreement details that support the request
+
+DO NOT:
+Do not request full invoice spreadsheet audits through iSell. Provide only a few AWB or PRO examples.`
+      },
+      {
+        title:"Submit the Case",
+        content:`After submission, choose View Case.
+
+You can then upload files and finish the process.`
+      },
+      {
+        title:"Add Additional Case Details",
+        content:`Complete the added case details so the ePRT Team can review the request properly.
+
+Required details may include:
+• Proposal Number — valid proposal number of the agreement
+• Tracking Numbers — AWBs or PRO numbers, maximum of 5
+• Issue Description — add more detail if needed
+• Files — upload screenshots, PDFs, XLS files, or other support
+
+IMPORTANT:
+Do not enter invoice numbers. Use AWB or PRO tracking numbers only.`
+      },
+      {
+        title:"ePRT Case Review",
+        content:`The GPRT team will review the case and may request additional details in the case comments.
+
+Once all details are provided, the case will be worked or escalated if needed.`
+      },
+      {
+        title:"Request Updates",
+        content:`To request updates, send an email from OSV and include the Salesforce Case Number.
+
+Update email:
+pricing_ePRT@corp.ds.fedex.com`
+      },
+      {
+        title:"Add a Customer Profile Note",
+        content:`Add a Customer Profile note using the correct format.
+
+Format:
+DATE – VS-PRIC-###### – EPRT TCKT # XXXXX – REASON
+
+Example:
+09/22/22 – VS-PRIC-14599820 – EPRT TCKT #47103 – RVW NOST WAIVED PER AGREEMENT`
+      },
+      {
+        title:"Pend the Salesforce Case",
+        content:`Pend the Salesforce case and include the ePRT Ticket Number in the Internal Comments.
+
+Final reminder:
+Submit the ePRT request with complete and accurate details, then document the ticket number properly so the case can be tracked without delays.`
+      }
+    ];
+
+    let currentStep = 0;
+
+    const els = {
+      stepTitle: document.getElementById("stepTitle"),
+      stepContent: document.getElementById("stepContent"),
+      stepImages: document.getElementById("stepImages"),
+      stepCounter: document.getElementById("stepCounter"),
+      miniProgressFill: document.getElementById("miniProgressFill"),
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      stepDots: document.getElementById("stepDots"),
+      stepBody: document.getElementById("stepBody"),
+      quickJumpList: document.getElementById("quickJumpList"),
+      metricSteps: document.getElementById("metricSteps"),
+      metricImages: document.getElementById("metricImages")
+    };
+
+    function countImages(){
+      return steps.reduce((total, step) => total + (Array.isArray(step.images) ? step.images.length : 0), 0);
+    }
+
+    function renderQuickJump(){
+      if(!els.quickJumpList) return;
+
+      els.quickJumpList.innerHTML = "";
+
+      steps.forEach((step, index) => {
+        const btn = document.createElement("button");
+        btn.className = "path-jump";
+        btn.type = "button";
+        btn.dataset.jump = index;
+
+        btn.innerHTML = `
+          <span>${index + 1}</span>
+          <div>
+            <strong>${escapeHtml(step.title)}</strong>
+            <small>Step ${index + 1}</small>
+          </div>
+        `;
+
+        btn.onclick = () => goToStep(index, true);
+        els.quickJumpList.appendChild(btn);
+      });
+    }
+
+    function updateQuickJump(){
+      document.querySelectorAll(".path-jump").forEach(btn => {
+        const index = Number(btn.dataset.jump);
+        btn.classList.toggle("active", index === currentStep);
+      });
+    }
+
+    function renderDots(){
+      if(!els.stepDots) return;
+
+      els.stepDots.innerHTML = "";
+
+      steps.forEach((step, index) => {
+        const dot = document.createElement("div");
+        dot.className = "step-dot";
+
+        if(index === currentStep) {
+          dot.classList.add("active");
+        }
+
+        dot.onclick = () => goToStep(index, true);
+        els.stepDots.appendChild(dot);
+      });
+    }
+
+    function renderStep(){
+      const step = steps[currentStep];
+      const progress = ((currentStep + 1) / steps.length * 100) + "%";
+
+      if (els.stepTitle) els.stepTitle.textContent = step.title;
+      if (els.stepContent) els.stepContent.textContent = step.content;
+
+      if (els.stepImages) {
+        els.stepImages.innerHTML = "";
+
+        if(Array.isArray(step.images)){
+          step.images.forEach(img => {
+            const image = document.createElement("img");
+            image.src = img;
+            image.alt = step.title;
+            image.loading = "lazy";
+            els.stepImages.appendChild(image);
+          });
+        }
+      }
+
+      if (els.stepCounter) {
+        els.stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      }
+
+      if (els.progressText) {
+        els.progressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      }
+
+      if (els.progressFill) {
+        els.progressFill.style.width = progress;
+      }
+
+      if (els.miniProgressFill) {
+        els.miniProgressFill.style.width = progress;
+      }
+
+      if (els.metricSteps) {
+        els.metricSteps.textContent = steps.length;
+      }
+
+      if (els.metricImages) {
+        els.metricImages.textContent = countImages();
+      }
+
+      if (els.prevBtn) {
+        els.prevBtn.disabled = currentStep === 0;
+      }
+
+      if (els.nextBtn) {
+        if(currentStep === steps.length - 1){
+          els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
+          els.nextBtn.classList.add("finish");
+        }else{
+          els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
+          els.nextBtn.classList.remove("finish");
+        }
+      }
+
+      renderDots();
+      updateQuickJump();
+    }
+
+    function animateStep(direction){
+      if (!els.stepBody) return;
+
+      els.stepBody.classList.remove("animate-left", "animate-right");
+      void els.stepBody.offsetWidth;
+      els.stepBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
+    }
+
+    function goToStep(index, shouldScroll = false){
+      if(index < 0 || index >= steps.length) return;
+
+      const direction = index >= currentStep ? "left" : "right";
+      currentStep = index;
+
+      animateStep(direction);
+      renderStep();
+
+      if(shouldScroll){
+        const stepsSection = document.getElementById("stepsSection");
+
+        if(stepsSection){
+          stepsSection.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+        }
+      }
+    }
+
+    function exploreSteps(){
+      goToStep(0, true);
+    }
+
+    window.goToStep = goToStep;
+    window.exploreSteps = exploreSteps;
+
+    if (els.nextBtn) {
+      els.nextBtn.onclick = () => {
+        if(currentStep < steps.length - 1){
+          currentStep++;
+          animateStep("left");
+          renderStep();
+        }else{
+          alert("ePRT Submission guide completed.");
+          currentStep = 0;
+          animateStep("left");
+          renderStep();
+        }
+      };
+    }
+
+    if (els.prevBtn) {
+      els.prevBtn.onclick = () => {
+        if(currentStep > 0){
+          currentStep--;
+          animateStep("right");
+          renderStep();
+        }
+      };
+    }
+
+    document.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight" && els.nextBtn) els.nextBtn.click();
+      if(e.key === "ArrowLeft" && els.prevBtn) els.prevBtn.click();
+      if(e.key === "Escape") closeImagePreview();
+    });
+
+    document.addEventListener("click", e => {
+      const previewModal = document.getElementById("imagePreviewModal");
+      const previewImage = document.getElementById("imagePreview");
+
+      if(e.target.matches(".step-images img")){
+        if (previewModal && previewImage) {
+          previewModal.style.display = "flex";
+          previewImage.src = e.target.src;
+          document.body.style.overflow = "hidden";
+        }
+      }
+
+      if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
+        closeImagePreview();
+      }
+    });
+
+    function closeImagePreview(){
+      const previewModal = document.getElementById("imagePreviewModal");
+      const previewImage = document.getElementById("imagePreview");
+
+      if(previewModal) previewModal.style.display = "none";
+      if(previewImage) previewImage.src = "";
+      document.body.style.overflow = "";
+    }
+
     function copyText(id, btn){
       const el = document.getElementById(id);
       if(!el) return;
 
-      const text = (el.innerText || el.textContent || "").trim();
+      const text = el.innerText.trim();
       if(!text) return;
 
       navigator.clipboard.writeText(text).then(() => {
@@ -1674,6 +1961,12 @@
         }, 1400);
       });
     }
+
+    window.copyText = copyText;
+    window.closeImagePreview = closeImagePreview;
+
+    renderQuickJump();
+    renderStep();
   </script>
 </body>
 </html>
