@@ -1577,6 +1577,26 @@
   line-height: 1.6;
 }
 
+.link-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+  padding:10px 14px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+  text-decoration:none;
+  box-shadow:0 10px 20px rgba(77,20,140,.2);
+  transition:.2s ease;
+}
+
+.link-btn:hover{
+  transform:translateY(-2px);
+}
+
 </style>
 </head>
 <body data-page="">
@@ -1824,287 +1844,493 @@ document.addEventListener("DOMContentLoaded", () => {
   //nodes here
 const NODES = {
 
-start: {
-  text: "Rate & Volume Quote - General Guide",
-  help: "Use this guide to validate if LTL or Volume quote can be applied based on BOL details, shipment data, and system checks.",
-  note: "Always review the BOL, ACCOPS, and quote details before applying or rejecting any rate.",
-  choices: [
-    {
-      label: "Continue",
-      next: "rate_volume_intro",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Start validating the quote noted on BOL."
-    }
-  ]
-},
+  start: {
+    text: "Rate Application per BOL Guide",
+    help: "Use this guide to validate LTL Quote or Volume Quote handling based on the quote noted per BOL.",
+    note: "Always review the BOL, ACCOPS, quote details, shipment details, and applicable system updates before deciding the next action.",
+    choices: [
+      {
+        label: "Continue",
+        next: "rate_volume_intro",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the Rate Application per BOL decision flow."
+      }
+    ]
+  },
 
-/* ================= INTRO ================= */
+  rate_volume_intro: {
+    text: "What quote is noted per BOL?",
+    choices: [
+      {
+        label: "LTL Quote",
+        next: "ltl_noted_check",
+        icon: "fa-solid fa-file-invoice-dollar",
+        desc: "BOL shows an LTL Quote."
+      },
+      {
+        label: "Volume Quote",
+        next: "volume_noted_check",
+        icon: "fa-solid fa-boxes-stacked",
+        desc: "BOL shows a Volume Quote."
+      }
+    ]
+  },
 
-rate_volume_intro: {
-  text: "What quote is noted per BOL?",
-  choices: [
-    { label: "LTL Quote", next: "ltl_noted_check", icon:"fa-solid fa-file-invoice" },
-    { label: "Volume Quote", next: "volume_noted_check", icon:"fa-solid fa-boxes-stacked" }
-  ]
-},
+  /* ================= LTL FLOW ================= */
 
-/* ================= LTL FLOW ================= */
+  ltl_noted_check: {
+    text: "Is the LTL Rate Quote noted on BOL?",
+    choices: [
+      {
+        label: "Yes",
+        next: "check_capl_keyword",
+        icon: "fa-solid fa-circle-check",
+        desc: "LTL Rate Quote is noted on BOL."
+      },
+      {
+        label: "No",
+        next: "final_ltl_not_noted_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "LTL Rate Quote is not noted on BOL."
+      }
+    ]
+  },
 
-ltl_noted_check: {
-  text: "Is the LTL Rate Quote noted on BOL?",
-  choices: [
-    { label: "Yes", next: "check_capl_keyword" },
-    { label: "No", next: "final_ltl_not_noted" }
-  ]
-},
+  final_ltl_not_noted_result: {
+    text: "Advise customer that LTL rate quote cannot be applied since not noted on BOL. See sample templates response on OS.",
+    choices: []
+  },
 
-final_ltl_not_noted: {
-  text: "LTL quote cannot be applied.",
-  note: "Quote is not noted on BOL. Use standard response template.",
-  choices: []
-},
+  check_capl_keyword: {
+    text: "Check if Pro has CAPL keyword.",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_move_to_inspection_review",
+        icon: "fa-solid fa-circle-check",
+        desc: "PRO has CAPL keyword."
+      },
+      {
+        label: "No",
+        next: "class_match_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "PRO does not have CAPL keyword."
+      }
+    ]
+  },
 
-check_capl_keyword: {
-  text: "Check if Pro has CAPL keyword.",
-  choices: [
-    { label: "Yes", next: "final_inspection_review" },
-    { label: "No", next: "class_match_check" }
-  ]
-},
+  final_move_to_inspection_review: {
+    text: "Move to Inspection Review.",
+    choices: []
+  },
 
-final_inspection_review: {
-  text: "Move case to Inspection Review.",
-  choices: []
-},
+  class_match_check: {
+    text: "Access the LTL Rate Quote ID in ACCOPS. Is the CLASS match on the FBC/FBI?",
+    choices: [
+      {
+        label: "Yes",
+        next: "weight_match_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "CLASS matches on the FBC/FBI."
+      },
+      {
+        label: "No",
+        next: "pro_inspected_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "CLASS does not match on the FBC/FBI."
+      }
+    ]
+  },
 
-class_match_check: {
-  text: "Does class match between ACCOPS and Pro?",
-  choices: [
-    { label: "Yes", next: "weight_match_check" },
-    { label: "No", next: "pro_inspected_check" }
-  ]
-},
+  pro_inspected_check: {
+    text: "Is the Pro inspected?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_reclass_result",
+        icon: "fa-solid fa-circle-check",
+        desc: "PRO was inspected."
+      },
+      {
+        label: "No",
+        next: "update_class_per_bol",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "PRO was not inspected."
+      }
+    ]
+  },
 
-pro_inspected_check: {
-  text: "Was the shipment inspected?",
-  choices: [
-    { label: "Yes", next: "final_reclass" },
-    { label: "No", next: "update_class_per_bol" }
-  ]
-},
+  final_reclass_result: {
+    text: "Advise customer that quote cannot be applied due to reclassification since the shipment was inspected. If disputing re-class, clone the case and move parent case to Inspection Review.",
+    choices: []
+  },
 
-final_reclass: {
-  text: "Quote cannot be applied due to reclassification.",
-  note: "If customer disputes, clone case and move to Inspection Review.",
-  choices: []
-},
+  update_class_per_bol: {
+    text: "Update class per BOL. Does rate match in ACCOPS after update?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_invoice_updated_result",
+        icon: "fa-solid fa-circle-check",
+        desc: "Rate matches in ACCOPS after update."
+      },
+      {
+        label: "No",
+        next: "weight_match_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Rate does not match in ACCOPS after update."
+      }
+    ]
+  },
 
-update_class_per_bol: {
-  text: "Update class per BOL. Does rate match after update?",
-  choices: [
-    { label: "Yes", next: "final_invoice_updated" },
-    { label: "No", next: "weight_match_check" }
-  ]
-},
+  weight_match_check: {
+    text: "Does the weight in ACCOPS match the Pro?",
+    choices: [
+      {
+        label: "Yes",
+        next: "zip_match_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Weight in ACCOPS matches the PRO."
+      },
+      {
+        label: "No",
+        next: "reweigh_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Weight in ACCOPS does not match the PRO."
+      }
+    ]
+  },
 
-weight_match_check: {
-  text: "Does weight match between ACCOPS and Pro?",
-  choices: [
-    { label: "Yes", next: "zip_match_check" },
-    { label: "No", next: "reweigh_check" }
-  ]
-},
+  reweigh_check: {
+    text: "Was the Pro reweighed?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_reweigh_result",
+        icon: "fa-solid fa-circle-check",
+        desc: "PRO was reweighed."
+      },
+      {
+        label: "No",
+        next: "update_weight_per_bol",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "PRO was not reweighed."
+      }
+    ]
+  },
 
-reweigh_check: {
-  text: "Was the shipment reweighed?",
-  choices: [
-    { label: "Yes", next: "final_reweigh" },
-    { label: "No", next: "update_weight_per_bol" }
-  ]
-},
+  final_reweigh_result: {
+    text: "Advise customer that quote cannot be applied due to new reweighed weight. If disputing, clone case and move parent case to Reweigh Review.",
+    choices: []
+  },
 
-final_reweigh: {
-  text: "Quote cannot be applied due to reweigh.",
-  note: "If disputed, clone case and move to Reweigh Review.",
-  choices: []
-},
+  update_weight_per_bol: {
+    text: "Update weight per BOL. Does rate match in ACCOPS after update?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_invoice_updated_result",
+        icon: "fa-solid fa-circle-check",
+        desc: "Rate matches in ACCOPS after update."
+      },
+      {
+        label: "No",
+        next: "zip_match_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Rate does not match in ACCOPS after update."
+      }
+    ]
+  },
 
-update_weight_per_bol: {
-  text: "Update weight per BOL. Does rate match after update?",
-  choices: [
-    { label: "Yes", next: "final_invoice_updated" },
-    { label: "No", next: "zip_match_check" }
-  ]
-},
+  zip_match_check: {
+    text: "Do shipper and consignee zip codes match ACCOPS?",
+    choices: [
+      {
+        label: "Yes",
+        next: "debtor_match_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Shipper and consignee zip codes match ACCOPS."
+      },
+      {
+        label: "No",
+        next: "final_zip_mismatch_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Shipper and consignee zip codes do not match ACCOPS."
+      }
+    ]
+  },
 
-zip_match_check: {
-  text: "Do zip codes match the quote?",
-  choices: [
-    { label: "Yes", next: "debtor_match_check" },
-    { label: "No", next: "final_zip_mismatch" }
-  ]
-},
+  final_zip_mismatch_result: {
+    text: "Advise customer that quote cannot be applied due to different pickup/delivery zip code than quoted.",
+    choices: []
+  },
 
-final_zip_mismatch: {
-  text: "Quote cannot be applied due to zip mismatch.",
-  choices: []
-},
+  debtor_match_check: {
+    text: "Does the debtor on ACCOPS match the Pro?",
+    choices: [
+      {
+        label: "Yes",
+        next: "accessorial_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Debtor on ACCOPS matches the PRO."
+      },
+      {
+        label: "No",
+        next: "billing_correct_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Debtor on ACCOPS does not match the PRO."
+      }
+    ]
+  },
 
-debtor_match_check: {
-  text: "Does debtor match?",
-  choices: [
-    { label: "Yes", next: "accessorial_check" },
-    { label: "No", next: "billing_correct_check" }
-  ]
-},
+  billing_correct_check: {
+    text: "Is the Pro billed correctly per BOL?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_billing_updated_result",
+        icon: "fa-solid fa-circle-check",
+        desc: "PRO is billed correctly per BOL."
+      },
+      {
+        label: "No",
+        next: "final_update_bill_autorate",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "PRO is not billed correctly per BOL."
+      }
+    ]
+  },
 
-billing_correct_check: {
-  text: "Is billing correct per BOL?",
-  choices: [
-    { label: "Yes", next: "final_billing_updated" },
-    { label: "No", next: "update_bill_autorate" }
-  ]
-},
+  final_billing_updated_result: {
+    text: "Billing updated to correct party per BOL.",
+    choices: []
+  },
 
-final_billing_updated: {
-  text: "Billing updated to correct party.",
-  choices: []
-},
+  final_update_bill_autorate: {
+    text: "Update bill per BOL then autorate. If rate matches, advise customer. If not, move to Pricing.",
+    choices: []
+  },
 
-update_bill_autorate: {
-  text: "Update billing and autorate.",
-  note: "If rate matches, advise customer. If not, move to Pricing.",
-  choices: []
-},
+  accessorial_check: {
+    text: "Do linehaul and fuel match the quote ID?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_invoice_rated_correctly",
+        icon: "fa-solid fa-circle-check",
+        desc: "Linehaul and fuel match the quote ID."
+      },
+      {
+        label: "No",
+        next: "service_level_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Linehaul and fuel do not match the quote ID."
+      }
+    ]
+  },
 
-accessorial_check: {
-  text: "Do linehaul and fuel match the quote?",
-  choices: [
-    { label: "Yes", next: "final_invoice_correct" },
-    { label: "No", next: "service_level_check" }
-  ]
-},
+  final_invoice_rated_correctly: {
+    text: "Advise customer invoice is rated correctly per quote ID noted on BOL.",
+    choices: []
+  },
 
-final_invoice_correct: {
-  text: "Invoice is correctly rated per quote.",
-  choices: []
-},
+  service_level_check: {
+    text: "What is the current service level?",
+    choices: [
+      {
+        label: "Economy",
+        next: "final_move_to_pricing_result",
+        icon: "fa-solid fa-truck",
+        desc: "Current service level is Economy."
+      },
+      {
+        label: "Priority",
+        next: "attempt_update_economy",
+        icon: "fa-solid fa-truck-fast",
+        desc: "Current service level is Priority."
+      }
+    ]
+  },
 
-service_level_check: {
-  text: "What is the service level?",
-  choices: [
-    { label: "Economy", next: "final_move_pricing" },
-    { label: "Priority", next: "attempt_update_economy" }
-  ]
-},
+  attempt_update_economy: {
+    text: "Attempt update to Economy. Does rate match after update?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_service_updated_success",
+        icon: "fa-solid fa-circle-check",
+        desc: "Rate matches after update."
+      },
+      {
+        label: "No",
+        next: "final_move_to_pricing_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Rate does not match after update."
+      }
+    ]
+  },
 
-attempt_update_economy: {
-  text: "Attempt to update to Economy.",
-  choices: [
-    { label: "Matches", next: "final_service_updated" },
-    { label: "Not Match", next: "final_move_pricing" }
-  ]
-},
+  final_service_updated_success: {
+    text: "Proceed with updating service level to Economy and advise customer that quote ID has been applied.",
+    choices: []
+  },
 
-final_service_updated: {
-  text: "Service updated to Economy and quote applied.",
-  choices: []
-},
+  final_invoice_updated_result: {
+    text: "Invoice updated to apply correct rate per quote ID noted on BOL.",
+    choices: []
+  },
 
-final_invoice_updated: {
-  text: "Invoice updated with correct quote rate.",
-  choices: []
-},
+  final_move_to_pricing_result: {
+    text: "Move case to Pricing 10 Pros or less subqueue due to rate mismatch per quote noted on BOL.",
+    choices: []
+  },
 
-final_move_pricing: {
-  text: "Move case to Pricing (10 Pros or less).",
-  choices: []
-},
+  /* ================= VOLUME FLOW ================= */
 
-/* ================= VOLUME FLOW ================= */
+  volume_noted_check: {
+    text: "Is the Volume quote noted on BOL?",
+    choices: [
+      {
+        label: "Yes",
+        next: "volume_minimum_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Volume quote is noted on BOL."
+      },
+      {
+        label: "No",
+        next: "customer_requested_tls_check",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Volume quote is not noted on BOL."
+      }
+    ]
+  },
 
-volume_noted_check: {
-  text: "Is the Volume quote noted on BOL?",
-  choices: [
-    { label: "Yes", next: "volume_minimum_check" },
-    { label: "No", next: "customer_requested_tls_check" }
-  ]
-},
+  customer_requested_tls_check: {
+    text: "Did customer request Volume/TLS rate to apply?",
+    choices: [
+      {
+        label: "Yes",
+        next: "pull_volume_quote",
+        icon: "fa-solid fa-circle-check",
+        desc: "Customer requested Volume/TLS rate to apply."
+      },
+      {
+        label: "No",
+        next: "final_tls_apply_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Customer did not request Volume/TLS rate to apply."
+      }
+    ]
+  },
 
-customer_requested_tls_check: {
-  text: "Did customer request Volume/TLS rate?",
-  choices: [
-    { label: "Yes", next: "pull_volume_quote" },
-    { label: "No", next: "final_tls_apply" }
-  ]
-},
+  final_tls_apply_result: {
+    text: "Advise customer that TLS rate will apply as charge fee per FXF 100 Rules Tariff Item 759.",
+    choices: []
+  },
 
-final_tls_apply: {
-  text: "TLS rate applies per FXF Rules Tariff Item 759.",
-  choices: []
-},
+  volume_minimum_check: {
+    text: "Does shipment meet minimum 2,500 lbs or 7 linear feet?",
+    choices: [
+      {
+        label: "Yes",
+        next: "pull_volume_quote",
+        icon: "fa-solid fa-circle-check",
+        desc: "Shipment meets minimum 2,500 lbs or 7 linear feet."
+      },
+      {
+        label: "No",
+        next: "final_volume_below_minimum_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Shipment does not meet minimum requirement."
+      }
+    ]
+  },
 
-volume_minimum_check: {
-  text: "Does shipment meet minimum requirement?",
-  note: "2,500 lbs or 7 linear feet",
-  choices: [
-    { label: "Yes", next: "pull_volume_quote" },
-    { label: "No", next: "final_volume_below_min" }
-  ]
-},
+  final_volume_below_minimum_result: {
+    text: "Volume Quote should not apply if below 2,500 lbs or 7 linear ft. Advise customer.",
+    choices: []
+  },
 
-final_volume_below_min: {
-  text: "Volume quote cannot be applied.",
-  note: "Shipment below minimum requirement.",
-  choices: []
-},
+  pull_volume_quote: {
+    text: "Do origin and destination zip codes (or service center IDs) match the Volume quote?",
+    choices: [
+      {
+        label: "Yes",
+        next: "shipment_date_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Origin and destination zip codes or service center IDs match the Volume quote."
+      },
+      {
+        label: "No",
+        next: "final_volume_zip_mismatch_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Origin and destination zip codes or service center IDs do not match the Volume quote."
+      }
+    ]
+  },
 
-pull_volume_quote: {
-  text: "Do zip codes match the Volume quote?",
-  choices: [
-    { label: "Yes", next: "shipment_date_check" },
-    { label: "No", next: "final_volume_zip_mismatch" }
-  ]
-},
+  final_volume_zip_mismatch_result: {
+    text: "Advise customer that Volume quote cannot apply due to origin/destination zip mismatch.",
+    choices: []
+  },
 
-final_volume_zip_mismatch: {
-  text: "Volume quote cannot apply due to zip mismatch.",
-  choices: []
-},
+  shipment_date_check: {
+    text: "Is shipment date within quote effective date range?",
+    choices: [
+      {
+        label: "Yes",
+        next: "volume_weight_linear_check",
+        icon: "fa-solid fa-circle-check",
+        desc: "Shipment date is within quote effective date range."
+      },
+      {
+        label: "No",
+        next: "final_volume_date_outside_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Shipment date is outside quote effective date range."
+      }
+    ]
+  },
 
-shipment_date_check: {
-  text: "Is shipment date within effective range?",
-  choices: [
-    { label: "Yes", next: "volume_weight_linear_check" },
-    { label: "No", next: "final_volume_date_outside" }
-  ]
-},
+  final_volume_date_outside_result: {
+    text: "Advise customer shipment date falls outside effective quote date.",
+    choices: []
+  },
 
-final_volume_date_outside: {
-  text: "Shipment date is outside quote range.",
-  choices: []
-},
+  volume_weight_linear_check: {
+    text: "Is weight and linear feet within quoted range?",
+    choices: [
+      {
+        label: "Yes",
+        next: "final_apply_volume_quote",
+        icon: "fa-solid fa-circle-check",
+        desc: "Weight and linear feet are within quoted range."
+      },
+      {
+        label: "No",
+        next: "final_overflow_charges_result",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Weight and linear feet are outside quoted range."
+      }
+    ]
+  },
 
-volume_weight_linear_check: {
-  text: "Is weight/linear feet within range?",
-  choices: [
-    { label: "Yes", next: "final_apply_volume" },
-    { label: "No", next: "final_overflow" }
-  ]
-},
+  final_overflow_charges_result: {
+    text: "Quote applies plus overflow charges. Calculate overflow using overflow calculator.",
+    choices: []
+  },
 
-final_overflow: {
-  text: "Apply quote with overflow charges.",
-  choices: []
-},
-
-final_apply_volume: {
-  text: "Apply Volume quote.",
+final_apply_volume_quote: {
+  text: "Access Volume quote application and apply Volume quote.",
+  link: {
+    label: "Open Volume Quote Application",
+    url: "volume-application.html",
+    icon: "fa-solid fa-arrow-up-right-from-square"
+  },
   choices: []
 }
 
 };
-
   function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -2412,63 +2638,74 @@ final_apply_volume: {
     if (e.key === "Escape") closeImageModal();
   });
 
-  async function renderFinal(finalNode){
-    const finalText = finalNode.action || getNodeText(finalNode) || "";
-    const finalNote = finalNode.note || "";
-    const finalImage = finalNode.image || "";
+async function renderFinal(finalNode){
+  const finalText = finalNode.action || getNodeText(finalNode) || "";
+  const finalNote = finalNode.note || "";
+  const finalImage = finalNode.image || "";
+  const finalLink = finalNode.link || null;
 
-    const formattedFinalText = escapeHtml(finalText)
-      .replace(/\r\n/g, "\n")
-      .replace(/\n/g, "<br>");
+  const formattedFinalText = escapeHtml(finalText)
+    .replace(/\r\n/g, "\n")
+    .replace(/\n/g, "<br>");
 
-    currentFinalRecommendation = finalText;
-    currentKey = "__final__";
-    updateMeta(true);
-    updatePath();
-    updateRecommendation(finalText, true);
-    await loadTemplatesForRecommendation(finalText);
+  currentFinalRecommendation = finalText;
+  currentKey = "__final__";
+  updateMeta(true);
+  updatePath();
+  updateRecommendation(finalText, true);
+  await loadTemplatesForRecommendation(finalText);
 
-    els.stageCard.innerHTML = `
-      <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
-        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
-      </div>
-
-      <div class="final-card">
-        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
-        <div class="final-title">Use this handling outcome</div>
-        <div class="final-text">${formattedFinalText}</div>
-${finalNote ? `
-  <div class="final-note-simple">
-    <div class="final-note-label">
-      <i class="fa-solid fa-circle-info"></i>
-      <span>Note</span>
+  els.stageCard.innerHTML = `
+    <div class="stage-top">
+      <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+      <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
     </div>
-    <div class="final-note-text">
-      ${escapeHtml(finalNote).replace(/\n/g, "<br>")}
-    </div>
-  </div>
-` : ""}
 
-        ${finalImage ? `
-          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
-            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
-          </div>
-        ` : ""}
+    <div class="final-card">
+      <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+      <div class="final-title">Use this handling outcome</div>
+      <div class="final-text">${formattedFinalText}</div>
 
-        <div class="final-actions">
-          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
-          <button class="app-btn primary" id="inlineRestart">Start Over</button>
+      ${finalLink ? `
+        <div class="final-actions" style="margin-top:18px;">
+          <a class="app-btn primary" href="${escapeHtml(finalLink.url)}" target="_blank" rel="noopener">
+            <i class="${escapeHtml(finalLink.icon || "fa-solid fa-arrow-up-right-from-square")}"></i>
+            ${escapeHtml(finalLink.label || "Open Link")}
+          </a>
         </div>
+      ` : ""}
+
+      ${finalNote ? `
+        <div class="final-note-simple">
+          <div class="final-note-label">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Note</span>
+          </div>
+          <div class="final-note-text">
+            ${escapeHtml(finalNote).replace(/\n/g, "<br>")}
+          </div>
+        </div>
+      ` : ""}
+
+      ${finalImage ? `
+        <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
+          <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
+        </div>
+      ` : ""}
+
+      <div class="final-actions">
+        <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+        <button class="app-btn primary" id="inlineRestart">Start Over</button>
       </div>
-    `;
+    </div>
+  `;
 
-    const inlineBack = document.getElementById("inlineBack");
-    const inlineRestart = document.getElementById("inlineRestart");
+  const inlineBack = document.getElementById("inlineBack");
+  const inlineRestart = document.getElementById("inlineRestart");
 
-    if (inlineBack) inlineBack.onclick = goBack;
-    if (inlineRestart) inlineRestart.onclick = restart;
-  }
+  if (inlineBack) inlineBack.onclick = goBack;
+  if (inlineRestart) inlineRestart.onclick = restart;
+}
 
   async function renderNode(key){
     currentKey = key;
