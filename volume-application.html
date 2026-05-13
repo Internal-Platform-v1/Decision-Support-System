@@ -1,1028 +1,1406 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Volume Application — Step by Step Procedure</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Volume Application — Step by Step Procedure</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    window.SITE_BASE = "";
+  </script>
 
-<style>
-:root{
-  --bg:#f4f7fb;
-  --card:#ffffff;
-  --muted:#64748b;
-  --accent:#4d148c;
-  --accent-dark:#3a0f6b;
-  --orange:#ff6600;
-  font-family: Inter, ui-sans-serif, system-ui;
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-*{box-sizing:border-box;}
+  <style>
+    :root{
+      --bg:#07111f;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --accent:#6d28d9;
+      --accent-2:#4d148c;
+      --accent-3:#ff6600;
+      --success:#16a34a;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10);
+      --shadow-card:0 16px 40px rgba(15,23,42,.06);
+      --max:1720px;
+      font-family:"Inter",system-ui,sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+
 body{
   margin:0;
-  background:linear-gradient(180deg,var(--bg),#eef6ff);
-  display:flex;
-  flex-direction:column;
   min-height:100vh;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-}
-
-header img{height:40px;}
-
-.nav-tabs{display:flex; gap:30px;}
-.tab{
-  color:white;
-  text-decoration:none;
-  font-weight:600;
-  font-size:16px;
-  position:relative;
-  padding:6px 0;
-}
-.tab.active::after{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:-6px;
-  width:100%;
-  height:3px;
-  background:var(--orange);
-  border-radius:3px;
-}
-
-/* ---------- BANNER ---------- */
-.welcome-section{
-  background: linear-gradient(90deg,#4D148C 0%,#330d5e 50%,#FF6600 100%);
-  background-size:200% 200%;
-  animation: shimmer 15s ease infinite;
-  color:white;
-  padding:20px 40px;
-}
-
-@keyframes shimmer{
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
-
-.welcome-content h1{
-  margin:0;
-  font-size:2rem;
-  font-weight:800;
-}
-
-.welcome-content p{
-  margin-top:6px;
-  opacity:0.9;
-}
-
-/* ---------- MAIN CARD ---------- */
-.main{
-  flex:1;
-  padding:40px;
-  display:flex;
-  justify-content:center;
-}
-
-.step-card{
-  background:white;
-  width:100%;
-  max-width:900px;
-  padding:40px;
-  border-radius:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.08);
-  position:relative;
-  overflow:hidden;
-}
-
-.step-counter{
-  font-size:14px;
-  font-weight:600;
-  color:var(--muted);
-  margin-bottom:15px;
-}
-
-.step-title{
-  font-size:22px;
-  font-weight:700;
-  margin-bottom:20px;
-  color:var(--accent-dark);
-}
-
-.step-content{
-  font-size:16px;
-  line-height:1.6;
-  white-space:pre-line;
-  margin-bottom:30px;
-}
-
-/* Progress Bar */
-.progress-container{
-  height:6px;
-  background:#e5e7eb;
-  border-radius:10px;
-  overflow:hidden;
-  margin-bottom:30px;
-}
-
-.progress-bar{
-  height:100%;
-  background:linear-gradient(90deg,var(--accent),var(--orange));
-  width:0%;
-  transition:width 0.4s ease;
-}
-
-/* Navigation */
-.nav-buttons{
-  display:flex;
-  justify-content:space-between;
-}
-
-
-/* Fade animation */
-.fade{
-  animation:fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateX(10px);}
-  to{opacity:1; transform:translateX(0);}
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  text-align:center;
-  padding:16px;
-}
-
-/* =========================
-   PROFESSIONAL MODALS
-========================= */
-/* MODALS */
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  z-index:1000;
-}
-.modal-content {
-  background:white;
-  border-radius:10px;
-  padding:24px;
-  width:100%;
-  max-width:500px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-.modal-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:12px;
-}
-.modal-close {
-  font-size:22px;
-  cursor:pointer;
-  color:var(--muted);
-}
-.modal-close:hover {color:var(--accent);}
-
-/* STAR RATING */
-.rating-container{display:flex;justify-content:center;gap:10px;margin-top:12px;}
-.rating-star{cursor:pointer;font-size:28px;color:#ccc;transition:color .2s,transform .2s;}
-.rating-star:hover{transform:scale(1.3);}
-.rating-star.selected{color:var(--accent-dark);}
-
-/* COMMENTS */
-.comment-list-item{padding:12px 0;border-bottom:1px solid #eee;}
-.comment-list-item .stars{color:var(--accent-dark);font-size:18px;margin-bottom:6px;}
-.comment-list-item:last-child{border:none;}
-input,textarea{width:100%;padding:8px;margin-top:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;}
-textarea{resize:none;min-height:80px;}
-
-/* TIME CALENDAR */
-#timeCalendarPopup {
-  display:none;
-  position:absolute;
-  top:60px; right:20px;
-  background:white;
-  border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.25);
-  padding:16px;
-  width:310px;
-  z-index:900;
-}
-#timeCalendarPopup h3 {
-  margin:0;text-align:center;font-size:18px;color:var(--accent-dark);
-  margin-bottom:8px;
-}
-.calendar-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#f0f0f0;
-  padding:8px;
-  border-radius:6px;
-}
-.calendar-header span{cursor:pointer;color:var(--accent-dark);font-weight:600;}
-.calendar-title{font-weight:700;}
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:4px;
-  margin-top:8px;
-}
-.calendar-grid .day-name{text-align:center;font-size:12px;font-weight:700;color:var(--muted);}
-.calendar-grid .day{text-align:center;padding:8px 0;font-size:14px;border-radius:50%;}
-.calendar-grid .today{background:var(--accent);color:white;font-weight:700;}
-.calendar-grid .day:hover{background:#f0f0f0;}
-
-/* COMMENT LINK */
-.link-text{
-  color:var(--accent-dark);
-  cursor:pointer;
-  text-decoration:underline;
-  font-size:14px;
-  margin-top:10px;
-  display:block;
-}
-
-/* STAR RATING COLORS */
-.rating-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.rating-star {
-  cursor: pointer;
-  font-size: 28px;
-  color: #ccc; /* default grey */
-  transition: color .2s, transform .2s;
-}
-
-.rating-star:hover {
-  transform: scale(1.3);
-}
-
-.rating-star.selected {
-  color: #FF6600; /* FedEx orange */
-}
-
-/* footer alignment */
-.comment-modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-}
-
-.link-text {
-  color: var(--accent-dark);
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 14px;
-}
-
-/* COMMENT LIST STAR COLORS */
-#commentsList .stars {
-  color: #FF6600; /* FedEx orange */
-  font-size: 18px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-/* ---------- HEADER ---------- */
-header{
-  background:var(--accent);
-  color:white;
-  padding:16px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-  z-index:1;
-}
-header img{height:40px; animation:logoFlyIn 1s ease-out forwards; opacity:0;}
-.nav-tabs{display:flex; gap:30px;}
-.tab{color:white; text-decoration:none; font-weight:600; font-size:16px; position:relative; padding:6px 0; transition: opacity 0.2s;}
-.tab:hover{opacity:0.8;}
-.tab.active::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:3px;background:#ff6600;border-radius:3px;}
-
-.header-icons{display:flex;align-items:center;gap:20px;}
-#clockBtn{cursor:pointer; display:flex; align-items:center; gap:6px; font-size:18px; font-weight:600; color:white; position:relative;}
-#clockBtn:hover{transform:scale(1.1);}
-.header-icon{font-size:24px;color:white;cursor:pointer;transition:color .2s,transform .2s;}
-.header-icon:hover{transform:scale(1.3);}
-.header-icon.active{color:var(--accent-dark);}
-
-/* ---------- HEADER ANIMATIONS ---------- */
-@keyframes logoFlyIn {0%{opacity:0;transform:translateX(-50px) scale(0.8);}100%{opacity:1;transform:translateX(0) scale(1);}}
-header::after{
-  content:"";
-  position:absolute; top:0; left:-100%;
-  width:100%; height:100%;
-  background: linear-gradient(120deg, #4d148c, #ff6600, #4d148c);
-  transform:skewX(-20deg);
-  animation:sweep 1s ease-out forwards;
-  z-index:0;
-  opacity:0.2;
-}
-@keyframes sweep{0%{left:-100%;}100%{left:100%;}}
-
-
-/* ---------- FED-EX ORANGE & PURPLE BANNER ---------- */
-.welcome-section {
-  background: linear-gradient(90deg, #4D148C 0%, #330d5e 50%, #FF6600 100%);
-  background-size: 200% 200%;
-  animation: fedexShimmer 15s ease infinite; /* slow shimmer */
-  color: white;
-  border-bottom:1px solid var(--border);
-  padding:26px 10px;  /* compact height */
-  text-align: left;     /* left-aligned text */
-  margin-bottom: 20px;
-  box-shadow: 0 5px 15px rgba(77, 20, 140, 0.15); /* subtle shadow */
-  border-radius: 0;     /* straight edges */
-}
-
-/* Shimmer animation */
-@keyframes fedexShimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.welcome-content h1 {
-  font-size: 2rem;  /* compact heading */
-  margin-bottom: 6px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.welcome-content p {
-  font-size: 1rem;  /* smaller subtitle */
-  max-width: 600px;
-  margin: 0;
-  opacity: 0.9;
-  line-height: 1.5;
-}
-/* ---------- MAIN ---------- */
-.message-box{
-  background:white;
-  padding:40px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-
-  max-width:900px;
-  width:100%;
-  margin:auto;
-}
-
-.btn{
-  background:var(--accent);
-  color:white;
-  border:none;
-  padding:10px 18px;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-.btn:hover{background:var(--accent-dark);}
-
-/* ---------- VOLUME STEP BACKGROUND ---------- */
-.volume-content-wrapper{
-  background:#f1f5f9; /* same soft grey used in directory table */
-  border-radius:12px;
-  padding:30px;
-  margin-top:30px;
-  margin-bottom:30px;
-}
-
-/*pop up time style*/
-/* POPUP TIME STYLE (Windows-like) */
-.popup-time{
-  font-size:34px;
-  font-weight:600;
-  text-align:left;
-  margin-bottom:4px;
-  color:#111;
-}
-
-#timeCalendarPopup {
-  background:white;}
-
-.popup-date{
-  font-size:14px;
-  color:#555;
-  margin-bottom:14px;
-  text-align:left;
-}
-/* =================================
-   PROFESSIONAL STEP IMAGE DISPLAY
-================================= */
-
-.step-images{
-  grid-template-columns:1fr;
-  gap:22px;
-  margin:30px 0;
-  width:100%;
-}
-
-
-/* IMAGE STYLE */
-.step-images img{
-  max-width:100%;
-  height:auto;
-  max-height:420px;
-  border-radius:12px;
-  box-shadow:0 15px 35px rgba(0,0,0,0.15);
-  border:1px solid #e5e7eb;
-
-  transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease,
-    opacity 0.4s ease;
-  animation: imageFadeIn 0.5s ease;
-}
-
-/* Hover zoom animation */
-.step-images img:hover{
-  transform:scale(1.03);
-  box-shadow:0 20px 50px rgba(0,0,0,0.25);
-}
-
-/* Image appear animation */
-@keyframes imageFadeIn{
-  from{
-    opacity:0;
-    transform:translateY(15px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-/* =========================
-   IMAGE FULLSCREEN PREVIEW
-========================= */
-
-.image-preview-modal{
-  display:none;
-  position:fixed;
-  z-index:2000;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.9);
-  justify-content:center;
-  align-items:center;
-  animation:fadeIn 0.3s ease;
-}
-
-.image-preview-modal img{
-  max-width:90%;
-  max-height:90%;
-  border-radius:10px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-.image-preview-close{
-  position:absolute;
-  top:20px;
-  right:40px;
-  font-size:40px;
-  color:white;
-  cursor:pointer;
-  font-weight:bold;
-}
-/* STEP NAVIGATION */
-.step-nav{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  justify-content:center;
-  margin-bottom:20px;
-}
-
-.step-dot{
-  width:32px;
-  height:32px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:8px;
-  background:#e5e7eb;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:600;
-  transition:all 0.2s ease;
-}
-
-.step-dot:hover{
-  background:#4d148c;
-  color:white;
-}
-
-.step-dot.active{
-  background:#ff6600;
-  color:white;
-}
-
-/* NAVIGATION BUTTONS */
-.nav-buttons{
-  display:flex;
-  justify-content:space-between;
-  margin-top:30px;
-}
-
-.nav-buttons button{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:12px 22px;
-  border:none;
-  border-radius:10px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all 0.25s ease;
-}
-
-/* PREVIOUS BUTTON */
-#prevBtn{
-  background:#e5e7eb;
-  color:#374151;
-}
-
-#prevBtn:hover{
-  background:#d1d5db;
-}
-
-/* NEXT BUTTON */
-#nextBtn{
-  background:#4d148c;
-  color:white;
-}
-
-#nextBtn:hover{
-  background:#3a0f6b;
-  transform:translateY(-1px);
-  box-shadow:0 6px 14px rgba(0,0,0,0.15);
-}
-
-/* FINISH BUTTON */
-#nextBtn.finish{
-  background:#10b981;
-}
-
-#nextBtn.finish:hover{
-  background:#059669;
-}
-
-/* DISABLED STATE */
-.nav-buttons button:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  box-shadow:none;
-  transform:none;
-}
-
-
-/* =========================
-   PRESENTATION STYLE
-========================= */
-
-.slide-wrapper{
-  max-width:850px;
-  margin:auto;
-}
-
-/* TOP AREA */
-
-.slide-top{
-  margin-bottom:25px;
-}
-
-/* TITLE */
-
-.step-title{
-  font-size:30px;
-  font-weight:800;
-  color:#4d148c;
-  margin-bottom:18px;
-}
-
-/* BODY */
-
-.slide-body{
-  padding:10px 0;
-}
-
-/* TEXT */
-
-.step-content{
-  font-size:17px;
-  line-height:1.7;
-  margin-bottom:30px;
-}
-
-/* IMAGE STACK */
-
-.step-images{
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
-
-/* =========================
-   SLIDE TRANSITION SYSTEM
-========================= */
-
-.slide-body{
-  position:relative;
-  overflow:hidden;
-  min-height:260px;
-}
-
-/* default state */
-
-.slide-body.animate-left{
-  animation:slideLeft .45s ease;
-}
-
-.slide-body.animate-right{
-  animation:slideRight .45s ease;
-}
-
-/* NEXT slide */
-
-@keyframes slideLeft{
-
-  from{
-    opacity:0;
-    transform:translateX(60px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-
-}
-
-/* PREVIOUS slide */
-
-@keyframes slideRight{
-
-  from{
-    opacity:0;
-    transform:translateX(-60px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateX(0);
-  }
-
-}
-
-/* NAVIGATION */
-
-.slide-navigation{
-  display:flex;
-  justify-content:space-between;
-  margin-top:40px;
-}
-
-.slide-navigation button{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 26px;
-  border-radius:10px;
-  border:none;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .25s ease;
-}
-
-/* PREVIOUS */
-
-#prevBtn{
-  background:#e5e7eb;
-  color:#374151;
-}
-
-#prevBtn:hover{
-  background:#d1d5db;
-}
-
-/* NEXT */
-
-#nextBtn{
-  background:#4d148c;
-  color:white;
-}
-
-#nextBtn:hover{
-  background:#3a0f6b;
-  transform:translateY(-2px);
-  box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* FINISH BUTTON */
-
-#nextBtn.finish{
-  background:#10b981;
-}
-
-#nextBtn.finish:hover{
-  background:#059669;
-}
-
-/* =========================
-   STEP PROGRESS DOTS
-========================= */
-
-.step-dots{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-  margin-top:14px;
-}
-
-.step-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:#d1d5db;
-  transition:all .25s ease;
-}
-
-.step-dot.active{
-  background:#ff6600;
-  transform:scale(1.3);
-}
-
-/* =========================
-   PRESENTATION MODE
-========================= */
-
-.presentation-mode .header-icons,
-.presentation-mode nav,
-.presentation-mode footer{
-  display:none;
-}
-
-.presentation-mode .main{
-  padding:10px;
-}
-
-.presentation-mode .message-box{
-  max-width:1100px;
-  box-shadow:none;
-}
-
-.presentation-mode .step-title{
-  font-size:36px;
-}
-
-.presentation-mode .step-content{
-  font-size:20px;
-}
-
-footer{
-  background:var(--accent);
-  color:white;
-  padding:4px 28px;   /* reduce height */
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  font-size:15px;
-}
-</style>
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+    radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+    linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+  overflow-x:hidden;
+}
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size:36px 36px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 60%);
+      z-index:0;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button,input,textarea{font:inherit}
+
+    .page{position:relative;z-index:1}
+
+    .app-shell{
+      width:min(calc(100% - 32px), var(--max));
+      margin:22px auto 24px;
+    }
+
+    .app-frame{
+      min-height:calc(100vh - 180px);
+      background:rgba(255,255,255,.58);
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.68);
+      border-radius:34px;
+      box-shadow:var(--shadow-xl);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:minmax(0,1.45fr) 380px 420px;
+    }
+
+    .main{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-width:0;
+    }
+
+    .main-topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      padding:16px 18px;
+      border-radius:24px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(219,228,240,.9);
+      box-shadow:var(--shadow-md);
+    }
+
+    .page-title-block{display:flex;flex-direction:column;gap:6px}
+
+    .page-title-block h1{
+      margin:0;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#0f172a;
+    }
+
+    .page-subtitle{
+      margin:0;
+      font-size:13px;
+      color:#64748b;
+      line-height:1.6;
+      max-width:780px;
+    }
+
+    .main-status{display:flex;gap:10px;flex-wrap:wrap}
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 14px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid #dbe4f0;
+      font-size:12px;
+      font-weight:800;
+      color:#0f172a;
+      white-space:nowrap;
+    }
+
+    .pill.primary{
+      background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;
+      border:none;
+    }
+
+    .workspace{
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:16px;
+      min-height:0;
+    }
+
+    .progress-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:16px 18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .progress-title{
+      font-size:14px;
+      font-weight:800;
+      color:#0f172a;
+    }
+
+    .progress-status{
+      font-size:12px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .progress-bar-shell{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
+      transition:width .35s ease;
+    }
+
+    .stage-card{
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border:1px solid #dbe4f0;
+      border-radius:30px;
+      box-shadow:var(--shadow-card);
+      min-height:640px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+
+    .stage-top{
+      padding:22px 22px 0;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .badge.alt{
+      background:#f8fafc;
+      color:#334155;
+    }
+
+    .content-wrap{
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      flex:1;
+    }
+
+    .hero-card-main{
+      position:relative;
+      padding:30px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
+        linear-gradient(180deg,#ffffff,#f8fbff);
+      border:1px solid #e6edf7;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .hero-card-main::after{
+      content:"";
+      position:absolute;
+      right:-60px;
+      top:-60px;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:rgba(77,20,140,.07);
+      pointer-events:none;
+    }
+
+    .question-label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#334155;
+      position:relative;
+      z-index:1;
+    }
+
+    .question-text{
+      margin:18px 0 0;
+      font-size:36px;
+      line-height:1.08;
+      letter-spacing:-.045em;
+      font-weight:900;
+      position:relative;
+      z-index:1;
+    }
+
+    .question-help{
+      margin:14px 0 0;
+      color:#64748b;
+      font-size:14px;
+      line-height:1.75;
+      max-width:840px;
+      position:relative;
+      z-index:1;
+    }
+
+    .hero-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:22px;
+      position:relative;
+      z-index:1;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 18px;
+      border:none;
+      border-radius:16px;
+      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+      transition:.22s ease;
+      cursor:pointer;
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 30px rgba(77,20,140,.24);
+    }
+
+    .btn.orange{
+      background:linear-gradient(135deg,#ff6600,#f59e0b);
+      box-shadow:0 14px 24px rgba(255,102,0,.18);
+    }
+
+    .section-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:24px;
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .section-head{
+      padding:18px 20px;
+      border-bottom:1px solid #eef2f7;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background:linear-gradient(180deg,#fff,#fbfdff);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-size:16px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      color:#0f172a;
+    }
+
+    .section-title i{
+      width:38px;
+      height:38px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+    }
+
+    .slide-shell{padding:18px}
+
+    .slide-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+
+    .step-counter{
+      font-size:12px;
+      font-weight:900;
+      color:#475569;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+    }
+
+    .mini-progress-bar{
+      height:12px;
+      background:#eaf0f7;
+      border-radius:999px;
+      overflow:hidden;
+      flex:1;
+      min-width:230px;
+    }
+
+    .mini-progress-fill{
+      height:100%;
+      width:0%;
+      border-radius:inherit;
+      background:linear-gradient(90deg,#4d148c 0%, #6d28d9 48%, #ff6600 100%);
+      transition:width .35s ease;
+    }
+
+    .slide-body{
+      position:relative;
+      min-height:520px;
+      padding:26px;
+      border-radius:26px;
+      border:1px solid #e5edf7;
+      background:
+        radial-gradient(circle at top right, rgba(109,40,217,.08), transparent 30%),
+        linear-gradient(180deg,#fff,#fbfdff);
+      box-shadow:0 12px 30px rgba(15,23,42,.04);
+      overflow:hidden;
+    }
+
+    .slide-body::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:5px;
+      background:linear-gradient(180deg,#4d148c,#ff6600);
+    }
+
+    .step-title{
+      margin:0;
+      font-size:clamp(28px,3vw,44px);
+      line-height:1.05;
+      letter-spacing:-.06em;
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .step-content{
+      margin-top:18px;
+      font-size:15px;
+      line-height:1.85;
+      color:#475569;
+      white-space:pre-line;
+      max-width:960px;
+    }
+
+    .step-images{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      margin-top:24px;
+    }
+
+    .step-images img{
+      width:100%;
+      max-height:460px;
+      object-fit:contain;
+      border-radius:20px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      box-shadow:0 18px 45px rgba(15,23,42,.14);
+      cursor:zoom-in;
+      transition:.25s ease;
+    }
+
+    .step-images img:hover{
+      transform:scale(1.015);
+      box-shadow:0 24px 60px rgba(15,23,42,.22);
+    }
+
+    .slide-body.animate-left{animation:slideLeft .38s ease}
+    .slide-body.animate-right{animation:slideRight .38s ease}
+
+    @keyframes slideLeft{
+      from{opacity:0;transform:translateX(40px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+
+    @keyframes slideRight{
+      from{opacity:0;transform:translateX(-40px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+
+    .slide-navigation{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .nav-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 20px;
+      border:none;
+      border-radius:16px;
+      font-size:14px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .nav-btn:hover{transform:translateY(-2px)}
+
+    .nav-btn.prev{
+      background:#f8fafc;
+      color:#334155;
+      border:1px solid #dbe4f0;
+    }
+
+    .nav-btn.next{
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
+      color:#fff;
+      box-shadow:0 14px 24px rgba(77,20,140,.18);
+    }
+
+    .nav-btn.finish{
+      background:linear-gradient(135deg,#16a34a,#22c55e);
+    }
+
+    .nav-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+
+    .step-dots{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
+      margin-top:16px;
+    }
+
+    .step-dot{
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:#d1d5db;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .step-dot:hover{
+      transform:scale(1.3);
+      background:#6d28d9;
+    }
+
+    .step-dot.active{
+      width:30px;
+      background:#ff6600;
+    }
+
+    .side-panel,
+    .template-panel{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-width:0;
+    }
+
+    .side-panel{padding:18px 14px 18px 0}
+    .template-panel{padding:18px 18px 18px 0}
+
+    .summary-card{
+      background:#fff;
+      border:1px solid #dbe4f0;
+      border-radius:22px;
+      padding:18px;
+      box-shadow:var(--shadow-md);
+    }
+
+    .summary-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+      font-size:14px;
+      font-weight:900;
+    }
+
+    .summary-head i{color:#7c3aed}
+
+    .section-note{
+      font-size:12px;
+      color:#64748b;
+      line-height:1.6;
+      margin-top:-2px;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .metric{
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+    }
+
+    .metric-k{
+      display:block;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#64748b;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .metric-v{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.03em;
+      word-break:break-word;
+    }
+
+    .path-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:620px;
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .path-jump{
+      width:100%;
+      text-align:left;
+      padding:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      cursor:pointer;
+      transition:.18s ease;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:#0f172a;
+    }
+
+    .path-jump:hover{
+      transform:translateY(-1px);
+      background:#eef4ff;
+      border-color:#cfe0ff;
+      box-shadow:0 10px 22px rgba(37,99,235,.08);
+    }
+
+    .path-jump.active{
+      border:2px solid #2563eb;
+      box-shadow:0 0 0 4px rgba(37,99,235,.10);
+    }
+
+    .path-jump span{
+      width:26px;
+      height:26px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:#eef4ff;
+      color:#1d4ed8;
+      font-size:11px;
+      font-weight:900;
+      flex:0 0 auto;
+    }
+
+    .path-jump strong{
+      display:block;
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .path-jump small{
+      display:block;
+      margin-top:4px;
+      color:#64748b;
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .reminder-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .reminder{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:13px;
+      border-radius:17px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      color:#475569;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .reminder i{
+      color:#ff6600;
+      margin-top:3px;
+    }
+
+    .copy-card{
+      margin-top:12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+    }
+
+    .copy-text{
+      font-size:13px;
+      line-height:1.6;
+      font-weight:800;
+      color:#0f172a;
+      word-break:break-word;
+    }
+
+    .copy-btn{
+      border:0;
+      cursor:pointer;
+      border-radius:12px;
+      padding:9px 12px;
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      transition:.18s ease;
+      white-space:nowrap;
+    }
+
+    .copy-btn:hover{transform:translateY(-1px)}
+    .copy-btn.copied{background:#dcfce7;color:#166534}
+
+    .template-stack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .template-card{
+      border:1px solid #e5ebf4;
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      overflow:hidden;
+    }
+
+    .template-card-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:14px 14px 10px;
+    }
+
+    .template-title-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:0;
+    }
+
+    .template-icon{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:#f3e8ff;
+      color:#7c3aed;
+      flex:0 0 auto;
+    }
+
+    .template-title{
+      font-size:14px;
+      font-weight:900;
+      color:#0f172a;
+    }
+
+    .template-sub{
+      font-size:12px;
+      color:#64748b;
+      margin-top:2px;
+    }
+
+    .template-body{
+      padding:0 14px 14px;
+    }
+
+    .template-box{
+      min-height:100px;
+      padding:14px;
+      border-radius:14px;
+      background:#f8fbff;
+      border:1px solid #e4ebf5;
+      font-size:13px;
+      line-height:1.7;
+      color:#334155;
+      white-space:pre-wrap;
+    }
+
+    .template-foot{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:0 14px 14px;
+    }
+
+    .template-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      font-size:11px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .template-copy{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius:12px;
+      background:#111827;
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      transition:all .18s ease;
+    }
+
+    .template-copy.copied{
+      background:#dcfce7 !important;
+      color:#166534 !important;
+      border-color:#bbf7d0 !important;
+    }
+
+    .image-preview-modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:99999;
+      background:rgba(2,6,23,.88);
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      backdrop-filter:blur(8px);
+    }
+
+    .image-preview-modal img{
+      max-width:94vw;
+      max-height:90vh;
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 30px 80px rgba(0,0,0,.45);
+    }
+
+    .image-preview-close{
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      font-size:30px;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .image-preview-close:hover{background:rgba(255,255,255,.2)}
+
+    #commentModal,
+    #allCommentsModal,
+    #helpModal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.52);
+      justify-content:center;
+      align-items:center;
+      padding:0 24px;
+      z-index:2147483647;
+      backdrop-filter:blur(8px);
+      overflow-y:auto;
+    }
+
+    #commentModal .modal-content,
+    #allCommentsModal .modal-content,
+    #helpModal .modal-content{
+      width:100%;
+      background:#fff;
+      border-radius:28px;
+      padding:26px;
+      box-shadow:0 24px 80px rgba(2,6,23,.18);
+      max-height:min(84vh, 900px);
+      overflow:auto;
+      border:1px solid rgba(148,163,184,.16);
+      margin:110px auto 32px;
+    }
+
+    #commentModal .feedback-modal{max-width:640px;border-radius:28px;padding:20px 20px 22px}
+    #allCommentsModal .modal-content{max-width:760px}
+    #helpModal .help-modal{max-width:760px;border-radius:30px;padding:18px}
+
+    #commentModal .modal-header,
+    #allCommentsModal .modal-header,
+    #helpModal .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      font-size:22px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      margin-bottom:14px;
+      color:#0f172a;
+    }
+
+    #commentModal .modal-close,
+    #allCommentsModal .modal-close,
+    #helpModal .modal-close{
+      cursor:pointer;
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#64748b;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+      transition:.2s ease;
+      flex-shrink:0;
+      font-size:22px;
+      line-height:1;
+    }
+
+    #commentModal .modal-close:hover,
+    #allCommentsModal .modal-close:hover,
+    #helpModal .modal-close:hover{
+      color:#0f172a;
+      background:#eef2ff;
+    }
+
+    #commentModal .rating-container{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      margin:16px 0 18px;
+    }
+
+    #commentModal .rating-star{
+      cursor:pointer;
+      font-size:26px;
+      color:#d1d5db;
+      transition:transform .18s ease, color .18s ease;
+    }
+
+    #commentModal .rating-star:hover{transform:translateY(-1px) scale(1.06)}
+    #commentModal .rating-star.selected{color:#ff6600}
+
+    #commentModal input,
+    #commentModal textarea{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:16px;
+      background:#f8fafc;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+      padding:14px 16px;
+      color:#0f172a;
+      font-size:14px;
+      transition:.18s ease;
+      font-family:inherit;
+    }
+
+    #commentModal input{margin-top:4px;margin-bottom:10px}
+    #commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
+
+    #commentModal input:focus,
+    #commentModal textarea:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+    }
+
+    #commentModal .feedback-submit-btn{margin:16px 0 8px;min-height:54px;border-radius:18px}
+    #commentModal .link-text{color:#4d148c;cursor:pointer;text-decoration:none;font-size:14px;font-weight:700}
+    #commentModal .link-text:hover{text-decoration:underline}
+
+    #allCommentsModal .comment-list-item{padding:14px 0;border-bottom:1px solid rgba(148,163,184,.18)}
+    #allCommentsModal .comment-list-item:last-child{border-bottom:none}
+    #allCommentsModal .stars{color:#ff6600;font-size:18px;margin-bottom:6px;display:block}
+
+    @media (max-width:1450px){
+      .app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}
+    }
+
+    @media (max-width:1220px){
+      .app-frame{grid-template-columns:1fr}
+      .side-panel,
+      .template-panel{padding:0 18px 18px}
+    }
+
+    @media (max-width:760px){
+      .app-shell{width:min(calc(100% - 20px), var(--max));margin:16px auto}
+      .app-frame{min-height:100vh;border-radius:24px}
+      .main{padding:18px}
+      .main-topbar{flex-direction:column;align-items:flex-start}
+      .question-text{font-size:28px}
+      .summary-grid{grid-template-columns:1fr}
+      .section-head{flex-direction:column;align-items:flex-start}
+      .slide-body{padding:22px;min-height:460px}
+      .copy-card{flex-direction:column}
+      .copy-btn{width:100%}
+      #commentModal,
+      #allCommentsModal,
+      #helpModal{padding:0 14px}
+      #commentModal .modal-content,
+      #allCommentsModal .modal-content,
+      #helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
+    }
+  </style>
 </head>
-<body>
 
-<header>
-  <div style="display:flex;align-items:center;gap:40px;">
-    <a href="index.html">
-      <img src="fedex.png" alt="FedEx Logo">
-    </a>
-    <nav class="nav-tabs">
-      <a href="index.html" class="tab">Home</a>
-      <a href="case-directory.html" class="tab">Case Directory</a>
-      <a href="ebs-response-template.html" class="tab">EBS Response</a>
-      <a href="volume-application.html" class="tab active">Volume Application</a>  
-    </nav>
-  </div>
-  
-    <div class="header-icons">
-    <div id="clockBtn">
-      <i class="fa-regular fa-clock"></i>
-      <span id="clockText">--:-- PM</span>
-    </div>
-    <i class="header-icon fa-solid fa-comment-dots" id="commentIcon" title="Feedback"></i>
-    <i class="header-icon fa-solid fa-circle-question" id="helpIcon" title="Get Help"></i>
-  </div>
-  
-</header>
+<body data-page="volume-application">
+  <div class="page">
+    <div id="site-header"></div>
+
+    <div class="app-shell">
+      <div class="app-frame">
+        <main class="main">
+          <div class="main-topbar">
+            <div class="page-title-block">
+              <h1>Volume Application — Step by Step Procedure</h1>
+              <p class="page-subtitle">
+                Use this guided walkthrough to correctly apply a Volume Quote, update rate keywords, validate surcharge handling, add agreement details, and finish the correction properly.
+              </p>
+            </div>
+
+            <div class="main-status">
+              <div class="pill primary">
+                <i class="fa-solid fa-truck-ramp-box"></i>
+                Ready
+              </div>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <section class="progress-card">
+              <div class="progress-head">
+                <div class="progress-title">Guide Progress</div>
+                <div class="progress-status" id="topProgressText">Step 1 of 13</div>
+              </div>
+              <div class="progress-bar-shell">
+                <div class="progress-fill" id="topProgressFill"></div>
+              </div>
+            </section>
+
+            <section class="stage-area">
+              <div class="stage-card">
+                <div class="stage-top">
+                  <span class="badge">
+                    <i class="fa-solid fa-truck-ramp-box"></i>
+                    Volume Quote Application
+                  </span>
+                  <span class="badge alt">
+                    <i class="fa-solid fa-keyboard"></i>
+                    Arrow Keys Supported
+                  </span>
+                </div>
+
+                <div class="content-wrap">
+                  <section class="hero-card-main">
+                    <div class="question-label">
+                      <i class="fa-solid fa-route"></i>
+                      Volume Quote Workflow
+                    </div>
+
+                    <h2 class="question-text">Apply the Volume Quote using the correct rate, keywords, surcharge handling, and correction code.</h2>
+
+                    <p class="question-help">
+                      Use the slideshow below to apply the flat quote amount, remove rate keywords, zero out applicable surcharges, add CONT and PRAU details, clean the description field, and complete the correction.
+                    </p>
+
+                    <div class="hero-actions">
+                      <button class="btn" type="button" onclick="goToStep(0)">
+                        <i class="fa-solid fa-play"></i>
+                        Start from Step 1
+                      </button>
+
+                      <button class="btn orange" type="button" onclick="goToStep(11)">
+                        <i class="fa-solid fa-code"></i>
+                        Jump to Correction Code
+                      </button>
+                    </div>
+                  </section>
+
+                  <section class="section-card">
+                    <div class="section-head">
+                      <div class="section-title">
+                        <i class="fa-solid fa-display"></i>
+                        Guided Volume Application Walkthrough
+                      </div>
+
+                      <span class="badge alt">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Interactive guide
+                      </span>
+                    </div>
+
+                    <div class="slide-shell">
+                      <div class="slide-top">
+                        <div class="step-counter" id="stepCounter"></div>
+
+                        <div class="mini-progress-bar">
+                          <div class="mini-progress-fill" id="progressBar"></div>
+                        </div>
+                      </div>
+
+                      <div class="slide-body" id="slideBody">
+                        <h2 class="step-title" id="stepTitle"></h2>
+                        <div class="step-content" id="stepContent"></div>
+                        <div class="step-images" id="stepImages"></div>
+                      </div>
+
+                      <div class="slide-navigation">
+                        <button class="nav-btn prev" id="prevBtn" type="button">
+                          <i class="fa-solid fa-arrow-left"></i>
+                          Previous
+                        </button>
+
+                        <button class="nav-btn next" id="nextBtn" type="button">
+                          Next
+                          <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                      </div>
+
+                      <div id="stepDots" class="step-dots"></div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <aside class="side-panel">
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-route"></i>
+              Quick Jump
+            </div>
+
+            <div class="path-list">
+              <button class="path-jump" type="button" data-jump="0" onclick="goToStep(0)">
+                <span>1</span>
+                <div>
+                  <strong>Adjust Freight Charges</strong>
+                  <small>Set FLAT and apply the volume amount.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="1" onclick="goToStep(1)">
+                <span>2</span>
+                <div>
+                  <strong>Remove Rate Keywords</strong>
+                  <small>Remove FSCL, DEWT, RAZ, LEDI, PRAU, BRAP.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="3" onclick="goToStep(3)">
+                <span>4</span>
+                <div>
+                  <strong>Zero Out Surcharges</strong>
+                  <small>Zero out applicable surcharge lines.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="5" onclick="goToStep(5)">
+                <span>6</span>
+                <div>
+                  <strong>Add CONT Keyword</strong>
+                  <small>Add CONT and quote information.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="8" onclick="goToStep(8)">
+                <span>9</span>
+                <div>
+                  <strong>Add PRAU Details</strong>
+                  <small>Add PRAU and agreement details.</small>
+                </div>
+              </button>
+
+              <button class="path-jump" type="button" data-jump="11" onclick="goToStep(11)">
+                <span>12</span>
+                <div>
+                  <strong>Correction Code</strong>
+                  <small>Use EADL, SYSM, or CMID.</small>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-chart-simple"></i>
+              Quick Snapshot
+            </div>
+
+            <div class="summary-grid">
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v">13</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Images</span>
+                <span class="metric-v">11</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Mode</span>
+                <span class="metric-v">Guide</span>
+              </div>
+
+              <div class="metric">
+                <span class="metric-k">Final</span>
+                <span class="metric-v">Accept</span>
+              </div>
+            </div>
+          </div>
+                    <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-lightbulb"></i>
+              Key Reminders
+            </div>
+
+            <div class="reminder-list">
+              <div class="reminder">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <span>Change the freight charge rate line to <strong>FLAT</strong> and apply the Volume Quote amount.</span>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-eraser"></i>
+                <span>Remove rate keywords such as FSCL, DEWT, RAZ, LEDI, PRAU, and BRAP.</span>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-ban"></i>
+                <span>Capacity load keywords do <strong>not</strong> need to be removed.</span>
+              </div>
+
+              <div class="reminder">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Click <strong>ACCEPT ALL</strong> after completing the correction.</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="template-panel">
 
 
-<div class="main">
-  <div class="message-box">
+          <div class="summary-card">
+            <div class="summary-head">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              Correction Codes
+            </div>
 
-    <div class="welcome-section">
-      <div class="welcome-content">
-        <h1>Volume Application — Step by Step Procedure</h1>
-        <p>Follow the guided steps to correctly apply a Volume Quote.</p>
+            <div class="section-note">
+              Use the correct correction code based on the reason for applying the Volume Quote.
+            </div>
+
+            <div class="template-stack">
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                      <div class="template-title">EADL</div>
+                      <div class="template-sub">Biller did not bill</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="eadlCode" class="template-box">EADL – Volume quote listed on BOL but biller did not bill.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
+                  <button class="template-copy" type="button" onclick="copyText('eadlCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-robot"></i></div>
+                    <div>
+                      <div class="template-title">SYSM</div>
+                      <div class="template-sub">Automation missed quote</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="sysmCode" class="template-box">SYSM – Volume quote noted but automation didn’t recognize it.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
+                  <button class="template-copy" type="button" onclick="copyText('sysmCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-user-xmark"></i></div>
+                    <div>
+                      <div class="template-title">CMID</div>
+                      <div class="template-sub">Quote not provided on BOL</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="template-body">
+                  <div id="cmidCode" class="template-box">CMID – Shipper/consignee/BT did not provide volume quote on BOL.</div>
+                </div>
+
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
+                  <button class="template-copy" type="button" onclick="copyText('cmidCode', this)">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
 
-   <div class="volume-content-wrapper">
-
-<div class="slide-wrapper">
-
-<div class="slide-top">
-
-<div class="step-counter" id="stepCounter"></div>
-
-<div class="progress-container">
-<div class="progress-bar" id="progressBar"></div>
-
-</div>
-
-
-</div>
-
-<div class="slide-body fade">
-
-<h2 class="step-title" id="stepTitle"></h2>
-
-<div class="step-content" id="stepContent"></div>
-
-<div class="step-images" id="stepImages"></div>
-
-</div>
-
-<div class="slide-navigation">
-
-<button id="prevBtn">
-<i class="fa-solid fa-arrow-left"></i>
-Previous
-</button>
-
-<button id="nextBtn">
-Next
-<i class="fa-solid fa-arrow-right"></i>
-</button>
-
-</div>
-<div id="stepDots" class="step-dots"></div>
-</div>
-
-</div>
-</div>
-</div>
-
-<footer>
-  <p><span style="font-weight:600;">© 2025 EBS Operations</span></p>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:12px;color:white;">
-      "Your feedback is important to us. Please feel free to email us with any comments or questions." -Jules
-    </span>
-  </div>
-</footer>
-
-<!-- HELP Modal -->
-<div id="helpModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      Get Help <span class="modal-close" onclick="closeHelp()">×</span>
-    </div>
-    <p>Welcome to the Fedex Queues Decision Guide! This tool is designed to help you quickly access the right guides for handling different queues and processes in FedEx.</p>
-    <ul>
-      <li><strong>Navigate the Menu:</strong> Click any card to open the corresponding guide, such as Billing Disputes, Pricing, OVC claims, Rebill, or Reweigh cases.</li>
-      <li><strong>Use the Clock & Calendar:</strong> Click the clock at the top-right to see the current time and calendar for scheduling or reference.</li>
-      <li><strong>Provide Feedback:</strong> Use the comment icon to rate the tool or leave suggestions. Your feedback helps us improve the tool.</li>
-      <li><strong>Quick Tips:</strong> Each guide includes step-by-step instructions and decision trees to make handling cases faster and more accurate.</li>
-    </ul>
-    <p>If you encounter any issues or need additional support, please reach out to your team lead or EBS Operations support.</p>
-  </div>
-</div>
-
-<!-- COMMENT MODALS -->
-<div id="commentModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      How do you rate the tool? <span class="modal-close" onclick="closeComment()">×</span>
-    </div>
-    <div class="rating-container">
-      <i class="fa-solid fa-star rating-star" data-value="1"></i>
-      <i class="fa-solid fa-star rating-star" data-value="2"></i>
-      <i class="fa-solid fa-star rating-star" data-value="3"></i>
-      <i class="fa-solid fa-star rating-star" data-value="4"></i>
-      <i class="fa-solid fa-star rating-star" data-value="5"></i>
-    </div>
-    <input type="text" id="commentName" placeholder="Your Name (optional)">
-    <textarea id="commentText" placeholder="Enter your comment..."></textarea>
-    <div class="comment-modal-footer">
-      <button class="btn" onclick="sendComment()">Send</button>
-      <span class="link-text" onclick="showAllComments()">View all comments & ratings</span>
-    </div>
-  </div>
-</div>
-
-<div id="allCommentsModal" class="modal">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header">
-      All Ratings & Comments <span class="modal-close" onclick="closeAllComments()">×</span>
-    </div>
-    <div id="commentsList"></div>
-  </div>
-</div>
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-<!-- TIME & CALENDAR POPUP -->
-<div id="timeCalendarPopup">
-
-  <div class="popup-time" id="popupTime"></div>
-  <div class="popup-date" id="popupDate"></div>
-
-  <div class="calendar-header">
-    <span id="prevMonth">‹</span>
-    <div id="monthYear" class="calendar-title"></div>
-    <span id="nextMonth">›</span>
+    <div id="site-footer"></div>
   </div>
 
-  <div class="calendar-grid" id="calendarGrid"></div>
+  <div id="imagePreviewModal" class="image-preview-modal">
+    <span class="image-preview-close">×</span>
+    <img id="imagePreview" src="" alt="Preview">
+  </div>
 
-</div>
+  <script src="./assets/js/header-loader.js"></script>
+  <script src="./assets/js/header.js"></script>
+  <script src="./assets/js/footer-loader.js"></script>
 
-
-<script>
-const steps = [
-{
-title:"Adjust Freight Charges",
-images:[
-"Steps/Step1.jpg",
-"Steps/Step1v2.jpg"
-],
-content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.`
-},
-
-{
-title:"Remove Rate Keywords",
-images:[
-"Steps/Step2.png"
-],
-content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)`
-},
-
-{
-title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD",
-images:[
-"Steps/Step3.png"
-],
-content:`• Capacity load keywords do NOT need to be removed.
+  <script>
+    const steps = [
+      {
+        title:"Adjust Freight Charges",
+        images:["Steps/Step1.jpg","Steps/Step1v2.jpg"],
+        content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.`
+      },
+      {
+        title:"Remove Rate Keywords",
+        images:["Steps/Step2.png"],
+        content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)`
+      },
+      {
+        title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD",
+        images:["Steps/Step3.png"],
+        content:`• Capacity load keywords do NOT need to be removed.
 • Add RMK line stating: "CAPL NOT APPLICABLE PER TRUCKLOAD."`
-},
-
-{
-title:"Zero Out Surcharges",
-images:[
-"Steps/Step4.png",
-"Steps/Step4v2.png"
-],
-content:`Zero out any of the following surcharges:
+      },
+      {
+        title:"Zero Out Surcharges",
+        images:["Steps/Step4.png","Steps/Step4v2.png"],
+        content:`Zero out any of the following surcharges:
 • VICH
 • VWCH
 • OVRL
@@ -1030,485 +1408,232 @@ content:`Zero out any of the following surcharges:
 • High Cost
 • California Compliance Fee
 • Demand Surcharge`
-},
-{
-title:"Validate Additional Surcharges",
-images:[
-"Steps/Step5.jpg"
-],
-content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.
+      },
+      {
+        title:"Validate Additional Surcharges",
+        images:["Steps/Step5.jpg"],
+        content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.
 • If surcharges with checkmarks are the only ones included in the quote, remove surcharge on FBC.
 • No checkmark = not included in quote.`
-},
-{
-title:"Add CONT Keyword",
-images:[
-"Steps/Step6.png"
-],
-content:`• Add keyword "CONT".`
-},
-
-
-{
-title:"Add full quote number into CONT Number field.",
-images:[
-"Steps/Step7.jpg"
-],
-content:`• Add full quote number into "CONT Number" field.
+      },
+      {
+        title:"Add CONT Keyword",
+        images:["Steps/Step6.png"],
+        content:`• Add keyword "CONT".`
+      },
+      {
+        title:"Add full quote number into CONT Number field.",
+        images:["Steps/Step7.jpg"],
+        content:`• Add full quote number into "CONT Number" field.
 • If error appears, click OK.
 • If "CM Option" dropdown appears, select service option noted on BOL (TLX, TLS, EXCL).
 • If none is noted, choose TLX. Click OK.`
-},
-
-
-{
-title:"System Auto Adds Keywords",
-images:[
-"Steps/Step8.png"
-],
-content:`System will automatically add:
+      },
+      {
+        title:"System Auto Adds Keywords",
+        images:["Steps/Step8.png"],
+        content:`System will automatically add:
 • CONT
 • TLX
 Below this point, add:
 • SLCU
 • NOAR`
-},
-{
-title:"Add PRAU & Agreement Details",
-images:[
-"Steps/Step9.png"
-],
-content:`• Below NOAR, add keyword PRAU.`
-},
-{
-title:"Add PRAU & Agreement Details",
-images:[
-"Steps/Step10.jpg"
-],
-content:`• In Agreement Type dropdown, choose "CONT".
+      },
+      {
+        title:"Add PRAU & Agreement Details",
+        images:["Steps/Step9.png"],
+        content:`• Below NOAR, add keyword PRAU.`
+      },
+      {
+        title:"Add PRAU & Agreement Details",
+        images:["Steps/Step10.jpg"],
+        content:`• In Agreement Type dropdown, choose "CONT".
 • In Tariff dropdown, choose service type from BOL (TLX, TLS, EXCL).
 • Enter 7 numbers between F and CM in quote number.
 • In Base Type dropdown, select "CUST".
 • In AP1 dropdown, select who the pro is billed to.
 • Click OK when finished.`
-},
-
-{
-title:"Clean Description Field",
-images:[
-"Steps/Step11.jpg"
-],
-content:`Delete all blank lines in the description field.`
-},
-{
-title:"Add Correction Code",
-content:`Add correction code based on reason:
+      },
+      {
+        title:"Clean Description Field",
+        images:["Steps/Step11.jpg"],
+        content:`Delete all blank lines in the description field.`
+      },
+      {
+        title:"Add Correction Code",
+        content:`Add correction code based on reason:
 
 EADL – Volume quote listed on BOL but biller did not bill.
 SYSM – Volume quote noted but automation didn’t recognize it.
 CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
-},
-{
-title:"Final Step",
-content:`At last, click ACCEPT ALL.`
-}
-];
+      },
+      {
+        title:"Final Step",
+        content:`At last, click ACCEPT ALL.`
+      }
+    ];
 
-let currentStep = 0;
-const stepTitle = document.getElementById("stepTitle");
-const stepContent = document.getElementById("stepContent");
-const stepImages = document.getElementById("stepImages");
-const stepCounter = document.getElementById("stepCounter");
-const progressBar = document.getElementById("progressBar");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const stepDots = document.getElementById("stepDots");
+    let currentStep = 0;
 
-function renderStep(){
-  const step = steps[currentStep];
+    const stepTitle = document.getElementById("stepTitle");
+    const stepContent = document.getElementById("stepContent");
+    const stepImages = document.getElementById("stepImages");
+    const stepCounter = document.getElementById("stepCounter");
+    const progressBar = document.getElementById("progressBar");
+    const topProgressFill = document.getElementById("topProgressFill");
+    const topProgressText = document.getElementById("topProgressText");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const stepDots = document.getElementById("stepDots");
+    const slideBody = document.getElementById("slideBody");
 
-  stepTitle.textContent = step.title;
-  stepContent.textContent = step.content;
+    function renderStep(){
+      const step = steps[currentStep];
+      const progress = ((currentStep + 1) / steps.length * 100) + "%";
 
-  /* SHOW STEP IMAGES */
-  stepImages.innerHTML = "";
+      stepTitle.textContent = step.title;
+      stepContent.textContent = step.content;
+      stepImages.innerHTML = "";
 
-  if(step.images){
-    step.images.forEach(img => {
-      const image = document.createElement("img");
-      image.src = img;
-      stepImages.appendChild(image);
-    });
-  }
+      if(step.images){
+        step.images.forEach(img => {
+          const image = document.createElement("img");
+          image.src = img;
+          image.alt = step.title;
+          image.loading = "lazy";
+          stepImages.appendChild(image);
+        });
+      }
 
-  stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
-  progressBar.style.width = ((currentStep+1)/steps.length*100)+"%";
+      stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      progressBar.style.width = progress;
+      topProgressFill.style.width = progress;
+      topProgressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
 
-  prevBtn.disabled = currentStep === 0;
+      prevBtn.disabled = currentStep === 0;
 
-  if(currentStep === steps.length - 1){
-    nextBtn.textContent = "Finish";
-    nextBtn.classList.add("finish");
-  }else{
-    nextBtn.textContent = "Next";
-    nextBtn.classList.remove("finish");
-  }
+      if(currentStep === steps.length - 1){
+        nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
+        nextBtn.classList.add("finish");
+      }else{
+        nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
+        nextBtn.classList.remove("finish");
+      }
 
-  renderDots();
-}
-
-
-/* KEYBOARD CONTROLS */
-document.addEventListener("keydown", function(e){
-
-  if(e.key === "ArrowRight"){
-    nextBtn.click();
-  }
-
-  if(e.key === "ArrowLeft"){
-    prevBtn.click();
-  }
-
-  if(e.key === "p" || e.key === "P"){
-    togglePresentation();
-  }
-
-});
-
-/* NEXT BUTTON */
-nextBtn.onclick = () => {
-
-  if(currentStep < steps.length - 1){
-
-    const slide = document.querySelector(".slide-body");
-
-    slide.classList.remove("animate-left","animate-right");
-    void slide.offsetWidth;
-
-    slide.classList.add("animate-left");
-
-    currentStep++;
-    renderStep();
-
-  } else {
-
-    alert("Volume Application Completed.");
-
-    currentStep = 0;
-    renderStep();
-
-  }
-
-};
-
-/* PREVIOUS BUTTON */
-prevBtn.onclick = () => {
-
-  if(currentStep > 0){
-
-    const slide = document.querySelector(".slide-body");
-
-    slide.classList.remove("animate-left","animate-right");
-    void slide.offsetWidth;
-
-    slide.classList.add("animate-right");
-
-    currentStep--;
-    renderStep();
-
-  }
-
-};
-
-renderStep();
-
-/* =========================
-   SAFE IMAGE PREVIEW
-========================= */
-
-document.addEventListener("click", function(e){
-
-  const previewModal = document.getElementById("imagePreviewModal");
-  const previewImage = document.getElementById("imagePreview");
-
-  if(e.target.matches(".step-images img")){
-    previewModal.style.display = "flex";
-    previewImage.src = e.target.src;
-  }
-
-  if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
-    previewModal.style.display = "none";
-  }
-
-});
-
-function renderDots(){
-
-  stepDots.innerHTML="";
-
-  steps.forEach((s,i)=>{
-
-    const dot=document.createElement("div");
-    dot.className="step-dot";
-
-    if(i===currentStep){
-      dot.classList.add("active");
+      renderDots();
+      updateQuickJump();
     }
 
-    dot.onclick = () => {
-      currentStep = i;
+    function animateSlide(direction){
+      slideBody.classList.remove("animate-left","animate-right");
+      void slideBody.offsetWidth;
+      slideBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
+    }
+
+    function goToStep(index){
+      if(index < 0 || index >= steps.length) return;
+      const direction = index >= currentStep ? "left" : "right";
+      currentStep = index;
+      animateSlide(direction);
       renderStep();
+    }
+
+    nextBtn.onclick = () => {
+      if(currentStep < steps.length - 1){
+        currentStep++;
+        animateSlide("left");
+        renderStep();
+      }else{
+        alert("Volume Application Completed.");
+        currentStep = 0;
+        animateSlide("left");
+        renderStep();
+      }
     };
 
-    stepDots.appendChild(dot);
+    prevBtn.onclick = () => {
+      if(currentStep > 0){
+        currentStep--;
+        animateSlide("right");
+        renderStep();
+      }
+    };
 
-  });
+    function renderDots(){
+      stepDots.innerHTML = "";
 
-}
+      steps.forEach((step, index) => {
+        const dot = document.createElement("div");
+        dot.className = "step-dot";
 
-let presentationMode = false;
+        if(index === currentStep){
+          dot.classList.add("active");
+        }
 
-function togglePresentation(){
-
-  if(!presentationMode){
-
-    document.body.classList.add("presentation-mode");
-    document.documentElement.requestFullscreen();
-    presentationMode = true;
-
-  }else{
-
-    document.body.classList.remove("presentation-mode");
-    document.exitFullscreen();
-    presentationMode = false;
-
-  }
-
-}
-
-
-/* =========================
-   CALENDAR LOGIC
-========================= */
-
-function updateClock(){
-  const now = new Date();
-
-  // HEADER TIME (Hour + Minute only)
-  const headerTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
-  }).format(now);
-
-  // POPUP TIME (Hour + Minute + Second)
-  const popupTime = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(now);
-
-  const popupDate = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  }).format(now);
-
-  // Update header
-  document.getElementById("clockText").textContent = headerTime;
-
-  // Update popup
-  document.getElementById("popupTime").textContent = popupTime;
-  document.getElementById("popupDate").textContent = popupDate;
-}
-// START CLOCK
-updateClock();
-setInterval(updateClock, 1000);
-
-
-const clockBtn = document.getElementById("clockBtn");
-const calendarPopup = document.getElementById("timeCalendarPopup");
-const calendarGrid = document.getElementById("calendarGrid");
-const monthYear = document.getElementById("monthYear");
-
-let currentDate = new Date();
-
-clockBtn.onclick = function(e){
-  e.stopPropagation();
-  calendarPopup.style.display =
-    calendarPopup.style.display === "block" ? "none" : "block";
-  renderCalendar(currentDate);
-};
-
-document.addEventListener("click", function(){
-  calendarPopup.style.display = "none";
-});
-
-document.getElementById("prevMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar(currentDate);
-};
-
-document.getElementById("nextMonth").onclick = function(e){
-  e.stopPropagation();
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar(currentDate);
-};
-
-function renderCalendar(date){
-  calendarGrid.innerHTML = "";
-
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  monthYear.textContent =
-    date.toLocaleString("en-PH", { month: "long", year: "numeric" });
-
-  const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  dayNames.forEach(d=>{
-    const el = document.createElement("div");
-    el.className="day-name";
-    el.textContent=d;
-    calendarGrid.appendChild(el);
-  });
-
-  for(let i=0;i<firstDay;i++){
-    const empty=document.createElement("div");
-    calendarGrid.appendChild(empty);
-  }
-
- const today = new Date(
-  new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Manila",
-    year: "numeric",
-    month: "numeric",
-    day: "numeric"
-  }).format(new Date())
-);
-
-  for(let d=1; d<=daysInMonth; d++){
-    const day=document.createElement("div");
-    day.className="day";
-    day.textContent=d;
-
-    if(
-      d===today.getDate() &&
-      month===today.getMonth() &&
-      year===today.getFullYear()
-    ){
-      day.classList.add("today");
+        dot.onclick = () => goToStep(index);
+        stepDots.appendChild(dot);
+      });
     }
 
-    calendarGrid.appendChild(day);
-  }
-}
-/* =========================
-   MODALS
-========================= */
-
-document.getElementById("helpIcon").onclick = () =>
-  document.getElementById("helpModal").style.display = "flex";
-
-document.getElementById("commentIcon").onclick = () => {
-  clearCommentForm();
-  document.getElementById("commentModal").style.display = "flex";
-};
-
-function closeHelp(){document.getElementById("helpModal").style.display="none";}
-function closeComment(){document.getElementById("commentModal").style.display="none";}
-function closeAllComments(){document.getElementById("allCommentsModal").style.display="none";}
-
-
-/* =========================
-   FEEDBACK SYSTEM
-========================= */
-
-let selectedRating = 0;
-
-document.querySelectorAll('.rating-star').forEach(star=>{
-  star.onclick=function(){
-    selectedRating=parseInt(this.dataset.value);
-    document.querySelectorAll('.rating-star').forEach(s=>
-      s.classList.toggle('selected', parseInt(s.dataset.value)<=selectedRating)
-    );
-  };
-});
-
-
-function sendComment(){
-  const name = document.getElementById('commentName').value.trim();
-  const comment = document.getElementById('commentText').value.trim();
-
-  if(selectedRating===0){
-    alert("Select a rating.");
-    return;
-  }
-
-  db.collection("feedback").add({
-    rating:selectedRating,
-    name:name||"Anonymous",
-    comment:comment,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(()=>{
-    alert("Saved!");
-    clearCommentForm();
-  }).catch(()=>alert("Save failed."));
-}
-
-
-function clearCommentForm(){
-  selectedRating=0;
-  document.getElementById('commentName').value="";
-  document.getElementById('commentText').value="";
-  document.querySelectorAll('.rating-star').forEach(s=>s.classList.remove('selected'));
-}
-
-
-let unsubscribeListener=null;
-
-function showAllComments(){
-  const listEl=document.getElementById('commentsList');
-  listEl.innerHTML="Loading…";
-
-  if(unsubscribeListener) unsubscribeListener();
-
-  unsubscribeListener=db.collection("feedback")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snap=>{
-      listEl.innerHTML="";
-      if(snap.empty){
-        listEl.innerHTML="<p>No feedback yet.</p>";
-      }
-      snap.forEach(doc=>{
-        const d=doc.data();
-        const div=document.createElement('div');
-        div.className="comment-list-item";
-        div.innerHTML=`
-          <div class="stars">${"★".repeat(d.rating)}${"☆".repeat(5-d.rating)}</div>
-          <strong>${d.name}</strong>
-          <p>${d.comment}</p>
-        `;
-        listEl.appendChild(div);
+    function updateQuickJump(){
+      document.querySelectorAll(".path-jump").forEach(btn => {
+        const index = Number(btn.dataset.jump);
+        btn.classList.toggle("active", index === currentStep);
       });
-      document.getElementById('allCommentsModal').style.display='flex';
+    }
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "ArrowRight") nextBtn.click();
+      if(e.key === "ArrowLeft") prevBtn.click();
+      if(e.key === "Escape") closeImagePreview();
     });
-}
 
+    document.addEventListener("click", function(e){
+      const previewModal = document.getElementById("imagePreviewModal");
+      const previewImage = document.getElementById("imagePreview");
 
-</script>
-<!-- IMAGE PREVIEW MODAL -->
-<div id="imagePreviewModal" class="image-preview-modal">
-  <span class="image-preview-close">&times;</span>
-  <img id="imagePreview" src="">
-</div>
+      if(e.target.matches(".step-images img")){
+        previewModal.style.display = "flex";
+        previewImage.src = e.target.src;
+        document.body.style.overflow = "hidden";
+      }
+
+      if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
+        closeImagePreview();
+      }
+    });
+
+    function closeImagePreview(){
+      const previewModal = document.getElementById("imagePreviewModal");
+      const previewImage = document.getElementById("imagePreview");
+
+      if(previewModal) previewModal.style.display = "none";
+      if(previewImage) previewImage.src = "";
+      document.body.style.overflow = "";
+    }
+
+    function copyText(id, btn){
+      const el = document.getElementById(id);
+      if(!el) return;
+
+      const text = el.innerText.trim();
+      if(!text) return;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const old = btn.textContent;
+        btn.classList.add("copied");
+        btn.textContent = "Copied ✓";
+
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.textContent = old;
+        }, 1400);
+      }).catch(() => {
+        alert("Copy failed. Please copy manually.");
+      });
+    }
+
+    renderStep();
+  </script>
 </body>
 </html>
