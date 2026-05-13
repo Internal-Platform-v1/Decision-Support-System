@@ -12,8 +12,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="assets/css/header-footer-style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    if (window.firebase && !firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+        authDomain: "bdgg-database.firebaseapp.com",
+        projectId: "bdgg-database",
+        storageBucket: "bdgg-database.appspot.com",
+        messagingSenderId: "43574975434",
+        appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+      });
+    }
+  </script>
 
   <style>
     :root{
@@ -35,16 +51,16 @@
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
 
-body{
-  margin:0;
-  min-height:100vh;
-  color:var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
-    radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
-    linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
-  overflow-x:hidden;
-}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+      overflow-x:hidden;
+    }
 
     body::before{
       content:"";
@@ -62,11 +78,31 @@ body{
     a{color:inherit;text-decoration:none}
     button,input,textarea{font:inherit}
 
-    .page{position:relative;z-index:1}
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    #site-header{
+      position:relative;
+      z-index:9999;
+    }
+
+    #site-header header,
+    #site-header .header,
+    #site-header .site-header,
+    #site-header .premium-header,
+    #site-header .top-header,
+    #site-header .nav-header{
+      position:relative;
+      z-index:9999;
+    }
 
     .app-shell{
       width:min(calc(100% - 32px), var(--max));
       margin:22px auto 24px;
+      position:relative;
+      z-index:1;
     }
 
     .app-frame{
@@ -630,23 +666,23 @@ body{
     .path-list{
       display:flex;
       flex-direction:column;
-      gap:10px;
-      max-height:620px;
-      overflow:auto;
-      padding-right:4px;
+      gap:6px;
+      overflow:visible;
+      max-height:none;
+      padding-right:0;
     }
 
     .path-jump{
       width:100%;
       text-align:left;
-      padding:12px;
-      border-radius:16px;
+      padding:8px 9px;
+      border-radius:13px;
       background:#f8fafc;
       border:1px solid #e7edf4;
       cursor:pointer;
       transition:.18s ease;
       display:flex;
-      gap:10px;
+      gap:8px;
       align-items:flex-start;
       color:#0f172a;
     }
@@ -655,38 +691,39 @@ body{
       transform:translateY(-1px);
       background:#eef4ff;
       border-color:#cfe0ff;
-      box-shadow:0 10px 22px rgba(37,99,235,.08);
+      box-shadow:0 8px 18px rgba(37,99,235,.08);
     }
 
     .path-jump.active{
       border:2px solid #2563eb;
-      box-shadow:0 0 0 4px rgba(37,99,235,.10);
+      box-shadow:0 0 0 3px rgba(37,99,235,.10);
     }
 
     .path-jump span{
-      width:26px;
-      height:26px;
-      border-radius:10px;
+      width:22px;
+      height:22px;
+      border-radius:8px;
       display:grid;
       place-items:center;
       background:#eef4ff;
       color:#1d4ed8;
-      font-size:11px;
+      font-size:10px;
       font-weight:900;
       flex:0 0 auto;
     }
 
     .path-jump strong{
       display:block;
-      font-size:13px;
-      line-height:1.35;
+      font-size:11px;
+      line-height:1.25;
     }
 
     .path-jump small{
       display:block;
-      margin-top:4px;
+      margin-top:2px;
       color:#64748b;
-      line-height:1.45;
+      line-height:1.25;
+      font-size:10px;
       font-weight:700;
     }
 
@@ -712,42 +749,6 @@ body{
       color:#ff6600;
       margin-top:3px;
     }
-
-    .copy-card{
-      margin-top:12px;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-      padding:14px;
-      border-radius:18px;
-      background:#f8fafc;
-      border:1px dashed #cbd5e1;
-    }
-
-    .copy-text{
-      font-size:13px;
-      line-height:1.6;
-      font-weight:800;
-      color:#0f172a;
-      word-break:break-word;
-    }
-
-    .copy-btn{
-      border:0;
-      cursor:pointer;
-      border-radius:12px;
-      padding:9px 12px;
-      background:#111827;
-      color:#fff;
-      font-size:12px;
-      font-weight:900;
-      transition:.18s ease;
-      white-space:nowrap;
-    }
-
-    .copy-btn:hover{transform:translateY(-1px)}
-    .copy-btn.copied{background:#dcfce7;color:#166534}
 
     .template-stack{
       display:flex;
@@ -905,7 +906,7 @@ body{
       justify-content:center;
       align-items:center;
       padding:0 24px;
-      z-index:2147483647;
+      z-index:2147483647 !important;
       backdrop-filter:blur(8px);
       overflow-y:auto;
     }
@@ -1035,8 +1036,10 @@ body{
       .summary-grid{grid-template-columns:1fr}
       .section-head{flex-direction:column;align-items:flex-start}
       .slide-body{padding:22px;min-height:460px}
-      .copy-card{flex-direction:column}
-      .copy-btn{width:100%}
+      .path-list{gap:8px}
+      .path-jump{padding:10px 11px}
+      .path-jump strong{font-size:12px}
+      .path-jump small{font-size:10px}
       #commentModal,
       #allCommentsModal,
       #helpModal{padding:0 14px}
@@ -1176,55 +1179,7 @@ body{
               Quick Jump
             </div>
 
-            <div class="path-list">
-              <button class="path-jump" type="button" data-jump="0" onclick="goToStep(0)">
-                <span>1</span>
-                <div>
-                  <strong>Adjust Freight Charges</strong>
-                  <small>Set FLAT and apply the volume amount.</small>
-                </div>
-              </button>
-
-              <button class="path-jump" type="button" data-jump="1" onclick="goToStep(1)">
-                <span>2</span>
-                <div>
-                  <strong>Remove Rate Keywords</strong>
-                  <small>Remove FSCL, DEWT, RAZ, LEDI, PRAU, BRAP.</small>
-                </div>
-              </button>
-
-              <button class="path-jump" type="button" data-jump="3" onclick="goToStep(3)">
-                <span>4</span>
-                <div>
-                  <strong>Zero Out Surcharges</strong>
-                  <small>Zero out applicable surcharge lines.</small>
-                </div>
-              </button>
-
-              <button class="path-jump" type="button" data-jump="5" onclick="goToStep(5)">
-                <span>6</span>
-                <div>
-                  <strong>Add CONT Keyword</strong>
-                  <small>Add CONT and quote information.</small>
-                </div>
-              </button>
-
-              <button class="path-jump" type="button" data-jump="8" onclick="goToStep(8)">
-                <span>9</span>
-                <div>
-                  <strong>Add PRAU Details</strong>
-                  <small>Add PRAU and agreement details.</small>
-                </div>
-              </button>
-
-              <button class="path-jump" type="button" data-jump="11" onclick="goToStep(11)">
-                <span>12</span>
-                <div>
-                  <strong>Correction Code</strong>
-                  <small>Use EADL, SYSM, or CMID.</small>
-                </div>
-              </button>
-            </div>
+            <div class="path-list" id="quickJumpList"></div>
           </div>
 
           <div class="summary-card">
@@ -1236,7 +1191,7 @@ body{
             <div class="summary-grid">
               <div class="metric">
                 <span class="metric-k">Steps</span>
-                <span class="metric-v">13</span>
+                <span class="metric-v" id="snapshotSteps">13</span>
               </div>
 
               <div class="metric">
@@ -1255,7 +1210,10 @@ body{
               </div>
             </div>
           </div>
-                    <div class="summary-card">
+        </aside>
+
+        <aside class="template-panel">
+          <div class="summary-card">
             <div class="summary-head">
               <i class="fa-solid fa-lightbulb"></i>
               Key Reminders
@@ -1283,10 +1241,6 @@ body{
               </div>
             </div>
           </div>
-        </aside>
-
-        <aside class="template-panel">
-
 
           <div class="summary-card">
             <div class="summary-head">
@@ -1375,9 +1329,9 @@ body{
     <img id="imagePreview" src="" alt="Preview">
   </div>
 
-  <script src="./assets/js/header-loader.js"></script>
-  <script src="./assets/js/header.js"></script>
-  <script src="./assets/js/footer-loader.js"></script>
+  <script src="assets/js/header-loader.js"></script>
+  <script src="assets/js/header.js"></script>
+  <script src="assets/js/footer-loader.js"></script>
 
   <script>
     const steps = [
@@ -1486,6 +1440,32 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
     const nextBtn = document.getElementById("nextBtn");
     const stepDots = document.getElementById("stepDots");
     const slideBody = document.getElementById("slideBody");
+    const quickJumpList = document.getElementById("quickJumpList");
+    const snapshotSteps = document.getElementById("snapshotSteps");
+
+    function renderQuickJump(){
+      if(!quickJumpList) return;
+
+      quickJumpList.innerHTML = "";
+
+      steps.forEach((step, index) => {
+        const btn = document.createElement("button");
+        btn.className = "path-jump";
+        btn.type = "button";
+        btn.dataset.jump = index;
+
+        btn.innerHTML = `
+          <span>${index + 1}</span>
+          <div>
+            <strong>${step.title}</strong>
+            <small>Step ${index + 1}</small>
+          </div>
+        `;
+
+        btn.onclick = () => goToStep(index);
+        quickJumpList.appendChild(btn);
+      });
+    }
 
     function renderStep(){
       const step = steps[currentStep];
@@ -1507,8 +1487,18 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
 
       stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
       progressBar.style.width = progress;
-      topProgressFill.style.width = progress;
-      topProgressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+
+      if(topProgressFill){
+        topProgressFill.style.width = progress;
+      }
+
+      if(topProgressText){
+        topProgressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      }
+
+      if(snapshotSteps){
+        snapshotSteps.textContent = steps.length;
+      }
 
       prevBtn.disabled = currentStep === 0;
 
@@ -1633,6 +1623,7 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
       });
     }
 
+    renderQuickJump();
     renderStep();
   </script>
 </body>
