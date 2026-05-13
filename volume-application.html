@@ -1958,5 +1958,77 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
     renderQuickJump();
     renderStep();
   </script>
+
+  <style>
+  /* Final fix for the Date & Time Settings button only */
+  #site-header .header-date-time-settings-fix{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:8px !important;
+
+    width:100% !important;
+    max-width:100% !important;
+    min-height:40px !important;
+    padding:0 16px !important;
+
+    border:0 !important;
+    outline:0 !important;
+    border-radius:12px !important;
+
+    background:linear-gradient(135deg, #5b21b6, #7c3aed) !important;
+    color:#ffffff !important;
+
+    font-family:"Inter",system-ui,sans-serif !important;
+    font-size:12px !important;
+    font-weight:900 !important;
+    line-height:1 !important;
+    text-decoration:none !important;
+
+    box-shadow:0 14px 28px rgba(91,33,182,.22) !important;
+    cursor:pointer !important;
+    appearance:none !important;
+  }
+
+  #site-header .header-date-time-settings-fix:hover{
+    transform:translateY(-1px);
+    box-shadow:0 18px 34px rgba(91,33,182,.28) !important;
+  }
+
+  #site-header .header-date-time-settings-fix i,
+  #site-header .header-date-time-settings-fix svg{
+    color:#ffffff !important;
+    fill:#ffffff !important;
+  }
+</style>
+
+<script>
+  function fixDateTimeSettingsButton(){
+    const header = document.getElementById("site-header");
+    if(!header) return;
+
+    const candidates = Array.from(header.querySelectorAll("button, a, [role='button']"));
+
+    candidates.forEach(btn => {
+      const text = (btn.innerText || btn.textContent || "").trim().toLowerCase();
+
+      if(text.includes("date & time settings") || text.includes("date and time settings")){
+        btn.classList.add("header-date-time-settings-fix");
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    fixDateTimeSettingsButton();
+
+    setTimeout(fixDateTimeSettingsButton, 300);
+    setTimeout(fixDateTimeSettingsButton, 800);
+    setTimeout(fixDateTimeSettingsButton, 1500);
+  });
+
+  document.addEventListener("click", () => {
+    setTimeout(fixDateTimeSettingsButton, 50);
+  });
+</script>
 </body>
 </html>
