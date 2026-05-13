@@ -1230,222 +1230,309 @@
   <script src="assets/js/footer-loader.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      if (window.firebase && !firebase.apps.length) {
-        firebase.initializeApp({
-          apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-          authDomain: "bdgg-database.firebaseapp.com",
-          projectId: "bdgg-database",
-          storageBucket: "bdgg-database.appspot.com",
-          messagingSenderId: "43574975434",
-          appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-        });
+  /* =========================================================
+     FIREBASE + FEEDBACK / HEADER MODAL FUNCTIONS
+     Matched to working Rate & Volume page behavior
+  ========================================================= */
+
+  if (window.firebase && !firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    });
+  }
+
+  const db = firebase.firestore();
+  const FEEDBACK_COLLECTION = "feedback";
+
+  let selectedRating = 0;
+  let ratingStars = [];
+  let commentsUnsubscribe = null;
+
+  function escapeHtml(value){
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function openModalAnimated(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.style.display = "flex";
+    modal.classList.remove("is-closing");
+
+    requestAnimationFrame(() => {
+      modal.classList.add("is-open");
+    });
+
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModalAnimated(id, onClosed) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.classList.remove("is-open");
+    modal.classList.add("is-closing");
+
+    setTimeout(() => {
+      modal.style.display = "none";
+      modal.classList.remove("is-closing");
+      document.body.style.overflow = "";
+
+      if (typeof onClosed === "function") {
+        onClosed();
+      }
+    }, 220);
+  }
+
+  function openComment() {
+    selectedRating = 0;
+    openModalAnimated("commentModal");
+    setTimeout(initRatingStars, 80);
+  }
+
+  function closeComment() {
+    closeModalAnimated("commentModal");
+  }
+
+  function openHelp() {
+    openModalAnimated("helpModal");
+  }
+
+  function closeHelp() {
+    closeModalAnimated("helpModal");
+  }
+
+  function closeAllComments() {
+    closeModalAnimated("allCommentsModal", () => {
+      if (typeof commentsUnsubscribe === "function") {
+        commentsUnsubscribe();
+        commentsUnsubscribe = null;
       }
     });
-  </script>
+  }
 
-  <script>
-    let selectedRating = 0;
-    let ratingStars = [];
-    let commentsUnsubscribe = null;
+  function initRatingStars() {
+    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+    if (!ratingStars.length) return;
 
-    function openModalAnimated(id) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
+    ratingStars.forEach(star => {
+      star.onclick = function (e) {
+        e.stopPropagation();
 
-      modal.style.display = "flex";
-      modal.classList.remove("is-closing");
+        selectedRating = Number(this.dataset.value || this.dataset.rating || 0);
 
-      requestAnimationFrame(() => {
-        modal.classList.add("is-open");
+        ratingStars.forEach(s => {
+          const value = Number(s.dataset.value || s.dataset.rating || 0);
+          s.classList.toggle("selected", value <= selectedRating);
+        });
+      };
+    });
+  }
+
+  async function sendComment() {
+    const nameEl = document.getElementById("commentName");
+    const textEl = document.getElementById("commentText");
+    const feedbackMessage = document.getElementById("feedbackMessage");
+
+    const name = (nameEl?.value || "").trim();
+    const comment = (textEl?.value || "").trim();
+
+    if (!selectedRating) {
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#ef4444";
+        feedbackMessage.textContent = "Please select a rating first.";
+      }
+      return;
+    }
+
+    if (!comment) {
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#ef4444";
+        feedbackMessage.textContent = "Please enter your feedback.";
+      }
+      return;
+    }
+
+    try {
+      await db.collection(FEEDBACK_COLLECTION).add({
+        name: name || "Anonymous",
+        comment,
+        rating: selectedRating,
+        page: document.body.dataset.page || "volume-application",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      document.body.style.overflow = "hidden";
-    }
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#16a34a";
+        feedbackMessage.textContent = "Feedback sent successfully.";
+      }
 
-    function closeModalAnimated(id, onClosed) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
+      if (nameEl) nameEl.value = "";
+      if (textEl) textEl.value = "";
 
-      modal.classList.remove("is-open");
-      modal.classList.add("is-closing");
+      selectedRating = 0;
+      ratingStars.forEach(star => star.classList.remove("selected"));
 
       setTimeout(() => {
-        modal.style.display = "none";
-        modal.classList.remove("is-closing");
-        document.body.style.overflow = "";
-        if (typeof onClosed === "function") onClosed();
-      }, 220);
+        closeComment();
+
+        if (feedbackMessage) {
+          feedbackMessage.style.display = "none";
+          feedbackMessage.textContent = "";
+        }
+      }, 900);
+    } catch (err) {
+      console.error("Unable to send feedback:", err);
+
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#ef4444";
+        feedbackMessage.textContent = "Unable to send feedback right now.";
+      }
+    }
+  }
+
+  async function showAllComments() {
+    const commentModal = document.getElementById("commentModal");
+
+    /*
+      Supports both possible IDs:
+      - commentsList = used by Rate & Volume page
+      - allCommentsList = used by one of the Volume Application versions
+    */
+    const commentsList =
+      document.getElementById("commentsList") ||
+      document.getElementById("allCommentsList");
+
+    if (!commentsList) {
+      openModalAnimated("allCommentsModal");
+      return;
     }
 
-    function openComment() {
-      selectedRating = 0;
-      openModalAnimated("commentModal");
-      setTimeout(initRatingStars, 80);
-    }
+    commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
 
-    function closeComment() {
-      closeModalAnimated("commentModal");
-    }
-
-    function openHelp() {
-      openModalAnimated("helpModal");
-    }
-
-    function closeHelp() {
-      closeModalAnimated("helpModal");
-    }
-
-    function closeAllComments() {
-      closeModalAnimated("allCommentsModal", () => {
+    const loadComments = () => {
+      try {
         if (typeof commentsUnsubscribe === "function") {
           commentsUnsubscribe();
           commentsUnsubscribe = null;
         }
-      });
-    }
 
-    function initRatingStars() {
-      ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-      if (!ratingStars.length) return;
+        commentsUnsubscribe = db
+          .collection(FEEDBACK_COLLECTION)
+          .orderBy("createdAt", "desc")
+          .limit(40)
+          .onSnapshot(snapshot => {
+            if (!snapshot.size) {
+              commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+              return;
+            }
 
-      ratingStars.forEach(star => {
-        star.onclick = function () {
-          selectedRating = Number(this.dataset.value || this.dataset.rating || 0);
-          ratingStars.forEach(s => {
-            const value = Number(s.dataset.value || s.dataset.rating || 0);
-            s.classList.toggle("selected", value <= selectedRating);
+            commentsList.innerHTML = "";
+
+            snapshot.forEach(doc => {
+              const data = doc.data() || {};
+              const rating = Number(data.rating || 0);
+              const safeRating = Math.max(0, Math.min(5, rating));
+              const stars = "★".repeat(safeRating) + "☆".repeat(5 - safeRating);
+
+              const item = document.createElement("div");
+              item.className = "comment-list-item";
+              item.innerHTML = `
+                <span class="stars">${stars}</span>
+                <strong style="display:block; color:#0f172a; margin-bottom:4px;">
+                  ${escapeHtml(data.name || "Anonymous")}
+                </strong>
+                <div style="color:#475569; line-height:1.7;">
+                  ${escapeHtml(data.comment || "No comment provided.")}
+                </div>
+              `;
+
+              commentsList.appendChild(item);
+            });
+          }, err => {
+            console.error("Unable to load comments:", err);
+            commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
           });
-        };
-      });
-    }
 
-    async function sendComment() {
-      const nameEl = document.getElementById("commentName");
-      const textEl = document.getElementById("commentText");
-      const feedbackMessage = document.getElementById("feedbackMessage");
-      const name = (nameEl?.value || "").trim();
-      const comment = (textEl?.value || "").trim();
-
-      if (!selectedRating) {
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#ef4444";
-          feedbackMessage.textContent = "Please select a rating first.";
-        }
-        return;
-      }
-
-      if (!comment) {
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#ef4444";
-          feedbackMessage.textContent = "Please enter your feedback.";
-        }
-        return;
-      }
-
-      try {
-        if (window.firebase && firebase.firestore) {
-          await firebase.firestore().collection("feedback").add({
-            name: name || "Anonymous",
-            comment,
-            rating: selectedRating,
-            page: document.body.dataset.page || "volume-application",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        }
-
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#16a34a";
-          feedbackMessage.textContent = "Feedback submitted. Thank you!";
-        }
-
-        if (nameEl) nameEl.value = "";
-        if (textEl) textEl.value = "";
-        selectedRating = 0;
-        ratingStars.forEach(s => s.classList.remove("selected"));
-
-        setTimeout(() => closeComment(), 900);
+        openModalAnimated("allCommentsModal");
       } catch (err) {
-        console.error(err);
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#ef4444";
-          feedbackMessage.textContent = "Unable to submit feedback right now.";
-        }
+        console.error("Unable to load comments:", err);
+        commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+        openModalAnimated("allCommentsModal");
       }
+    };
+
+    if (commentModal && commentModal.style.display === "flex") {
+      closeModalAnimated("commentModal", loadComments);
+    } else {
+      loadComments();
     }
+  }
 
-    function viewAllComments() {
-      const list = document.getElementById("allCommentsList");
-      if (list) {
-        list.innerHTML = '<div class="comment-list-item">Loading comments...</div>';
-      }
-      openModalAnimated("allCommentsModal");
+  function viewAllComments() {
+    showAllComments();
+  }
 
-      if (!(window.firebase && firebase.firestore && list)) return;
+  window.openComment = openComment;
+  window.closeComment = closeComment;
+  window.openHelp = openHelp;
+  window.closeHelp = closeHelp;
+  window.closeAllComments = closeAllComments;
+  window.showAllComments = showAllComments;
+  window.viewAllComments = viewAllComments;
+  window.sendComment = sendComment;
 
-      if (typeof commentsUnsubscribe === "function") {
-        commentsUnsubscribe();
-      }
+  document.addEventListener("headerLoaded", () => {
+    initRatingStars();
+  });
 
-      commentsUnsubscribe = firebase.firestore()
-        .collection("feedback")
-        .orderBy("createdAt", "desc")
-        .limit(40)
-        .onSnapshot(snapshot => {
-          if (!snapshot.size) {
-            list.innerHTML = '<div class="comment-list-item">No comments yet.</div>';
-            return;
-          }
+  document.addEventListener("DOMContentLoaded", () => {
+    initRatingStars();
+  });
 
-          list.innerHTML = "";
-          snapshot.forEach(doc => {
-            const data = doc.data() || {};
-            const rating = Number(data.rating || 0);
-            const stars = "★".repeat(rating) + "☆".repeat(Math.max(0, 5 - rating));
-            const item = document.createElement("div");
-            item.className = "comment-list-item";
-            item.innerHTML = `
-              <span class="stars">${stars}</span>
-              <strong>${escapeHtml(data.name || "Anonymous")}</strong>
-              <p>${escapeHtml(data.comment || "")}</p>
-            `;
-            list.appendChild(item);
-          });
-        }, err => {
-          console.error(err);
-          list.innerHTML = '<div class="comment-list-item">Unable to load comments.</div>';
-        });
-    }
+  setTimeout(initRatingStars, 300);
+</script>
 
-    document.addEventListener("DOMContentLoaded", initRatingStars);
-  </script>
+<script>
+  /* =========================================================
+     VOLUME APPLICATION STEPS
+  ========================================================= */
 
-  <script>
-    const steps = [
-      {
-        title:"Adjust Freight Charges",
-        images:["Steps/Step1.jpg","Steps/Step1v2.jpg"],
-        content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.`
-      },
-      {
-        title:"Remove Rate Keywords",
-        images:["Steps/Step2.png"],
-        content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)`
-      },
-      {
-        title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD",
-        images:["Steps/Step3.png"],
-        content:`• Capacity load keywords do NOT need to be removed.
+  const steps = [
+    {
+      title:"Adjust Freight Charges",
+      images:["Steps/Step1.jpg","Steps/Step1v2.jpg"],
+      content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.`
+    },
+    {
+      title:"Remove Rate Keywords",
+      images:["Steps/Step2.png"],
+      content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)`
+    },
+    {
+      title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD",
+      images:["Steps/Step3.png"],
+      content:`• Capacity load keywords do NOT need to be removed.
 • Add RMK line stating: "CAPL NOT APPLICABLE PER TRUCKLOAD."`
-      },
-      {
-        title:"Zero Out Surcharges",
-        images:["Steps/Step4.png","Steps/Step4v2.png"],
-        content:`Zero out any of the following surcharges:
+    },
+    {
+      title:"Zero Out Surcharges",
+      images:["Steps/Step4.png","Steps/Step4v2.png"],
+      content:`Zero out any of the following surcharges:
 • VICH
 • VWCH
 • OVRL
@@ -1453,149 +1540,151 @@
 • High Cost
 • California Compliance Fee
 • Demand Surcharge`
-      },
-      {
-        title:"Validate Additional Surcharges",
-        images:["Steps/Step5.jpg"],
-        content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.
+    },
+    {
+      title:"Validate Additional Surcharges",
+      images:["Steps/Step5.jpg"],
+      content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.
 • If surcharges with checkmarks are the only ones included in the quote, remove surcharge on FBC.
 • No checkmark = not included in quote.`
-      },
-      {
-        title:"Add CONT Keyword",
-        images:["Steps/Step6.png"],
-        content:`• Add keyword "CONT".`
-      },
-      {
-        title:"Add full quote number into CONT Number field.",
-        images:["Steps/Step7.jpg"],
-        content:`• Add full quote number into "CONT Number" field.
+    },
+    {
+      title:"Add CONT Keyword",
+      images:["Steps/Step6.png"],
+      content:`• Add keyword "CONT".`
+    },
+    {
+      title:"Add full quote number into CONT Number field.",
+      images:["Steps/Step7.jpg"],
+      content:`• Add full quote number into "CONT Number" field.
 • If error appears, click OK.
 • If "CM Option" dropdown appears, select service option noted on BOL (TLX, TLS, EXCL).
 • If none is noted, choose TLX. Click OK.`
-      },
-      {
-        title:"System Auto Adds Keywords",
-        images:["Steps/Step8.png"],
-        content:`System will automatically add:
+    },
+    {
+      title:"System Auto Adds Keywords",
+      images:["Steps/Step8.png"],
+      content:`System will automatically add:
 • CONT
 • TLX
 Below this point, add:
 • SLCU
 • NOAR`
-      },
-      {
-        title:"Add PRAU & Agreement Details",
-        images:["Steps/Step9.png"],
-        content:`• Below NOAR, add keyword PRAU.`
-      },
-      {
-        title:"Add PRAU & Agreement Details",
-        images:["Steps/Step10.jpg"],
-        content:`• In Agreement Type dropdown, choose "CONT".
+    },
+    {
+      title:"Add PRAU & Agreement Details",
+      images:["Steps/Step9.png"],
+      content:`• Below NOAR, add keyword PRAU.`
+    },
+    {
+      title:"Add PRAU & Agreement Details",
+      images:["Steps/Step10.jpg"],
+      content:`• In Agreement Type dropdown, choose "CONT".
 • In Tariff dropdown, choose service type from BOL (TLX, TLS, EXCL).
 • Enter 7 numbers between F and CM in quote number.
 • In Base Type dropdown, select "CUST".
 • In AP1 dropdown, select who the pro is billed to.
 • Click OK when finished.`
-      },
-      {
-        title:"Clean Description Field",
-        images:["Steps/Step11.jpg"],
-        content:`Delete all blank lines in the description field.`
-      },
-      {
-        title:"Add Correction Code",
-        content:`Add correction code based on reason:
+    },
+    {
+      title:"Clean Description Field",
+      images:["Steps/Step11.jpg"],
+      content:`Delete all blank lines in the description field.`
+    },
+    {
+      title:"Add Correction Code",
+      content:`Add correction code based on reason:
 
 EADL – Volume quote listed on BOL but biller did not bill.
 SYSM – Volume quote noted but automation didn’t recognize it.
 CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
-      },
-      {
-        title:"Final Step",
-        content:`At last, click ACCEPT ALL.`
+    },
+    {
+      title:"Final Step",
+      content:`At last, click ACCEPT ALL.`
+    }
+  ];
+
+  let currentStep = 0;
+
+  const els = {
+    stepTitle: document.getElementById("stepTitle"),
+    stepContent: document.getElementById("stepContent"),
+    stepImages: document.getElementById("stepImages"),
+    stepCounter: document.getElementById("stepCounter"),
+    miniProgressFill: document.getElementById("miniProgressFill"),
+    progressFill: document.getElementById("progressFill"),
+    progressText: document.getElementById("progressText"),
+    prevBtn: document.getElementById("prevBtn"),
+    nextBtn: document.getElementById("nextBtn"),
+    stepDots: document.getElementById("stepDots"),
+    stepBody: document.getElementById("stepBody"),
+    quickJumpList: document.getElementById("quickJumpList"),
+    metricSteps: document.getElementById("metricSteps"),
+    metricImages: document.getElementById("metricImages")
+  };
+
+  function countImages(){
+    return steps.reduce((total, step) => total + (Array.isArray(step.images) ? step.images.length : 0), 0);
+  }
+
+  function renderQuickJump(){
+    if(!els.quickJumpList) return;
+
+    els.quickJumpList.innerHTML = "";
+
+    steps.forEach((step, index) => {
+      const btn = document.createElement("button");
+      btn.className = "path-jump";
+      btn.type = "button";
+      btn.dataset.jump = index;
+
+      btn.innerHTML = `
+        <span>${index + 1}</span>
+        <div>
+          <strong>${escapeHtml(step.title)}</strong>
+          <small>Step ${index + 1}</small>
+        </div>
+      `;
+
+      btn.onclick = () => goToStep(index, true);
+      els.quickJumpList.appendChild(btn);
+    });
+  }
+
+  function updateQuickJump(){
+    document.querySelectorAll(".path-jump").forEach(btn => {
+      const index = Number(btn.dataset.jump);
+      btn.classList.toggle("active", index === currentStep);
+    });
+  }
+
+  function renderDots(){
+    if(!els.stepDots) return;
+
+    els.stepDots.innerHTML = "";
+
+    steps.forEach((step, index) => {
+      const dot = document.createElement("div");
+      dot.className = "step-dot";
+
+      if(index === currentStep) {
+        dot.classList.add("active");
       }
-    ];
 
-    let currentStep = 0;
+      dot.onclick = () => goToStep(index, true);
+      els.stepDots.appendChild(dot);
+    });
+  }
 
-    const els = {
-      stepTitle: document.getElementById("stepTitle"),
-      stepContent: document.getElementById("stepContent"),
-      stepImages: document.getElementById("stepImages"),
-      stepCounter: document.getElementById("stepCounter"),
-      miniProgressFill: document.getElementById("miniProgressFill"),
-      progressFill: document.getElementById("progressFill"),
-      progressText: document.getElementById("progressText"),
-      prevBtn: document.getElementById("prevBtn"),
-      nextBtn: document.getElementById("nextBtn"),
-      stepDots: document.getElementById("stepDots"),
-      stepBody: document.getElementById("stepBody"),
-      quickJumpList: document.getElementById("quickJumpList"),
-      metricSteps: document.getElementById("metricSteps"),
-      metricImages: document.getElementById("metricImages")
-    };
+  function renderStep(){
+    const step = steps[currentStep];
+    const progress = ((currentStep + 1) / steps.length * 100) + "%";
 
-    function escapeHtml(value){
-      return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+    if (els.stepTitle) els.stepTitle.textContent = step.title;
+    if (els.stepContent) els.stepContent.textContent = step.content;
 
-    function countImages(){
-      return steps.reduce((total, step) => total + (Array.isArray(step.images) ? step.images.length : 0), 0);
-    }
-
-    function renderQuickJump(){
-      if(!els.quickJumpList) return;
-      els.quickJumpList.innerHTML = "";
-
-      steps.forEach((step, index) => {
-        const btn = document.createElement("button");
-        btn.className = "path-jump";
-        btn.type = "button";
-        btn.dataset.jump = index;
-        btn.innerHTML = `
-          <span>${index + 1}</span>
-          <div>
-            <strong>${escapeHtml(step.title)}</strong>
-            <small>Step ${index + 1}</small>
-          </div>
-        `;
-        btn.onclick = () => goToStep(index, true);
-        els.quickJumpList.appendChild(btn);
-      });
-    }
-
-    function updateQuickJump(){
-      document.querySelectorAll(".path-jump").forEach(btn => {
-        const index = Number(btn.dataset.jump);
-        btn.classList.toggle("active", index === currentStep);
-      });
-    }
-
-    function renderDots(){
-      if(!els.stepDots) return;
-      els.stepDots.innerHTML = "";
-      steps.forEach((step, index) => {
-        const dot = document.createElement("div");
-        dot.className = "step-dot";
-        if(index === currentStep) dot.classList.add("active");
-        dot.onclick = () => goToStep(index, true);
-        els.stepDots.appendChild(dot);
-      });
-    }
-
-    function renderStep(){
-      const step = steps[currentStep];
-      const progress = ((currentStep + 1) / steps.length * 100) + "%";
-
-      els.stepTitle.textContent = step.title;
-      els.stepContent.textContent = step.content;
+    if (els.stepImages) {
       els.stepImages.innerHTML = "";
 
       if(Array.isArray(step.images)){
@@ -1607,17 +1696,37 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
           els.stepImages.appendChild(image);
         });
       }
+    }
 
+    if (els.stepCounter) {
       els.stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+    }
+
+    if (els.progressText) {
       els.progressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+    }
+
+    if (els.progressFill) {
       els.progressFill.style.width = progress;
+    }
+
+    if (els.miniProgressFill) {
       els.miniProgressFill.style.width = progress;
+    }
 
-      if(els.metricSteps) els.metricSteps.textContent = steps.length;
-      if(els.metricImages) els.metricImages.textContent = countImages();
+    if (els.metricSteps) {
+      els.metricSteps.textContent = steps.length;
+    }
 
+    if (els.metricImages) {
+      els.metricImages.textContent = countImages();
+    }
+
+    if (els.prevBtn) {
       els.prevBtn.disabled = currentStep === 0;
+    }
 
+    if (els.nextBtn) {
       if(currentStep === steps.length - 1){
         els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
         els.nextBtn.classList.add("finish");
@@ -1625,36 +1734,49 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
         els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
         els.nextBtn.classList.remove("finish");
       }
-
-      renderDots();
-      updateQuickJump();
     }
 
-    function animateStep(direction){
-      els.stepBody.classList.remove("animate-left", "animate-right");
-      void els.stepBody.offsetWidth;
-      els.stepBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
-    }
+    renderDots();
+    updateQuickJump();
+  }
 
-    function goToStep(index, shouldScroll = false){
-      if(index < 0 || index >= steps.length) return;
-      const direction = index >= currentStep ? "left" : "right";
-      currentStep = index;
-      animateStep(direction);
-      renderStep();
+  function animateStep(direction){
+    if (!els.stepBody) return;
 
-      if(shouldScroll){
-        const stepsSection = document.getElementById("stepsSection");
-        if(stepsSection){
-          stepsSection.scrollIntoView({ behavior:"smooth", block:"start" });
-        }
+    els.stepBody.classList.remove("animate-left", "animate-right");
+    void els.stepBody.offsetWidth;
+    els.stepBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
+  }
+
+  function goToStep(index, shouldScroll = false){
+    if(index < 0 || index >= steps.length) return;
+
+    const direction = index >= currentStep ? "left" : "right";
+    currentStep = index;
+
+    animateStep(direction);
+    renderStep();
+
+    if(shouldScroll){
+      const stepsSection = document.getElementById("stepsSection");
+
+      if(stepsSection){
+        stepsSection.scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
       }
     }
+  }
 
-    function exploreSteps(){
-      goToStep(0, true);
-    }
+  function exploreSteps(){
+    goToStep(0, true);
+  }
 
+  window.goToStep = goToStep;
+  window.exploreSteps = exploreSteps;
+
+  if (els.nextBtn) {
     els.nextBtn.onclick = () => {
       if(currentStep < steps.length - 1){
         currentStep++;
@@ -1667,7 +1789,9 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
         renderStep();
       }
     };
+  }
 
+  if (els.prevBtn) {
     els.prevBtn.onclick = () => {
       if(currentStep > 0){
         currentStep--;
@@ -1675,105 +1799,66 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
         renderStep();
       }
     };
+  }
 
-    document.addEventListener("keydown", e => {
-      if(e.key === "ArrowRight") els.nextBtn.click();
-      if(e.key === "ArrowLeft") els.prevBtn.click();
-      if(e.key === "Escape") closeImagePreview();
-    });
+  document.addEventListener("keydown", e => {
+    if(e.key === "ArrowRight" && els.nextBtn) els.nextBtn.click();
+    if(e.key === "ArrowLeft" && els.prevBtn) els.prevBtn.click();
+    if(e.key === "Escape") closeImagePreview();
+  });
 
-    document.addEventListener("click", e => {
-      const previewModal = document.getElementById("imagePreviewModal");
-      const previewImage = document.getElementById("imagePreview");
+  document.addEventListener("click", e => {
+    const previewModal = document.getElementById("imagePreviewModal");
+    const previewImage = document.getElementById("imagePreview");
 
-      if(e.target.matches(".step-images img")){
+    if(e.target.matches(".step-images img")){
+      if (previewModal && previewImage) {
         previewModal.style.display = "flex";
         previewImage.src = e.target.src;
         document.body.style.overflow = "hidden";
       }
-
-      if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
-        closeImagePreview();
-      }
-    });
-
-    function closeImagePreview(){
-      const previewModal = document.getElementById("imagePreviewModal");
-      const previewImage = document.getElementById("imagePreview");
-      if(previewModal) previewModal.style.display = "none";
-      if(previewImage) previewImage.src = "";
-      document.body.style.overflow = "";
     }
 
-    function copyText(id, btn){
-      const el = document.getElementById(id);
-      if(!el) return;
-      const text = el.innerText.trim();
-      if(!text) return;
-
-      navigator.clipboard.writeText(text).then(() => {
-        const old = btn.textContent;
-        btn.classList.add("copied");
-        btn.textContent = "Copied ✓";
-        setTimeout(() => {
-          btn.classList.remove("copied");
-          btn.textContent = old;
-        }, 1400);
-      }).catch(() => {
-        alert("Copy failed. Please copy manually.");
-      });
+    if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
+      closeImagePreview();
     }
+  });
 
-    renderQuickJump();
-    renderStep();
+  function closeImagePreview(){
+    const previewModal = document.getElementById("imagePreviewModal");
+    const previewImage = document.getElementById("imagePreview");
 
-async function showAllComments() {
-  const commentModal = document.getElementById("commentModal");
-  const commentsList = document.getElementById("commentsList");
-  if (!commentsList) return;
-
-  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
-
-  const loadComments = async () => {
-    try {
-      const snap = await db
-        .collection(FEEDBACK_COLLECTION)
-        .orderBy("createdAt", "desc")
-        .get();
-
-      if (snap.empty) {
-        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
-      } else {
-        commentsList.innerHTML = snap.docs.map(doc => {
-          const data = doc.data() || {};
-          const rating = Number(data.rating || 0);
-          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
-          const empty = "☆".repeat(Math.max(0, 5 - rating));
-
-          return `
-            <div class="comment-list-item">
-              <span class="stars">${filled}${empty}</span>
-              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
-              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
-            </div>
-          `;
-        }).join("");
-      }
-
-      openModalAnimated("allCommentsModal");
-    } catch (err) {
-      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
-      openModalAnimated("allCommentsModal");
-    }
-  };
-
-  if (commentModal && commentModal.style.display === "flex") {
-    closeModalAnimated("commentModal", loadComments);
-  } else {
-    loadComments();
+    if(previewModal) previewModal.style.display = "none";
+    if(previewImage) previewImage.src = "";
+    document.body.style.overflow = "";
   }
-}
-    
-  </script>
+
+  function copyText(id, btn){
+    const el = document.getElementById(id);
+    if(!el) return;
+
+    const text = el.innerText.trim();
+    if(!text) return;
+
+    navigator.clipboard.writeText(text).then(() => {
+      const old = btn.textContent;
+      btn.classList.add("copied");
+      btn.textContent = "Copied ✓";
+
+      setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.textContent = old;
+      }, 1400);
+    }).catch(() => {
+      alert("Copy failed. Please copy manually.");
+    });
+  }
+
+  window.copyText = copyText;
+  window.closeImagePreview = closeImagePreview;
+
+  renderQuickJump();
+  renderStep();
+</script>
 </body>
 </html>
