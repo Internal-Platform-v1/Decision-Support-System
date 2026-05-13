@@ -1726,6 +1726,54 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
 
     renderQuickJump();
     renderStep();
+
+async function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const commentsList = document.getElementById("commentsList");
+  if (!commentsList) return;
+
+  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+  const loadComments = async () => {
+    try {
+      const snap = await db
+        .collection(FEEDBACK_COLLECTION)
+        .orderBy("createdAt", "desc")
+        .get();
+
+      if (snap.empty) {
+        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+      } else {
+        commentsList.innerHTML = snap.docs.map(doc => {
+          const data = doc.data() || {};
+          const rating = Number(data.rating || 0);
+          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+          const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+          return `
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      openModalAnimated("allCommentsModal");
+    } catch (err) {
+      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+      openModalAnimated("allCommentsModal");
+    }
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeModalAnimated("commentModal", loadComments);
+  } else {
+    loadComments();
+  }
+}
+    
   </script>
 </body>
 </html>
