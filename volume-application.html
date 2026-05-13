@@ -12,28 +12,41 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/header-footer-style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/header-footer-style.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <style>
     :root{
       --bg:#07111f;
+      --bg-soft:#0c1728;
+      --panel:#0f1c31;
+      --panel-2:#12233d;
       --card:#ffffff;
+      --card-soft:#f8fafc;
       --text:#0f172a;
-      --muted:#64748b;
+      --text-soft:#475569;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.18);
+      --white-line:rgba(255,255,255,.08);
       --accent:#6d28d9;
       --accent-2:#4d148c;
       --accent-3:#ff6600;
       --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#ef4444;
       --shadow-xl:0 24px 80px rgba(2,6,23,.18);
+      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
       --shadow-md:0 10px 28px rgba(15,23,42,.10);
       --shadow-card:0 16px 40px rgba(15,23,42,.06);
+      --radius-xl:28px;
+      --radius-lg:20px;
+      --radius-md:16px;
+      --radius-sm:12px;
       --max:1720px;
-      font-family:"Inter",system-ui,sans-serif;
+      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     *{box-sizing:border-box}
@@ -56,41 +69,21 @@
       inset:0;
       pointer-events:none;
       background:
-        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
       background-size:36px 36px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 60%);
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
       z-index:0;
     }
 
-    a{color:inherit;text-decoration:none}
+    a{color:inherit}
     button,input,textarea{font:inherit}
 
-    .page{
-      position:relative;
-      z-index:1;
-    }
-
-    #site-header{
-      position:relative;
-      z-index:9999;
-    }
-
-    #site-header header,
-    #site-header .header,
-    #site-header .site-header,
-    #site-header .premium-header,
-    #site-header .top-header,
-    #site-header .nav-header{
-      position:relative;
-      z-index:9999;
-    }
+    .page{position:relative;z-index:1}
 
     .app-shell{
       width:min(calc(100% - 32px), var(--max));
       margin:22px auto 24px;
-      position:relative;
-      z-index:1;
     }
 
     .app-frame{
@@ -140,7 +133,7 @@
       font-size:13px;
       color:#64748b;
       line-height:1.6;
-      max-width:780px;
+      max-width:720px;
     }
 
     .main-status{display:flex;gap:10px;flex-wrap:wrap}
@@ -188,19 +181,10 @@
       margin-bottom:10px;
     }
 
-    .progress-title{
-      font-size:14px;
-      font-weight:800;
-      color:#0f172a;
-    }
+    .progress-title{font-size:14px;font-weight:800;color:#0f172a}
+    .progress-status{font-size:12px;font-weight:800;color:#64748b}
 
-    .progress-status{
-      font-size:12px;
-      font-weight:800;
-      color:#64748b;
-    }
-
-    .progress-bar-shell{
+    .progress-bar{
       height:12px;
       background:#eaf0f7;
       border-radius:999px;
@@ -212,7 +196,7 @@
       width:0%;
       border-radius:inherit;
       background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
-      transition:width .35s ease;
+      transition:width .28s ease;
     }
 
     .stage-card{
@@ -246,12 +230,9 @@
       font-weight:800;
     }
 
-    .badge.alt{
-      background:#f8fafc;
-      color:#334155;
-    }
+    .badge.alt{background:#f8fafc;color:#334155}
 
-    .content-wrap{
+    .question-wrap{
       padding:22px;
       display:flex;
       flex-direction:column;
@@ -259,7 +240,7 @@
       flex:1;
     }
 
-    .hero-card-main{
+    .question-card{
       position:relative;
       padding:30px;
       border-radius:28px;
@@ -271,16 +252,13 @@
       overflow:hidden;
     }
 
-    .hero-card-main::after{
+    .question-card::after{
       content:"";
       position:absolute;
-      right:-60px;
-      top:-60px;
-      width:180px;
-      height:180px;
-      border-radius:50%;
-      background:rgba(77,20,140,.07);
+      inset:0;
+      border-radius:inherit;
       pointer-events:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
     }
 
     .question-label{
@@ -315,50 +293,46 @@
       color:#64748b;
       font-size:14px;
       line-height:1.75;
-      max-width:840px;
+      max-width:800px;
       position:relative;
       z-index:1;
     }
 
-    .hero-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+    .step-actions{
       margin-top:22px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
       position:relative;
       z-index:1;
     }
 
-    .guide-btn{
+    .volume-btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:10px;
       min-height:50px;
       padding:0 18px;
-      border:none;
       border-radius:16px;
-      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+      background:linear-gradient(135deg,#4d148c,#6d28d9);
       color:#fff;
-      text-decoration:none;
-      font-weight:800;
       font-size:13px;
+      font-weight:900;
+      text-decoration:none;
       box-shadow:0 14px 24px rgba(77,20,140,.18);
-      transition:.22s ease;
-      cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease;
     }
 
-    .guide-btn:hover{
+    .volume-btn:hover{
       transform:translateY(-2px);
       box-shadow:0 18px 30px rgba(77,20,140,.24);
     }
 
-    .guide-btn.orange{
-      background:linear-gradient(135deg,#ff6600,#f59e0b);
-      box-shadow:0 14px 24px rgba(255,102,0,.18);
-    }
-
-    .section-card{
+    .step-viewer{
       background:#fff;
       border:1px solid #dbe4f0;
       border-radius:24px;
@@ -366,7 +340,7 @@
       overflow:hidden;
     }
 
-    .section-head{
+    .step-viewer-head{
       padding:18px 20px;
       border-bottom:1px solid #eef2f7;
       display:flex;
@@ -376,7 +350,7 @@
       background:linear-gradient(180deg,#fff,#fbfdff);
     }
 
-    .section-title{
+    .step-viewer-title{
       display:flex;
       align-items:center;
       gap:12px;
@@ -386,7 +360,7 @@
       color:#0f172a;
     }
 
-    .section-title i{
+    .step-viewer-title i{
       width:38px;
       height:38px;
       border-radius:14px;
@@ -396,9 +370,9 @@
       background:linear-gradient(135deg,#4d148c,#6d28d9);
     }
 
-    .slide-shell{padding:18px}
+    .step-shell{padding:18px}
 
-    .slide-top{
+    .step-top{
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -432,7 +406,7 @@
       transition:width .35s ease;
     }
 
-    .slide-body{
+    .step-body{
       position:relative;
       min-height:520px;
       padding:26px;
@@ -445,7 +419,7 @@
       overflow:hidden;
     }
 
-    .slide-body::before{
+    .step-body::before{
       content:"";
       position:absolute;
       left:0;
@@ -497,27 +471,20 @@
       box-shadow:0 24px 60px rgba(15,23,42,.22);
     }
 
-    .slide-body.animate-left{animation:slideLeft .38s ease}
-    .slide-body.animate-right{animation:slideRight .38s ease}
+    .step-body.animate-left{animation:slideLeft .38s ease}
+    .step-body.animate-right{animation:slideRight .38s ease}
 
-    @keyframes slideLeft{
-      from{opacity:0;transform:translateX(40px)}
-      to{opacity:1;transform:translateX(0)}
-    }
+    @keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
 
-    @keyframes slideRight{
-      from{opacity:0;transform:translateX(-40px)}
-      to{opacity:1;transform:translateX(0)}
-    }
-
-    .slide-navigation{
+    .step-navigation{
       display:flex;
       justify-content:space-between;
       gap:12px;
       margin-top:18px;
     }
 
-    .nav-btn{
+    .step-nav-btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
@@ -532,25 +499,23 @@
       transition:.2s ease;
     }
 
-    .nav-btn:hover{transform:translateY(-2px)}
+    .step-nav-btn:hover{transform:translateY(-2px)}
 
-    .nav-btn.prev{
+    .step-nav-btn.prev{
       background:#f8fafc;
       color:#334155;
       border:1px solid #dbe4f0;
     }
 
-    .nav-btn.next{
+    .step-nav-btn.next{
       background:linear-gradient(135deg,#4d148c,#6d28d9);
       color:#fff;
       box-shadow:0 14px 24px rgba(77,20,140,.18);
     }
 
-    .nav-btn.finish{
-      background:linear-gradient(135deg,#16a34a,#22c55e);
-    }
+    .step-nav-btn.finish{background:linear-gradient(135deg,#16a34a,#22c55e)}
 
-    .nav-btn:disabled{
+    .step-nav-btn:disabled{
       opacity:.45;
       cursor:not-allowed;
       transform:none;
@@ -574,26 +539,19 @@
       transition:.2s ease;
     }
 
-    .step-dot:hover{
-      transform:scale(1.3);
-      background:#6d28d9;
-    }
-
-    .step-dot.active{
-      width:30px;
-      background:#ff6600;
-    }
+    .step-dot:hover{transform:scale(1.3);background:#6d28d9}
+    .step-dot.active{width:30px;background:#ff6600}
 
     .side-panel,
     .template-panel{
+      padding:18px 18px 18px 0;
       display:flex;
       flex-direction:column;
       gap:14px;
       min-width:0;
     }
 
-    .side-panel{padding:18px 14px 18px 0}
-    .template-panel{padding:18px 18px 18px 0}
+    .side-panel{padding-right:14px}
 
     .summary-card{
       background:#fff;
@@ -613,13 +571,6 @@
     }
 
     .summary-head i{color:#7c3aed}
-
-    .section-note{
-      font-size:12px;
-      color:#64748b;
-      line-height:1.6;
-      margin-top:-2px;
-    }
 
     .summary-grid{
       display:grid;
@@ -700,25 +651,17 @@
       flex:0 0 auto;
     }
 
-    .path-jump strong{
-      display:block;
-      font-size:11px;
-      line-height:1.25;
-    }
+    .path-jump strong{display:block;font-size:11px;line-height:1.25}
+    .path-jump small{display:block;margin-top:2px;color:#64748b;line-height:1.25;font-size:10px;font-weight:700}
 
-    .path-jump small{
-      display:block;
-      margin-top:2px;
+    .section-note{
+      font-size:12px;
       color:#64748b;
-      line-height:1.25;
-      font-size:10px;
-      font-weight:700;
+      line-height:1.6;
+      margin-top:-2px;
     }
 
-    .reminder-list{
-      display:grid;
-      gap:10px;
-    }
+    .reminder-list{display:grid;gap:10px}
 
     .reminder{
       display:flex;
@@ -733,17 +676,9 @@
       line-height:1.6;
     }
 
-    .reminder i{
-      color:#ff6600;
-      margin-top:3px;
-    }
+    .reminder i{color:#ff6600;margin-top:3px}
 
-    .template-stack{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-top:14px;
-    }
+    .template-stack{display:flex;flex-direction:column;gap:12px;margin-top:14px}
 
     .template-card{
       border:1px solid #e5ebf4;
@@ -760,12 +695,7 @@
       padding:14px 14px 10px;
     }
 
-    .template-title-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-    }
+    .template-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
 
     .template-icon{
       width:36px;
@@ -778,21 +708,9 @@
       flex:0 0 auto;
     }
 
-    .template-title{
-      font-size:14px;
-      font-weight:900;
-      color:#0f172a;
-    }
-
-    .template-sub{
-      font-size:12px;
-      color:#64748b;
-      margin-top:2px;
-    }
-
-    .template-body{
-      padding:0 14px 14px;
-    }
+    .template-title{font-size:14px;font-weight:900;color:#0f172a}
+    .template-sub{font-size:12px;color:#64748b;margin-top:2px}
+    .template-body{padding:0 14px 14px}
 
     .template-box{
       min-height:100px;
@@ -840,11 +758,7 @@
       transition:all .18s ease;
     }
 
-    .template-copy.copied{
-      background:#dcfce7 !important;
-      color:#166534 !important;
-      border-color:#bbf7d0 !important;
-    }
+    .template-copy.copied{background:#dcfce7 !important;color:#166534 !important;border-color:#bbf7d0 !important}
 
     .image-preview-modal{
       display:none;
@@ -894,7 +808,7 @@
       justify-content:center;
       align-items:center;
       padding:0 24px;
-      z-index:2147483647 !important;
+      z-index:2147483647;
       backdrop-filter:blur(8px);
       overflow-y:auto;
     }
@@ -951,25 +865,10 @@
 
     #commentModal .modal-close:hover,
     #allCommentsModal .modal-close:hover,
-    #helpModal .modal-close:hover{
-      color:#0f172a;
-      background:#eef2ff;
-    }
+    #helpModal .modal-close:hover{color:#0f172a;background:#eef2ff}
 
-    #commentModal .rating-container{
-      display:flex;
-      justify-content:center;
-      gap:14px;
-      margin:16px 0 18px;
-    }
-
-    #commentModal .rating-star{
-      cursor:pointer;
-      font-size:26px;
-      color:#d1d5db;
-      transition:transform .18s ease, color .18s ease;
-    }
-
+    #commentModal .rating-container{display:flex;justify-content:center;gap:14px;margin:16px 0 18px}
+    #commentModal .rating-star{cursor:pointer;font-size:26px;color:#d1d5db;transition:transform .18s ease, color .18s ease}
     #commentModal .rating-star:hover{transform:translateY(-1px) scale(1.06)}
     #commentModal .rating-star.selected{color:#ff6600}
 
@@ -985,34 +884,23 @@
       color:#0f172a;
       font-size:14px;
       transition:.18s ease;
-      font-family:inherit;
     }
 
     #commentModal input{margin-top:4px;margin-bottom:10px}
     #commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
-
-    #commentModal input:focus,
-    #commentModal textarea:focus{
-      background:#fff;
-      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
-    }
-
+    #commentModal input:focus,#commentModal textarea:focus{background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06)}
     #commentModal .feedback-submit-btn{margin:16px 0 8px;min-height:54px;border-radius:18px}
     #commentModal .link-text{color:#4d148c;cursor:pointer;text-decoration:none;font-size:14px;font-weight:700}
     #commentModal .link-text:hover{text-decoration:underline}
-
     #allCommentsModal .comment-list-item{padding:14px 0;border-bottom:1px solid rgba(148,163,184,.18)}
     #allCommentsModal .comment-list-item:last-child{border-bottom:none}
     #allCommentsModal .stars{color:#ff6600;font-size:18px;margin-bottom:6px;display:block}
 
-    @media (max-width:1450px){
-      .app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}
-    }
+    @media (max-width:1450px){.app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}}
 
     @media (max-width:1220px){
       .app-frame{grid-template-columns:1fr}
-      .side-panel,
-      .template-panel{padding:0 18px 18px}
+      .side-panel,.template-panel{padding:0 18px 18px}
     }
 
     @media (max-width:760px){
@@ -1022,197 +910,15 @@
       .main-topbar{flex-direction:column;align-items:flex-start}
       .question-text{font-size:28px}
       .summary-grid{grid-template-columns:1fr}
-      .section-head{flex-direction:column;align-items:flex-start}
-      .slide-body{padding:22px;min-height:460px}
+      .step-viewer-head{flex-direction:column;align-items:flex-start}
+      .step-body{padding:22px;min-height:460px}
       .path-list{gap:8px}
       .path-jump{padding:10px 11px}
       .path-jump strong{font-size:12px}
       .path-jump small{font-size:10px}
-      #commentModal,
-      #allCommentsModal,
-      #helpModal{padding:0 14px}
-      #commentModal .modal-content,
-      #allCommentsModal .modal-content,
-      #helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
+      #commentModal,#allCommentsModal,#helpModal{padding:0 14px}
+      #commentModal .modal-content,#allCommentsModal .modal-content,#helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
     }
-
-/* ===== HEADER SHOULD FOLLOW SHARED HEADER STYLE ===== */
-#site-header{
-  position:relative;
-  z-index:9999;
-}
-
-#site-header header,
-#site-header .header,
-#site-header .site-header,
-#site-header .premium-header,
-#site-header .top-header,
-#site-header .nav-header{
-  position:relative;
-  z-index:9999;
-}
-
-/* Keep shared modals above the guide */
-#commentModal,
-#allCommentsModal,
-#helpModal{
-  z-index:2147483647 !important;
-}
-
-/* Only prevent the page app from covering the header */
-.app-shell{
-  position:relative;
-  z-index:1;
-}
-
-/* =========================================================
-   FINAL HEADER / MODAL BUTTON STYLE RESTORE
-   Fixes:
-   - Date & Time Settings button
-   - Save Changes button
-   - Send Feedback button
-   - Keeps guide buttons separate from shared header buttons
-========================================================= */
-
-/* Keep guide page buttons separate */
-.guide-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  min-height:50px;
-  padding:0 18px;
-  border:none;
-  border-radius:16px;
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-  color:#fff;
-  text-decoration:none;
-  font-weight:800;
-  font-size:13px;
-  box-shadow:0 14px 24px rgba(77,20,140,.18);
-  transition:.22s ease;
-  cursor:pointer;
-}
-
-.guide-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.24);
-}
-
-/* Restore purple modal buttons used by shared header */
-#site-header .date-time-settings-btn,
-#site-header .dateTimeSettingsBtn,
-#site-header #dateTimeSettingsBtn,
-#site-header button[onclick*="openDateTimeSettings"],
-#site-header button[onclick*="openTimeSettings"],
-#site-header button[onclick*="dateTime"],
-#site-header button[onclick*="DateTime"]{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:8px !important;
-  width:100% !important;
-  min-height:40px !important;
-  padding:0 16px !important;
-  border:0 !important;
-  border-radius:12px !important;
-  background:linear-gradient(135deg, #5b21b6, #7c3aed) !important;
-  color:#fff !important;
-  font-size:12px !important;
-  font-weight:900 !important;
-  line-height:1 !important;
-  box-shadow:0 14px 28px rgba(91,33,182,.22) !important;
-  cursor:pointer !important;
-}
-
-/* Restore Save Changes button inside Date & Time Settings modal */
-#timeSettingsModal button[type="submit"],
-#timeSettingsModal .save-btn,
-#timeSettingsModal .save-button,
-#timeSettingsModal button:not(.modal-close),
-#dateTimeSettingsModal button[type="submit"],
-#dateTimeSettingsModal .save-btn,
-#dateTimeSettingsModal .save-button,
-#dateTimeSettingsModal button:not(.modal-close),
-#site-header .time-settings-modal button[type="submit"],
-#site-header .date-time-settings-modal button[type="submit"],
-#site-header .time-settings-modal .save-btn,
-#site-header .date-time-settings-modal .save-btn{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  width:100% !important;
-  min-height:40px !important;
-  padding:0 16px !important;
-  border:0 !important;
-  border-radius:12px !important;
-  background:linear-gradient(135deg, #5b21b6, #7c3aed) !important;
-  color:#fff !important;
-  font-size:13px !important;
-  font-weight:900 !important;
-  box-shadow:0 14px 28px rgba(91,33,182,.22) !important;
-  cursor:pointer !important;
-}
-
-/* Restore Send Feedback button */
-#commentModal .feedback-submit-btn,
-#commentModal button[onclick*="sendComment"],
-#commentModal button[type="submit"]{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:8px !important;
-  width:100% !important;
-  min-height:44px !important;
-  padding:0 16px !important;
-  border:0 !important;
-  border-radius:12px !important;
-  background:linear-gradient(135deg, #5b21b6, #7c3aed) !important;
-  color:#fff !important;
-  font-size:13px !important;
-  font-weight:900 !important;
-  box-shadow:0 14px 28px rgba(91,33,182,.22) !important;
-  cursor:pointer !important;
-}
-
-/* Restore hover effect */
-#site-header .date-time-settings-btn:hover,
-#site-header .dateTimeSettingsBtn:hover,
-#site-header #dateTimeSettingsBtn:hover,
-#site-header button[onclick*="openDateTimeSettings"]:hover,
-#site-header button[onclick*="openTimeSettings"]:hover,
-#site-header button[onclick*="dateTime"]:hover,
-#site-header button[onclick*="DateTime"]:hover,
-#timeSettingsModal button[type="submit"]:hover,
-#dateTimeSettingsModal button[type="submit"]:hover,
-#commentModal .feedback-submit-btn:hover,
-#commentModal button[onclick*="sendComment"]:hover,
-#commentModal button[type="submit"]:hover{
-  transform:translateY(-1px);
-  box-shadow:0 18px 34px rgba(91,33,182,.28) !important;
-}
-
-/* Keep close buttons untouched */
-#commentModal .modal-close,
-#allCommentsModal .modal-close,
-#helpModal .modal-close,
-#timeSettingsModal .modal-close,
-#dateTimeSettingsModal .modal-close,
-#site-header .modal-close{
-  width:40px !important;
-  min-height:40px !important;
-  padding:0 !important;
-  border-radius:14px !important;
-  background:#f8fafc !important;
-  color:#64748b !important;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16) !important;
-}
-
-/* Make sure plain buttons inside feedback modal do not fall back to browser default */
-#commentModal button{
-  font-family:"Inter",system-ui,sans-serif !important;
-}    
-
   </style>
 </head>
 
@@ -1227,12 +933,12 @@
             <div class="page-title-block">
               <h1>Volume Application — Step by Step Procedure</h1>
               <p class="page-subtitle">
-                Use this guided walkthrough to correctly apply a Volume Quote, update rate keywords, validate surcharge handling, add agreement details, and finish the correction properly.
+                Follow this clean Rate & Volume style guide to apply the Volume Quote, update required keywords, validate surcharge handling, add agreement details, and finish the correction.
               </p>
             </div>
 
             <div class="main-status">
-              <div class="pill primary">
+              <div class="pill primary" id="statusPill">
                 <i class="fa-solid fa-truck-ramp-box"></i>
                 Ready
               </div>
@@ -1243,18 +949,18 @@
             <section class="progress-card">
               <div class="progress-head">
                 <div class="progress-title">Guide Progress</div>
-                <div class="progress-status" id="topProgressText">Step 1 of 13</div>
+                <div class="progress-status" id="progressText">Step 1 of 13</div>
               </div>
-              <div class="progress-bar-shell">
-                <div class="progress-fill" id="topProgressFill"></div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
               </div>
             </section>
 
             <section class="stage-area">
-              <div class="stage-card">
+              <div class="stage-card" id="stageCard">
                 <div class="stage-top">
                   <span class="badge">
-                    <i class="fa-solid fa-truck-ramp-box"></i>
+                    <i class="fa-solid fa-boxes-stacked"></i>
                     Volume Quote Application
                   </span>
                   <span class="badge alt">
@@ -1263,8 +969,8 @@
                   </span>
                 </div>
 
-                <div class="content-wrap">
-                  <section class="hero-card-main">
+                <div class="question-wrap">
+                  <section class="question-card">
                     <div class="question-label">
                       <i class="fa-solid fa-route"></i>
                       Volume Quote Workflow
@@ -1273,20 +979,20 @@
                     <h2 class="question-text">Apply the Volume Quote using the correct rate, keywords, surcharge handling, and correction code.</h2>
 
                     <p class="question-help">
-                      Use the slideshow below to apply the flat quote amount, remove rate keywords, zero out applicable surcharges, add CONT and PRAU details, clean the description field, and complete the correction.
+                      Use the steps below to apply the flat quote amount, remove rate keywords, zero out applicable surcharges, add CONT and PRAU details, clean the description field, and complete the correction.
                     </p>
 
-                    <div class="hero-actions">
-                      <button class="guide-btn" type="button" onclick="exploreSteps()">
+                    <div class="step-actions">
+                      <button class="volume-btn" type="button" onclick="exploreSteps()">
                         Explore Steps
                         <i class="fa-solid fa-arrow-right"></i>
                       </button>
                     </div>
                   </section>
 
-                  <section class="section-card" id="stepsSection">
-                    <div class="section-head">
-                      <div class="section-title">
+                  <section class="step-viewer" id="stepsSection">
+                    <div class="step-viewer-head">
+                      <div class="step-viewer-title">
                         <i class="fa-solid fa-display"></i>
                         Guided Volume Application Walkthrough
                       </div>
@@ -1297,28 +1003,28 @@
                       </span>
                     </div>
 
-                    <div class="slide-shell">
-                      <div class="slide-top">
+                    <div class="step-shell">
+                      <div class="step-top">
                         <div class="step-counter" id="stepCounter"></div>
 
                         <div class="mini-progress-bar">
-                          <div class="mini-progress-fill" id="progressBar"></div>
+                          <div class="mini-progress-fill" id="miniProgressFill"></div>
                         </div>
                       </div>
 
-                      <div class="slide-body" id="slideBody">
+                      <div class="step-body" id="stepBody">
                         <h2 class="step-title" id="stepTitle"></h2>
                         <div class="step-content" id="stepContent"></div>
                         <div class="step-images" id="stepImages"></div>
                       </div>
 
-                      <div class="slide-navigation">
-                        <button class="nav-btn prev" id="prevBtn" type="button">
+                      <div class="step-navigation">
+                        <button class="step-nav-btn prev" id="prevBtn" type="button">
                           <i class="fa-solid fa-arrow-left"></i>
                           Previous
                         </button>
 
-                        <button class="nav-btn next" id="nextBtn" type="button">
+                        <button class="step-nav-btn next" id="nextBtn" type="button">
                           Next
                           <i class="fa-solid fa-arrow-right"></i>
                         </button>
@@ -1343,12 +1049,12 @@
             <div class="summary-grid">
               <div class="metric">
                 <span class="metric-k">Steps</span>
-                <span class="metric-v" id="snapshotSteps">13</span>
+                <span class="metric-v" id="metricSteps">13</span>
               </div>
 
               <div class="metric">
                 <span class="metric-k">Images</span>
-                <span class="metric-v">11</span>
+                <span class="metric-v" id="metricImages">11</span>
               </div>
 
               <div class="metric">
@@ -1491,27 +1197,28 @@
   </div>
 
   <script src="assets/js/header-loader.js"></script>
-
-  <script>
-    if (window.firebase && !firebase.apps.length) {
-      firebase.initializeApp({
-        apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-        authDomain: "bdgg-database.firebaseapp.com",
-        projectId: "bdgg-database",
-        storageBucket: "bdgg-database.appspot.com",
-        messagingSenderId: "43574975434",
-        appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-      });
-    }
-  </script>
-
   <script src="assets/js/header.js"></script>
   <script src="assets/js/footer-loader.js"></script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.firebase && !firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+          authDomain: "bdgg-database.firebaseapp.com",
+          projectId: "bdgg-database",
+          storageBucket: "bdgg-database.appspot.com",
+          messagingSenderId: "43574975434",
+          appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+        });
+      }
+    });
+  </script>
 
   <script>
     let selectedRating = 0;
     let ratingStars = [];
+    let commentsUnsubscribe = null;
 
     function openModalAnimated(id) {
       const modal = document.getElementById(id);
@@ -1538,15 +1245,14 @@
         modal.style.display = "none";
         modal.classList.remove("is-closing");
         document.body.style.overflow = "";
-
-        if (typeof onClosed === "function") {
-          onClosed();
-        }
+        if (typeof onClosed === "function") onClosed();
       }, 220);
     }
 
     function openComment() {
+      selectedRating = 0;
       openModalAnimated("commentModal");
+      setTimeout(initRatingStars, 80);
     }
 
     function closeComment() {
@@ -1562,20 +1268,21 @@
     }
 
     function closeAllComments() {
-      closeModalAnimated("allCommentsModal");
-    }
-
-    function viewAllComments() {
-      openModalAnimated("allCommentsModal");
+      closeModalAnimated("allCommentsModal", () => {
+        if (typeof commentsUnsubscribe === "function") {
+          commentsUnsubscribe();
+          commentsUnsubscribe = null;
+        }
+      });
     }
 
     function initRatingStars() {
       ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+      if (!ratingStars.length) return;
 
       ratingStars.forEach(star => {
         star.onclick = function () {
           selectedRating = Number(this.dataset.value || this.dataset.rating || 0);
-
           ratingStars.forEach(s => {
             const value = Number(s.dataset.value || s.dataset.rating || 0);
             s.classList.toggle("selected", value <= selectedRating);
@@ -1588,7 +1295,6 @@
       const nameEl = document.getElementById("commentName");
       const textEl = document.getElementById("commentText");
       const feedbackMessage = document.getElementById("feedbackMessage");
-
       const name = (nameEl?.value || "").trim();
       const comment = (textEl?.value || "").trim();
 
@@ -1629,16 +1335,12 @@
 
         if (nameEl) nameEl.value = "";
         if (textEl) textEl.value = "";
-
         selectedRating = 0;
         ratingStars.forEach(s => s.classList.remove("selected"));
 
-        setTimeout(() => {
-          closeComment();
-        }, 900);
+        setTimeout(() => closeComment(), 900);
       } catch (err) {
         console.error(err);
-
         if (feedbackMessage) {
           feedbackMessage.style.display = "block";
           feedbackMessage.style.color = "#ef4444";
@@ -1647,9 +1349,50 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      initRatingStars();
-    });
+    function viewAllComments() {
+      const list = document.getElementById("allCommentsList");
+      if (list) {
+        list.innerHTML = '<div class="comment-list-item">Loading comments...</div>';
+      }
+      openModalAnimated("allCommentsModal");
+
+      if (!(window.firebase && firebase.firestore && list)) return;
+
+      if (typeof commentsUnsubscribe === "function") {
+        commentsUnsubscribe();
+      }
+
+      commentsUnsubscribe = firebase.firestore()
+        .collection("feedback")
+        .orderBy("createdAt", "desc")
+        .limit(40)
+        .onSnapshot(snapshot => {
+          if (!snapshot.size) {
+            list.innerHTML = '<div class="comment-list-item">No comments yet.</div>';
+            return;
+          }
+
+          list.innerHTML = "";
+          snapshot.forEach(doc => {
+            const data = doc.data() || {};
+            const rating = Number(data.rating || 0);
+            const stars = "★".repeat(rating) + "☆".repeat(Math.max(0, 5 - rating));
+            const item = document.createElement("div");
+            item.className = "comment-list-item";
+            item.innerHTML = `
+              <span class="stars">${stars}</span>
+              <strong>${escapeHtml(data.name || "Anonymous")}</strong>
+              <p>${escapeHtml(data.comment || "")}</p>
+            `;
+            list.appendChild(item);
+          });
+        }, err => {
+          console.error(err);
+          list.innerHTML = '<div class="comment-list-item">Unable to load comments.</div>';
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", initRatingStars);
   </script>
 
   <script>
@@ -1748,152 +1491,54 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
 
     let currentStep = 0;
 
-    const stepTitle = document.getElementById("stepTitle");
-    const stepContent = document.getElementById("stepContent");
-    const stepImages = document.getElementById("stepImages");
-    const stepCounter = document.getElementById("stepCounter");
-    const progressBar = document.getElementById("progressBar");
-    const topProgressFill = document.getElementById("topProgressFill");
-    const topProgressText = document.getElementById("topProgressText");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const stepDots = document.getElementById("stepDots");
-    const slideBody = document.getElementById("slideBody");
-    const quickJumpList = document.getElementById("quickJumpList");
-    const snapshotSteps = document.getElementById("snapshotSteps");
+    const els = {
+      stepTitle: document.getElementById("stepTitle"),
+      stepContent: document.getElementById("stepContent"),
+      stepImages: document.getElementById("stepImages"),
+      stepCounter: document.getElementById("stepCounter"),
+      miniProgressFill: document.getElementById("miniProgressFill"),
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      stepDots: document.getElementById("stepDots"),
+      stepBody: document.getElementById("stepBody"),
+      quickJumpList: document.getElementById("quickJumpList"),
+      metricSteps: document.getElementById("metricSteps"),
+      metricImages: document.getElementById("metricImages")
+    };
 
+    function escapeHtml(value){
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
-    function exploreSteps(){
-      goToStep(0);
-
-      const stepsSection = document.getElementById("stepsSection");
-      if(stepsSection){
-        stepsSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      }
+    function countImages(){
+      return steps.reduce((total, step) => total + (Array.isArray(step.images) ? step.images.length : 0), 0);
     }
 
     function renderQuickJump(){
-      if(!quickJumpList) return;
-
-      quickJumpList.innerHTML = "";
+      if(!els.quickJumpList) return;
+      els.quickJumpList.innerHTML = "";
 
       steps.forEach((step, index) => {
         const btn = document.createElement("button");
         btn.className = "path-jump";
         btn.type = "button";
         btn.dataset.jump = index;
-
         btn.innerHTML = `
           <span>${index + 1}</span>
           <div>
-            <strong>${step.title}</strong>
+            <strong>${escapeHtml(step.title)}</strong>
             <small>Step ${index + 1}</small>
           </div>
         `;
-
-        btn.onclick = () => goToStep(index);
-        quickJumpList.appendChild(btn);
-      });
-    }
-
-    function renderStep(){
-      const step = steps[currentStep];
-      const progress = ((currentStep + 1) / steps.length * 100) + "%";
-
-      stepTitle.textContent = step.title;
-      stepContent.textContent = step.content;
-      stepImages.innerHTML = "";
-
-      if(step.images){
-        step.images.forEach(img => {
-          const image = document.createElement("img");
-          image.src = img;
-          image.alt = step.title;
-          image.loading = "lazy";
-          stepImages.appendChild(image);
-        });
-      }
-
-      stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
-      progressBar.style.width = progress;
-
-      if(topProgressFill){
-        topProgressFill.style.width = progress;
-      }
-
-      if(topProgressText){
-        topProgressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
-      }
-
-      if(snapshotSteps){
-        snapshotSteps.textContent = steps.length;
-      }
-
-      prevBtn.disabled = currentStep === 0;
-
-      if(currentStep === steps.length - 1){
-        nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
-        nextBtn.classList.add("finish");
-      }else{
-        nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
-        nextBtn.classList.remove("finish");
-      }
-
-      renderDots();
-      updateQuickJump();
-    }
-
-    function animateSlide(direction){
-      slideBody.classList.remove("animate-left","animate-right");
-      void slideBody.offsetWidth;
-      slideBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
-    }
-
-    function goToStep(index){
-      if(index < 0 || index >= steps.length) return;
-      const direction = index >= currentStep ? "left" : "right";
-      currentStep = index;
-      animateSlide(direction);
-      renderStep();
-    }
-
-    nextBtn.onclick = () => {
-      if(currentStep < steps.length - 1){
-        currentStep++;
-        animateSlide("left");
-        renderStep();
-      }else{
-        alert("Volume Application Completed.");
-        currentStep = 0;
-        animateSlide("left");
-        renderStep();
-      }
-    };
-
-    prevBtn.onclick = () => {
-      if(currentStep > 0){
-        currentStep--;
-        animateSlide("right");
-        renderStep();
-      }
-    };
-
-    function renderDots(){
-      stepDots.innerHTML = "";
-
-      steps.forEach((step, index) => {
-        const dot = document.createElement("div");
-        dot.className = "step-dot";
-
-        if(index === currentStep){
-          dot.classList.add("active");
-        }
-
-        dot.onclick = () => goToStep(index);
-        stepDots.appendChild(dot);
+        btn.onclick = () => goToStep(index, true);
+        els.quickJumpList.appendChild(btn);
       });
     }
 
@@ -1904,13 +1549,111 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
       });
     }
 
-    document.addEventListener("keydown", function(e){
-      if(e.key === "ArrowRight") nextBtn.click();
-      if(e.key === "ArrowLeft") prevBtn.click();
+    function renderDots(){
+      if(!els.stepDots) return;
+      els.stepDots.innerHTML = "";
+      steps.forEach((step, index) => {
+        const dot = document.createElement("div");
+        dot.className = "step-dot";
+        if(index === currentStep) dot.classList.add("active");
+        dot.onclick = () => goToStep(index, true);
+        els.stepDots.appendChild(dot);
+      });
+    }
+
+    function renderStep(){
+      const step = steps[currentStep];
+      const progress = ((currentStep + 1) / steps.length * 100) + "%";
+
+      els.stepTitle.textContent = step.title;
+      els.stepContent.textContent = step.content;
+      els.stepImages.innerHTML = "";
+
+      if(Array.isArray(step.images)){
+        step.images.forEach(img => {
+          const image = document.createElement("img");
+          image.src = img;
+          image.alt = step.title;
+          image.loading = "lazy";
+          els.stepImages.appendChild(image);
+        });
+      }
+
+      els.stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      els.progressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      els.progressFill.style.width = progress;
+      els.miniProgressFill.style.width = progress;
+
+      if(els.metricSteps) els.metricSteps.textContent = steps.length;
+      if(els.metricImages) els.metricImages.textContent = countImages();
+
+      els.prevBtn.disabled = currentStep === 0;
+
+      if(currentStep === steps.length - 1){
+        els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
+        els.nextBtn.classList.add("finish");
+      }else{
+        els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
+        els.nextBtn.classList.remove("finish");
+      }
+
+      renderDots();
+      updateQuickJump();
+    }
+
+    function animateStep(direction){
+      els.stepBody.classList.remove("animate-left", "animate-right");
+      void els.stepBody.offsetWidth;
+      els.stepBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
+    }
+
+    function goToStep(index, shouldScroll = false){
+      if(index < 0 || index >= steps.length) return;
+      const direction = index >= currentStep ? "left" : "right";
+      currentStep = index;
+      animateStep(direction);
+      renderStep();
+
+      if(shouldScroll){
+        const stepsSection = document.getElementById("stepsSection");
+        if(stepsSection){
+          stepsSection.scrollIntoView({ behavior:"smooth", block:"start" });
+        }
+      }
+    }
+
+    function exploreSteps(){
+      goToStep(0, true);
+    }
+
+    els.nextBtn.onclick = () => {
+      if(currentStep < steps.length - 1){
+        currentStep++;
+        animateStep("left");
+        renderStep();
+      }else{
+        alert("Volume Application Completed.");
+        currentStep = 0;
+        animateStep("left");
+        renderStep();
+      }
+    };
+
+    els.prevBtn.onclick = () => {
+      if(currentStep > 0){
+        currentStep--;
+        animateStep("right");
+        renderStep();
+      }
+    };
+
+    document.addEventListener("keydown", e => {
+      if(e.key === "ArrowRight") els.nextBtn.click();
+      if(e.key === "ArrowLeft") els.prevBtn.click();
       if(e.key === "Escape") closeImagePreview();
     });
 
-    document.addEventListener("click", function(e){
+    document.addEventListener("click", e => {
       const previewModal = document.getElementById("imagePreviewModal");
       const previewImage = document.getElementById("imagePreview");
 
@@ -1928,7 +1671,6 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
     function closeImagePreview(){
       const previewModal = document.getElementById("imagePreviewModal");
       const previewImage = document.getElementById("imagePreview");
-
       if(previewModal) previewModal.style.display = "none";
       if(previewImage) previewImage.src = "";
       document.body.style.overflow = "";
@@ -1937,7 +1679,6 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
     function copyText(id, btn){
       const el = document.getElementById(id);
       if(!el) return;
-
       const text = el.innerText.trim();
       if(!text) return;
 
@@ -1945,7 +1686,6 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
         const old = btn.textContent;
         btn.classList.add("copied");
         btn.textContent = "Copied ✓";
-
         setTimeout(() => {
           btn.classList.remove("copied");
           btn.textContent = old;
@@ -1958,77 +1698,5 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
     renderQuickJump();
     renderStep();
   </script>
-
-  <style>
-  /* Final fix for the Date & Time Settings button only */
-  #site-header .header-date-time-settings-fix{
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    gap:8px !important;
-
-    width:100% !important;
-    max-width:100% !important;
-    min-height:40px !important;
-    padding:0 16px !important;
-
-    border:0 !important;
-    outline:0 !important;
-    border-radius:12px !important;
-
-    background:linear-gradient(135deg, #5b21b6, #7c3aed) !important;
-    color:#ffffff !important;
-
-    font-family:"Inter",system-ui,sans-serif !important;
-    font-size:12px !important;
-    font-weight:900 !important;
-    line-height:1 !important;
-    text-decoration:none !important;
-
-    box-shadow:0 14px 28px rgba(91,33,182,.22) !important;
-    cursor:pointer !important;
-    appearance:none !important;
-  }
-
-  #site-header .header-date-time-settings-fix:hover{
-    transform:translateY(-1px);
-    box-shadow:0 18px 34px rgba(91,33,182,.28) !important;
-  }
-
-  #site-header .header-date-time-settings-fix i,
-  #site-header .header-date-time-settings-fix svg{
-    color:#ffffff !important;
-    fill:#ffffff !important;
-  }
-</style>
-
-<script>
-  function fixDateTimeSettingsButton(){
-    const header = document.getElementById("site-header");
-    if(!header) return;
-
-    const candidates = Array.from(header.querySelectorAll("button, a, [role='button']"));
-
-    candidates.forEach(btn => {
-      const text = (btn.innerText || btn.textContent || "").trim().toLowerCase();
-
-      if(text.includes("date & time settings") || text.includes("date and time settings")){
-        btn.classList.add("header-date-time-settings-fix");
-      }
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    fixDateTimeSettingsButton();
-
-    setTimeout(fixDateTimeSettingsButton, 300);
-    setTimeout(fixDateTimeSettingsButton, 800);
-    setTimeout(fixDateTimeSettingsButton, 1500);
-  });
-
-  document.addEventListener("click", () => {
-    setTimeout(fixDateTimeSettingsButton, 50);
-  });
-</script>
 </body>
 </html>
