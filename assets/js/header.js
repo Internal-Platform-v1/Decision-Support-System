@@ -198,7 +198,7 @@ function renderHeaderCalendar() {
     cell.style.textAlign = "center";
     cell.style.borderRadius = "12px";
     cell.style.background = getCssVar("--header-calendar-cell", "#f8fafc");
-    cell.style.color = getCssVar("--header-ink", "#0f172a");
+    cell.style.color = getCssVar("--header-calendar-ink", "#0f172a");
     cell.style.boxShadow = "inset 0 0 0 1px rgba(148,163,184,.12)";
 
     const isToday =
@@ -207,6 +207,7 @@ function renderHeaderCalendar() {
       day === todayParts.day;
 
     if (isToday) {
+      cell.classList.add("calendar-today");
       cell.style.background = accent;
       cell.style.color = accentText;
       cell.style.fontWeight = "900";
