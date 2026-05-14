@@ -1118,3 +1118,141 @@ html{scroll-behavior:smooth}
     width:min(calc(100% - 20px), 1440px) !important;
   }
 }
+
+
+/* =========================================================
+   FINAL HEADER ALIGNMENT FIX
+   - Header stays visible while scrolling
+   - Brand title restored to Internal Platform / Decision Support System
+   - Navigation tabs centered
+   - Actions stay on the right
+   ========================================================= */
+
+#site-header{
+  position:sticky !important;
+  top:0 !important;
+  z-index:2147483000 !important;
+  width:100% !important;
+}
+
+.topbar{
+  position:relative !important;
+  top:auto !important;
+  width:min(calc(100% - 32px), 1440px) !important;
+  margin:14px auto 0 !important;
+  border-radius:999px !important;
+}
+
+.topbar-inner{
+  display:grid !important;
+  grid-template-columns:minmax(260px, 1fr) auto minmax(260px, 1fr) !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:14px !important;
+  min-height:54px !important;
+  padding:8px 10px !important;
+}
+
+.brand-wrap{
+  grid-column:1 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  min-width:0 !important;
+}
+
+.brand{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+}
+
+.brand-title{
+  color:var(--header-ink) !important;
+  font-size:15px !important;
+  font-weight:950 !important;
+  line-height:1.08 !important;
+  white-space:nowrap !important;
+}
+
+.brand-kicker{
+  color:var(--header-muted) !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  letter-spacing:.14em !important;
+  text-transform:uppercase !important;
+  margin:0 0 4px !important;
+  white-space:nowrap !important;
+}
+
+.nav-tabs{
+  grid-column:2 !important;
+  justify-self:center !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  flex-wrap:nowrap !important;
+}
+
+.actions{
+  grid-column:3 !important;
+  justify-self:end !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+}
+
+/* Keep FedEx title readable on the dark header */
+body:not(.atlas-theme) .brand-title,
+:root .brand-title{
+  text-shadow:none;
+}
+
+@media (max-width:1180px){
+  .topbar{
+    border-radius:28px !important;
+  }
+
+  .topbar-inner{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+    padding:10px !important;
+  }
+
+  .brand-wrap,
+  .nav-tabs,
+  .actions{
+    grid-column:auto !important;
+    width:100% !important;
+  }
+
+  .nav-tabs{
+    justify-content:flex-start !important;
+    flex-wrap:wrap !important;
+  }
+
+  .actions{
+    justify-content:space-between !important;
+    flex-wrap:wrap !important;
+  }
+
+  .clock-pill{
+    max-width:none !important;
+  }
+}
+
+@media (max-width:720px){
+  .topbar{
+    width:min(calc(100% - 20px), 1440px) !important;
+  }
+
+  .brand-title,
+  .brand-kicker{
+    white-space:normal !important;
+  }
+}
