@@ -10,6 +10,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     target.innerHTML = await response.text();
 
+    target.querySelectorAll("[data-link]").forEach((link) => {
+      const path = link.getAttribute("data-link");
+      if (path) {
+        link.setAttribute("href", base + path);
+      }
+    });
+
     requestAnimationFrame(() => {
       target.classList.add("loaded");
     });
