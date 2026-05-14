@@ -1,674 +1,1339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>BD Tools — Account Handling Guides</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BD Tools — Account Handling Guides</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/header-footer-style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="assets/css/header-footer-style.css">
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <style>
-    :root{
-      --bg:#07111f;
-      --bg-2:#0c1628;
-      --shell:#eef4fb;
-      --panel:#ffffff;
-      --panel-soft:rgba(255,255,255,.72);
-      --panel-line:rgba(148,163,184,.18);
-      --text:#0f172a;
-      --text-soft:#475569;
-      --muted:#94a3b8;
-      --white-soft:rgba(255,255,255,.12);
-      --white-line:rgba(255,255,255,.10);
-      --accent:#4D148C;
-      --accent-2:#6d28d9;
-      --accent-3:#FF6600;
-      --accent-soft:#f6efff;
-      --chip:#fff7ed;
-      --chip-text:#c2410c;
-      --success:#22c55e;
-      --shadow-1:0 12px 28px rgba(15,23,42,.08);
-      --shadow-2:0 22px 52px rgba(15,23,42,.12);
-      --shadow-3:0 32px 90px rgba(2,6,23,.22);
-      --radius-xl:34px;
-      --radius-lg:24px;
-      --radius-md:18px;
-      --radius-sm:14px;
-      --max:1460px;
-      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+<style>
+:root{
+  --cream:#eef4fb;
+  --cream-2:#f5f8fc;
+  --cream-3:#e2e8f0;
+  --yellow:#ff6600;
+  --yellow-soft:#ff8a33;
+  --olive:#6d28d9;
+  --olive-2:#4d148c;
+  --teal:#4d148c;
+  --teal-2:#3b0f73;
+  --dark:#1e293b;
+  --dark-2:#07111f;
+  --ink:#0f172a;
+  --muted:#475569;
+  --line:rgba(148,163,184,.18);
+  --white:rgba(255,255,255,.88);
+  --shadow-xl:0 34px 90px rgba(2,6,23,.28);
+  --shadow-lg:0 24px 60px rgba(2,6,23,.20);
+  --shadow-md:0 14px 34px rgba(15,23,42,.12);
+  --radius-2xl:36px;
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --max:1440px;
+  font-family:"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      min-height:100vh;
-      color:var(--text);
-      overflow-x:hidden;
-      background:linear-gradient(180deg,#091120 0%,#0d1727 100%,#edf3fb 100%,#edf3fb 100%);
-    }
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      z-index:-2;
-      pointer-events:none;
-      background:
-        radial-gradient(circle at 10% 8%, rgba(109,40,217,.30), transparent 20%),
-        radial-gradient(circle at 92% 12%, rgba(255,102,0,.14), transparent 18%),
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,.06), transparent 24%);
-    }
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      z-index:-1;
-      pointer-events:none;
-      background:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:34px 34px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 38%);
-    }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(109,40,217,.30), transparent 28%),
+    radial-gradient(circle at 84% 0%, rgba(255,102,0,.18), transparent 30%),
+    radial-gradient(circle at 50% 115%, rgba(77,20,140,.22), transparent 34%),
+    linear-gradient(180deg, #10072a 0%, #07111f 48%, #07111f 100%);
+}
 
-    a{color:inherit}
-    button,input,textarea,select{font:inherit}
-    .page{position:relative;z-index:1}
-    .container{width:min(calc(100% - 32px), var(--max));margin:0 auto}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.82), transparent 70%);
+  z-index:-2;
+}
 
-    .hero-wrap{padding:26px 0 22px}
-    .hero{
-      position:relative;
-      overflow:hidden;
-      border-radius:38px;
-      background:
-        radial-gradient(circle at 85% 18%, rgba(255,102,0,.18), transparent 18%),
-        radial-gradient(circle at 12% 14%, rgba(255,255,255,.15), transparent 18%),
-        linear-gradient(135deg, #4D148C 0%, #5b1aae 42%, #0f172a 100%);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:var(--shadow-3);
-      padding:34px;
-    }
-    .hero::before,
-    .hero::after{
-      content:"";
-      position:absolute;
-      border-radius:999px;
-      pointer-events:none;
-    }
-    .hero::before{
-      width:480px;
-      height:480px;
-      top:-250px;
-      right:-160px;
-      background:radial-gradient(circle, rgba(255,255,255,.16), transparent 64%);
-    }
-    .hero::after{
-      width:320px;
-      height:320px;
-      left:-120px;
-      bottom:-170px;
-      background:radial-gradient(circle, rgba(255,102,0,.18), transparent 66%);
-    }
-    .hero-grid{
-      position:relative;
-      z-index:1;
-      display:grid;
-      grid-template-columns:minmax(0,1.25fr) minmax(330px,.95fr);
-      gap:22px;
-      align-items:stretch;
-    }
-    .eyebrow{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      background:rgba(255,255,255,.12);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
-      color:#fff;
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      margin-bottom:18px;
-    }
-    .hero h1{
-      margin:0;
-      color:#fff;
-      font-size:clamp(2.1rem, 4vw, 3.55rem);
-      line-height:.98;
-      letter-spacing:-.05em;
-      max-width:820px;
-    }
-    .hero p{
-      margin:16px 0 24px;
-      color:rgba(255,255,255,.82);
-      font-size:15px;
-      line-height:1.75;
-      max-width:760px;
-    }
-    .hero-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      margin-bottom:24px;
-    }
-    .hero-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      min-height:48px;
-      padding:0 18px;
-      border-radius:16px;
-      text-decoration:none;
-      font-weight:800;
-      transition:.22s ease;
-    }
-    .hero-btn.primary{
-      background:#fff;
-      color:#4D148C;
-      box-shadow:0 16px 32px rgba(2,6,23,.18);
-    }
-    .hero-btn:hover{transform:translateY(-2px)}
+body::after{
+  content:"";
+  position:fixed;
+  width:620px;
+  height:620px;
+  right:-210px;
+  bottom:-210px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,102,0,.13), transparent 66%);
+  pointer-events:none;
+  z-index:-1;
+}
 
-    .hero-stats{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:14px;
-    }
-    .stat-card{
-      border-radius:22px;
-      padding:18px 18px 16px;
-      background:rgba(255,255,255,.10);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-      backdrop-filter:blur(10px);
-    }
-    .stat-value{
-      color:#fff;
-      font-size:28px;
-      font-weight:900;
-      letter-spacing:-.05em;
-      margin-bottom:6px;
-    }
-    .stat-label{
-      color:rgba(255,255,255,.72);
-      font-size:13px;
-      line-height:1.45;
-    }
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font:inherit}
+button{-webkit-tap-highlight-color:transparent}
 
-    .quick-panel{
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      gap:14px;
-      border-radius:28px;
-      padding:22px;
-      background:rgba(255,255,255,.10);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-      backdrop-filter:blur(14px);
-    }
-    .panel-title{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      color:#fff;
-      font-size:18px;
-      font-weight:800;
-      margin-bottom:14px;
-    }
-    .panel-title span:last-child{
-      color:rgba(255,255,255,.62);
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-    .quick-list{
-      list-style:none;
-      padding:0;
-      margin:0;
-      display:grid;
-      gap:12px;
-    }
-    .quick-item{
-      display:flex;
-      gap:14px;
-      align-items:flex-start;
-      padding:14px;
-      border-radius:20px;
-      background:rgba(255,255,255,.08);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
-    }
-    .quick-icon{
-      width:44px;
-      height:44px;
-      flex-shrink:0;
-      border-radius:15px;
-      display:grid;
-      place-items:center;
-      color:#fff;
-      background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
-    }
-    .quick-item strong{
-      display:block;
-      color:#fff;
-      font-size:14px;
-      margin-bottom:4px;
-    }
-    .quick-item span{
-      display:block;
-      color:rgba(255,255,255,.72);
-      font-size:13px;
-      line-height:1.5;
-    }
-    .live-strip{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      border-radius:18px;
-      padding:14px 16px;
-      background:rgba(7,17,31,.24);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-      color:#fff;
-    }
-    .live-strip strong{
-      display:block;
-      font-size:14px;
-      margin-bottom:4px;
-    }
-    .live-strip span{
-      color:rgba(255,255,255,.66);
-      font-size:13px;
-    }
-    .pulse{
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      background:#22c55e;
-      box-shadow:0 0 0 0 rgba(34,197,94,.55);
-      animation:pulse 1.9s infinite;
-      flex-shrink:0;
-    }
-    @keyframes pulse{
-      0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}
-      70%{box-shadow:0 0 0 16px rgba(34,197,94,0)}
-      100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
-    }
+.page{position:relative;z-index:1}
+.container{width:min(calc(100% - 32px), var(--max));margin:0 auto}
 
-    .guides-wrap{padding:0 0 58px}
-    .workspace{
-      background:rgba(255,255,255,.72);
-      backdrop-filter:blur(18px);
-      border:1px solid rgba(255,255,255,.78);
-      box-shadow:var(--shadow-2);
-      border-radius:30px;
-      padding:18px;
-    }
-    .workspace-top{
-      display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:18px;
-      align-items:start;
-      margin-bottom:18px;
-    }
-    .workspace-copy h2{
-      margin:0 0 6px;
-      font-size:26px;
-      letter-spacing:-.03em;
-    }
-    .workspace-copy p{
-      margin:0;
-      color:var(--text-soft);
-      font-size:14px;
-      line-height:1.65;
-    }
-    .workspace-side{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:flex-end;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      background:#eef2ff;
-      color:#4338ca;
-      border:1px solid #e0e7ff;
-      font-size:13px;
-      font-weight:800;
-      white-space:nowrap;
-    }
-    .toolbar{
-      display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:14px;
-      margin-bottom:18px;
-    }
-    .search-shell{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-height:58px;
-      padding:0 16px;
-      border-radius:20px;
-      background:#fff;
-      border:1px solid #e2e8f0;
-      box-shadow:var(--shadow-1);
-    }
-    .search-shell i{
-      color:#64748b;
-      font-size:15px;
-    }
-    .search-shell input{
-      border:none;
-      outline:none;
-      background:transparent;
-      padding:0;
-      width:100%;
-      font-size:14px;
-      color:var(--text);
-    }
-    .filter-row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .filter-btn{
-      min-height:58px;
-      padding:0 16px;
-      border:none;
-      border-radius:18px;
-      background:#fff;
-      color:#334155;
-      border:1px solid #e2e8f0;
-      font-weight:800;
-      cursor:pointer;
-      transition:.2s ease;
-      box-shadow:var(--shadow-1);
-    }
-    .filter-btn.active{
-      background:linear-gradient(135deg,#4D148C 0%,#6d28d9 100%);
-      color:#fff;
-      border-color:transparent;
-      box-shadow:0 14px 30px rgba(77,20,140,.20);
-    }
+.hero{
+  padding:42px 0 26px;
+}
 
-    .guide-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
-      gap:18px;
-    }
-    .card{
-      position:relative;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      padding:22px;
-      border-radius:26px;
-      background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
-      border:1px solid rgba(226,232,240,.95);
-      box-shadow:0 16px 36px rgba(15,23,42,.06);
-      transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
-    }
-    .card::before{
-      content:"";
-      position:absolute;
-      inset:0 auto auto 0;
-      width:100%;
-      height:4px;
-      background:linear-gradient(90deg,#4D148C 0%,#6d28d9 55%,#FF6600 100%);
-      opacity:.9;
-    }
-    .card:hover{
-      transform:translateY(-5px);
-      box-shadow:0 22px 48px rgba(15,23,42,.10);
-      border-color:#d7dfea;
-    }
-    .card-top{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:12px;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      border-radius:999px;
-      background:var(--chip);
-      color:var(--chip-text);
-      border:1px solid #fed7aa;
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-    .guide-icon{
-      width:54px;
-      height:54px;
-      flex-shrink:0;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      color:#fff;
-      font-size:20px;
-      background:linear-gradient(135deg,#4D148C 0%,#6d28d9 100%);
-      box-shadow:0 16px 28px rgba(77,20,140,.20);
-    }
-    .card h1{
-      margin:0;
-      font-size:24px;
-      line-height:1.08;
-      letter-spacing:-.04em;
-    }
-    .lead{
-      margin:0;
-      color:#475569;
-      font-size:14px;
-      line-height:1.72;
-      min-height:68px;
-    }
-    .card-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-    .meta-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      min-height:32px;
-      padding:0 11px;
-      border-radius:999px;
-      background:#f8fafc;
-      color:#64748b;
-      border:1px solid #e2e8f0;
-      font-size:12px;
-      font-weight:700;
-    }
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      min-height:50px;
-      padding:0 18px;
-      width:100%;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(135deg, #4D148C 0%, #6d28d9 100%);
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-      transition:.22s ease;
-      cursor:pointer;
-      margin-top:auto;
-    }
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 18px 30px rgba(77,20,140,.24);
-    }
-    .small{
-      margin:0;
-      color:#64748b;
-      font-size:13px;
-      line-height:1.65;
-    }
+.hero-shell{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);
+  gap:26px;
+  align-items:stretch;
+}
 
-    .card.is-hidden{display:none}
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  min-height:520px;
+  border-radius:var(--radius-2xl);
+  padding:42px;
+  background:
+    radial-gradient(circle at 16% 16%, rgba(255,102,0,.25), transparent 26%),
+    linear-gradient(135deg, var(--teal) 0%, var(--teal-2) 48%, var(--dark-2) 100%);
+  color:#fff;
+  box-shadow:var(--shadow-xl);
+  isolation:isolate;
+}
 
-    footer{
-      background:var(--accent);
-      color:white;
-      padding:10px 28px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      font-size:15px;
-      gap:16px;
-      flex-wrap:wrap;
-    }
+.hero-card::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:conic-gradient(from 180deg, transparent, rgba(255,102,0,.22), transparent, rgba(255,255,255,.12), transparent);
+  animation:spin 18s linear infinite;
+  z-index:-2;
+}
 
-    @media (max-width:1080px){
-      .hero-grid{grid-template-columns:1fr}
-      .hero-stats{grid-template-columns:1fr}
-      .workspace-top,
-      .toolbar{grid-template-columns:1fr}
-      .workspace-side{justify-content:flex-start}
-    }
+.hero-card::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:35px;
+  background:
+    radial-gradient(circle at 78% 24%, rgba(255,255,255,.12), transparent 20%),
+    linear-gradient(135deg, rgba(77,20,140,.97), rgba(59,15,115,.96) 48%, rgba(7,17,31,.98));
+  z-index:-1;
+}
 
-    @media (max-width:760px){
-      .container{width:min(calc(100% - 20px), var(--max))}
-      .hero{padding:24px;border-radius:28px}
-      .workspace{padding:16px}
-      .card h1{font-size:22px}
-      .lead{min-height:auto}
-      footer{flex-direction:column;align-items:flex-start}
-    }
-  </style>
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.hero-content{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.pill{
+  width:max-content;
+  max-width:100%;
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.16);
+  color:rgba(255,255,255,.88);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  backdrop-filter:blur(10px);
+  margin-bottom:24px;
+}
+
+.pill i{color:var(--yellow-soft)}
+
+.hero h1{
+  margin:0;
+  color:#fff;
+  font-size:clamp(2.7rem, 5.5vw, 5.45rem);
+  line-height:.9;
+  letter-spacing:-.08em;
+  max-width:880px;
+  text-wrap:balance;
+}
+
+.hero p{
+  margin:24px 0 0;
+  max-width:760px;
+  color:rgba(255,255,255,.76);
+  font-size:17px;
+  line-height:1.75;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:30px;
+}
+
+.hero-main-btn,
+.hero-ghost-btn{
+  min-height:54px;
+  padding:0 22px;
+  border-radius:18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-weight:900;
+  transition:.22s var(--ease);
+  border:none;
+  cursor:pointer;
+}
+
+.hero-main-btn{
+  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+  color:var(--dark-2);
+  box-shadow:0 18px 34px rgba(201,201,54,.22);
+}
+
+.hero-ghost-btn{
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.15);
+}
+
+.hero-main-btn:hover,
+.hero-ghost-btn:hover{transform:translateY(-3px)}
+
+.hero-metrics{
+  margin-top:auto;
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:12px;
+  padding-top:42px;
+}
+
+.metric{
+  padding:16px;
+  border-radius:22px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(10px);
+}
+
+.metric strong{
+  display:block;
+  font-size:28px;
+  letter-spacing:-.04em;
+}
+
+.metric span{
+  display:block;
+  margin-top:6px;
+  color:rgba(255,255,255,.66);
+  font-size:13px;
+  line-height:1.4;
+}
+
+.side-stack{
+  display:grid;
+  gap:18px;
+}
+
+.focus-card{
+  border-radius:var(--radius-2xl);
+  padding:24px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:blur(18px);
+  overflow:hidden;
+  position:relative;
+}
+
+.focus-card.dark{
+  color:#fff;
+  background:linear-gradient(135deg, var(--dark), var(--dark-2));
+  border-color:rgba(255,255,255,.12);
+}
+
+.focus-card::before{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  right:-70px;
+  top:-80px;
+  background:radial-gradient(circle, rgba(201,201,54,.20), transparent 68%);
+  pointer-events:none;
+}
+
+.card-label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:18px;
+  position:relative;
+  z-index:1;
+}
+
+.card-label span{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--olive-2);
+}
+
+.focus-card.dark .card-label span{color:var(--yellow-soft)}
+
+.card-label i:last-child{
+  width:42px;
+  height:42px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  color:var(--teal);
+  box-shadow:0 12px 24px rgba(18,31,21,.08);
+}
+
+.focus-card h2{
+  position:relative;
+  z-index:1;
+  margin:0;
+  font-size:30px;
+  line-height:1.02;
+  letter-spacing:-.055em;
+  color:var(--ink);
+}
+
+.focus-card.dark h2{color:#fff}
+
+.focus-card p{
+  position:relative;
+  z-index:1;
+  margin:14px 0 0;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:14px;
+}
+
+.focus-card.dark p{color:rgba(255,255,255,.72)}
+
+.quick-list{
+  position:relative;
+  z-index:1;
+  display:grid;
+  gap:10px;
+  margin:18px 0 0;
+  padding:0;
+  list-style:none;
+}
+
+.quick-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:18px;
+  background:rgba(255,255,255,.68);
+  border:1px solid rgba(58,64,24,.08);
+  transition:transform .22s var(--ease), background .22s var(--ease);
+}
+
+.quick-item:hover{
+  transform:translateX(4px);
+  background:rgba(255,255,255,.88);
+}
+
+.quick-icon{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:var(--cream-3);
+  color:var(--dark);
+  flex-shrink:0;
+}
+
+.quick-item strong{
+  display:block;
+  font-size:14px;
+  color:var(--ink);
+  margin-bottom:2px;
+}
+
+.quick-item span{
+  display:block;
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.45;
+}
+
+.search-section{
+  padding:18px 0 22px;
+}
+
+.search-panel{
+  border-radius:var(--radius-2xl);
+  padding:20px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:blur(18px);
+}
+
+.search-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
+
+.search-copy h2{
+  margin:0 0 6px;
+  font-size:26px;
+  letter-spacing:-.045em;
+  color:var(--ink);
+}
+
+.search-copy p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:14px;
+}
+
+.chip-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius:999px;
+  padding:10px 14px;
+  background:#fff;
+  border:1px solid rgba(58,64,24,.08);
+  color:var(--olive-2);
+  font-weight:900;
+  font-size:13px;
+  box-shadow:0 10px 22px rgba(18,31,21,.06);
+}
+
+.toolbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:14px;
+  align-items:center;
+}
+
+.search-input-wrap{
+  position:relative;
+}
+
+.search-input-wrap i{
+  position:absolute;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  pointer-events:none;
+}
+
+#guideSearch{
+  width:100%;
+  min-height:62px;
+  border:none;
+  outline:none;
+  border-radius:20px;
+  padding:0 54px 0 50px;
+  background:#fff;
+  color:var(--ink);
+  font-weight:800;
+  font-size:16px;
+  box-shadow:inset 0 0 0 1px rgba(58,64,24,.12);
+  transition:.22s var(--ease);
+}
+
+#guideSearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(14,83,97,.26), 0 0 0 7px rgba(14,83,97,.08);
+  transform:translateY(-1px);
+}
+
+#guideSearch::placeholder{
+  color:#9aa697;
+  font-weight:600;
+}
+
+#clearSearchBtn{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:999px;
+  background:var(--cream-2);
+  color:var(--dark);
+  font-weight:900;
+  cursor:pointer;
+  display:none;
+}
+
+.filter-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.filter-btn{
+  min-height:58px;
+  padding:0 16px;
+  border:none;
+  border-radius:18px;
+  background:rgba(255,255,255,.78);
+  color:#3d4938;
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 10px 22px rgba(18,31,21,.06), inset 0 0 0 1px rgba(58,64,24,.09);
+  transition:.22s var(--ease);
+}
+
+.filter-btn:hover{
+  transform:translateY(-2px);
+  background:#fff;
+  color:var(--teal);
+}
+
+.filter-btn.active{
+  background:linear-gradient(135deg, var(--dark), var(--teal));
+  color:#fff;
+  box-shadow:0 16px 30px rgba(14,83,97,.18);
+}
+
+.results-line{
+  display:none;
+  margin:0 0 16px;
+  text-align:center;
+  font-weight:900;
+  color:var(--muted);
+}
+
+.results-line span{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 16px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(58,64,24,.08);
+  box-shadow:0 10px 22px rgba(18,31,21,.06);
+}
+
+.section{
+  padding:42px 0 58px;
+}
+
+.section-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:22px;
+  margin-bottom:22px;
+}
+
+.section-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 13px;
+  border-radius:999px;
+  color:var(--olive-2);
+  background:rgba(225,223,106,.28);
+  border:1px solid rgba(91,127,8,.12);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.section-title{
+  margin:0;
+  font-size:clamp(2rem, 4vw, 3.4rem);
+  line-height:.98;
+  letter-spacing:-.065em;
+  color:var(--ink);
+  max-width:760px;
+}
+
+.section-copy{
+  margin:0;
+  color:var(--muted);
+  line-height:1.7;
+  max-width:520px;
+  font-size:15px;
+}
+
+.guide-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:18px;
+  align-items:stretch;
+  perspective:1200px;
+}
+
+.guide-card{
+  --mx:50%;
+  --my:0%;
+  position:relative;
+  overflow:hidden;
+  padding:22px;
+  min-height:330px;
+  border-radius:30px;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgba(201,201,54,.16), transparent 32%),
+    rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:var(--shadow-md);
+  backdrop-filter:blur(16px);
+  transition:transform .28s var(--ease), box-shadow .28s var(--ease);
+  display:flex;
+  flex-direction:column;
+  transform-style:preserve-3d;
+}
+
+.guide-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:linear-gradient(135deg, rgba(14,83,97,.26), rgba(201,201,54,.22), rgba(255,255,255,.30));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:0;
+  pointer-events:none;
+  transition:.28s var(--ease);
+}
+
+.guide-card:hover{
+  transform:translateY(-8px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  box-shadow:0 28px 64px rgba(18,31,21,.14);
+}
+
+.guide-card:hover::before{opacity:1}
+
+.guide-card-top{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.guide-meta{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(58,64,24,.08);
+  color:var(--olive-2);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.03em;
+  box-shadow:0 10px 22px rgba(18,31,21,.05);
+}
+
+.guide-meta i{color:var(--teal)}
+
+.guide-icon{
+  width:52px;
+  height:52px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(135deg, var(--teal), var(--dark));
+  box-shadow:0 14px 26px rgba(14,83,97,.18);
+  flex-shrink:0;
+  transition:.22s var(--ease);
+}
+
+.guide-card:hover .guide-icon{
+  transform:translateY(-2px) scale(1.04);
+}
+
+.guide-card h3{
+  position:relative;
+  z-index:1;
+  margin:0 0 12px;
+  color:var(--ink);
+  font-size:22px;
+  line-height:1.12;
+  letter-spacing:-.045em;
+  font-weight:950;
+  min-height:50px;
+}
+
+.lead{
+  position:relative;
+  z-index:1;
+  margin:0 0 18px;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:14px;
+  min-height:74px;
+}
+
+.card-meta{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:0 0 16px;
+}
+
+.meta-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:32px;
+  padding:0 11px;
+  border-radius:999px;
+  background:#fff;
+  color:var(--muted);
+  border:1px solid rgba(58,64,24,.09);
+  font-size:12px;
+  font-weight:800;
+}
+
+.guide-link{
+  position:relative;
+  z-index:1;
+  margin-top:auto;
+  min-height:50px;
+  padding:0 16px;
+  border-radius:17px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  color:#fff;
+  font-weight:900;
+  background:linear-gradient(135deg, var(--dark), var(--teal));
+  box-shadow:0 16px 30px rgba(14,83,97,.16);
+  transition:.22s var(--ease);
+  overflow:hidden;
+}
+
+.guide-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(115deg, transparent, rgba(255,255,255,.18), transparent);
+  transform:translateX(-110%);
+  transition:.65s var(--ease);
+}
+
+.guide-link:hover{
+  transform:translateY(-2px);
+  box-shadow:0 22px 38px rgba(14,83,97,.22);
+}
+
+.guide-link:hover::before{transform:translateX(110%)}
+.guide-link i{transition:.22s var(--ease)}
+.guide-link:hover i{transform:translateX(3px)}
+
+.small{
+  position:relative;
+  z-index:1;
+  margin:14px 0 0;
+  padding-top:14px;
+  border-top:1px dashed rgba(58,64,24,.16);
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.65;
+}
+
+.guide-card.is-hidden{display:none}
+
+.info-panels{
+  display:grid;
+  grid-template-columns:1fr .85fr;
+  gap:18px;
+  margin-top:22px;
+}
+
+.tips-panel,
+.support-panel{
+  border-radius:28px;
+  padding:22px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:var(--shadow-md);
+  backdrop-filter:blur(16px);
+}
+
+.support-panel{
+  background:linear-gradient(135deg, var(--teal), var(--dark));
+  color:#fff;
+}
+
+.tips-panel strong,
+.support-panel strong{
+  display:block;
+  margin-bottom:10px;
+  font-size:16px;
+  color:inherit;
+}
+
+.tips-panel ul{
+  margin:0;
+  padding-left:18px;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:14px;
+}
+
+.support-panel span{
+  display:block;
+  color:rgba(255,255,255,.72);
+  line-height:1.75;
+  font-size:14px;
+}
+
+.reveal{
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
+}
+
+.reveal.in-view{
+  opacity:1;
+  transform:none;
+}
+
+.delay-1{transition-delay:.08s}
+.delay-2{transition-delay:.16s}
+.delay-3{transition-delay:.24s}
+.delay-4{transition-delay:.32s}
+.delay-5{transition-delay:.40s}
+.delay-6{transition-delay:.48s}
+
+/* ===== HEADER MODALS / CLOCK FIX ===== */
+#commentModal,
+#allCommentsModal,
+#helpModal,
+#timeSettingsModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  justify-content:center;
+  align-items:center;
+  padding:0 24px;
+  background:rgba(2,6,23,.52);
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
+}
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content,
+#timeSettingsModal .modal-content{
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  border:1px solid rgba(148,163,184,.16);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  margin:110px auto 32px;
+}
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content,
+#helpModal .help-modal{
+  max-width:760px;
+}
+
+#timeSettingsModal .modal-content{
+  max-width:580px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header,
+#timeSettingsModal .modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:14px;
+  letter-spacing:-.03em;
+  color:#0f172a;
+}
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close,
+#timeSettingsModal .modal-close{
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
+}
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover,
+#timeSettingsModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .rating-container{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:16px 0 18px;
+}
+
+#commentModal .rating-star{
+  cursor:pointer;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
+}
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
+  color:var(--yellow);
+}
+
+#commentModal input,
+#commentModal textarea,
+#timeSettingsModal input,
+#timeSettingsModal textarea,
+#timeSettingsModal select{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  transition:.18s ease;
+}
+
+#commentModal input{margin-top:4px;margin-bottom:10px}
+#commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
+
+#commentModal input:focus,
+#commentModal textarea:focus,
+#timeSettingsModal select:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(14,83,97,.16), 0 0 0 5px rgba(14,83,97,.06);
+}
+
+#commentModal .link-text{
+  color:var(--teal);
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+
+#commentModal .link-text:hover{text-decoration:underline}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{border-bottom:none}
+
+#allCommentsModal .stars{
+  color:var(--yellow);
+  font-size:18px;
+  margin-bottom:6px;
+  display:block;
+}
+
+#timeCalendarPopup{
+  display:none;
+  position:fixed;
+  top:92px;
+  right:24px;
+  width:min(360px, calc(100vw - 32px));
+  z-index:2147483647;
+  padding:20px;
+  border-radius:28px;
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(148,163,184,.16);
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  backdrop-filter:blur(16px);
+}
+
+.popup-time{
+  font-size:34px;
+  font-weight:800;
+  color:#0f172a;
+  margin-bottom:4px;
+}
+
+.popup-date{
+  font-size:14px;
+  color:#64748b;
+  margin-bottom:16px;
+}
+
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+  padding:10px 12px;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+}
+
+.calendar-header span{
+  cursor:pointer;
+  color:var(--teal);
+  font-weight:800;
+  font-size:18px;
+  user-select:none;
+  width:28px;
+  text-align:center;
+}
+
+.calendar-title{
+  font-weight:800;
+  color:#0f172a;
+}
+
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:8px;
+}
+
+footer{
+  background:var(--teal);
+  color:white;
+  padding:10px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:15px;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+
+/* ===== FEDEX FULL BACKGROUND READABILITY ===== */
+.section-title{
+  color:#ffffff;
+  text-shadow:0 18px 44px rgba(2,6,23,.28);
+}
+
+.section-copy{
+  color:rgba(226,232,240,.78);
+}
+
+.section-kicker{
+  color:var(--yellow-soft);
+  background:rgba(77,20,140,.38);
+  border-color:rgba(255,102,0,.22);
+  box-shadow:0 12px 26px rgba(2,6,23,.12);
+}
+
+.search-panel,
+.guide-card,
+.tips-panel{
+  background:rgba(255,255,255,.86);
+  border-color:rgba(255,255,255,.90);
+}
+
+.support-panel,
+.focus-card.dark{
+  background:linear-gradient(135deg, #4d148c, #07111f);
+}
+
+.hero-main-btn{
+  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+  color:#fff;
+  box-shadow:0 18px 34px rgba(255,102,0,.22);
+}
+
+.pill i,
+.focus-card.dark .card-label span,
+#commentModal .rating-star.selected,
+#allCommentsModal .stars{
+  color:var(--yellow-soft);
+}
+
+@media (max-width:1280px){
+  .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+
+@media (max-width:1080px){
+  .hero-shell{grid-template-columns:1fr}
+  .hero-card{min-height:auto}
+  .toolbar{grid-template-columns:1fr}
+  .filter-row{justify-content:flex-start}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .info-panels{grid-template-columns:1fr}
+}
+
+@media (max-width:760px){
+  .container{width:min(calc(100% - 20px), var(--max))}
+  .hero{padding:28px 0 18px}
+  .hero-card{padding:28px;border-radius:30px}
+  .hero-card::after{border-radius:29px}
+  .hero h1{font-size:3.05rem}
+  .hero-metrics,.guide-grid{grid-template-columns:1fr}
+  .guide-card{min-height:unset}
+  .guide-card h3,.lead{min-height:unset}
+  #commentModal,
+  #allCommentsModal,
+  #helpModal,
+  #timeSettingsModal{padding:0 14px}
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content,
+  #timeSettingsModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+  #timeCalendarPopup{right:10px;top:86px}
+  footer{flex-direction:column;align-items:flex-start}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+
+
+
+/* ===== ACCOUNT HANDLING GUIDE PAGE ADJUSTMENTS ===== */
+.guide-card{
+  min-height:365px;
+}
+
+.guide-card h3{
+  min-height:58px;
+}
+
+.lead{
+  min-height:92px;
+}
+
+@media (max-width:760px){
+  .guide-card h3,
+  .lead{
+    min-height:unset;
+  }
+}
+
+/* Keep shared header Date & Time buttons full-width on this group page */
+#timeCalendarPopup .btn,
+#timeSettingsModal .btn,
+#timeSettingsModal #saveTimeSettings,
+#timeCalendarPopup #openTimeSettings{
+  width:100% !important;
+  max-width:100% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:10px !important;
+  min-height:54px !important;
+  padding:0 18px !important;
+  border-radius:18px !important;
+  border:none !important;
+  box-sizing:border-box !important;
+}
+
+#timeSettingsModal #saveTimeSettings{margin-top:16px !important}
+#timeCalendarPopup #openTimeSettings{margin-top:14px !important}
+
+</style>
 </head>
-<body>
-  <div class="page">
-    <div id="site-header"></div>
 
-    <section class="hero-wrap">
+
+
+<body data-page="home">
+<div class="page">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="hero">
       <div class="container">
-        <div class="hero">
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <div class="eyebrow"><i class="fa-solid fa-id-card"></i> Account Workspace</div>
+        <div class="hero-shell">
+          <div class="hero-card reveal delay-1">
+            <div class="hero-content">
+              <div class="pill"><i class="fa-solid fa-user-gear"></i> Account workspace</div>
               <h1>Account Handling Guides</h1>
-              <p>Open the guide that matches the account concern so you can move faster through account creation, status review, search, and SCAC/BU-related handling in one premium workspace.</p>
+              <p>
+                Open the guide that matches the account concern so you can move faster through account creation, status review, search, and SCAC/BU-related handling in one premium workspace.
+              </p>
 
               <div class="hero-actions">
-                <a href="#guideLibrary" class="hero-btn primary">
-                  Explore Guides <i class="fa-solid fa-arrow-down"></i>
-                </a>
+                <a href="#guideLibrary" class="hero-main-btn">Explore guides <i class="fa-solid fa-arrow-down"></i></a>
+                <button type="button" class="hero-ghost-btn" onclick="focusGuideSearch()">Search guides <i class="fa-solid fa-magnifying-glass"></i></button>
               </div>
 
-              <div class="hero-stats">
-                <div class="stat-card">
-                  <div class="stat-value">5</div>
-                  <div class="stat-label">Account handling guides ready in one premium workspace.</div>
+              <div class="hero-metrics">
+                <div class="metric">
+                  <strong>5</strong>
+                  <span>Account handling guides ready in one premium workspace.</span>
                 </div>
-                <div class="stat-card">
-                  <div class="stat-value">Focused</div>
-                  <div class="stat-label">Built for account setup, search, status handling, and SCAC/BU updates.</div>
+                <div class="metric">
+                  <strong>3</strong>
+                  <span>Filter by status, creation, or update to narrow the results.</span>
                 </div>
-                <div class="stat-card">
-                  <div class="stat-value">Fast</div>
-                  <div class="stat-label">Cleaner layout so the right account guide is easier to find.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="hero-side">
-              <div class="quick-panel">
-                <div>
-                  <div class="panel-title">
-                    <span>Quick Access</span>
-                    <span>Live</span>
-                  </div>
-
-                  <ul class="quick-list">
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-user-xmark"></i></div>
-                      <div>
-                        <strong>Inactive Account</strong>
-                        <span>Open the guide for handling inactive, archived, or unavailable account concerns.</span>
-                      </div>
-                    </li>
-
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-user-plus"></i></div>
-                      <div>
-                        <strong>Create Account</strong>
-                        <span>Use the account creation guides when the request involves setting up a customer account.</span>
-                      </div>
-                    </li>
-
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-code-branch"></i></div>
-                      <div>
-                        <strong>SCAC/BU Update</strong>
-                        <span>Open the update guide when the concern involves SCAC/BU correction or validation.</span>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="live-strip">
-                  <div>
-                    <strong>Ready to work</strong>
-                    <span>Choose a card below to open the account guide.</span>
-                  </div>
-                  <div class="pulse"></div>
+                <div class="metric">
+                  <strong>Fast</strong>
+                  <span>Cleaner layout so the right account guide is easier to find.</span>
                 </div>
               </div>
             </div>
           </div>
+
+          <aside class="side-stack">
+            <div class="focus-card reveal delay-2">
+              <div class="card-label">
+                <span><i class="fa-solid fa-compass"></i> Quick access</span>
+                <i class="fa-solid fa-route"></i>
+              </div>
+              <h2>Start with the account concern.</h2>
+              <p>Use the quick options below or search the library to open the correct account handling path.</p>
+
+              <ul class="quick-list">
+                <li class="quick-item">
+                  <div class="quick-icon"><i class="fa-solid fa-user-xmark"></i></div>
+                  <div>
+                    <strong>Inactive Account</strong>
+                    <span>Open this for inactive, archived, deleted, or do-not-use account handling.</span>
+                  </div>
+                </li>
+                <li class="quick-item">
+                  <div class="quick-icon"><i class="fa-solid fa-user-plus"></i></div>
+                  <div>
+                    <strong>Create Account</strong>
+                    <span>Use this when the request involves setting up a customer account.</span>
+                  </div>
+                </li>
+                <li class="quick-item">
+                  <div class="quick-icon"><i class="fa-solid fa-code-branch"></i></div>
+                  <div>
+                    <strong>SCAC/BU Update</strong>
+                    <span>Open this when the concern involves SCAC/BU correction or validation.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="focus-card dark reveal delay-3">
+              <div class="card-label">
+                <span><i class="fa-solid fa-shield-halved"></i> Ready to work</span>
+                <i class="fa-solid fa-truck-fast"></i>
+              </div>
+              <h2>Choose a guide below to begin.</h2>
+              <p>Use the search, filters, and guide cards to find the right account workflow faster. If the case does not match any guide, use Get Help or ask your team lead before applying a decision.</p>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
 
-    <section class="guides-wrap" id="guideLibrary">
+    <section class="search-section reveal delay-2">
       <div class="container">
-        <div class="workspace">
-          <div class="workspace-top">
-            <div class="workspace-copy">
-              <h2>Guide Library</h2>
-              <p>Browse the available account handling guides below and select the one that matches your concern.</p>
+        <div class="search-panel">
+          <div class="search-top">
+            <div class="search-copy">
+              <h2>Search the account guide library</h2>
+              <p>Search by guide name, account concern, keyword, or process type. You can also filter the cards by category.</p>
             </div>
 
-            <div class="workspace-side">
-              <span class="chip"><i class="fa-solid fa-file-lines"></i> Account Guides</span>
+            <div class="chip-row">
+              <span class="chip"><i class="fa-solid fa-id-card"></i> Account Guides</span>
               <span class="chip"><i class="fa-solid fa-magnifying-glass"></i> Quick Access</span>
-              <span class="chip"><i class="fa-solid fa-star"></i> Premium</span>
+              <span class="chip"><i class="fa-solid fa-bolt"></i> Fast review</span>
             </div>
           </div>
 
           <div class="toolbar">
-            <div class="search-shell">
+            <div class="search-input-wrap">
               <i class="fa-solid fa-magnifying-glass"></i>
               <input type="text" id="guideSearch" placeholder="Search account handling guides...">
+              <button id="clearSearchBtn" type="button" aria-label="Clear search">×</button>
             </div>
 
             <div class="filter-row">
@@ -678,174 +1343,489 @@
               <button class="filter-btn" data-filter="update">Update</button>
             </div>
           </div>
-
-          <div class="guide-grid" id="guideGrid">
-
-            <div class="card" data-category="status" data-keywords="inactive account archived deleted dnu not active handling guide account status">
-              <div class="card-top">
-                <span class="badge"><i class="fa-solid fa-user-xmark"></i> Status</span>
-                <div class="guide-icon"><i class="fa-solid fa-user-xmark"></i></div>
-              </div>
-              <h1>Handling Inactive Account</h1>
-              <p class="lead">Open this guide when the concern involves inactive, archived, deleted, or do-not-use account handling and the correct next action.</p>
-              <div class="card-meta">
-                <span class="meta-pill"><i class="fa-solid fa-ban"></i> Inactive</span>
-                <span class="meta-pill"><i class="fa-solid fa-circle-check"></i> Validation</span>
-              </div>
-              <a href="account-handling-guides-list/handling-notactive-guide.html" class="btn">
-                Open Handling Inactive Account <i class="fa-solid fa-arrow-right"></i>
-              </a>
-              <p class="small">Use this when validating account status and next handling steps.</p>
-            </div>
-
-            <div class="card" data-category="creation" data-keywords="creating customer account create customer account new account setup guide">
-              <div class="card-top">
-                <span class="badge"><i class="fa-solid fa-user-plus"></i> Creation</span>
-                <div class="guide-icon"><i class="fa-solid fa-user-plus"></i></div>
-              </div>
-              <h1>Creating Customer's Account</h1>
-              <p class="lead">Use this guide when the request involves creating a new customer account and following the correct setup process.</p>
-              <div class="card-meta">
-                <span class="meta-pill"><i class="fa-solid fa-user-plus"></i> New Account</span>
-                <span class="meta-pill"><i class="fa-solid fa-list-check"></i> Setup</span>
-              </div>
-              <a href="account-handling-guides-list/creating-customer-account.html" class="btn">
-                Open Creating Customer's Account <i class="fa-solid fa-arrow-right"></i>
-              </a>
-              <p class="small">Best for new customer account setup and related handling steps.</p>
-            </div>
-
-            <div class="card" data-category="creation" data-keywords="steps on how to create an account account creation steps guide create account process">
-              <div class="card-top">
-                <span class="badge"><i class="fa-solid fa-list-check"></i> Creation</span>
-                <div class="guide-icon"><i class="fa-solid fa-list-check"></i></div>
-              </div>
-              <h1>Steps on How to Create an Account</h1>
-              <p class="lead">Open this guide for a step-by-step account creation process when you need a more structured setup walkthrough.</p>
-              <div class="card-meta">
-                <span class="meta-pill"><i class="fa-solid fa-file-lines"></i> Step-by-Step</span>
-                <span class="meta-pill"><i class="fa-solid fa-list-ol"></i> Process</span>
-              </div>
-              <a href="account-handling-guides-list/account-creation-steps.html" class="btn">
-                Open Account Creation Steps <i class="fa-solid fa-arrow-right"></i>
-              </a>
-              <p class="small">Helpful for guided account setup and complete creation flow review.</p>
-            </div>
-
-            <div class="card" data-category="status" data-keywords="searching for account guide account search find account customer search">
-              <div class="card-top">
-                <span class="badge"><i class="fa-solid fa-magnifying-glass"></i> Status</span>
-                <div class="guide-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-              </div>
-              <h1>Searching for Account Guide</h1>
-              <p class="lead">Use this guide when the concern involves locating, validating, or reviewing the correct customer account before proceeding.</p>
-              <div class="card-meta">
-                <span class="meta-pill"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
-                <span class="meta-pill"><i class="fa-solid fa-circle-check"></i> Review</span>
-              </div>
-              <a href="account-handling-guides-list/searching-account-guide.html" class="btn">
-                Open Searching for Account Guide <i class="fa-solid fa-arrow-right"></i>
-              </a>
-              <p class="small">Use this when you need to search and confirm the correct account first.</p>
-            </div>
-
-            <div class="card" data-category="update" data-keywords="updating scac bu guide updating bt scac bu scac bu account update">
-              <div class="card-top">
-                <span class="badge"><i class="fa-solid fa-code-branch"></i> Update</span>
-                <div class="guide-icon"><i class="fa-solid fa-code-branch"></i></div>
-              </div>
-              <h1>Updating SCAC/BU Guide</h1>
-              <p class="lead">Open this guide when the request involves SCAC/BU updates, validation, or the correct next correction step.</p>
-              <div class="card-meta">
-                <span class="meta-pill"><i class="fa-solid fa-code-branch"></i> SCAC/BU</span>
-                <span class="meta-pill"><i class="fa-solid fa-pen-to-square"></i> Update</span>
-              </div>
-              <a href="account-handling-guides-list/updating-bt-scacbu-guide.html" class="btn">
-                Open Updating SCAC/BU Guide <i class="fa-solid fa-arrow-right"></i>
-              </a>
-              <p class="small">Best for SCAC/BU correction, validation, and update handling.</p>
-            </div>
-
-          </div>
         </div>
       </div>
     </section>
 
-    <div id="site-footer"></div>
-  </div>
+    <section class="section" id="guideLibrary">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker"><i class="fa-solid fa-layer-group"></i> Guide library</div>
+            <h2 class="section-title">Select the account guide that fits the case.</h2>
+          </div>
+          <p class="section-copy">Each card includes the account handling type, a short description, and a direct link to open the guide.</p>
+        </div>
 
-  <script>
-    window.SITE_BASE = "";
-  </script>
+        <div id="resultsLine" class="results-line"></div>
 
-  <script src="assets/js/header-loader.js"></script>
-  <script src="assets/js/header.js"></script>
-  <script src="assets/js/footer-loader.js"></script>
+        <div class="guide-grid" id="guideGrid">
+          <article class="guide-card reveal delay-1" data-category="status" data-keywords="inactive account archived deleted dnu not active handling guide account status">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-user-xmark"></i> Status</span>
+              <div class="guide-icon"><i class="fa-solid fa-user-xmark"></i></div>
+            </div>
+            <h3>Handling Inactive Account</h3>
+            <p class="lead">Open this guide when the concern involves inactive, archived, deleted, or do-not-use account handling and the correct next action.</p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-ban"></i> Inactive</span>
+              <span class="meta-pill"><i class="fa-solid fa-circle-check"></i> Validation</span>
+            </div>
+            <a href="account-handling-guides-list/handling-notactive-guide.html" class="guide-link">Open Handling Inactive Account <i class="fa-solid fa-arrow-right"></i></a>
+            <p class="small">Use this when validating account status and next handling steps.</p>
+          </article>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-      authDomain: "bdgg-database.firebaseapp.com",
-      projectId: "bdgg-database",
-      storageBucket: "bdgg-database.appspot.com",
-      messagingSenderId: "43574975434",
-      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    };
+          <article class="guide-card reveal delay-2" data-category="creation" data-keywords="creating customer account create customer account new account setup guide">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-user-plus"></i> Creation</span>
+              <div class="guide-icon"><i class="fa-solid fa-user-plus"></i></div>
+            </div>
+            <h3>Creating Customer's Account</h3>
+            <p class="lead">Use this guide when the request involves creating a new customer account and following the correct setup process.</p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-user-plus"></i> New Account</span>
+              <span class="meta-pill"><i class="fa-solid fa-list-check"></i> Setup</span>
+            </div>
+            <a href="account-handling-guides-list/creating-customer-account.html" class="guide-link">Open Creating Customer's Account <i class="fa-solid fa-arrow-right"></i></a>
+            <p class="small">Best for new customer account setup and related handling steps.</p>
+          </article>
 
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+          <article class="guide-card reveal delay-3" data-category="creation" data-keywords="steps on how to create an account account creation steps guide create account process">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-list-check"></i> Creation</span>
+              <div class="guide-icon"><i class="fa-solid fa-list-check"></i></div>
+            </div>
+            <h3>Steps on How to Create an Account</h3>
+            <p class="lead">Open this guide for a step-by-step account creation process when you need a more structured setup walkthrough.</p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-file-lines"></i> Step-by-Step</span>
+              <span class="meta-pill"><i class="fa-solid fa-list-ol"></i> Process</span>
+            </div>
+            <a href="account-handling-guides-list/account-creation-steps.html" class="guide-link">Open Account Creation Steps <i class="fa-solid fa-arrow-right"></i></a>
+            <p class="small">Helpful for guided account setup and complete creation flow review.</p>
+          </article>
 
-    function setupGuideFilters(){
-      const searchInput = document.getElementById("guideSearch");
-      const filterButtons = Array.from(document.querySelectorAll(".filter-btn"));
-      const cards = Array.from(document.querySelectorAll("#guideGrid .card"));
+          <article class="guide-card reveal delay-4" data-category="status" data-keywords="searching for account guide account search find account customer search">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-magnifying-glass"></i> Status</span>
+              <div class="guide-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            </div>
+            <h3>Searching for Account Guide</h3>
+            <p class="lead">Use this guide when the concern involves locating, validating, or reviewing the correct customer account before proceeding.</p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-magnifying-glass"></i> Search</span>
+              <span class="meta-pill"><i class="fa-solid fa-circle-check"></i> Review</span>
+            </div>
+            <a href="account-handling-guides-list/searching-account-guide.html" class="guide-link">Open Searching for Account Guide <i class="fa-solid fa-arrow-right"></i></a>
+            <p class="small">Use this when you need to search and confirm the correct account first.</p>
+          </article>
 
-      if (!searchInput || !cards.length) return;
+          <article class="guide-card reveal delay-5" data-category="update" data-keywords="updating scac bu guide updating bt scac bu scac bu account update">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-code-branch"></i> Update</span>
+              <div class="guide-icon"><i class="fa-solid fa-code-branch"></i></div>
+            </div>
+            <h3>Updating SCAC/BU Guide</h3>
+            <p class="lead">Open this guide when the request involves SCAC/BU updates, validation, or the correct next correction step.</p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-code-branch"></i> SCAC/BU</span>
+              <span class="meta-pill"><i class="fa-solid fa-pen-to-square"></i> Update</span>
+            </div>
+            <a href="account-handling-guides-list/updating-bt-scacbu-guide.html" class="guide-link">Open Updating SCAC/BU Guide <i class="fa-solid fa-arrow-right"></i></a>
+            <p class="small">Best for SCAC/BU correction, validation, and update handling.</p>
+          </article>
+        </div>
 
-      let activeFilter = "all";
+        <div class="info-panels reveal delay-3">
+          <div class="tips-panel">
+            <strong>Quick tips</strong>
+            <ul>
+              <li>Search by account status, creation step, account search, or SCAC/BU update keyword.</li>
+              <li>Open the guide that best matches the customer’s account concern or request.</li>
+              <li>Validate the account status and supporting account details before applying an update or correction.</li>
+              <li>If the case does not match any guide, use Get Help or ask your team lead before applying a decision.</li>
+            </ul>
+          </div>
 
-      function applyFilters(){
-        const term = searchInput.value.trim().toLowerCase();
+          <div class="support-panel">
+            <strong>Need more support?</strong>
+            <span>If the account concern is unclear, do not guess. Recheck the request details, use the available header tools, or ask for support before completing the handling.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-        cards.forEach(card => {
-          const category = (card.dataset.category || "").toLowerCase();
-          const keywords = (card.dataset.keywords || "").toLowerCase();
-          const title = (card.querySelector("h1")?.textContent || "").toLowerCase();
-          const desc = (card.querySelector(".lead")?.textContent || "").toLowerCase();
-          const small = (card.querySelector(".small")?.textContent || "").toLowerCase();
+  <div id="site-footer"></div>
+</div>
 
-          const matchesSearch =
-            !term ||
-            category.includes(term) ||
-            keywords.includes(term) ||
-            title.includes(term) ||
-            desc.includes(term) ||
-            small.includes(term);
+<script>
+window.SITE_BASE = "";
+</script>
 
-          const matchesFilter =
-            activeFilter === "all" || category === activeFilter;
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/footer-loader.js"></script>
 
-          card.classList.toggle("is-hidden", !(matchesSearch && matchesFilter));
-        });
-      }
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+  authDomain: "bdgg-database.firebaseapp.com",
+  projectId: "bdgg-database",
+  storageBucket: "bdgg-database.appspot.com",
+  messagingSenderId: "43574975434",
+  appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+};
 
-      searchInput.addEventListener("input", applyFilters);
-      searchInput.addEventListener("keyup", applyFilters);
-      searchInput.addEventListener("search", applyFilters);
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-      filterButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          filterButtons.forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          activeFilter = (btn.dataset.filter || "all").toLowerCase();
-          applyFilters();
-        });
-      });
+function setupGuideFilters(){
+  const searchInput = document.getElementById("guideSearch");
+  const clearSearchBtn = document.getElementById("clearSearchBtn");
+  const filterButtons = Array.from(document.querySelectorAll(".filter-btn"));
+  const cards = Array.from(document.querySelectorAll("#guideGrid .guide-card"));
+  const resultsLine = document.getElementById("resultsLine");
 
-      applyFilters();
+  if (!searchInput || !cards.length) return;
+
+  let activeFilter = "all";
+
+  function applyFilters(){
+    const term = searchInput.value.trim().toLowerCase();
+
+    if (clearSearchBtn) {
+      clearSearchBtn.style.display = term ? "block" : "none";
     }
 
-    document.addEventListener("DOMContentLoaded", setupGuideFilters);
-  </script>
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const category = (card.dataset.category || "").toLowerCase();
+      const keywords = (card.dataset.keywords || "").toLowerCase();
+      const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
+      const desc = (card.querySelector(".lead")?.textContent || "").toLowerCase();
+      const small = (card.querySelector(".small")?.textContent || "").toLowerCase();
+
+      const matchesSearch =
+        !term ||
+        category.includes(term) ||
+        keywords.includes(term) ||
+        title.includes(term) ||
+        desc.includes(term) ||
+        small.includes(term);
+
+      const matchesFilter =
+        activeFilter === "all" || category === activeFilter;
+
+      const isVisible = matchesSearch && matchesFilter;
+      card.classList.toggle("is-hidden", !isVisible);
+
+      if (isVisible) visibleCount++;
+    });
+
+    if (resultsLine) {
+      resultsLine.style.display = term || activeFilter !== "all" ? "block" : "none";
+      resultsLine.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${visibleCount} guide${visibleCount === 1 ? "" : "s"}</span>`;
+    }
+  }
+
+  searchInput.addEventListener("input", applyFilters);
+  searchInput.addEventListener("keyup", applyFilters);
+  searchInput.addEventListener("search", applyFilters);
+
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      applyFilters();
+      searchInput.focus();
+    });
+  }
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeFilter = (btn.dataset.filter || "all").toLowerCase();
+      applyFilters();
+    });
+  });
+
+  applyFilters();
+}
+
+function focusGuideSearch(){
+  const input = document.getElementById("guideSearch");
+  if (!input) return;
+
+  const y = input.getBoundingClientRect().top + window.pageYOffset - 130;
+  window.scrollTo({
+    top: Math.max(0, y),
+    behavior: "smooth"
+  });
+
+  setTimeout(() => {
+    input.focus({ preventScroll:true });
+    input.setSelectionRange(input.value.length, input.value.length);
+  }, 350);
+}
+
+function initRevealMotion(){
+  const revealItems = document.querySelectorAll(".reveal");
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.12, rootMargin:"0px 0px -40px 0px" });
+
+    revealItems.forEach(item => observer.observe(item));
+  } else {
+    revealItems.forEach(item => item.classList.add("in-view"));
+  }
+}
+
+function initCardMotion(){
+  document.querySelectorAll(".guide-card").forEach(card => {
+    if (card.dataset.motionReady === "true") return;
+    card.dataset.motionReady = "true";
+
+    card.addEventListener("pointermove", event => {
+      const rect = card.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const px = x / rect.width;
+      const py = y / rect.height;
+
+      card.style.setProperty("--mx", `${px * 100}%`);
+      card.style.setProperty("--my", `${py * 100}%`);
+      card.style.setProperty("--rx", `${(0.5 - py) * 4}deg`);
+      card.style.setProperty("--ry", `${(px - 0.5) * 5}deg`);
+    });
+
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--rx", "0deg");
+      card.style.setProperty("--ry", "0deg");
+    });
+  });
+}
+
+/* FEEDBACK + HELP FOR HEADER MODALS */
+let selectedRating = 0;
+let ratingStars = [];
+let commentsUnsubscribe = null;
+
+function openAnimatedModal(modal) {
+  if (!modal) return;
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
+
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
+
+function closeAnimatedModal(modal, onClosed) {
+  if (!modal) return;
+
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
+
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+
+  ratingStars.forEach(star => {
+    star.addEventListener("click", () => {
+      selectedRating = Number(star.dataset.value || 0);
+      ratingStars.forEach(s => {
+        s.classList.toggle("selected", Number(s.dataset.value || 0) <= selectedRating);
+      });
+    });
+  });
+}
+
+function openComment() {
+  openAnimatedModal(document.getElementById("commentModal"));
+}
+
+function closeComment() {
+  closeAnimatedModal(document.getElementById("commentModal"));
+}
+
+function openHelp() {
+  openAnimatedModal(document.getElementById("helpModal"));
+}
+
+function closeHelp() {
+  closeAnimatedModal(document.getElementById("helpModal"));
+}
+
+function closeAllComments() {
+  closeAnimatedModal(document.getElementById("allCommentsModal"), () => {
+    if (commentsUnsubscribe) {
+      commentsUnsubscribe();
+      commentsUnsubscribe = null;
+    }
+  });
+}
+
+async function sendComment() {
+  const name = document.getElementById("commentName")?.value.trim() || "";
+  const comment = document.getElementById("commentText")?.value.trim() || "";
+  const feedbackMessage = document.getElementById("feedbackMessage");
+
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
+    }
+    return;
+  }
+
+  try {
+    await db.collection("feedback").add({
+      rating: selectedRating,
+      name: name || "Anonymous",
+      comment,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    const nameEl = document.getElementById("commentName");
+    const commentEl = document.getElementById("commentText");
+    if (nameEl) nameEl.value = "";
+    if (commentEl) commentEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
+
+    setTimeout(() => {
+      closeComment();
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
+      }
+    }, 900);
+  } catch (err) {
+    console.error(err);
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
+    }
+  }
+}
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const modal = document.getElementById("allCommentsModal");
+  const list = document.getElementById("commentsList");
+
+  if (!modal || !list) return;
+
+  list.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>";
+
+  if (commentsUnsubscribe) commentsUnsubscribe();
+
+  const loadComments = () => {
+    openAnimatedModal(modal);
+
+    commentsUnsubscribe = db.collection("feedback")
+      .orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        if (snapshot.empty) {
+          list.innerHTML = "<p style='color:#64748b;'>No comments and ratings yet.</p>";
+          return;
+        }
+
+        let html = "";
+        snapshot.forEach(doc => {
+          const data = doc.data() || {};
+          const rating = Number(data.rating || 0);
+          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+          const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+          html += `
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            </div>
+          `;
+        });
+
+        list.innerHTML = html;
+      }, error => {
+        console.error(error);
+        list.innerHTML = "<p style='color:#ef4444;'>Unable to load comments right now.</p>";
+      });
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeAnimatedModal(commentModal, loadComments);
+  } else {
+    loadComments();
+  }
+}
+
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
+
+window.addEventListener("click", (e) => {
+  const commentModal = document.getElementById("commentModal");
+  const allCommentsModal = document.getElementById("allCommentsModal");
+  const helpModal = document.getElementById("helpModal");
+
+  if (e.target === commentModal) closeComment();
+  if (e.target === allCommentsModal) closeAllComments();
+  if (e.target === helpModal) closeHelp();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupGuideFilters();
+  initRevealMotion();
+  initCardMotion();
+});
+
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+  setupGuideFilters();
+});
+
+setTimeout(() => {
+  initRatingStars();
+}, 300);
+</script>
 </body>
 </html>
