@@ -937,7 +937,6 @@ html{scroll-behavior:smooth}
   .topbar,.site-footer{width:min(calc(100% - 20px), var(--header-max))}
   .nav-tabs .tab{padding:9px 11px}
   .brand-title,.brand-kicker{white-space:normal}
-  .launch-btn{flex:1 1 100%}
   .clock-pill{flex:1 1 100%;justify-content:flex-start}
   .icon-btn,.user-trigger{width:46px;height:46px}
   #timeCalendarPopup{right:10px;top:86px}
@@ -959,4 +958,120 @@ html{scroll-behavior:smooth}
     transform:none!important;
     opacity:1!important;
   }
+}
+
+
+/* ===== ROBUST MODAL VISIBILITY FIX =====
+   Some pages open shared modals by setting display:flex only.
+   This makes Feedback, Get Help, All Comments, and Time Settings visible
+   even when the page does not add the .is-open class.
+*/
+.modal[style*="display: flex"],
+#timeSettingsModal[style*="display: flex"],
+#commentModal[style*="display: flex"],
+#allCommentsModal[style*="display: flex"],
+#helpModal[style*="display: flex"]{
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+
+.modal[style*="display: flex"] .modal-content,
+#timeSettingsModal[style*="display: flex"] .modal-content,
+#commentModal[style*="display: flex"] .modal-content,
+#allCommentsModal[style*="display: flex"] .modal-content,
+#helpModal[style*="display: flex"] .modal-content{
+  opacity:1 !important;
+  transform:translateY(0) scale(1) !important;
+}
+
+.modal.is-open,
+#timeSettingsModal.is-open,
+#commentModal.is-open,
+#allCommentsModal.is-open,
+#helpModal.is-open{
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+
+.modal.is-open .modal-content,
+#timeSettingsModal.is-open .modal-content,
+#commentModal.is-open .modal-content,
+#allCommentsModal.is-open .modal-content,
+#helpModal.is-open .modal-content{
+  opacity:1 !important;
+  transform:translateY(0) scale(1) !important;
+}
+
+
+/* ===== FEDEX HEADER COMPACT FIX ===== */
+.topbar{
+  background:rgba(16,11,38,.82);
+  border-color:rgba(255,255,255,.14);
+}
+
+.topbar-inner{
+  gap:12px;
+}
+
+.brand-wrap{
+  gap:18px;
+}
+
+.actions{
+  gap:8px;
+}
+
+.clock-pill{
+  min-width:auto;
+  max-width:156px;
+  padding:7px 11px 7px 9px;
+  background:rgba(255,255,255,.95);
+  color:#25164f;
+}
+
+.clock-pill > i{
+  color:#4d148c;
+  background:#f5f3ff;
+}
+
+.clock-small{
+  color:rgba(77,20,140,.72);
+}
+
+#clockText{
+  color:#25164f;
+  font-size:12px;
+}
+
+.icon-btn,
+.user-trigger{
+  background:rgba(255,255,255,.95);
+  color:#25164f;
+}
+
+.icon-btn:hover,
+.user-trigger:hover{
+  color:#ff6600;
+}
+
+.user-avatar{
+  background:linear-gradient(135deg, #4d148c, #ff6600);
+}
+
+@media (max-width:1180px){
+  .clock-pill{
+    max-width:none;
+  }
+}
+
+
+/* Prevent shared card hover rules from moving header/footer controls. */
+.topbar:hover,
+.brand:hover,
+.tab:hover,
+.clock-pill:hover,
+.icon-btn:hover,
+.user-trigger:hover,
+.site-footer:hover{
+  transform:none;
 }
