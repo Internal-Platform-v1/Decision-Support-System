@@ -4,43 +4,42 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BD Tools — Pricing Guides</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="assets/css/header-footer-style.css">
+
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <style>
 :root{
-  --bg:#07111f;
-  --bg-2:#0c1628;
-  --shell:#eef4fb;
-  --panel:#ffffff;
-  --panel-soft:rgba(255,255,255,.72);
-  --panel-line:rgba(148,163,184,.18);
-  --text:#0f172a;
-  --text-soft:#475569;
-  --muted:#94a3b8;
-  --white-soft:rgba(255,255,255,.12);
-  --white-line:rgba(255,255,255,.10);
-  --accent:#4D148C;
-  --accent-2:#6d28d9;
-  --accent-3:#FF6600;
-  --accent-soft:#f6efff;
-  --chip:#fff7ed;
-  --chip-text:#c2410c;
-  --success:#22c55e;
-  --shadow-1:0 12px 28px rgba(15,23,42,.08);
-  --shadow-2:0 22px 52px rgba(15,23,42,.12);
-  --shadow-3:0 32px 90px rgba(2,6,23,.22);
-  --radius-xl:34px;
-  --radius-lg:24px;
-  --radius-md:18px;
-  --radius-sm:14px;
-  --max:1460px;
-  font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --cream:#eef4fb;
+  --cream-2:#f5f8fc;
+  --cream-3:#e2e8f0;
+  --yellow:#ff6600;
+  --yellow-soft:#ff8a33;
+  --olive:#6d28d9;
+  --olive-2:#4d148c;
+  --teal:#4d148c;
+  --teal-2:#3b0f73;
+  --dark:#1e293b;
+  --dark-2:#07111f;
+  --ink:#0f172a;
+  --muted:#475569;
+  --line:rgba(148,163,184,.18);
+  --white:rgba(255,255,255,.88);
+  --shadow-xl:0 34px 90px rgba(2,6,23,.28);
+  --shadow-lg:0 24px 60px rgba(2,6,23,.20);
+  --shadow-md:0 14px 34px rgba(15,23,42,.12);
+  --radius-2xl:36px;
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --max:1440px;
+  font-family:"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 *{box-sizing:border-box}
@@ -48,454 +47,690 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   min-height:100vh;
-  color:var(--text);
+  color:var(--ink);
   overflow-x:hidden;
-  background:linear-gradient(180deg,#091120 0%,#0d1727 100%,#edf3fb 100%,#edf3fb 100%);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(109,40,217,.30), transparent 28%),
+    radial-gradient(circle at 84% 0%, rgba(255,102,0,.18), transparent 30%),
+    radial-gradient(circle at 50% 115%, rgba(77,20,140,.22), transparent 34%),
+    linear-gradient(180deg, #10072a 0%, #07111f 48%, #07111f 100%);
 }
+
 body::before{
   content:"";
   position:fixed;
   inset:0;
-  z-index:-2;
   pointer-events:none;
   background:
-    radial-gradient(circle at 10% 8%, rgba(109,40,217,.30), transparent 20%),
-    radial-gradient(circle at 92% 12%, rgba(255,102,0,.14), transparent 18%),
-    radial-gradient(circle at 50% 0%, rgba(255,255,255,.06), transparent 24%);
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.82), transparent 70%);
+  z-index:-2;
 }
+
 body::after{
   content:"";
   position:fixed;
-  inset:0;
-  z-index:-1;
+  width:620px;
+  height:620px;
+  right:-210px;
+  bottom:-210px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,102,0,.13), transparent 66%);
   pointer-events:none;
-  background:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size:34px 34px;
-  mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 38%);
+  z-index:-1;
 }
 
-a{color:inherit}
+a{color:inherit;text-decoration:none}
 button,input,textarea,select{font:inherit}
+button{-webkit-tap-highlight-color:transparent}
+
 .page{position:relative;z-index:1}
 .container{width:min(calc(100% - 32px), var(--max));margin:0 auto}
 
-/* HERO */
-.hero-wrap{padding:26px 0 22px}
 .hero{
-  position:relative;
-  overflow:hidden;
-  border-radius:38px;
-  background:
-    radial-gradient(circle at 85% 18%, rgba(255,102,0,.18), transparent 18%),
-    radial-gradient(circle at 12% 14%, rgba(255,255,255,.15), transparent 18%),
-    linear-gradient(135deg, #4D148C 0%, #5b1aae 42%, #0f172a 100%);
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:var(--shadow-3);
-  padding:34px;
+  padding:42px 0 26px;
 }
-.hero::before,
-.hero::after{
-  content:"";
-  position:absolute;
-  border-radius:999px;
-  pointer-events:none;
-}
-.hero::before{
-  width:480px;
-  height:480px;
-  top:-250px;
-  right:-160px;
-  background:radial-gradient(circle, rgba(255,255,255,.16), transparent 64%);
-}
-.hero::after{
-  width:320px;
-  height:320px;
-  left:-120px;
-  bottom:-170px;
-  background:radial-gradient(circle, rgba(255,102,0,.18), transparent 66%);
-}
-.hero-grid{
-  position:relative;
-  z-index:1;
+
+.hero-shell{
   display:grid;
-  grid-template-columns:minmax(0,1.25fr) minmax(330px,.95fr);
-  gap:22px;
+  grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);
+  gap:26px;
   align-items:stretch;
 }
-.eyebrow{
+
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  min-height:520px;
+  border-radius:var(--radius-2xl);
+  padding:42px;
+  background:
+    radial-gradient(circle at 16% 16%, rgba(255,102,0,.25), transparent 26%),
+    linear-gradient(135deg, var(--teal) 0%, var(--teal-2) 48%, var(--dark-2) 100%);
+  color:#fff;
+  box-shadow:var(--shadow-xl);
+  isolation:isolate;
+}
+
+.hero-card::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:conic-gradient(from 180deg, transparent, rgba(255,102,0,.22), transparent, rgba(255,255,255,.12), transparent);
+  animation:spin 18s linear infinite;
+  z-index:-2;
+}
+
+.hero-card::after{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:35px;
+  background:
+    radial-gradient(circle at 78% 24%, rgba(255,255,255,.12), transparent 20%),
+    linear-gradient(135deg, rgba(77,20,140,.97), rgba(59,15,115,.96) 48%, rgba(7,17,31,.98));
+  z-index:-1;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.hero-content{
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.pill{
+  width:max-content;
+  max-width:100%;
   display:inline-flex;
   align-items:center;
-  gap:8px;
+  gap:9px;
   padding:10px 14px;
   border-radius:999px;
   background:rgba(255,255,255,.12);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
-  color:#fff;
+  border:1px solid rgba(255,255,255,.16);
+  color:rgba(255,255,255,.88);
   font-size:12px;
-  font-weight:800;
+  font-weight:900;
   letter-spacing:.10em;
   text-transform:uppercase;
-  margin-bottom:18px;
+  backdrop-filter:blur(10px);
+  margin-bottom:24px;
 }
+
+.pill i{color:var(--yellow-soft)}
+
 .hero h1{
   margin:0;
   color:#fff;
-  font-size:clamp(2.1rem, 4vw, 3.55rem);
-  line-height:.98;
-  letter-spacing:-.05em;
-  max-width:820px;
+  font-size:clamp(2.7rem, 5.5vw, 5.45rem);
+  line-height:.9;
+  letter-spacing:-.08em;
+  max-width:880px;
+  text-wrap:balance;
 }
+
 .hero p{
-  margin:16px 0 24px;
-  color:rgba(255,255,255,.82);
-  font-size:15px;
-  line-height:1.75;
+  margin:24px 0 0;
   max-width:760px;
+  color:rgba(255,255,255,.76);
+  font-size:17px;
+  line-height:1.75;
 }
+
 .hero-actions{
   display:flex;
   flex-wrap:wrap;
   gap:12px;
-  margin-bottom:24px;
+  margin-top:30px;
 }
-.hero-btn{
+
+.hero-main-btn,
+.hero-ghost-btn{
+  min-height:54px;
+  padding:0 22px;
+  border-radius:18px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:10px;
-  min-height:48px;
-  padding:0 18px;
-  border-radius:16px;
-  text-decoration:none;
-  font-weight:800;
-  transition:.22s ease;
+  font-weight:900;
+  transition:.22s var(--ease);
+  border:none;
+  cursor:pointer;
 }
-.hero-btn.primary{
-  background:#fff;
-  color:#4D148C;
-  box-shadow:0 16px 32px rgba(2,6,23,.18);
+
+.hero-main-btn{
+  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+  color:var(--dark-2);
+  box-shadow:0 18px 34px rgba(201,201,54,.22);
 }
-.hero-btn.secondary{
+
+.hero-ghost-btn{
   background:rgba(255,255,255,.10);
   color:#fff;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.15);
 }
-.hero-btn:hover{transform:translateY(-2px)}
 
-.hero-stats{
+.hero-main-btn:hover,
+.hero-ghost-btn:hover{transform:translateY(-3px)}
+
+.hero-metrics{
+  margin-top:auto;
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  gap:12px;
+  padding-top:42px;
 }
-.stat-card{
+
+.metric{
+  padding:16px;
   border-radius:22px;
-  padding:18px 18px 16px;
   background:rgba(255,255,255,.10);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.10);
   backdrop-filter:blur(10px);
 }
-.stat-value{
-  color:#fff;
+
+.metric strong{
+  display:block;
   font-size:28px;
-  font-weight:900;
-  letter-spacing:-.05em;
-  margin-bottom:6px;
+  letter-spacing:-.04em;
 }
-.stat-label{
-  color:rgba(255,255,255,.72);
+
+.metric span{
+  display:block;
+  margin-top:6px;
+  color:rgba(255,255,255,.66);
   font-size:13px;
+  line-height:1.4;
+}
+
+.side-stack{
+  display:grid;
+  gap:18px;
+}
+
+.focus-card{
+  border-radius:var(--radius-2xl);
+  padding:24px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(255,255,255,.92);
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:blur(18px);
+  overflow:hidden;
+  position:relative;
+}
+
+.focus-card.dark{
+  color:#fff;
+  background:linear-gradient(135deg, var(--dark), var(--dark-2));
+  border-color:rgba(255,255,255,.12);
+}
+
+.focus-card::before{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  right:-70px;
+  top:-80px;
+  background:radial-gradient(circle, rgba(201,201,54,.20), transparent 68%);
+  pointer-events:none;
+}
+
+.card-label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:18px;
+  position:relative;
+  z-index:1;
+}
+
+.card-label span{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--olive-2);
+}
+
+.focus-card.dark .card-label span{color:var(--yellow-soft)}
+
+.card-label i:last-child{
+  width:42px;
+  height:42px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  color:var(--teal);
+  box-shadow:0 12px 24px rgba(18,31,21,.08);
+}
+
+.focus-card h2{
+  position:relative;
+  z-index:1;
+  margin:0;
+  font-size:30px;
+  line-height:1.02;
+  letter-spacing:-.055em;
+  color:var(--ink);
+}
+
+.focus-card.dark h2{color:#fff}
+
+.focus-card p{
+  position:relative;
+  z-index:1;
+  margin:14px 0 0;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:14px;
+}
+
+.focus-card.dark p{color:rgba(255,255,255,.72)}
+
+.quick-list{
+  position:relative;
+  z-index:1;
+  display:grid;
+  gap:10px;
+  margin:18px 0 0;
+  padding:0;
+  list-style:none;
+}
+
+.quick-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:18px;
+  background:rgba(255,255,255,.68);
+  border:1px solid rgba(58,64,24,.08);
+  transition:transform .22s var(--ease), background .22s var(--ease);
+}
+
+.quick-item:hover{
+  transform:translateX(4px);
+  background:rgba(255,255,255,.88);
+}
+
+.quick-icon{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:var(--cream-3);
+  color:var(--dark);
+  flex-shrink:0;
+}
+
+.quick-item strong{
+  display:block;
+  font-size:14px;
+  color:var(--ink);
+  margin-bottom:2px;
+}
+
+.quick-item span{
+  display:block;
+  color:var(--muted);
+  font-size:12.5px;
   line-height:1.45;
 }
 
-.quick-panel{
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  gap:14px;
-  border-radius:28px;
-  padding:22px;
-  background:rgba(255,255,255,.10);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-  backdrop-filter:blur(14px);
-}
-.panel-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  color:#fff;
-  font-size:18px;
-  font-weight:800;
-  margin-bottom:14px;
-}
-.panel-title span:last-child{
-  color:rgba(255,255,255,.62);
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.quick-list{
-  list-style:none;
-  padding:0;
-  margin:0;
-  display:grid;
-  gap:12px;
-}
-.quick-item{
-  display:flex;
-  gap:14px;
-  align-items:flex-start;
-  padding:14px;
-  border-radius:20px;
-  background:rgba(255,255,255,.08);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
-}
-.quick-icon{
-  width:44px;
-  height:44px;
-  flex-shrink:0;
-  border-radius:15px;
-  display:grid;
-  place-items:center;
-  color:#fff;
-  background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
-}
-.quick-item strong{
-  display:block;
-  color:#fff;
-  font-size:14px;
-  margin-bottom:4px;
-}
-.quick-item span{
-  display:block;
-  color:rgba(255,255,255,.72);
-  font-size:13px;
-  line-height:1.5;
-}
-.live-strip{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  border-radius:18px;
-  padding:14px 16px;
-  background:rgba(7,17,31,.24);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-  color:#fff;
-}
-.live-strip strong{
-  display:block;
-  font-size:14px;
-  margin-bottom:4px;
-}
-.live-strip span{
-  color:rgba(255,255,255,.66);
-  font-size:13px;
-}
-.pulse{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:#22c55e;
-  box-shadow:0 0 0 0 rgba(34,197,94,.55);
-  animation:pulse 1.9s infinite;
-  flex-shrink:0;
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}
-  70%{box-shadow:0 0 0 16px rgba(34,197,94,0)}
-  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+.search-section{
+  padding:18px 0 22px;
 }
 
-/* CONTENT SHELL */
-.guides-wrap{padding:0 0 58px}
-.workspace{
-  background:rgba(255,255,255,.72);
+.search-panel{
+  border-radius:var(--radius-2xl);
+  padding:20px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:var(--shadow-lg);
   backdrop-filter:blur(18px);
-  border:1px solid rgba(255,255,255,.78);
-  box-shadow:var(--shadow-2);
-  border-radius:30px;
-  padding:18px;
 }
-.workspace-top{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
+
+.search-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
   gap:18px;
-  align-items:start;
-  margin-bottom:18px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
 }
-.workspace-copy h2{
+
+.search-copy h2{
   margin:0 0 6px;
   font-size:26px;
-  letter-spacing:-.03em;
+  letter-spacing:-.045em;
+  color:var(--ink);
 }
-.workspace-copy p{
+
+.search-copy p{
   margin:0;
-  color:var(--text-soft);
+  color:var(--muted);
+  line-height:1.6;
   font-size:14px;
-  line-height:1.65;
 }
-.workspace-side{
+
+.chip-row{
   display:flex;
-  flex-wrap:wrap;
   gap:10px;
-  justify-content:flex-end;
+  flex-wrap:wrap;
 }
+
 .chip{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:10px 14px;
   border-radius:999px;
-  background:#eef2ff;
-  color:#4338ca;
-  border:1px solid #e0e7ff;
+  padding:10px 14px;
+  background:#fff;
+  border:1px solid rgba(58,64,24,.08);
+  color:var(--olive-2);
+  font-weight:900;
   font-size:13px;
-  font-weight:800;
-  white-space:nowrap;
+  box-shadow:0 10px 22px rgba(18,31,21,.06);
 }
+
 .toolbar{
   display:grid;
   grid-template-columns:minmax(0,1fr) auto;
   gap:14px;
-  margin-bottom:18px;
-}
-.search-shell{
-  display:flex;
   align-items:center;
-  gap:12px;
-  min-height:58px;
-  padding:0 16px;
-  border-radius:20px;
-  background:#fff;
-  border:1px solid #e2e8f0;
-  box-shadow:var(--shadow-1);
 }
-.search-shell i{
-  color:#64748b;
-  font-size:15px;
+
+.search-input-wrap{
+  position:relative;
 }
-.search-shell input{
+
+.search-input-wrap i{
+  position:absolute;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  pointer-events:none;
+}
+
+#guideSearch{
+  width:100%;
+  min-height:62px;
   border:none;
   outline:none;
-  background:transparent;
-  padding:0;
-  width:100%;
-  font-size:14px;
-  color:var(--text);
+  border-radius:20px;
+  padding:0 54px 0 50px;
+  background:#fff;
+  color:var(--ink);
+  font-weight:800;
+  font-size:16px;
+  box-shadow:inset 0 0 0 1px rgba(58,64,24,.12);
+  transition:.22s var(--ease);
 }
+
+#guideSearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(14,83,97,.26), 0 0 0 7px rgba(14,83,97,.08);
+  transform:translateY(-1px);
+}
+
+#guideSearch::placeholder{
+  color:#9aa697;
+  font-weight:600;
+}
+
+#clearSearchBtn{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  width:32px;
+  height:32px;
+  border:none;
+  border-radius:999px;
+  background:var(--cream-2);
+  color:var(--dark);
+  font-weight:900;
+  cursor:pointer;
+  display:none;
+}
+
 .filter-row{
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+  justify-content:flex-end;
 }
+
 .filter-btn{
   min-height:58px;
   padding:0 16px;
   border:none;
   border-radius:18px;
-  background:#fff;
-  color:#334155;
-  border:1px solid #e2e8f0;
-  font-weight:800;
+  background:rgba(255,255,255,.78);
+  color:#3d4938;
+  font-size:13px;
+  font-weight:900;
   cursor:pointer;
-  transition:.2s ease;
-  box-shadow:var(--shadow-1);
+  box-shadow:0 10px 22px rgba(18,31,21,.06), inset 0 0 0 1px rgba(58,64,24,.09);
+  transition:.22s var(--ease);
 }
+
+.filter-btn:hover{
+  transform:translateY(-2px);
+  background:#fff;
+  color:var(--teal);
+}
+
 .filter-btn.active{
-  background:linear-gradient(135deg,#4D148C 0%,#6d28d9 100%);
+  background:linear-gradient(135deg, var(--dark), var(--teal));
   color:#fff;
-  border-color:transparent;
-  box-shadow:0 14px 30px rgba(77,20,140,.20);
+  box-shadow:0 16px 30px rgba(14,83,97,.18);
+}
+
+.results-line{
+  display:none;
+  margin:0 0 16px;
+  text-align:center;
+  font-weight:900;
+  color:var(--muted);
+}
+
+.results-line span{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 16px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(58,64,24,.08);
+  box-shadow:0 10px 22px rgba(18,31,21,.06);
+}
+
+.section{
+  padding:42px 0 58px;
+}
+
+.section-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:22px;
+  margin-bottom:22px;
+}
+
+.section-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 13px;
+  border-radius:999px;
+  color:var(--olive-2);
+  background:rgba(225,223,106,.28);
+  border:1px solid rgba(91,127,8,.12);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.section-title{
+  margin:0;
+  font-size:clamp(2rem, 4vw, 3.4rem);
+  line-height:.98;
+  letter-spacing:-.065em;
+  color:var(--ink);
+  max-width:760px;
+}
+
+.section-copy{
+  margin:0;
+  color:var(--muted);
+  line-height:1.7;
+  max-width:520px;
+  font-size:15px;
 }
 
 .guide-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  grid-template-columns:repeat(3, minmax(0,1fr));
   gap:18px;
+  align-items:stretch;
+  perspective:1200px;
 }
-.card{
+
+.guide-card{
+  --mx:50%;
+  --my:0%;
   position:relative;
   overflow:hidden;
+  padding:22px;
+  min-height:330px;
+  border-radius:30px;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgba(201,201,54,.16), transparent 32%),
+    rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:var(--shadow-md);
+  backdrop-filter:blur(16px);
+  transition:transform .28s var(--ease), box-shadow .28s var(--ease);
   display:flex;
   flex-direction:column;
-  gap:14px;
-  padding:22px;
-  border-radius:26px;
-  background:
-    linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
-  border:1px solid rgba(226,232,240,.95);
-  box-shadow:0 16px 36px rgba(15,23,42,.06);
-  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  transform-style:preserve-3d;
 }
-.card::before{
+
+.guide-card::before{
   content:"";
   position:absolute;
-  inset:0 auto auto 0;
-  width:100%;
-  height:4px;
-  background:linear-gradient(90deg,#4D148C 0%,#6d28d9 55%,#FF6600 100%);
-  opacity:.9;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:linear-gradient(135deg, rgba(14,83,97,.26), rgba(201,201,54,.22), rgba(255,255,255,.30));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:0;
+  pointer-events:none;
+  transition:.28s var(--ease);
 }
-.card:hover{
-  transform:translateY(-5px);
-  box-shadow:0 22px 48px rgba(15,23,42,.10);
-  border-color:#d7dfea;
+
+.guide-card:hover{
+  transform:translateY(-8px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  box-shadow:0 28px 64px rgba(18,31,21,.14);
 }
-.card-top{
+
+.guide-card:hover::before{opacity:1}
+
+.guide-card-top{
+  position:relative;
+  z-index:1;
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
-  gap:12px;
+  gap:14px;
+  margin-bottom:18px;
 }
-.badge{
+
+.guide-meta{
   display:inline-flex;
   align-items:center;
   gap:8px;
   padding:9px 12px;
   border-radius:999px;
-  background:var(--chip);
-  color:var(--chip-text);
-  border:1px solid #fed7aa;
-  font-size:11px;
+  background:#fff;
+  border:1px solid rgba(58,64,24,.08);
+  color:var(--olive-2);
+  font-size:12px;
   font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
+  letter-spacing:.03em;
+  box-shadow:0 10px 22px rgba(18,31,21,.05);
 }
+
+.guide-meta i{color:var(--teal)}
+
 .guide-icon{
-  width:54px;
-  height:54px;
-  flex-shrink:0;
+  width:52px;
+  height:52px;
   border-radius:18px;
   display:grid;
   place-items:center;
   color:#fff;
-  font-size:20px;
-  background:linear-gradient(135deg,#4D148C 0%,#6d28d9 100%);
-  box-shadow:0 16px 28px rgba(77,20,140,.20);
+  background:linear-gradient(135deg, var(--teal), var(--dark));
+  box-shadow:0 14px 26px rgba(14,83,97,.18);
+  flex-shrink:0;
+  transition:.22s var(--ease);
 }
-.card h1{
-  margin:0;
-  font-size:26px;
-  line-height:1.06;
-  letter-spacing:-.04em;
+
+.guide-card:hover .guide-icon{
+  transform:translateY(-2px) scale(1.04);
 }
+
+.guide-card h3{
+  position:relative;
+  z-index:1;
+  margin:0 0 12px;
+  color:var(--ink);
+  font-size:22px;
+  line-height:1.12;
+  letter-spacing:-.045em;
+  font-weight:950;
+  min-height:50px;
+}
+
 .lead{
-  margin:0;
-  color:#475569;
+  position:relative;
+  z-index:1;
+  margin:0 0 18px;
+  color:var(--muted);
+  line-height:1.7;
   font-size:14px;
-  line-height:1.72;
-  min-height:70px;
+  min-height:74px;
 }
+
 .card-meta{
+  position:relative;
+  z-index:1;
   display:flex;
   flex-wrap:wrap;
   gap:8px;
+  margin:0 0 16px;
 }
+
 .meta-pill{
   display:inline-flex;
   align-items:center;
@@ -503,45 +738,128 @@ button,input,textarea,select{font:inherit}
   min-height:32px;
   padding:0 11px;
   border-radius:999px;
-  background:#f8fafc;
-  color:#64748b;
-  border:1px solid #e2e8f0;
+  background:#fff;
+  color:var(--muted);
+  border:1px solid rgba(58,64,24,.09);
   font-size:12px;
-  font-weight:700;
+  font-weight:800;
 }
-.btn{
+
+.guide-link{
+  position:relative;
+  z-index:1;
+  margin-top:auto;
+  min-height:50px;
+  padding:0 16px;
+  border-radius:17px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:10px;
-  min-height:50px;
-  padding:0 18px;
   width:100%;
-  border:none;
-  border-radius:16px;
-  background:linear-gradient(135deg, #4D148C 0%, #6d28d9 100%);
   color:#fff;
-  text-decoration:none;
-  font-weight:800;
-  box-shadow:0 14px 24px rgba(77,20,140,.18);
-  transition:.22s ease;
-  cursor:pointer;
-  margin-top:auto;
+  font-weight:900;
+  background:linear-gradient(135deg, var(--dark), var(--teal));
+  box-shadow:0 16px 30px rgba(14,83,97,.16);
+  transition:.22s var(--ease);
+  overflow:hidden;
 }
-.btn:hover{
+
+.guide-link::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(115deg, transparent, rgba(255,255,255,.18), transparent);
+  transform:translateX(-110%);
+  transition:.65s var(--ease);
+}
+
+.guide-link:hover{
   transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.24);
+  box-shadow:0 22px 38px rgba(14,83,97,.22);
 }
+
+.guide-link:hover::before{transform:translateX(110%)}
+.guide-link i{transition:.22s var(--ease)}
+.guide-link:hover i{transform:translateX(3px)}
+
 .small{
-  margin:0;
-  color:#64748b;
+  position:relative;
+  z-index:1;
+  margin:14px 0 0;
+  padding-top:14px;
+  border-top:1px dashed rgba(58,64,24,.16);
+  color:var(--muted);
   font-size:13px;
   line-height:1.65;
 }
 
-/* MODALS */
-/* ===== HEADER MODALS / CLOCK FIX ===== */
+.guide-card.is-hidden{display:none}
 
+.info-panels{
+  display:grid;
+  grid-template-columns:1fr .85fr;
+  gap:18px;
+  margin-top:22px;
+}
+
+.tips-panel,
+.support-panel{
+  border-radius:28px;
+  padding:22px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:var(--shadow-md);
+  backdrop-filter:blur(16px);
+}
+
+.support-panel{
+  background:linear-gradient(135deg, var(--teal), var(--dark));
+  color:#fff;
+}
+
+.tips-panel strong,
+.support-panel strong{
+  display:block;
+  margin-bottom:10px;
+  font-size:16px;
+  color:inherit;
+}
+
+.tips-panel ul{
+  margin:0;
+  padding-left:18px;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:14px;
+}
+
+.support-panel span{
+  display:block;
+  color:rgba(255,255,255,.72);
+  line-height:1.75;
+  font-size:14px;
+}
+
+.reveal{
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
+}
+
+.reveal.in-view{
+  opacity:1;
+  transform:none;
+}
+
+.delay-1{transition-delay:.08s}
+.delay-2{transition-delay:.16s}
+.delay-3{transition-delay:.24s}
+.delay-4{transition-delay:.32s}
+.delay-5{transition-delay:.40s}
+.delay-6{transition-delay:.48s}
+
+/* ===== HEADER MODALS / CLOCK FIX ===== */
 #commentModal,
 #allCommentsModal,
 #helpModal,
@@ -649,7 +967,7 @@ button,input,textarea,select{font:inherit}
 }
 
 #commentModal .rating-star.selected{
-  color:#FF6600;
+  color:var(--yellow);
 }
 
 #commentModal input,
@@ -669,53 +987,40 @@ button,input,textarea,select{font:inherit}
   transition:.18s ease;
 }
 
-#commentModal input{
-  margin-top:4px;
-  margin-bottom:10px;
-}
-
-#commentModal textarea{
-  min-height:120px;
-  resize:vertical;
-  margin-top:0;
-}
+#commentModal input{margin-top:4px;margin-bottom:10px}
+#commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
 
 #commentModal input:focus,
 #commentModal textarea:focus,
 #timeSettingsModal select:focus{
   background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+  box-shadow:inset 0 0 0 2px rgba(14,83,97,.16), 0 0 0 5px rgba(14,83,97,.06);
 }
 
 #commentModal .link-text{
-  color:#4D148C;
+  color:var(--teal);
   cursor:pointer;
   text-decoration:none;
   font-size:14px;
   font-weight:700;
 }
 
-#commentModal .link-text:hover{
-  text-decoration:underline;
-}
+#commentModal .link-text:hover{text-decoration:underline}
 
 #allCommentsModal .comment-list-item{
   padding:14px 0;
   border-bottom:1px solid rgba(148,163,184,.18);
 }
 
-#allCommentsModal .comment-list-item:last-child{
-  border-bottom:none;
-}
+#allCommentsModal .comment-list-item:last-child{border-bottom:none}
 
 #allCommentsModal .stars{
-  color:#FF6600;
+  color:var(--yellow);
   font-size:18px;
   margin-bottom:6px;
   display:block;
 }
 
-/* let shared header.js handle popup placement */
 #timeCalendarPopup{
   display:none;
   position:fixed;
@@ -758,7 +1063,7 @@ button,input,textarea,select{font:inherit}
 
 .calendar-header span{
   cursor:pointer;
-  color:#4D148C;
+  color:var(--teal);
   font-weight:800;
   font-size:18px;
   user-select:none;
@@ -777,30 +1082,8 @@ button,input,textarea,select{font:inherit}
   gap:8px;
 }
 
-@media (max-width:720px){
-  #commentModal,
-  #allCommentsModal,
-  #helpModal,
-  #timeSettingsModal{
-    padding:0 14px;
-  }
-
-  #commentModal .modal-content,
-  #allCommentsModal .modal-content,
-  #helpModal .modal-content,
-  #timeSettingsModal .modal-content{
-    padding:20px;
-    border-radius:22px;
-    margin:96px auto 20px;
-  }
-
-  #timeCalendarPopup{
-    right:10px;
-    top:86px;
-  }
-}
 footer{
-  background:var(--accent);
+  background:var(--teal);
   color:white;
   padding:10px 28px;
   display:flex;
@@ -811,274 +1094,424 @@ footer{
   flex-wrap:wrap;
 }
 
-/* HIDE/SHOW */
-.card.is-hidden{display:none}
+
+/* ===== FEDEX FULL BACKGROUND READABILITY ===== */
+.section-title{
+  color:#ffffff;
+  text-shadow:0 18px 44px rgba(2,6,23,.28);
+}
+
+.section-copy{
+  color:rgba(226,232,240,.78);
+}
+
+.section-kicker{
+  color:var(--yellow-soft);
+  background:rgba(77,20,140,.38);
+  border-color:rgba(255,102,0,.22);
+  box-shadow:0 12px 26px rgba(2,6,23,.12);
+}
+
+.search-panel,
+.guide-card,
+.tips-panel{
+  background:rgba(255,255,255,.86);
+  border-color:rgba(255,255,255,.90);
+}
+
+.support-panel,
+.focus-card.dark{
+  background:linear-gradient(135deg, #4d148c, #07111f);
+}
+
+.hero-main-btn{
+  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+  color:#fff;
+  box-shadow:0 18px 34px rgba(255,102,0,.22);
+}
+
+.pill i,
+.focus-card.dark .card-label span,
+#commentModal .rating-star.selected,
+#allCommentsModal .stars{
+  color:var(--yellow-soft);
+}
+
+@media (max-width:1280px){
+  .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
 
 @media (max-width:1080px){
-  .hero-grid{grid-template-columns:1fr}
-  .hero-stats{grid-template-columns:1fr}
-  .workspace-top,
+  .hero-shell{grid-template-columns:1fr}
+  .hero-card{min-height:auto}
   .toolbar{grid-template-columns:1fr}
-  .workspace-side{justify-content:flex-start}
+  .filter-row{justify-content:flex-start}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .info-panels{grid-template-columns:1fr}
 }
+
 @media (max-width:760px){
   .container{width:min(calc(100% - 20px), var(--max))}
-  .hero{padding:24px;border-radius:28px}
-  .workspace{padding:16px}
-  .card h1{font-size:24px}
-  .lead{min-height:auto}
-  .comment-modal-footer,
+  .hero{padding:28px 0 18px}
+  .hero-card{padding:28px;border-radius:30px}
+  .hero-card::after{border-radius:29px}
+  .hero h1{font-size:3.05rem}
+  .hero-metrics,.guide-grid{grid-template-columns:1fr}
+  .guide-card{min-height:unset}
+  .guide-card h3,.lead{min-height:unset}
+  #commentModal,
+  #allCommentsModal,
+  #helpModal,
+  #timeSettingsModal{padding:0 14px}
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content,
+  #timeSettingsModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+  #timeCalendarPopup{right:10px;top:86px}
   footer{flex-direction:column;align-items:flex-start}
 }
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+
+/* ===== PRICING GUIDE PAGE ADJUSTMENTS ===== */
+.section-title{
+  max-width:820px;
+}
+
+.guide-card{
+  min-height:350px;
+}
+
+.guide-card h3{
+  min-height:54px;
+}
+
+.lead{
+  min-height:84px;
+}
+
+@media (max-width:760px){
+  .guide-card h3,
+  .lead{
+    min-height:unset;
+  }
+}
+
+/* Keep shared header Date & Time buttons full-width on this group page */
+#timeCalendarPopup .btn,
+#timeSettingsModal .btn,
+#timeSettingsModal #saveTimeSettings,
+#timeCalendarPopup #openTimeSettings{
+  width:100% !important;
+  max-width:100% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:10px !important;
+  min-height:54px !important;
+  padding:0 18px !important;
+  border-radius:18px !important;
+  border:none !important;
+  box-sizing:border-box !important;
+}
+
+#timeSettingsModal #saveTimeSettings{margin-top:16px !important}
+#timeCalendarPopup #openTimeSettings{margin-top:14px !important}
+
 </style>
 </head>
-<body>
+
+
+<body data-page="home">
 <div class="page">
   <div id="site-header"></div>
 
-  <section class="hero-wrap">
-    <div class="container">
-      <div class="hero">
-        <div class="hero-grid">
-          <div class="hero-copy">
-            <div class="eyebrow"><i class="fa-solid fa-bolt"></i> Pricing Workspace</div>
-            <h1>General Pricing Guides</h1>
-            <p>Open the guide that matches the concern and move through pricing review faster with a cleaner workspace, faster access, and a more premium dashboard experience.</p>
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-shell">
+          <div class="hero-card reveal delay-1">
+            <div class="hero-content">
+              <div class="pill"><i class="fa-solid fa-tags"></i> Pricing workspace</div>
+              <h1>General Pricing Guides</h1>
+              <p>
+                Open the pricing guide or support tool that matches the concern and move through fuel, surcharge, ePRT, EPRS, Base Rater, Discount-AMC, or courtesy discount review faster.
+              </p>
 
-            <div class="hero-actions">
-  <a href="#guideLibrary" class="hero-btn primary">
-    Explore Guides <i class="fa-solid fa-arrow-down"></i>
-  </a>
-</div>
+              <div class="hero-actions">
+                <a href="#guideLibrary" class="hero-main-btn">Explore guides <i class="fa-solid fa-arrow-down"></i></a>
+                <button type="button" class="hero-ghost-btn" onclick="focusGuideSearch()">Search guides <i class="fa-solid fa-magnifying-glass"></i></button>
+              </div>
 
-            <div class="hero-stats">
-              <div class="stat-card">
-                <div class="stat-value">7</div>
-                <div class="stat-label">Pricing guides and tools ready in one premium workspace.</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-value">1</div>
-                <div class="stat-label">Dedicated premium Discount - AMC guide for modern pricing review.</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-value">Fast</div>
-                <div class="stat-label">Cleaner layout so it is easier to find the right next step.</div>
+              <div class="hero-metrics">
+                <div class="metric">
+                  <strong>8</strong>
+                  <span>Pricing guides and tools ready in one premium workspace.</span>
+                </div>
+                <div class="metric">
+                  <strong>2</strong>
+                  <span>Filter by pricing guides or support tools to narrow the results.</span>
+                </div>
+                <div class="metric">
+                  <strong>Fast</strong>
+                  <span>Cleaner layout so it is easier to find the right next step.</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="hero-side">
-            <div class="quick-panel">
-              <div>
-                <div class="panel-title">
-                  <span>Quick Access</span>
-                  <span>Live</span>
-                </div>
-
-                <ul class="quick-list">
-                  <li class="quick-item">
-                    <div class="quick-icon"><i class="fa-solid fa-tags"></i></div>
-                    <div>
-                      <strong>DISCOUNT-AMC Guide</strong>
-                      <span>Review agreements, AMC handling, pricing exceptions, and rerate direction.</span>
-                    </div>
-                  </li>
-                  <li class="quick-item">
-                    <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-                    <div>
-                      <strong>Checking EPRS</strong>
-                      <span>Validate customer pricing setup before moving deeper into dispute review.</span>
-                    </div>
-                  </li>
-                  <li class="quick-item">
-                    <div class="quick-icon"><i class="fa-solid fa-paper-plane"></i></div>
-                    <div>
-                      <strong>ePRT Submission</strong>
-                      <span>Jump straight into submission once escalation is confirmed.</span>
-                    </div>
-                  </li>
-                </ul>
+          <aside class="side-stack">
+            <div class="focus-card reveal delay-2">
+              <div class="card-label">
+                <span><i class="fa-solid fa-compass"></i> Quick access</span>
+                <i class="fa-solid fa-route"></i>
               </div>
+              <h2>Start with the pricing concern or tool needed.</h2>
+              <p>Use the quick options below or search the library to open the correct pricing path.</p>
 
-              <div class="live-strip">
-                <div>
-                  <strong>Ready to work</strong>
-                  <span>Choose a card below to open the guide.</span>
-                </div>
-                <div class="pulse"></div>
+              <ul class="quick-list">
+                <li class="quick-item">
+                  <div class="quick-icon"><i class="fa-solid fa-tags"></i></div>
+                  <div>
+                    <strong>Discount - AMC Guide</strong>
+                    <span>Review agreements, AMC handling, pricing exceptions, and rerate direction.</span>
+                  </div>
+                </li>
+                <li class="quick-item">
+                  <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                  <div>
+                    <strong>Checking EPRS</strong>
+                    <span>Validate customer pricing setup before moving deeper into dispute review.</span>
+                  </div>
+                </li>
+                <li class="quick-item">
+                  <div class="quick-icon"><i class="fa-solid fa-paper-plane"></i></div>
+                  <div>
+                    <strong>ePRT Submission</strong>
+                    <span>Use this once the case already requires formal ePRT routing.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="focus-card dark reveal delay-3">
+              <div class="card-label">
+                <span><i class="fa-solid fa-shield-halved"></i> Ready to work</span>
+                <i class="fa-solid fa-truck-fast"></i>
               </div>
+              <h2>Choose a guide below to begin.</h2>
+              <p>Use the search, filters, and guide cards to find the right pricing workflow faster. If the case does not match any guide, use Get Help or ask your team lead before applying a decision.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="search-section reveal delay-2">
+      <div class="container">
+        <div class="search-panel">
+          <div class="search-top">
+            <div class="search-copy">
+              <h2>Search the pricing guide library</h2>
+              <p>Search by guide name, pricing concern, keyword, or tool name. You can also filter the cards by category.</p>
+            </div>
+
+            <div class="chip-row">
+              <span class="chip"><i class="fa-solid fa-sack-dollar"></i> Pricing</span>
+              <span class="chip"><i class="fa-solid fa-toolbox"></i> Support Tools</span>
+              <span class="chip"><i class="fa-solid fa-bolt"></i> Fast access</span>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="guideSearch" placeholder="Search pricing guides or tools...">
+              <button id="clearSearchBtn" type="button" aria-label="Clear search">×</button>
+            </div>
+
+            <div class="filter-row">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="pricing">Pricing</button>
+              <button class="filter-btn" data-filter="tools">Tools</button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="guides-wrap" id="guideLibrary">
-    <div class="container">
-      <div class="workspace">
-        <div class="workspace-top">
-          <div class="workspace-copy">
-            <h2>Guide Library</h2>
-            <p>Browse the pricing guides and support tools below. Everything is organized in a cleaner card layout so you can find the right option faster.</p>
+    <section class="section" id="guideLibrary">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <div class="section-kicker"><i class="fa-solid fa-layer-group"></i> Guide library</div>
+            <h2 class="section-title">Select the pricing path or tool that fits the case.</h2>
           </div>
-
-          <div class="workspace-side">
-            <span class="chip"><i class="fa-solid fa-sack-dollar"></i> Pricing</span>
-            <span class="chip"><i class="fa-solid fa-toolbox"></i> Support Tools</span>
-            <span class="chip"><i class="fa-solid fa-star"></i> Premium</span>
-          </div>
+          <p class="section-copy">Each card includes the concern type, a short description, and a direct link to open the guide or tool.</p>
         </div>
 
-        <div class="toolbar">
-          <div class="search-shell">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="guideSearch" placeholder="Search pricing guides or tools...">
-          </div>
-
-          <div class="filter-row">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="pricing">Pricing</button>
-            <button class="filter-btn" data-filter="tools">Tools</button>
-          </div>
-        </div>
+        <div id="resultsLine" class="results-line"></div>
 
         <div class="guide-grid" id="guideGrid">
-          <div class="card" data-category="pricing" data-keywords="fuel pricing guide dispute charge review">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-gas-pump"></i> Fuel</span>
+          <article class="guide-card reveal delay-1" data-category="pricing" data-keywords="fuel pricing guide dispute charge review">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-gas-pump"></i> Fuel</span>
               <div class="guide-icon"><i class="fa-solid fa-gas-pump"></i></div>
             </div>
-            <h1>Fuel Guide</h1>
+            <h3>Fuel Guide</h3>
             <p class="lead">Review fuel-related pricing disputes using the correct guide and supporting validation steps.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-sack-dollar"></i> Pricing</span>
               <span class="meta-pill"><i class="fa-solid fa-bolt"></i> Fast Check</span>
             </div>
-            <a href="pricing-guides-list/fuel-guide.html" class="btn">Open Fuel Guide <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="pricing-guides-list/fuel-guide.html" class="guide-link">Open Fuel Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this for fuel charge checks and related pricing concerns.</p>
-          </div>
+          </article>
 
-          <div class="card" data-category="pricing" data-keywords="surcharge pricing guide review validation dispute">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-receipt"></i> Surcharge</span>
+          <article class="guide-card reveal delay-2" data-category="pricing" data-keywords="surcharge pricing guide review validation dispute">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-receipt"></i> Surcharge</span>
               <div class="guide-icon"><i class="fa-solid fa-receipt"></i></div>
             </div>
-            <h1>Surcharge Guide</h1>
+            <h3>Surcharge Guide</h3>
             <p class="lead">Check surcharge disputes and verify the correct supporting logic before responding.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-sack-dollar"></i> Pricing</span>
-              <span class="meta-pill"><i class="fa-solid fa-shield-check"></i> Validation</span>
+              <span class="meta-pill"><i class="fa-solid fa-shield-halved"></i> Validation</span>
             </div>
-            <a href="pricing-guides-list/surcharge-guide.html" class="btn">Open Surcharge Guide <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="pricing-guides-list/surcharge-guide.html" class="guide-link">Open Surcharge Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Helpful for surcharge validation, pricing review, and dispute handling.</p>
-          </div>
+          </article>
 
-          <div class="card" data-category="pricing" data-keywords="eprt guide exception escalation review pricing">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-file-lines"></i> ePRT</span>
+          <article class="guide-card reveal delay-3" data-category="pricing" data-keywords="eprt guide exception escalation review pricing">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-file-lines"></i> ePRT</span>
               <div class="guide-icon"><i class="fa-solid fa-file-lines"></i></div>
             </div>
-            <h1>ePRT Guide</h1>
+            <h3>ePRT Guide</h3>
             <p class="lead">Use ePRT guidance when pricing results need exception handling or escalation review.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-sack-dollar"></i> Pricing</span>
               <span class="meta-pill"><i class="fa-solid fa-triangle-exclamation"></i> Escalation</span>
             </div>
-            <a href="pricing-guides-list/eprt-guide.html" class="btn">Open ePRT Guide <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="pricing-guides-list/eprt-guide.html" class="guide-link">Open ePRT Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Supports pricing exception review and escalation guidance.</p>
-          </div>
+          </article>
 
-          <div class="card" data-category="pricing" data-keywords="eprt submission routing escalation submit">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-paper-plane"></i> Submission</span>
+          <article class="guide-card reveal delay-4" data-category="pricing" data-keywords="eprt submission routing escalation submit">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-paper-plane"></i> Submission</span>
               <div class="guide-icon"><i class="fa-solid fa-paper-plane"></i></div>
             </div>
-            <h1>ePRT Submission</h1>
+            <h3>ePRT Submission</h3>
             <p class="lead">Open the submission page when the case already requires formal ePRT routing.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-sack-dollar"></i> Pricing</span>
               <span class="meta-pill"><i class="fa-solid fa-paper-plane"></i> Submit</span>
             </div>
-            <a href="pricing-guides-list/eprt-submission.html" class="btn">Open ePRT Submission <i class="fa-solid fa-arrow-right"></i></a>
-            <p class="small">Use this guide after confirming escalation is needed. </p>
-          </div>
+            <a href="pricing-guides-list/eprt-submission.html" class="guide-link">Open ePRT Submission <i class="fa-solid fa-arrow-right"></i></a>
+            <p class="small">Use this guide after confirming escalation is needed.</p>
+          </article>
 
-          <div class="card" data-category="tools" data-keywords="checking eprs agreement pricing setup validation tool">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-magnifying-glass"></i> Tool</span>
+          <article class="guide-card reveal delay-5" data-category="tools" data-keywords="checking eprs agreement pricing setup validation tool">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-magnifying-glass"></i> Tool</span>
               <div class="guide-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
             </div>
-            <h1>Checking EPRS</h1>
+            <h3>Checking EPRS</h3>
             <p class="lead">Validate customer agreement and pricing setup using the EPRS reference tool.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-toolbox"></i> Tool</span>
               <span class="meta-pill"><i class="fa-solid fa-magnifying-glass"></i> Lookup</span>
             </div>
-            <a href="pricing-guides-list/checking-eprs.html" class="btn">Open Checking EPRS <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="pricing-guides-list/checking-eprs.html" class="guide-link">Open Checking EPRS <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Useful before applying pricing exceptions, agreement checks, and AMC review.</p>
-          </div>
+          </article>
 
-          <div class="card" data-category="tools" data-keywords="base rater rate validation pricing tool">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-calculator"></i> Tool</span>
+          <article class="guide-card reveal delay-6" data-category="tools" data-keywords="base rater rate validation pricing tool">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-calculator"></i> Tool</span>
               <div class="guide-icon"><i class="fa-solid fa-calculator"></i></div>
             </div>
-            <h1>Base Rater</h1>
+            <h3>Base Rater</h3>
             <p class="lead">Open the base rating tool when pricing needs direct rate validation support.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-toolbox"></i> Tool</span>
               <span class="meta-pill"><i class="fa-solid fa-calculator"></i> Rate Check</span>
             </div>
-            <a href="pricing-guides-list/base-rater.html" class="btn">Open Base Rater <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="pricing-guides-list/base-rater.html" class="guide-link">Open Base Rater <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this for rate checks that support dispute analysis.</p>
-          </div>
+          </article>
 
-          <div class="card" data-category="pricing" data-keywords="discount amc pricing agreement exception rerate guide">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-tags"></i> Pricing</span>
+          <article class="guide-card reveal delay-1" data-category="pricing" data-keywords="discount amc pricing agreement exception rerate guide">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-tags"></i> Pricing</span>
               <div class="guide-icon"><i class="fa-solid fa-tags"></i></div>
             </div>
-            <h1>Discount - AMC Guide</h1>
+            <h3>Discount - AMC Guide</h3>
             <p class="lead">Follow the premium decision flow for agreement checks, pricing exceptions, AMC handling, and rerate direction.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-sack-dollar"></i> Pricing</span>
               <span class="meta-pill"><i class="fa-solid fa-star"></i> Premium</span>
             </div>
-            <a href="pricing-guides-list/discount-amc-guide.html" class="btn">Open Discount - AMC Guide <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="pricing-guides-list/discount-amc-guide.html" class="guide-link">Open Discount - AMC Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Covers billing account review, agreement timing, AMC exceptions, and escalation paths.</p>
-          </div>
+          </article>
 
-           <div class="card" data-category="pricing" data-keywords="courtesy discount surcharge guide adjustment pricing">
-            <div class="card-top">
-              <span class="badge"><i class="fa-solid fa-hand-holding-dollar"></i> Discount</span>
+          <article class="guide-card reveal delay-2" data-category="pricing" data-keywords="courtesy discount surcharge guide adjustment pricing">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-hand-holding-dollar"></i> Discount</span>
               <div class="guide-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
             </div>
-            <h1>Courtesy Discount</h1>
+            <h3>Courtesy Discount</h3>
             <p class="lead">Use this guide when the concern involves courtesy discount handling, review direction, or surcharge-related adjustment support.</p>
             <div class="card-meta">
               <span class="meta-pill"><i class="fa-solid fa-file-lines"></i> Adjustment</span>
               <span class="meta-pill"><i class="fa-solid fa-hand-holding-dollar"></i> Discount</span>
             </div>
-            <a href="other-surcharges/courtesy-discount.html" class="btn">Open Courtesy Discount <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="other-surcharges/courtesy-discount.html" class="guide-link">Open Courtesy Discount <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this for courtesy discount questions and related review steps.</p>
+          </article>
+        </div>
+
+        <div class="info-panels reveal delay-3">
+          <div class="tips-panel">
+            <strong>Quick tips</strong>
+            <ul>
+              <li>Search by the concern or tool name, such as fuel, surcharge, ePRT, EPRS, Base Rater, Discount-AMC, or courtesy discount.</li>
+              <li>Open the guide that best matches the customer request and follow the path shown.</li>
+              <li>Validate agreements, rating setup, and supporting pricing details before applying an adjustment or escalation.</li>
+              <li>If the case does not match any guide, use Get Help or ask your team lead before applying a decision.</li>
+            </ul>
           </div>
-          
-        </div>        
+
+          <div class="support-panel">
+            <strong>Need more support?</strong>
+            <span>If the pricing concern is unclear, do not guess. Use the available header tools, check the case details again, or ask for support before completing the handling.</span>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
   <div id="site-footer"></div>
 </div>
 
 <script>
-  window.SITE_BASE = "";
+window.SITE_BASE = "";
 </script>
 
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
+
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
@@ -1092,11 +1525,12 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* GUIDE SEARCH + FILTER */
 function setupGuideFilters(){
   const searchInput = document.getElementById("guideSearch");
+  const clearSearchBtn = document.getElementById("clearSearchBtn");
   const filterButtons = Array.from(document.querySelectorAll(".filter-btn"));
-  const cards = Array.from(document.querySelectorAll("#guideGrid .card"));
+  const cards = Array.from(document.querySelectorAll("#guideGrid .guide-card"));
+  const resultsLine = document.getElementById("resultsLine");
 
   if (!searchInput || !cards.length) return;
 
@@ -1105,10 +1539,16 @@ function setupGuideFilters(){
   function applyFilters(){
     const term = searchInput.value.trim().toLowerCase();
 
+    if (clearSearchBtn) {
+      clearSearchBtn.style.display = term ? "block" : "none";
+    }
+
+    let visibleCount = 0;
+
     cards.forEach(card => {
       const category = (card.dataset.category || "").toLowerCase();
       const keywords = (card.dataset.keywords || "").toLowerCase();
-      const title = (card.querySelector("h1")?.textContent || "").toLowerCase();
+      const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
       const desc = (card.querySelector(".lead")?.textContent || "").toLowerCase();
       const small = (card.querySelector(".small")?.textContent || "").toLowerCase();
 
@@ -1123,13 +1563,29 @@ function setupGuideFilters(){
       const matchesFilter =
         activeFilter === "all" || category === activeFilter;
 
-      card.classList.toggle("is-hidden", !(matchesSearch && matchesFilter));
+      const isVisible = matchesSearch && matchesFilter;
+      card.classList.toggle("is-hidden", !isVisible);
+
+      if (isVisible) visibleCount++;
     });
+
+    if (resultsLine) {
+      resultsLine.style.display = term || activeFilter !== "all" ? "block" : "none";
+      resultsLine.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${visibleCount} guide${visibleCount === 1 ? "" : "s"}</span>`;
+    }
   }
 
   searchInput.addEventListener("input", applyFilters);
   searchInput.addEventListener("keyup", applyFilters);
   searchInput.addEventListener("search", applyFilters);
+
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      applyFilters();
+      searchInput.focus();
+    });
+  }
 
   filterButtons.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -1143,7 +1599,65 @@ function setupGuideFilters(){
   applyFilters();
 }
 
-document.addEventListener("DOMContentLoaded", setupGuideFilters);
+function focusGuideSearch(){
+  const input = document.getElementById("guideSearch");
+  if (!input) return;
+
+  const y = input.getBoundingClientRect().top + window.pageYOffset - 130;
+  window.scrollTo({
+    top: Math.max(0, y),
+    behavior: "smooth"
+  });
+
+  setTimeout(() => {
+    input.focus({ preventScroll:true });
+    input.setSelectionRange(input.value.length, input.value.length);
+  }, 350);
+}
+
+function initRevealMotion(){
+  const revealItems = document.querySelectorAll(".reveal");
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.12, rootMargin:"0px 0px -40px 0px" });
+
+    revealItems.forEach(item => observer.observe(item));
+  } else {
+    revealItems.forEach(item => item.classList.add("in-view"));
+  }
+}
+
+function initCardMotion(){
+  document.querySelectorAll(".guide-card").forEach(card => {
+    if (card.dataset.motionReady === "true") return;
+    card.dataset.motionReady = "true";
+
+    card.addEventListener("pointermove", event => {
+      const rect = card.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const px = x / rect.width;
+      const py = y / rect.height;
+
+      card.style.setProperty("--mx", `${px * 100}%`);
+      card.style.setProperty("--my", `${py * 100}%`);
+      card.style.setProperty("--rx", `${(0.5 - py) * 4}deg`);
+      card.style.setProperty("--ry", `${(px - 0.5) * 5}deg`);
+    });
+
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--rx", "0deg");
+      card.style.setProperty("--ry", "0deg");
+    });
+  });
+}
 
 /* FEEDBACK + HELP FOR HEADER MODALS */
 let selectedRating = 0;
@@ -1341,6 +1855,12 @@ window.addEventListener("click", (e) => {
   if (e.target === commentModal) closeComment();
   if (e.target === allCommentsModal) closeAllComments();
   if (e.target === helpModal) closeHelp();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupGuideFilters();
+  initRevealMotion();
+  initCardMotion();
 });
 
 document.addEventListener("headerLoaded", () => {
