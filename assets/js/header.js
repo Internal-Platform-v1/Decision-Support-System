@@ -10,6 +10,11 @@ let headerCurrentDate = null;
 let headerClockInterval = null;
 let headerEventsBound = false;
 
+function getCssVar(name, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
 function getZoneLabel(zone) {
   const zoneMap = {
     "Asia/Manila": "Manila Time",
@@ -147,6 +152,9 @@ function renderHeaderCalendar() {
 
   if (!calendarGrid || !monthYear || !headerCurrentDate) return;
 
+  const accent = getCssVar("--header-accent", "#0e5361");
+  const accentText = getCssVar("--header-accent-text", "#ffffff");
+
   calendarGrid.innerHTML = "";
 
   const displayYear = headerCurrentDate.getUTCFullYear();
@@ -167,9 +175,9 @@ function renderHeaderCalendar() {
   dayNames.forEach((day) => {
     const cell = document.createElement("div");
     cell.textContent = day;
-    cell.style.fontWeight = "700";
+    cell.style.fontWeight = "800";
     cell.style.fontSize = "12px";
-    cell.style.color = "#64748b";
+    cell.style.color = getCssVar("--header-muted", "#64748b");
     cell.style.textAlign = "center";
     calendarGrid.appendChild(cell);
   });
@@ -189,8 +197,8 @@ function renderHeaderCalendar() {
     cell.style.padding = "10px";
     cell.style.textAlign = "center";
     cell.style.borderRadius = "12px";
-    cell.style.background = "#f8fafc";
-    cell.style.color = "#0f172a";
+    cell.style.background = getCssVar("--header-calendar-cell", "#f8fafc");
+    cell.style.color = getCssVar("--header-ink", "#0f172a");
     cell.style.boxShadow = "inset 0 0 0 1px rgba(148,163,184,.12)";
 
     const isToday =
@@ -199,9 +207,9 @@ function renderHeaderCalendar() {
       day === todayParts.day;
 
     if (isToday) {
-      cell.style.background = "#4d148c";
-      cell.style.color = "#fff";
-      cell.style.fontWeight = "800";
+      cell.style.background = accent;
+      cell.style.color = accentText;
+      cell.style.fontWeight = "900";
       cell.style.boxShadow = "none";
     }
 
@@ -235,12 +243,14 @@ function markRevealTargets() {
     ".content-grid",
     ".cards-grid",
     ".guides-grid",
+    ".guide-grid",
     ".flow-shell",
     ".flow-panel",
     ".recommendation-panel",
     ".template-panel",
     ".card",
     ".guide-card",
+    ".guide-tile",
     ".step-card",
     ".premium-step-card",
     ".template-card",
@@ -277,6 +287,7 @@ function initPremiumReveal() {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add("show");
+        entry.target.classList.add("in-view");
         observer.unobserve(entry.target);
       });
     },
@@ -303,7 +314,10 @@ window.showRevealNow = function (root = document) {
     ".reveal, .reveal-up, .reveal-left, .reveal-right, .reveal-scale"
   );
 
-  items.forEach((item) => item.classList.add("show"));
+  items.forEach((item) => {
+    item.classList.add("show");
+    item.classList.add("in-view");
+  });
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -519,7 +533,8 @@ function setupUserMenuDropdown() {
   const userMenu = document.getElementById("userMenu");
   const userBtn = document.getElementById("userMenuBtn");
 
-  if (!userMenu || !userBtn) return;
+  if (!userMenu || !userBtn || userMenu.dataset.dropdownReady === "true") return;
+  userMenu.dataset.dropdownReady = "true";
 
   userBtn.addEventListener("click", (e) => {
     e.stopPropagation();
