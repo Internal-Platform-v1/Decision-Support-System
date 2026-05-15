@@ -2091,6 +2091,714 @@
       }
     }
 
+  
+/* ===== RESTORED ORIGINAL ANIMATED FBI STEPS MODAL ===== */
+/* =========================
+   FBI INSTRUCTION MODAL
+========================= */
+
+.fbi-modal{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+  background:rgba(2,6,23,.68);
+  backdrop-filter:blur(10px);
+}
+
+.fbi-modal.show{display:flex}
+
+.fbi-modal-content{
+  width:min(1040px, 100%);
+  height:min(92vh, 900px);
+  max-height:92vh;
+  overflow:hidden;
+  border-radius:30px;
+  display:flex;
+  flex-direction:column;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 30px 90px rgba(2,6,23,.38);
+  animation:fbiModalIn .28s ease both;
+}
+
+@keyframes fbiModalIn{
+  from{opacity:0; transform:translateY(16px) scale(.98)}
+  to{opacity:1; transform:translateY(0) scale(1)}
+}
+
+.fbi-modal-header{
+  flex:0 0 auto;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  padding:22px 24px 18px;
+  border-bottom:1px solid #e2e8f0;
+  background:
+    radial-gradient(circle at top left, rgba(77,20,140,.10), transparent 34%),
+    linear-gradient(180deg,#ffffff,#fbfdff);
+}
+
+.fbi-modal-title h3{
+  margin:0 0 6px;
+  color:#0f172a;
+  font-size:22px;
+  letter-spacing:-.04em;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.fbi-modal-title p{
+  margin:0;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.fbi-close-btn{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  color:#334155;
+  background:#f1f5f9;
+  display:grid;
+  place-items:center;
+  transition:.2s ease;
+}
+
+.fbi-close-btn:hover{
+  background:#e2e8f0;
+  transform:rotate(4deg) scale(1.03);
+}
+
+.fbi-progress-wrap{
+  flex:0 0 auto;
+  padding:16px 24px 0;
+}
+
+.fbi-progress-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.fbi-step-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#f5f3ff;
+  border:1px solid #e9ddff;
+  color:#4d148c;
+  font-size:12px;
+  font-weight:900;
+}
+
+.fbi-progress-percent{
+  color:#64748b;
+  font-size:12px;
+  font-weight:900;
+}
+
+.fbi-progress-track{
+  height:10px;
+  width:100%;
+  border-radius:999px;
+  background:#e2e8f0;
+  overflow:hidden;
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.08);
+}
+
+.fbi-progress-fill{
+  width:25%;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
+  transition:width .32s ease;
+}
+
+.fbi-modal-body{
+  flex:1 1 auto;
+  min-height:0;
+  padding:18px 24px 16px;
+  overflow:auto;
+}
+
+.fbi-steps-shell{position:relative}
+
+.fbi-step{
+  display:none;
+  animation:fbiStepIn .28s ease both;
+}
+
+.fbi-step.active{display:block}
+
+@keyframes fbiStepIn{
+  from{opacity:0; transform:translateX(12px)}
+  to{opacity:1; transform:translateX(0)}
+}
+
+.fbi-step-text{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px;
+  padding:14px 16px;
+  border-radius:18px;
+  background:linear-gradient(180deg,#fff7ed,#ffffff);
+  border:1px solid rgba(255,102,0,.20);
+  color:#334155;
+  font-size:14px;
+  line-height:1.65;
+}
+
+.fbi-step-number{
+  flex:0 0 auto;
+  width:34px;
+  height:34px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  box-shadow:0 10px 20px rgba(77,20,140,.20);
+  font-weight:900;
+}
+
+.fbi-image-wrap{
+  position:relative;
+  overflow:hidden;
+  border-radius:22px;
+  border:1px solid #e2e8f0;
+  background:#0f172a;
+  box-shadow:0 18px 44px rgba(15,23,42,.15);
+  cursor:zoom-in;
+}
+
+.fbi-image-wrap img{
+  width:100%;
+  max-height:calc(92vh - 330px);
+  object-fit:contain;
+  display:block;
+  transition:transform .35s ease, filter .35s ease;
+}
+
+.fbi-image-wrap:hover img{
+  transform:scale(1.012);
+  filter:saturate(1.04) contrast(1.02);
+}
+
+.fbi-image-wrap::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(255,102,0,.18), transparent 16%);
+  opacity:.82;
+  pointer-events:none;
+  animation:fbiSpotlight 2.8s ease-in-out infinite;
+}
+
+@keyframes fbiSpotlight{
+  0%,100%{opacity:.35}
+  50%{opacity:.9}
+}
+
+.fbi-cursor{
+  position:absolute;
+  left:var(--cursor-x, 50%);
+  top:var(--cursor-y, 50%);
+  z-index:3;
+  width:45px;
+  height:45px;
+  transform:translate(-8px,-6px);
+  color:#fff;
+  filter:drop-shadow(0 10px 12px rgba(15,23,42,.35));
+  animation:fbiCursorMove 2.8s ease-in-out infinite;
+  pointer-events:none;
+}
+
+.fbi-cursor::before{
+  content:"\f245";
+  font-family:"Font Awesome 6 Free";
+  font-weight:900;
+  font-size:39px;
+  -webkit-text-stroke:2px #4d148c;
+}
+
+.fbi-click-ring{
+  position:absolute;
+  left:var(--cursor-x, 50%);
+  top:var(--cursor-y, 50%);
+  z-index:2;
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  border:3px solid #ff6600;
+  transform:translate(-50%,-50%);
+  animation:fbiClickRing 2.8s ease-out infinite;
+  pointer-events:none;
+}
+
+@keyframes fbiCursorMove{
+  0%{transform:translate(-34px,-24px) scale(.94); opacity:0}
+  18%{opacity:1}
+  58%{transform:translate(-8px,-6px) scale(1); opacity:1}
+  66%{transform:translate(-8px,-6px) scale(.88)}
+  74%{transform:translate(-8px,-6px) scale(1)}
+  100%{transform:translate(-8px,-6px) scale(1); opacity:1}
+}
+
+@keyframes fbiClickRing{
+  0%,54%{opacity:0; transform:translate(-50%,-50%) scale(.5)}
+  62%{opacity:1; transform:translate(-50%,-50%) scale(.9)}
+  100%{opacity:0; transform:translate(-50%,-50%) scale(2.3)}
+}
+
+.fbi-controls{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 24px 22px;
+  border-top:1px solid #e2e8f0;
+  background:#fbfdff;
+}
+
+.fbi-control-group{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.fbi-control-btn{
+  min-height:44px;
+  padding:0 15px;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  font-weight:900;
+  font-size:13px;
+  transition:.2s ease;
+}
+
+.fbi-control-btn.primary{
+  color:#fff;
+  background:linear-gradient(135deg,#4d148c,#6d28d9);
+  box-shadow:0 12px 22px rgba(77,20,140,.18);
+}
+
+.fbi-control-btn.dark{
+  color:#fff;
+  background:#111827;
+}
+
+.fbi-control-btn.light{
+  color:#334155;
+  background:#f1f5f9;
+}
+
+.fbi-control-btn:hover{
+  transform:translateY(-2px);
+}
+
+.fbi-control-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.fbi-dots{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  flex:1;
+}
+
+.fbi-dot{
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  background:#cbd5e1;
+  transition:.22s ease;
+}
+
+.fbi-dot.active{
+  width:28px;
+  background:linear-gradient(90deg,#4d148c,#ff6600);
+}
+
+.image-zoom-modal{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(2,6,23,.86);
+  backdrop-filter:blur(8px);
+}
+
+.image-zoom-modal.show{display:flex}
+
+.image-zoom-modal img{
+  max-width:94vw;
+  max-height:88vh;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 30px 90px rgba(0,0,0,.45);
+  animation:fbiZoomIn .2s ease both;
+}
+
+@keyframes fbiZoomIn{
+  from{opacity:0; transform:scale(.96)}
+  to{opacity:1; transform:scale(1)}
+}
+
+/* =========================
+   SHARED HEADER MODALS — SAME CASE DIRECTORY / EBS STYLE
+   Do not style #site-header directly.
+========================= */
+
+#commentModal,
+#allCommentsModal,
+#helpModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.52);
+  justify-content:center;
+  align-items:center;
+  padding:0 24px;
+  z-index:2147483647;
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
+}
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content{
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  border:1px solid rgba(148,163,184,.16);
+  margin:110px auto 32px;
+}
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content{
+  max-width:760px;
+}
+
+#helpModal .help-modal{
+  max-width:760px;
+  border-radius:30px;
+  padding:18px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close{
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  min-height:40px;
+  padding:0;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
+}
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .rating-container{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:16px 0 18px;
+}
+
+#commentModal .rating-star{
+  cursor:pointer;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
+}
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
+  color:#ff6600;
+}
+
+#commentModal input,
+#commentModal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  transition:.18s ease;
+  font-family:inherit;
+}
+
+#commentModal input{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+
+#commentModal textarea{
+  min-height:120px;
+  resize:vertical;
+  margin-top:0;
+}
+
+#commentModal input:focus,
+#commentModal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#commentModal .btn,
+#allCommentsModal .btn,
+#helpModal .btn,
+#commentModal button:not(.modal-close),
+#allCommentsModal button:not(.modal-close),
+#helpModal button:not(.modal-close){
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:50px;
+  padding:0 18px;
+  border-radius:17px;
+  text-decoration:none;
+  font-weight:800;
+  border:none;
+  cursor:pointer;
+  transition:.22s ease;
+  width:100%;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
+  color:#fff;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+}
+
+#commentModal .btn:hover,
+#allCommentsModal .btn:hover,
+#helpModal .btn:hover,
+#commentModal button:not(.modal-close):hover,
+#allCommentsModal button:not(.modal-close):hover,
+#helpModal button:not(.modal-close):hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+
+.comment-modal-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.link-text{
+  color:#4d148c;
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+
+.link-text:hover{text-decoration:underline}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{
+  border-bottom:none;
+}
+
+#allCommentsModal .stars,
+#commentsList .stars{
+  color:#ff6600;
+  font-size:18px;
+  margin-bottom:6px;
+  display:block;
+}
+
+/* Date & Time popup/settings, same Case Directory/EBS button treatment */
+#timeCalendarPopup .settings-btn,
+#timeCalendarPopup .time-settings-btn,
+#timeCalendarPopup button:last-of-type{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100% !important;
+  min-height:50px;
+  padding:0 18px;
+  border:none;
+  border-radius:17px;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;
+  color:#fff !important;
+  font-weight:800;
+  text-decoration:none;
+  cursor:pointer;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+  transition:.22s ease;
+}
+
+#timeCalendarPopup .settings-btn:hover,
+#timeCalendarPopup .time-settings-btn:hover,
+#timeCalendarPopup button:last-of-type:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+
+#timeSettingsModal select,
+#timezoneModal select,
+#dateTimeSettingsModal select{
+  width:100%;
+  min-height:46px;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:0 16px;
+  color:#0f172a;
+  font-size:14px;
+  appearance:auto;
+}
+
+#timeSettingsModal select:focus,
+#timezoneModal select:focus,
+#dateTimeSettingsModal select:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#timeSettingsModal .btn,
+#timezoneModal .btn,
+#dateTimeSettingsModal .btn,
+#timeSettingsModal button:not(.modal-close),
+#timezoneModal button:not(.modal-close),
+#dateTimeSettingsModal button:not(.modal-close){
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  width:100% !important;
+  min-height:50px;
+  padding:0 18px;
+  border:none;
+  border-radius:17px;
+  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;
+  color:#fff !important;
+  font-weight:800;
+  text-decoration:none;
+  cursor:pointer;
+  box-shadow:0 14px 24px rgba(77,20,140,.16);
+  transition:.22s ease;
+  margin-top:18px;
+}
+
+#timeSettingsModal .btn:hover,
+#timezoneModal .btn:hover,
+#dateTimeSettingsModal .btn:hover,
+#timeSettingsModal button:not(.modal-close):hover,
+#timezoneModal button:not(.modal-close):hover,
+#dateTimeSettingsModal button:not(.modal-close):hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 30px rgba(77,20,140,.22);
+}
+
+/* Keep the old animation classes working above the newer image modal fallback styles */
+#fbiModal.fbi-modal.show{
+  display:flex !important;
+}
+
+#fbiModal .fbi-modal-content{
+  width:min(1040px, 100%) !important;
+  height:min(92vh, 900px) !important;
+  max-height:92vh !important;
+  overflow:hidden !important;
+  border-radius:30px !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+#fbiModal .fbi-step{
+  display:none !important;
+}
+
+#fbiModal .fbi-step.active{
+  display:grid !important;
+}
+
+#imageZoomModal.image-zoom-modal.show{
+  display:flex !important;
+}
+
   </style>
 </head>
 <body data-page="fbc-comments">
@@ -3613,6 +4321,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </script>
 
+
+
+
 <script>
   function scrollToBuilder() {
     const target = document.getElementById("fbcBuilder");
@@ -3637,98 +4348,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("modal-open");
   }
 
-  function ensureFbiModal() {
-    let modal = document.getElementById("fbiModal");
-    if (modal) return modal;
-
-    modal = document.createElement("div");
-    modal.id = "fbiModal";
-    modal.className = "fbi-modal";
-    modal.innerHTML = `
-      <div class="fbi-modal-card">
-        <div class="fbi-modal-head">
-          <div>
-            <h3>How to add comment in FBI</h3>
-            <p>Follow these steps when adding the FBC/FBI comment.</p>
-          </div>
-          <button class="fbi-modal-close" type="button" onclick="closeFbiModal()">×</button>
-        </div>
-
-        <div class="fbi-step-grid">
-          <div class="fbi-step">
-            <div class="fbi-step-number">1</div>
-            <div>
-              <strong>Open the PRO in FBI/FBC</strong>
-              <span>Go to the PRO you are working and confirm that you are updating the correct shipment or case.</span>
-            </div>
-          </div>
-
-          <div class="fbi-step">
-            <div class="fbi-step-number">2</div>
-            <div>
-              <strong>Press F9 or open the comment area</strong>
-              <span>Use the comment function where FBC/FBI comments are added for the PRO.</span>
-            </div>
-          </div>
-
-          <div class="fbi-step">
-            <div class="fbi-step-number">3</div>
-            <div>
-              <strong>Paste the generated comment</strong>
-              <span>Use the generated 2x4 comment format and make sure the case number is correct.</span>
-            </div>
-          </div>
-
-          <div class="fbi-step">
-            <div class="fbi-step-number">4</div>
-            <div>
-              <strong>Save and confirm</strong>
-              <span>Save the comment, then review the PRO to make sure the comment was added successfully.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal) closeFbiModal();
-    });
-    return modal;
-  }
-
-  function openFbiModal() {
-    const modal = ensureFbiModal();
-    modal.classList.add("is-open");
-    modal.style.display = "flex";
-    document.body.classList.add("modal-open");
-  }
-
-  function closeFbiModal() {
-    const modal = document.getElementById("fbiModal");
-    if (!modal) return;
-    modal.classList.remove("is-open");
-    modal.style.display = "none";
-    document.body.classList.remove("modal-open");
-  }
-
   document.addEventListener("click", (event) => {
     const tableModal = document.getElementById("fbcTableModal");
-    const fbiModal = document.getElementById("fbiModal");
-
     if (event.target === tableModal) closeFbcTableModal();
-    if (event.target === fbiModal) closeFbiModal();
   });
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     closeFbcTableModal();
-    closeFbiModal();
   });
 
   window.openFbcTableModal = openFbcTableModal;
   window.closeFbcTableModal = closeFbcTableModal;
-  window.openFbiModal = openFbiModal;
-  window.closeFbiModal = closeFbiModal;
 </script>
 
 </body>
