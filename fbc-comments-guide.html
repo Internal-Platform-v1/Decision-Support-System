@@ -1,2268 +1,2225 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BD Tools — FBC Comments Guide</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="assets/css/header-footer-style.css">
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<style>
-:root{
-  --bg:#07111f;
-  --bg-soft:#0c1728;
-  --panel:#0f1c31;
-  --panel-2:#12233d;
-  --card:#ffffff;
-  --card-soft:#f8fafc;
-  --text:#0f172a;
-  --text-soft:#475569;
-  --muted:#94a3b8;
-  --line:rgba(148,163,184,.18);
-  --white-line:rgba(255,255,255,.08);
-  --accent:#6d28d9;
-  --accent-2:#4d148c;
-  --accent-3:#ff6600;
-  --success:#16a34a;
-  --warning:#f59e0b;
-  --danger:#ef4444;
-  --shadow-xl:0 24px 80px rgba(2,6,23,.18);
-  --shadow-lg:0 18px 48px rgba(2,6,23,.12);
-  --shadow-md:0 10px 28px rgba(15,23,42,.10);
-  --shadow-card:0 16px 40px rgba(15,23,42,.06);
-  --radius-xl:28px;
-  --radius-lg:20px;
-  --radius-md:16px;
-  --radius-sm:12px;
-  --max:1440px;
-  font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-a{color:inherit}
-button,input,textarea,select{font:inherit}
-
-body{
-  margin:0;
-  min-height:100vh;
-  color:var(--text);
-  overflow-x:hidden;
-  background:#eef4fb;
-}
-
-body.modal-open{
-  overflow:hidden;
-  height:100vh;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background:
-    radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
-    radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
-    linear-gradient(180deg, #091120 0%, #0b1525 38%, #eef4fb 38%, #f5f8fc 100%);
-  pointer-events:none;
-}
-
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size:36px 36px;
-  mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
-}
-
-.page{position:relative;z-index:1}
-.container{width:min(calc(100% - 32px), var(--max));margin:0 auto}
-
-/* =========================
-   HERO — SAME CASE DIRECTORY STYLE
-========================= */
-
-.hero-wrap{padding:28px 0 18px}
-
-.hero{
-  position:relative;
-  overflow:hidden;
-  border-radius:36px;
-  background:
-    radial-gradient(circle at 85% 20%, rgba(255,102,0,.24), transparent 18%),
-    radial-gradient(circle at 15% 18%, rgba(255,255,255,.16), transparent 20%),
-    linear-gradient(135deg, #4d148c 0%, #5b1aae 46%, #1e293b 100%);
-  box-shadow:var(--shadow-xl);
-  border:1px solid rgba(255,255,255,.12);
-}
-
-.hero::before,
-.hero::after{
-  content:"";
-  position:absolute;
-  border-radius:999px;
-  pointer-events:none;
-}
-
-.hero::before{
-  width:420px;
-  height:420px;
-  top:-220px;
-  right:-120px;
-  background:radial-gradient(circle, rgba(255,255,255,.18), transparent 62%);
-}
-
-.hero::after{
-  width:280px;
-  height:280px;
-  bottom:-160px;
-  left:-80px;
-  background:radial-gradient(circle, rgba(255,102,0,.18), transparent 65%);
-}
-
-.hero-grid{
-  position:relative;
-  z-index:1;
-  display:grid;
-  grid-template-columns:minmax(0,1.25fr) minmax(300px,.82fr);
-  gap:22px;
-  align-items:stretch;
-  padding:32px;
-}
-
-.eyebrow{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:9px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,.12);
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:.10em;
-  text-transform:uppercase;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
-  margin-bottom:18px;
-}
-
-.hero h1{
-  margin:0;
-  color:#fff;
-  font-size:clamp(2.1rem, 4vw, 3.65rem);
-  line-height:.98;
-  letter-spacing:-.05em;
-  max-width:760px;
-}
-
-.hero p{
-  margin:16px 0 22px;
-  color:rgba(255,255,255,.82);
-  font-size:16px;
-  line-height:1.7;
-  max-width:760px;
-}
-
-.hero-stats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;
-  margin-top:22px;
-}
-
-.stat-card{
-  border-radius:20px;
-  padding:18px 18px 16px;
-  background:rgba(255,255,255,.10);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-  backdrop-filter:blur(10px);
-}
-
-.stat-value{
-  color:#fff;
-  font-size:26px;
-  font-weight:800;
-  letter-spacing:-.04em;
-  margin-bottom:6px;
-}
-
-.stat-label{
-  color:rgba(255,255,255,.7);
-  font-size:13px;
-  line-height:1.45;
-}
-
-.hero-cta{
-  border:none;
-  padding:14px 22px;
-  border-radius:999px;
-  background:#ffffff;
-  color:#4d148c;
-  font-weight:800;
-  font-size:14px;
-  cursor:pointer;
-  box-shadow:0 10px 24px rgba(0,0,0,.15);
-  transition:all .2s ease;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  animation:fadeUp .6s ease;
-}
-
-.hero-cta:hover{
-  transform:translateY(-2px);
-  box-shadow:0 14px 30px rgba(0,0,0,.2);
-}
-
-.hero-side{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-  min-width:0;
-}
-
-.quick-panel{
-  background:rgba(255,255,255,.10);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-  border-radius:28px;
-  padding:22px;
-  backdrop-filter:blur(12px);
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
-
-.panel-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  color:#fff;
-  font-weight:700;
-  font-size:18px;
-  margin-bottom:14px;
-}
-
-.panel-title span:last-child{
-  color:rgba(255,255,255,.6);
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.quick-list{
-  display:grid;
-  gap:12px;
-  margin:0;
-  padding:0;
-  list-style:none;
-}
-
-.quick-item{
-  display:flex;
-  gap:14px;
-  align-items:flex-start;
-  padding:14px;
-  border-radius:18px;
-  background:rgba(255,255,255,.08);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
-}
-
-.quick-icon{
-  width:42px;
-  height:42px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
-  color:#fff;
-  flex-shrink:0;
-}
-
-.quick-item strong{
-  display:block;
-  color:#fff;
-  font-size:14px;
-  margin-bottom:4px;
-}
-
-.quick-item span{
-  display:block;
-  color:rgba(255,255,255,.7);
-  font-size:13px;
-  line-height:1.45;
-}
-
-.live-strip{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  margin-top:16px;
-  padding:14px 16px;
-  border-radius:18px;
-  background:rgba(7,17,31,.24);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-  color:#fff;
-}
-
-.live-strip strong{
-  display:block;
-  font-size:14px;
-  margin-bottom:4px;
-}
-
-.live-strip span{
-  color:rgba(255,255,255,.68);
-  font-size:13px;
-}
-
-.pulse{
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  background:#22c55e;
-  box-shadow:0 0 0 0 rgba(34,197,94,.55);
-  animation:pulse 1.9s infinite;
-  flex-shrink:0;
-}
-
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(34,197,94,.55)}
-  70%{box-shadow:0 0 0 16px rgba(34,197,94,0)}
-  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
-}
-
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-/* =========================
-   WORKSPACE
-========================= */
-
-.workspace-wrap{
-  padding:8px 0 58px;
-  position:relative;
-  z-index:1;
-  scroll-margin-top:120px;
-}
-
-.workspace-wrap::before{
-  content:"";
-  position:absolute;
-  top:22px;
-  left:50%;
-  width:min(1320px, calc(100% - 80px));
-  height:92%;
-  transform:translateX(-50%);
-  border-radius:42px;
-  background:
-    radial-gradient(circle at top center, rgba(109,40,217,.12), transparent 38%),
-    linear-gradient(180deg, rgba(255,255,255,.62), rgba(248,250,252,.42));
-  filter:blur(8px);
-  z-index:-1;
-}
-
-.library-panel{
-  background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(248,250,252,.96));
-  border:1px solid rgba(226,232,240,.96);
-  border-radius:36px;
-  padding:32px;
-  box-shadow:0 26px 60px rgba(15,23,42,.08);
-}
-
-.section-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:18px;
-  margin-bottom:26px;
-  flex-wrap:wrap;
-}
-
-.section-head-left{
-  flex:1 1 700px;
-  min-width:280px;
-}
-
-.section-overline{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:12px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:linear-gradient(180deg,#f5f3ff,#ede9fe);
-  border:1px solid #e9ddff;
-  color:#5b21b6;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.section-head-left h3{
-  margin:0 0 10px;
-  font-size:38px;
-  letter-spacing:-.055em;
-  color:#0f172a !important;
-  font-weight:900;
-  line-height:1;
-}
-
-.section-head-left p{
-  margin:0;
-  color:#64748b !important;
-  font-size:15px;
-  line-height:1.75;
-  max-width:760px;
-}
-
-.section-note{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:14px 18px;
-  border-radius:18px;
-  background:linear-gradient(180deg,#ffffff,#f8fafc);
-  border:1px solid rgba(203,213,225,.92);
-  box-shadow:0 14px 30px rgba(15,23,42,.06);
-  color:#334155;
-  font-weight:800;
-  font-size:13px;
-  flex:0 0 auto;
-}
-
-.content-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.25fr) 360px;
-  gap:22px;
-  align-items:start;
-}
-
-.work-card,
-.side-card{
-  position:relative;
-  background:linear-gradient(180deg,#ffffff 0%,#fbfdff 100%);
-  border:1px solid rgba(226,232,240,.96);
-  border-radius:28px;
-  padding:18px 18px 20px;
-  box-shadow:0 14px 30px rgba(15,23,42,.08);
-  overflow:hidden;
-}
-
-.work-card::before,
-.side-card::before{
-  content:"";
-  position:absolute;
-  left:18px;
-  right:18px;
-  top:0;
-  height:4px;
-  border-radius:0 0 999px 999px;
-  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
-  opacity:.98;
-}
-
-.work-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:18px;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:linear-gradient(180deg,#f8f6ff,#f1ecff);
-  color:#5b21b6;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.02em;
-  border:1px solid #ece5ff;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
-}
-
-.guide-icon{
-  width:46px;
-  height:46px;
-  border-radius:16px;
-  display:grid;
-  place-items:center;
-  color:#5b21b6;
-  background:linear-gradient(180deg, rgba(91,33,182,.08), rgba(255,102,0,.08));
-  box-shadow:inset 0 0 0 1px rgba(91,33,182,.08);
-  font-size:17px;
-  flex-shrink:0;
-}
-
-.work-card h4,
-.side-card h4{
-  margin:0 0 10px;
-  font-size:18px;
-  letter-spacing:-.03em;
-  line-height:1.25;
-  color:#111827;
-}
-
-.lead{
-  margin:0 0 18px;
-  color:#516173;
-  font-size:14px;
-  line-height:1.72;
-}
-
-.select-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-bottom:14px;
-}
-
-.field-label{
-  display:block;
-  font-size:12px;
-  font-weight:900;
-  color:#334155;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-.select-wrap{position:relative}
-
-.select-wrap i{
-  position:absolute;
-  right:14px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#64748b;
-  pointer-events:none;
-}
-
-/* =========================
-   FBC BUILDER FORM — SCOPED ONLY
-========================= */
-
-#fbcBuilder select,
-#fbcBuilder textarea,
-#fbcBuilder input{
-  width:100%;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  padding:14px 16px;
-  color:#0f172a;
-  font-size:14px;
-  transition:.18s ease;
-}
-
-#fbcBuilder select{
-  appearance:none;
-  padding-right:42px;
-  cursor:pointer;
-}
-
-#fbcBuilder select:focus,
-#fbcBuilder textarea:focus,
-#fbcBuilder input:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16),0 0 0 5px rgba(77,20,140,.06);
-}
-
-#fbcBuilder select:disabled{
-  opacity:.65;
-  cursor:not-allowed;
-}
-
-.info-box{
-  padding:14px 16px;
-  border-radius:18px;
-  background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);
-  border:1px solid #e4ebf5;
-  font-size:14px;
-  line-height:1.7;
-  color:#334155;
-  min-height:78px;
-}
-
-.info-box.empty{color:#94a3b8}
-
-.generated-output-wrap{position:relative}
-
-#fbcBuilder textarea.response-box{
-  min-height:66px !important;
-  max-height:190px !important;
-  resize:none !important;
-  overflow:hidden !important;
-  white-space:pre-wrap !important;
-  line-height:1.72 !important;
-  transition:height .15s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease, transform .22s ease !important;
-  font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-  font-weight:950 !important;
-  font-size:17.5px !important;
-  letter-spacing:.012em !important;
-  color:#07111f !important;
-  padding:20px 116px 20px 20px !important;
-  border-radius:20px !important;
-  background:
-    radial-gradient(circle at top right, rgba(255,102,0,.12), transparent 28%),
-    linear-gradient(135deg,#ffffff 0%,#f8fafc 52%,#fff7ed 100%) !important;
-  border:2px solid rgba(77,20,140,.18) !important;
-  box-shadow:
-    0 18px 42px rgba(77,20,140,.14),
-    0 6px 18px rgba(15,23,42,.08),
-    inset 0 1px 0 rgba(255,255,255,.85) !important;
-}
-
-#fbcBuilder textarea.response-box::placeholder{
-  font-weight:800 !important;
-  color:#94a3b8 !important;
-}
-
-#fbcBuilder textarea.response-box:focus{
-  background:#ffffff !important;
-  border-color:#4d148c !important;
-  box-shadow:
-    0 0 0 5px rgba(77,20,140,.10),
-    0 22px 46px rgba(77,20,140,.18),
-    inset 0 1px 0 rgba(255,255,255,.9) !important;
-  transform:translateY(-1px);
-}
-
-.copied-badge{
-  position:absolute;
-  top:12px;
-  right:12px;
-  z-index:2;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:7px 10px;
-  border-radius:999px;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-  color:#fff;
-  font-size:12px;
-  font-weight:900;
-  box-shadow:0 10px 22px rgba(22,163,74,.22);
-  opacity:0;
-  transform:translateY(-4px) scale(.96);
-  pointer-events:none;
-  transition:opacity .2s ease, transform .2s ease;
-}
-
-.copied-badge.show{
-  opacity:1;
-  transform:translateY(0) scale(1);
-}
-
-.action-row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:14px;
-}
-
-.action-row .btn{
-  flex:1 1 0;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  min-height:50px;
-  padding:0 18px;
-  border-radius:17px;
-  text-decoration:none;
-  font-weight:800;
-  border:none;
-  cursor:pointer;
-  transition:.22s ease;
-}
-
-.btn-primary{
-  background:linear-gradient(135deg,#4d148c 0%,#6d28d9 100%);
-  color:#fff;
-  box-shadow:0 14px 24px rgba(77,20,140,.16);
-}
-
-.btn-primary:hover{
-  transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.22);
-}
-
-.btn-dark{
-  background:#111827;
-  color:#fff;
-  box-shadow:0 8px 20px rgba(17,24,39,.14);
-}
-
-.btn-dark:hover{transform:translateY(-1px)}
-
-.note-box{
-  margin-top:14px;
-  background:#f8fafc;
-  border-left:5px solid var(--accent-2);
-  padding:14px 16px;
-  border-radius:14px;
-  color:#334155;
-  font-size:14px;
-  line-height:1.7;
-}
-
-/* =========================
-   REMINDER / REFERENCE CARDS
-========================= */
-
-.reminder-grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:22px;
-  margin-bottom:22px;
-}
-
-.reminder-card{
-  background:linear-gradient(180deg,#fff7ed 0%,#ffffff 100%);
-  border:1px solid rgba(255,102,0,.22);
-}
-
-.reminder-card::before{
-  background:linear-gradient(90deg,#ff6600,#fb923c,#fdba74);
-}
-
-.reminder-title{
-  margin:0 0 12px;
-  font-size:18px;
-  color:#c2410c;
-  letter-spacing:-.03em;
-}
-
-.reminder-list{
-  margin:0;
-  padding-left:20px;
-  color:#0f172a;
-  line-height:1.8;
-  font-size:14px;
-}
-
-.reminder-list li+li{margin-top:4px}
-
-.inline-link{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  color:#0f4c81;
-  font-weight:800;
-  text-decoration:none;
-  margin:14px 0 8px;
-}
-
-.inline-link:hover{text-decoration:underline}
-
-.warning-copy{
-  margin-top:14px;
-  padding:14px 16px;
-  border-radius:16px;
-  background:#fff1f2;
-  border:1px solid #fecdd3;
-  color:#b91c1c;
-  font-weight:800;
-  line-height:1.7;
-}
-
-.guide-image-wrap{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.guide-image{
-  width:100%;
-  border-radius:20px;
-  border:1px solid #e2e8f0;
-  box-shadow:0 16px 34px rgba(15,23,42,.10);
-  background:#f8fafc;
-  min-height:240px;
-  object-fit:cover;
-}
-
-.guide-image-placeholder{
-  display:grid;
-  place-items:center;
-  min-height:240px;
-  border-radius:20px;
-  border:1px dashed #cbd5e1;
-  background:linear-gradient(180deg,#ffffff,#f8fafc);
-  color:#64748b;
-  text-align:center;
-  padding:24px;
-  line-height:1.8;
-  font-weight:600;
-}
-
-.reference-card{
-  background:linear-gradient(180deg,#ffffff 0%,#fffaf5 100%);
-  border:1px solid rgba(255,102,0,.18);
-}
-
-.reference-card::before{
-  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
-}
-
-.reference-note{
-  display:flex;
-  align-items:flex-start;
-  gap:12px;
-  margin:0 0 16px;
-  padding:14px 16px;
-  border-radius:16px;
-  background:linear-gradient(135deg,#f8f6ff,#fff7ed);
-  border:1px solid #e9ddff;
-  color:#334155;
-  font-size:14px;
-  font-weight:700;
-  line-height:1.7;
-  box-shadow:0 10px 24px rgba(77,20,140,.06);
-}
-
-.reference-note i{
-  color:#4d148c;
-  margin-top:4px;
-  flex:0 0 auto;
-}
-
-/* =========================
-   SIDE PANEL / RECENTS
-========================= */
-
-.side-stack{
-  display:flex;
-  flex-direction:column;
-  gap:22px;
-}
-
-.quick-stat{
-  padding:14px;
-  border-radius:18px;
-  background:#f8fafc;
-  border:1px solid #e7edf4;
-}
-
-.quick-stat + .quick-stat{margin-top:10px}
-
-.quick-label{
-  display:block;
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  color:#64748b;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
-.quick-value{
-  font-size:18px;
-  font-weight:900;
-  letter-spacing:-.03em;
-  word-break:break-word;
-}
-
-.helper-text{
-  font-size:13px;
-  color:#64748b;
-  line-height:1.7;
-}
-
-.helper-list{
-  margin:0;
-  padding-left:18px;
-  color:#475569;
-  line-height:1.8;
-  font-size:14px;
-}
-
-.helper-list li+li{margin-top:4px}
-
-.action-row.right{justify-content:flex-end}
-
-.action-row.right .btn{flex:0 0 auto}
-
-.action-row .btn-wide{
-  width:220px;
-  max-width:100%;
-}
-
-.generate-inline-wrap{
-  display:flex;
-  align-items:flex-end;
-  justify-content:flex-end;
-}
-
-.generate-inline-wrap .btn{
-  width:auto !important;
-  min-width:165px;
-  max-width:190px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  min-height:50px;
-  padding:0 18px;
-  border-radius:17px;
-  text-decoration:none;
-  font-weight:800;
-  border:none;
-  cursor:pointer;
-  transition:.22s ease;
-  white-space:nowrap;
-}
-
-.highlight-preview{display:none !important}
-
-.highlight-line{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.comment-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 9px;
-  border-radius:999px;
-  background:#f8fafc;
-  border:1px solid #e2e8f0;
-  color:#64748b;
-  font-weight:800;
-  font-size:11px;
-}
-
-.case-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:6px 10px;
-  border-radius:999px;
-  background:#fff7ed;
-  border:1px solid rgba(255,102,0,.22);
-  color:#c2410c;
-  font-weight:800;
-  font-size:12px;
-}
-
-.comment-text-highlight{
-  display:block;
-  margin-top:10px;
-  color:#475569;
-}
-
-.comment-text-main{
-  display:block;
-  width:100%;
-  padding:16px 18px;
-  border-radius:16px;
-  background:linear-gradient(135deg,#ffffff 0%,#f8fafc 45%,#fff7ed 100%);
-  border:1px solid #e9ddff;
-  box-shadow:0 14px 32px rgba(77,20,140,.12);
-  color:#0f172a;
-  font-size:18px;
-  font-weight:950;
-  line-height:1.7;
-  letter-spacing:.01em;
-  word-break:break-word;
-}
-
-.recent-actions{
-  display:flex;
-  justify-content:flex-end;
-  margin-top:12px;
-}
-
-.recent-actions button{
-  border:none;
-  border-radius:999px;
-  background:#f1f5f9;
-  color:#475569;
-  font-weight:800;
-  font-size:12px;
-  padding:9px 12px;
-  cursor:pointer;
-  transition:.18s ease;
-}
-
-.recent-actions button:hover{
-  background:#e2e8f0;
-  color:#0f172a;
-}
-
-.recent-list{
-  display:grid;
-  gap:10px;
-}
-
-.recent-item{
-  padding:12px;
-  border-radius:16px;
-  background:#f8fafc;
-  border:1px solid #e7edf4;
-  cursor:pointer;
-  transition:.18s ease;
-}
-
-.recent-item:hover{
-  transform:translateY(-1px);
-  background:#fff;
-  box-shadow:0 12px 22px rgba(15,23,42,.08);
-}
-
-.recent-item strong{
-  display:block;
-  font-size:12px;
-  color:#4d148c;
-  margin-bottom:5px;
-}
-
-.recent-item span{
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-  font-size:12px;
-  line-height:1.5;
-  color:#475569;
-}
-
-/* =========================
-   AI ASSISTANT SECTION
-========================= */
-
-.ai-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-bottom:14px;
-}
-
-.ai-panel{
-  margin:14px 0;
-  padding:16px;
-  border-radius:20px;
-  background:linear-gradient(180deg,#f8f6ff,#ffffff);
-  border:1px solid #eadfff;
-  box-shadow:0 12px 26px rgba(77,20,140,.06);
-}
-
-.ai-panel-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:12px;
-}
-
-.ai-panel-title strong{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:#4d148c;
-  font-size:14px;
-}
-
-.ai-control-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-bottom:14px;
-}
-
-.ai-toggle-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-
-.toggle-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:999px;
-  background:#fff;
-  border:1px solid #e2e8f0;
-  color:#334155;
-  font-size:13px;
-  font-weight:800;
-  cursor:pointer;
-  user-select:none;
-}
-
-.toggle-pill input{
-  width:auto !important;
-  box-shadow:none !important;
-  padding:0 !important;
-  accent-color:#4d148c;
-}
-
-.ai-helper-box{
-  padding:13px 14px;
-  border-radius:16px;
-  background:#fff;
-  border:1px solid #e4ebf5;
-  color:#475569;
-  font-size:13px;
-  line-height:1.7;
-}
-
-.ai-suggestions{
-  display:grid;
-  gap:10px;
-  margin-top:12px;
-}
-
-.ai-suggestion{
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-  padding:12px;
-  border-radius:16px;
-  background:#ffffff;
-  border:1px solid #e5e7eb;
-  color:#334155;
-  font-size:13px;
-  line-height:1.55;
-}
-
-.ai-suggestion i{
-  color:#4d148c;
-  margin-top:2px;
-}
-
-.generated-toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:8px;
-}
-
-.generated-toolbar .mini-status{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 10px;
-  border-radius:999px;
-  background:#f1f5f9;
-  color:#475569;
-  font-size:12px;
-  font-weight:800;
-}
-
-.generated-toolbar .mini-status.ready{
-  background:#ecfdf5;
-  color:#15803d;
-}
-
-.case-warning{
-  display:none;
-  margin-top:8px;
-  color:#b91c1c;
-  font-size:12px;
-  font-weight:800;
-}
-
-.case-warning.show{display:block}
-
-#aiContextInput{
-  min-height:96px;
-  resize:vertical;
-  line-height:1.65;
-}
-
-/* =========================
-   FBI INSTRUCTION MODAL
-========================= */
-
-.fbi-modal{
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:22px;
-  background:rgba(2,6,23,.68);
-  backdrop-filter:blur(10px);
-}
-
-.fbi-modal.show{display:flex}
-
-.fbi-modal-content{
-  width:min(1040px, 100%);
-  height:min(92vh, 900px);
-  max-height:92vh;
-  overflow:hidden;
-  border-radius:30px;
-  display:flex;
-  flex-direction:column;
-  background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
-  border:1px solid rgba(255,255,255,.78);
-  box-shadow:0 30px 90px rgba(2,6,23,.38);
-  animation:fbiModalIn .28s ease both;
-}
-
-@keyframes fbiModalIn{
-  from{opacity:0; transform:translateY(16px) scale(.98)}
-  to{opacity:1; transform:translateY(0) scale(1)}
-}
-
-.fbi-modal-header{
-  flex:0 0 auto;
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:18px;
-  padding:22px 24px 18px;
-  border-bottom:1px solid #e2e8f0;
-  background:
-    radial-gradient(circle at top left, rgba(77,20,140,.10), transparent 34%),
-    linear-gradient(180deg,#ffffff,#fbfdff);
-}
-
-.fbi-modal-title h3{
-  margin:0 0 6px;
-  color:#0f172a;
-  font-size:22px;
-  letter-spacing:-.04em;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.fbi-modal-title p{
-  margin:0;
-  color:#64748b;
-  font-size:13px;
-  line-height:1.6;
-}
-
-.fbi-close-btn{
-  width:42px;
-  height:42px;
-  border:none;
-  border-radius:15px;
-  cursor:pointer;
-  color:#334155;
-  background:#f1f5f9;
-  display:grid;
-  place-items:center;
-  transition:.2s ease;
-}
-
-.fbi-close-btn:hover{
-  background:#e2e8f0;
-  transform:rotate(4deg) scale(1.03);
-}
-
-.fbi-progress-wrap{
-  flex:0 0 auto;
-  padding:16px 24px 0;
-}
-
-.fbi-progress-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  margin-bottom:10px;
-}
-
-.fbi-step-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:#f5f3ff;
-  border:1px solid #e9ddff;
-  color:#4d148c;
-  font-size:12px;
-  font-weight:900;
-}
-
-.fbi-progress-percent{
-  color:#64748b;
-  font-size:12px;
-  font-weight:900;
-}
-
-.fbi-progress-track{
-  height:10px;
-  width:100%;
-  border-radius:999px;
-  background:#e2e8f0;
-  overflow:hidden;
-  box-shadow:inset 0 1px 2px rgba(15,23,42,.08);
-}
-
-.fbi-progress-fill{
-  width:25%;
-  height:100%;
-  border-radius:999px;
-  background:linear-gradient(90deg,#4d148c,#7c3aed,#ff6600);
-  transition:width .32s ease;
-}
-
-.fbi-modal-body{
-  flex:1 1 auto;
-  min-height:0;
-  padding:18px 24px 16px;
-  overflow:auto;
-}
-
-.fbi-steps-shell{position:relative}
-
-.fbi-step{
-  display:none;
-  animation:fbiStepIn .28s ease both;
-}
-
-.fbi-step.active{display:block}
-
-@keyframes fbiStepIn{
-  from{opacity:0; transform:translateX(12px)}
-  to{opacity:1; transform:translateX(0)}
-}
-
-.fbi-step-text{
-  display:flex;
-  align-items:flex-start;
-  gap:12px;
-  margin-bottom:14px;
-  padding:14px 16px;
-  border-radius:18px;
-  background:linear-gradient(180deg,#fff7ed,#ffffff);
-  border:1px solid rgba(255,102,0,.20);
-  color:#334155;
-  font-size:14px;
-  line-height:1.65;
-}
-
-.fbi-step-number{
-  flex:0 0 auto;
-  width:34px;
-  height:34px;
-  border-radius:13px;
-  display:grid;
-  place-items:center;
-  color:#fff;
-  background:linear-gradient(135deg,#4d148c,#6d28d9);
-  box-shadow:0 10px 20px rgba(77,20,140,.20);
-  font-weight:900;
-}
-
-.fbi-image-wrap{
-  position:relative;
-  overflow:hidden;
-  border-radius:22px;
-  border:1px solid #e2e8f0;
-  background:#0f172a;
-  box-shadow:0 18px 44px rgba(15,23,42,.15);
-  cursor:zoom-in;
-}
-
-.fbi-image-wrap img{
-  width:100%;
-  max-height:calc(92vh - 330px);
-  object-fit:contain;
-  display:block;
-  transition:transform .35s ease, filter .35s ease;
-}
-
-.fbi-image-wrap:hover img{
-  transform:scale(1.012);
-  filter:saturate(1.04) contrast(1.02);
-}
-
-.fbi-image-wrap::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(255,102,0,.18), transparent 16%);
-  opacity:.82;
-  pointer-events:none;
-  animation:fbiSpotlight 2.8s ease-in-out infinite;
-}
-
-@keyframes fbiSpotlight{
-  0%,100%{opacity:.35}
-  50%{opacity:.9}
-}
-
-.fbi-cursor{
-  position:absolute;
-  left:var(--cursor-x, 50%);
-  top:var(--cursor-y, 50%);
-  z-index:3;
-  width:45px;
-  height:45px;
-  transform:translate(-8px,-6px);
-  color:#fff;
-  filter:drop-shadow(0 10px 12px rgba(15,23,42,.35));
-  animation:fbiCursorMove 2.8s ease-in-out infinite;
-  pointer-events:none;
-}
-
-.fbi-cursor::before{
-  content:"\f245";
-  font-family:"Font Awesome 6 Free";
-  font-weight:900;
-  font-size:39px;
-  -webkit-text-stroke:2px #4d148c;
-}
-
-.fbi-click-ring{
-  position:absolute;
-  left:var(--cursor-x, 50%);
-  top:var(--cursor-y, 50%);
-  z-index:2;
-  width:22px;
-  height:22px;
-  border-radius:999px;
-  border:3px solid #ff6600;
-  transform:translate(-50%,-50%);
-  animation:fbiClickRing 2.8s ease-out infinite;
-  pointer-events:none;
-}
-
-@keyframes fbiCursorMove{
-  0%{transform:translate(-34px,-24px) scale(.94); opacity:0}
-  18%{opacity:1}
-  58%{transform:translate(-8px,-6px) scale(1); opacity:1}
-  66%{transform:translate(-8px,-6px) scale(.88)}
-  74%{transform:translate(-8px,-6px) scale(1)}
-  100%{transform:translate(-8px,-6px) scale(1); opacity:1}
-}
-
-@keyframes fbiClickRing{
-  0%,54%{opacity:0; transform:translate(-50%,-50%) scale(.5)}
-  62%{opacity:1; transform:translate(-50%,-50%) scale(.9)}
-  100%{opacity:0; transform:translate(-50%,-50%) scale(2.3)}
-}
-
-.fbi-controls{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:16px 24px 22px;
-  border-top:1px solid #e2e8f0;
-  background:#fbfdff;
-}
-
-.fbi-control-group{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.fbi-control-btn{
-  min-height:44px;
-  padding:0 15px;
-  border:none;
-  border-radius:15px;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:9px;
-  font-weight:900;
-  font-size:13px;
-  transition:.2s ease;
-}
-
-.fbi-control-btn.primary{
-  color:#fff;
-  background:linear-gradient(135deg,#4d148c,#6d28d9);
-  box-shadow:0 12px 22px rgba(77,20,140,.18);
-}
-
-.fbi-control-btn.dark{
-  color:#fff;
-  background:#111827;
-}
-
-.fbi-control-btn.light{
-  color:#334155;
-  background:#f1f5f9;
-}
-
-.fbi-control-btn:hover{
-  transform:translateY(-2px);
-}
-
-.fbi-control-btn:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
-}
-
-.fbi-dots{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  flex:1;
-}
-
-.fbi-dot{
-  width:9px;
-  height:9px;
-  border-radius:999px;
-  background:#cbd5e1;
-  transition:.22s ease;
-}
-
-.fbi-dot.active{
-  width:28px;
-  background:linear-gradient(90deg,#4d148c,#ff6600);
-}
-
-.image-zoom-modal{
-  position:fixed;
-  inset:0;
-  z-index:100000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  background:rgba(2,6,23,.86);
-  backdrop-filter:blur(8px);
-}
-
-.image-zoom-modal.show{display:flex}
-
-.image-zoom-modal img{
-  max-width:94vw;
-  max-height:88vh;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 30px 90px rgba(0,0,0,.45);
-  animation:fbiZoomIn .2s ease both;
-}
-
-@keyframes fbiZoomIn{
-  from{opacity:0; transform:scale(.96)}
-  to{opacity:1; transform:scale(1)}
-}
-
-/* =========================
-   SHARED HEADER MODALS — SAME CASE DIRECTORY / EBS STYLE
-   Do not style #site-header directly.
-========================= */
-
-#commentModal,
-#allCommentsModal,
-#helpModal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.52);
-  justify-content:center;
-  align-items:center;
-  padding:0 24px;
-  z-index:2147483647;
-  backdrop-filter:blur(8px);
-  overflow-y:auto;
-}
-
-#commentModal .modal-content,
-#allCommentsModal .modal-content,
-#helpModal .modal-content{
-  width:100%;
-  background:#fff;
-  border-radius:28px;
-  padding:26px;
-  box-shadow:0 24px 80px rgba(2,6,23,.18);
-  max-height:min(84vh, 900px);
-  overflow:auto;
-  border:1px solid rgba(148,163,184,.16);
-  margin:110px auto 32px;
-}
-
-#commentModal .feedback-modal{
-  max-width:640px;
-  border-radius:28px;
-  padding:20px 20px 22px;
-}
-
-#allCommentsModal .modal-content{
-  max-width:760px;
-}
-
-#helpModal .help-modal{
-  max-width:760px;
-  border-radius:30px;
-  padding:18px;
-}
-
-#commentModal .modal-header,
-#allCommentsModal .modal-header,
-#helpModal .modal-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  font-size:22px;
-  font-weight:800;
-  letter-spacing:-.03em;
-  margin-bottom:14px;
-  color:#0f172a;
-}
-
-#commentModal .modal-close,
-#allCommentsModal .modal-close,
-#helpModal .modal-close{
-  cursor:pointer;
-  width:40px;
-  height:40px;
-  min-height:40px;
-  padding:0;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  color:#64748b;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-  transition:.2s ease;
-  flex-shrink:0;
-  font-size:22px;
-  line-height:1;
-}
-
-#commentModal .modal-close:hover,
-#allCommentsModal .modal-close:hover,
-#helpModal .modal-close:hover{
-  color:#0f172a;
-  background:#eef2ff;
-}
-
-#commentModal .rating-container{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  margin:16px 0 18px;
-}
-
-#commentModal .rating-star{
-  cursor:pointer;
-  font-size:26px;
-  color:#d1d5db;
-  transition:transform .18s ease, color .18s ease;
-}
-
-#commentModal .rating-star:hover{
-  transform:translateY(-1px) scale(1.06);
-}
-
-#commentModal .rating-star.selected{
-  color:#ff6600;
-}
-
-#commentModal input,
-#commentModal textarea{
-  width:100%;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  padding:14px 16px;
-  color:#0f172a;
-  font-size:14px;
-  transition:.18s ease;
-  font-family:inherit;
-}
-
-#commentModal input{
-  margin-top:4px;
-  margin-bottom:10px;
-}
-
-#commentModal textarea{
-  min-height:120px;
-  resize:vertical;
-  margin-top:0;
-}
-
-#commentModal input:focus,
-#commentModal textarea:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
-}
-
-#commentModal .btn,
-#allCommentsModal .btn,
-#helpModal .btn,
-#commentModal button:not(.modal-close),
-#allCommentsModal button:not(.modal-close),
-#helpModal button:not(.modal-close){
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  min-height:50px;
-  padding:0 18px;
-  border-radius:17px;
-  text-decoration:none;
-  font-weight:800;
-  border:none;
-  cursor:pointer;
-  transition:.22s ease;
-  width:100%;
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-  color:#fff;
-  box-shadow:0 14px 24px rgba(77,20,140,.16);
-}
-
-#commentModal .btn:hover,
-#allCommentsModal .btn:hover,
-#helpModal .btn:hover,
-#commentModal button:not(.modal-close):hover,
-#allCommentsModal button:not(.modal-close):hover,
-#helpModal button:not(.modal-close):hover{
-  transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.22);
-}
-
-.comment-modal-footer{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  flex-wrap:wrap;
-}
-
-.link-text{
-  color:#4d148c;
-  cursor:pointer;
-  text-decoration:none;
-  font-size:14px;
-  font-weight:700;
-}
-
-.link-text:hover{text-decoration:underline}
-
-#allCommentsModal .comment-list-item{
-  padding:14px 0;
-  border-bottom:1px solid rgba(148,163,184,.18);
-}
-
-#allCommentsModal .comment-list-item:last-child{
-  border-bottom:none;
-}
-
-#allCommentsModal .stars,
-#commentsList .stars{
-  color:#ff6600;
-  font-size:18px;
-  margin-bottom:6px;
-  display:block;
-}
-
-/* Date & Time popup/settings, same Case Directory/EBS button treatment */
-#timeCalendarPopup .settings-btn,
-#timeCalendarPopup .time-settings-btn,
-#timeCalendarPopup button:last-of-type{
-  display:flex !important;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  width:100% !important;
-  min-height:50px;
-  padding:0 18px;
-  border:none;
-  border-radius:17px;
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;
-  color:#fff !important;
-  font-weight:800;
-  text-decoration:none;
-  cursor:pointer;
-  box-shadow:0 14px 24px rgba(77,20,140,.16);
-  transition:.22s ease;
-}
-
-#timeCalendarPopup .settings-btn:hover,
-#timeCalendarPopup .time-settings-btn:hover,
-#timeCalendarPopup button:last-of-type:hover{
-  transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.22);
-}
-
-#timeSettingsModal select,
-#timezoneModal select,
-#dateTimeSettingsModal select{
-  width:100%;
-  min-height:46px;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  padding:0 16px;
-  color:#0f172a;
-  font-size:14px;
-  appearance:auto;
-}
-
-#timeSettingsModal select:focus,
-#timezoneModal select:focus,
-#dateTimeSettingsModal select:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
-}
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BD Tools — FBC Comments Guide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/header-footer-style.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+
+    html.page-protected,
+    html.page-protected body{
+      visibility:hidden;
+    }
+
+    :root{
+      --cream:#f7f8fb;
+      --cream-2:#edf0f6;
+      --cream-3:#dfe4ee;
+      --yellow:#ff6600;
+      --yellow-soft:#ff8a33;
+      --olive:#6d28d9;
+      --olive-2:#4d148c;
+      --teal:#4d148c;
+      --teal-2:#3b0f73;
+      --dark:#1e293b;
+      --dark-2:#07111f;
+      --ink:#0f172a;
+      --muted:#475569;
+      --line:rgba(148,163,184,.18);
+      --white:rgba(255,255,255,.86);
+      --shadow-xl:0 34px 90px rgba(2,6,23,.22);
+      --shadow-lg:0 24px 60px rgba(2,6,23,.16);
+      --shadow-md:0 14px 34px rgba(15,23,42,.10);
+      --radius-2xl:36px;
+      --radius-xl:28px;
+      --radius-lg:20px;
+      --ease:cubic-bezier(.2,.8,.2,1);
+      --max:1440px;
+      font-family:"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(109,40,217,.28), transparent 28%),
+        radial-gradient(circle at 82% 0%, rgba(255,102,0,.18), transparent 30%),
+        radial-gradient(circle at 40% 52%, rgba(77,20,140,.16), transparent 34%),
+        radial-gradient(circle at 88% 78%, rgba(255,102,0,.10), transparent 30%),
+        linear-gradient(180deg, #121033 0%, #091120 42%, #07111f 100%);
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size:44px 44px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 65%);
+      z-index:-2;
+    }
+
+    body::after{
+      content:"";
+      position:fixed;
+      width:520px;
+      height:520px;
+      right:-180px;
+      bottom:-180px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,102,0,.16), transparent 66%);
+      pointer-events:none;
+      z-index:-1;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit}
+
+    .page{
+      position:relative;
+      z-index:1;
+    }
+
+    .container{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+    }
+
+    .hero{
+      padding:42px 0 26px;
+    }
+
+    .hero-shell{
+      display:grid;
+      grid-template-columns:minmax(0, 1.1fr) minmax(360px, .9fr);
+      gap:26px;
+      align-items:stretch;
+    }
+
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      min-height:540px;
+      border-radius:var(--radius-2xl);
+      padding:42px;
+      background:
+        radial-gradient(circle at 16% 16%, rgba(255,102,0,.24), transparent 26%),
+        linear-gradient(135deg, var(--teal) 0%, var(--teal-2) 50%, var(--dark-2) 100%);
+      color:#fff;
+      box-shadow:var(--shadow-xl);
+      isolation:isolate;
+    }
+
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:conic-gradient(from 180deg, transparent, rgba(255,102,0,.18), transparent, rgba(255,255,255,.10), transparent);
+      animation:spin 18s linear infinite;
+      z-index:-2;
+    }
+
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      inset:1px;
+      border-radius:35px;
+      background:
+        radial-gradient(circle at 78% 24%, rgba(255,255,255,.12), transparent 20%),
+        linear-gradient(135deg, rgba(77,20,140,.96), rgba(59,15,115,.94) 50%, rgba(7,17,31,.96));
+      z-index:-1;
+    }
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .hero-content{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+
+    .pill{
+      width:max-content;
+      max-width:100%;
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.16);
+      color:rgba(255,255,255,.88);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      backdrop-filter:blur(10px);
+      margin-bottom:24px;
+    }
+
+    .pill i{color:var(--yellow-soft)}
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(2.8rem, 6vw, 5.7rem);
+      line-height:.9;
+      letter-spacing:-.08em;
+      max-width:900px;
+      text-wrap:balance;
+    }
+
+    .hero p{
+      margin:24px 0 0;
+      max-width:760px;
+      color:rgba(255,255,255,.76);
+      font-size:17px;
+      line-height:1.75;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:30px;
+    }
+
+    .hero-main-btn,
+    .hero-ghost-btn{
+      min-height:54px;
+      padding:0 22px;
+      border-radius:18px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-weight:900;
+      transition:.22s var(--ease);
+      border:none;
+      cursor:pointer;
+    }
+
+    .hero-main-btn{
+      background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+      color:#fff;
+      box-shadow:0 18px 34px rgba(255,102,0,.24);
+    }
+
+    .hero-ghost-btn{
+      background:rgba(255,255,255,.10);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.15);
+    }
+
+    .hero-main-btn:hover,
+    .hero-ghost-btn:hover{transform:translateY(-3px)}
+
+    .hero-metrics{
+      margin-top:auto;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0,1fr));
+      gap:12px;
+      padding-top:42px;
+    }
+
+    .metric{
+      padding:16px;
+      border-radius:22px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.10);
+      backdrop-filter:blur(10px);
+    }
+
+    .metric strong{
+      display:block;
+      font-size:28px;
+      letter-spacing:-.04em;
+    }
+
+    .metric span{
+      display:block;
+      margin-top:6px;
+      color:rgba(255,255,255,.66);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .side-stack{
+      display:grid;
+      gap:18px;
+    }
+
+    .how-use-panel{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius-2xl);
+      padding:22px;
+      color:#fff;
+      min-height:100%;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(255,255,255,.18), transparent 26%),
+        radial-gradient(circle at 88% 92%, rgba(255,102,0,.16), transparent 30%),
+        linear-gradient(135deg, rgba(77,20,140,.98), rgba(109,40,217,.84) 48%, rgba(7,17,31,.92));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:var(--shadow-lg);
+      backdrop-filter:blur(18px);
+    }
+
+    .how-use-panel::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:conic-gradient(from 180deg, transparent, rgba(255,255,255,.14), transparent, rgba(255,102,0,.13), transparent);
+      animation:spin 20s linear infinite;
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .how-use-head{
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+    }
+
+    .how-use-head h2{
+      margin:0;
+      color:#fff;
+      font-size:22px;
+      font-weight:950;
+      letter-spacing:-.045em;
+    }
+
+    .how-use-head span{
+      color:rgba(255,255,255,.64);
+      font-size:12px;
+      font-weight:950;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    .how-use-list{
+      position:relative;
+      z-index:1;
+      display:grid;
+      gap:10px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+
+    .how-use-item{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:14px;
+      min-height:72px;
+      border-radius:18px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.11);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 12px 28px rgba(2,6,23,.08);
+      transition:transform .22s var(--ease), background .22s var(--ease), border-color .22s var(--ease);
+    }
+
+    .how-use-item:hover{
+      transform:translateX(4px);
+      background:rgba(255,255,255,.16);
+      border-color:rgba(255,255,255,.18);
+    }
+
+    .how-use-icon{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      flex-shrink:0;
+      color:#fff;
+      background:rgba(255,255,255,.13);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.13), 0 12px 22px rgba(2,6,23,.10);
+      font-size:18px;
+    }
+
+    .how-use-item strong{
+      display:block;
+      color:#fff;
+      font-size:14px;
+      line-height:1.2;
+      margin-bottom:4px;
+      font-weight:950;
+    }
+
+    .how-use-item span{
+      display:block;
+      color:rgba(255,255,255,.72);
+      font-size:12.5px;
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .how-use-note{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      color:rgba(255,255,255,.78);
+      background:rgba(2,6,23,.20);
+      border:1px solid rgba(255,255,255,.10);
+      line-height:1.6;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .how-use-note strong{
+      display:block;
+      color:#fff;
+      margin-bottom:4px;
+      font-size:13px;
+      font-weight:950;
+    }
+
+
+    .focus-card{
+      border-radius:var(--radius-2xl);
+      padding:24px;
+      background:rgba(255,255,255,.74);
+      border:1px solid rgba(255,255,255,.92);
+      box-shadow:var(--shadow-lg);
+      backdrop-filter:blur(18px);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .focus-card.dark{
+      color:#fff;
+      background:linear-gradient(135deg, var(--teal), var(--dark-2));
+      border-color:rgba(255,255,255,.12);
+    }
+
+    .focus-card::before{
+      content:"";
+      position:absolute;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      right:-70px;
+      top:-80px;
+      background:radial-gradient(circle, rgba(255,102,0,.18), transparent 68%);
+      pointer-events:none;
+    }
+
+    .card-label{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .card-label span{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      color:var(--olive-2);
+    }
+
+    .focus-card.dark .card-label span{color:var(--yellow-soft)}
+
+    .card-label i:last-child{
+      width:42px;
+      height:42px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:var(--teal);
+      box-shadow:0 12px 24px rgba(18,31,21,.08);
+    }
+
+    .focus-card h2{
+      margin:0;
+      font-size:30px;
+      line-height:1.02;
+      letter-spacing:-.055em;
+      color:var(--ink);
+    }
+
+    .focus-card.dark h2{color:#fff}
+
+    .focus-card p{
+      margin:14px 0 0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .focus-card.dark p{color:rgba(255,255,255,.68)}
+
+    .mini-list{
+      display:grid;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .mini-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px;
+      border-radius:18px;
+      background:rgba(255,255,255,.68);
+      border:1px solid rgba(58,64,24,.08);
+    }
+
+    .mini-item i{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:var(--cream-3);
+      color:var(--dark);
+      flex-shrink:0;
+    }
+
+    .mini-item strong{
+      display:block;
+      font-size:14px;
+    }
+
+    .mini-item span{
+      display:block;
+      margin-top:2px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .search-section{
+      padding:18px 0 22px;
+    }
+
+    .search-panel{
+      border-radius:var(--radius-2xl);
+      padding:20px;
+      background:rgba(255,255,255,.74);
+      border:1px solid rgba(255,255,255,.88);
+      box-shadow:var(--shadow-lg);
+      backdrop-filter:blur(18px);
+    }
+
+    .search-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+
+    .search-copy h2{
+      margin:0 0 6px;
+      font-size:26px;
+      letter-spacing:-.045em;
+      color:var(--ink);
+    }
+
+    .search-copy p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:14px;
+    }
+
+    .chip-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border-radius:999px;
+      padding:10px 14px;
+      background:#fff;
+      border:1px solid rgba(58,64,24,.08);
+      color:var(--olive-2);
+      font-weight:900;
+      font-size:13px;
+      box-shadow:0 10px 22px rgba(18,31,21,.06);
+    }
+
+    .search-bar{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:center;
+    }
+
+    .search-input-wrap{
+      position:relative;
+    }
+
+    .search-input-wrap i{
+      position:absolute;
+      left:18px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--muted);
+      pointer-events:none;
+    }
+
+    #guideSearch{
+      width:100%;
+      min-height:62px;
+      border:none;
+      outline:none;
+      border-radius:20px;
+      padding:0 54px 0 50px;
+      background:#fff;
+      color:var(--ink);
+      font-weight:800;
+      font-size:16px;
+      box-shadow:inset 0 0 0 1px rgba(58,64,24,.12);
+      transition:.22s var(--ease);
+    }
+
+    #guideSearch:focus{
+      box-shadow:inset 0 0 0 2px rgba(14,83,97,.26), 0 0 0 7px rgba(14,83,97,.08);
+      transform:translateY(-1px);
+    }
+
+    #guideSearch::placeholder{
+      color:#9aa697;
+      font-weight:600;
+    }
+
+    #clearSearchBtn{
+      position:absolute;
+      right:14px;
+      top:50%;
+      transform:translateY(-50%);
+      width:32px;
+      height:32px;
+      border:none;
+      border-radius:999px;
+      background:var(--cream-2);
+      color:var(--dark);
+      font-weight:900;
+      cursor:pointer;
+      display:none;
+    }
+
+    .search-btn{
+      min-height:62px;
+      padding:0 22px;
+      border:none;
+      border-radius:20px;
+      background:linear-gradient(135deg, var(--dark), var(--teal));
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 16px 30px rgba(14,83,97,.18);
+      transition:.22s var(--ease);
+    }
+
+    .search-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 38px rgba(14,83,97,.24);
+    }
+
+    .guide-filters{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto 14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+    }
+
+    .filter-chip{
+      border:none;
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(255,255,255,.78);
+      color:#3d4938;
+      font-size:13px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(18,31,21,.06), inset 0 0 0 1px rgba(58,64,24,.09);
+      transition:.22s var(--ease);
+    }
+
+    .filter-chip:hover{
+      transform:translateY(-2px);
+      background:#fff;
+      color:var(--teal);
+    }
+
+    .filter-chip.active{
+      background:linear-gradient(135deg, var(--dark), var(--teal));
+      color:#fff;
+      box-shadow:0 16px 30px rgba(14,83,97,.18);
+    }
+
+    #resultsCount,
+    #noResults{
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto 12px;
+      text-align:center;
+      display:none;
+      font-weight:900;
+      color:var(--muted);
+    }
+
+    #resultsCount span,
+    #noResults span{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:12px 16px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(58,64,24,.08);
+      box-shadow:0 10px 22px rgba(18,31,21,.06);
+    }
+
+    mark.search-highlight{
+      background:rgba(255,102,0,.20);
+      color:var(--dark-2);
+      padding:0 3px;
+      border-radius:6px;
+    }
+
+    .section{
+      padding:42px 0;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:22px;
+      margin-bottom:22px;
+    }
+
+    .section-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 13px;
+      border-radius:999px;
+      color:var(--olive-2);
+      background:rgba(255,102,0,.10);
+      border:1px solid rgba(77,20,140,.12);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+      margin-bottom:12px;
+    }
+
+    .section-title{
+      margin:0;
+      font-size:clamp(2rem, 4vw, 3.4rem);
+      line-height:.98;
+      letter-spacing:-.065em;
+      color:var(--ink);
+      max-width:760px;
+    }
+
+    .section-copy{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      max-width:520px;
+      font-size:15px;
+    }
+
+    .guide-grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:18px;
+      align-items:stretch;
+      perspective:1200px;
+    }
+
+    .guide-tile{
+      --mx:50%;
+      --my:0%;
+      position:relative;
+      overflow:hidden;
+      padding:22px;
+      min-height:310px;
+      border-radius:30px;
+      background:
+        radial-gradient(circle at var(--mx) var(--my), rgba(255,102,0,.10), transparent 32%),
+        rgba(255,255,255,.76);
+      border:1px solid rgba(255,255,255,.88);
+      box-shadow:var(--shadow-md);
+      backdrop-filter:blur(16px);
+      transition:.28s var(--ease);
+      display:flex;
+      flex-direction:column;
+      transform-style:preserve-3d;
+    }
+
+    .guide-tile::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      padding:1px;
+      background:linear-gradient(135deg, rgba(14,83,97,.26), rgba(255,102,0,.20), rgba(255,255,255,.30));
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      opacity:0;
+      pointer-events:none;
+      transition:.28s var(--ease);
+    }
+
+    .guide-tile:hover{
+      transform:translateY(-8px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      box-shadow:0 28px 64px rgba(18,31,21,.14);
+    }
+
+    .guide-tile:hover::before{opacity:1}
+
+    .guide-tile-top{
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .guide-tile-meta{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(58,64,24,.08);
+      color:var(--olive-2);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.03em;
+      box-shadow:0 10px 22px rgba(18,31,21,.05);
+    }
+
+    .guide-tile-meta i{color:var(--teal)}
+
+    .guide-tile-icon{
+      width:52px;
+      height:52px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg, var(--teal), var(--dark));
+      box-shadow:0 14px 26px rgba(14,83,97,.18);
+      flex-shrink:0;
+      transition:.22s var(--ease);
+    }
+
+    .guide-tile:hover .guide-tile-icon{
+      transform:translateY(-2px) scale(1.04);
+    }
+
+    .guide-tile h3{
+      position:relative;
+      z-index:1;
+      margin:0 0 12px;
+      color:var(--ink);
+      font-size:20px;
+      line-height:1.2;
+      letter-spacing:-.04em;
+      font-weight:900;
+      min-height:48px;
+    }
+
+    .guide-tile p{
+      position:relative;
+      z-index:1;
+      margin:0 0 18px;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .guide-tile .guide-desc{
+      min-height:94px;
+    }
+
+    .guide-tile-link{
+      position:relative;
+      z-index:1;
+      margin-top:auto;
+      min-height:50px;
+      padding:0 16px;
+      border-radius:17px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      width:100%;
+      color:#fff;
+      font-weight:900;
+      background:linear-gradient(135deg, var(--dark), var(--teal));
+      box-shadow:0 16px 30px rgba(14,83,97,.16);
+      transition:.22s var(--ease);
+      overflow:hidden;
+    }
+
+    .guide-tile-link::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(115deg, transparent, rgba(255,255,255,.18), transparent);
+      transform:translateX(-110%);
+      transition:.65s var(--ease);
+    }
+
+    .guide-tile-link:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 38px rgba(14,83,97,.22);
+    }
+
+    .guide-tile-link:hover::before{transform:translateX(110%)}
+    .guide-tile-link i{transition:.22s var(--ease)}
+    .guide-tile-link:hover i{transform:translateX(3px)}
+
+    .guide-small{
+      position:relative;
+      z-index:1;
+      margin-top:14px !important;
+      padding-top:14px;
+      border-top:1px dashed rgba(58,64,24,.16);
+      font-size:13px !important;
+    }
+
+    .info-panels{
+      display:grid;
+      grid-template-columns:1fr .85fr;
+      gap:18px;
+      margin-top:22px;
+    }
+
+    .tips-panel,
+    .support-panel{
+      border-radius:28px;
+      padding:22px;
+      background:rgba(255,255,255,.76);
+      border:1px solid rgba(255,255,255,.88);
+      box-shadow:var(--shadow-md);
+      backdrop-filter:blur(16px);
+    }
+
+    .support-panel{
+      background:linear-gradient(135deg, var(--teal), var(--dark));
+      color:#fff;
+    }
+
+    .tips-panel strong,
+    .support-panel strong{
+      display:block;
+      margin-bottom:10px;
+      font-size:16px;
+      color:inherit;
+    }
+
+    .tips-panel ul{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:14px;
+    }
+
+    .support-panel span{
+      display:block;
+      color:rgba(255,255,255,.72);
+      line-height:1.75;
+      font-size:14px;
+    }
+
+    .comment-modal-footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-top:16px;
+      flex-wrap:wrap;
+    }
+
+    .link-text{
+      color:var(--teal);
+      cursor:pointer;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:800;
+    }
+
+    .link-text:hover{text-decoration:underline}
+
+    .comment-list-item{
+      padding:14px 0;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+
+    .comment-list-item:last-child{border-bottom:none}
+
+    #commentsList .stars{
+      color:var(--yellow);
+      font-size:18px;
+      margin-bottom:6px;
+      display:block;
+    }
+
+    .reveal{
+      opacity:0;
+      transform:translateY(22px);
+      transition:opacity .7s var(--ease), transform .7s var(--ease);
+    }
+
+    .reveal.in-view{
+      opacity:1;
+      transform:none;
+    }
+
+    .delay-1{transition-delay:.08s}
+    .delay-2{transition-delay:.16s}
+    .delay-3{transition-delay:.24s}
+    .delay-4{transition-delay:.32s}
+    .delay-5{transition-delay:.40s}
+    .delay-6{transition-delay:.48s}
+
+
+
+    /* FedEx version readability fix: the guide library title sits on the dark hero background,
+       so keep that heading block light until the cards begin. */
+    #guideLibrarySection .section-head{
+      position:relative;
+      z-index:2;
+      padding:4px 0 6px;
+    }
+
+    #guideLibrarySection .section-title{
+      color:#ffffff !important;
+      text-shadow:0 16px 38px rgba(2,6,23,.42);
+    }
+
+    #guideLibrarySection .section-copy{
+      color:rgba(255,255,255,.78) !important;
+      text-shadow:0 10px 24px rgba(2,6,23,.32);
+    }
+
+    #guideLibrarySection .section-kicker{
+      color:#f6e9ff !important;
+      background:rgba(77,20,140,.35) !important;
+      border-color:rgba(255,255,255,.12) !important;
+      box-shadow:0 14px 30px rgba(2,6,23,.16);
+    }
+
+    #guideLibrarySection .section-kicker i{
+      color:#ff8a33;
+    }
+
+    @media (max-width:1280px){
+      .guide-grid{grid-template-columns:repeat(3, minmax(0,1fr))}
+    }
+
+    @media (max-width:1080px){
+      .hero-shell{grid-template-columns:1fr}
+      .hero-card{min-height:auto}
+      .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+      .section-head{align-items:flex-start;flex-direction:column}
+      .info-panels{grid-template-columns:1fr}
+    }
+
+    @media (max-width:720px){
+      .container,.guide-filters,#resultsCount,#noResults{width:min(calc(100% - 20px), var(--max))}
+      .hero{padding-top:28px}
+      .hero-card{padding:28px;border-radius:30px}
+      .hero-card::after{border-radius:29px}
+      .hero h1{font-size:3.1rem}
+      .hero-metrics,.guide-grid{grid-template-columns:1fr}
+      .search-bar{grid-template-columns:1fr}
+      .search-btn{width:100%}
+      .guide-tile{min-height:unset}
+      .guide-tile h3,.guide-tile .guide-desc{min-height:unset}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+      .reveal{opacity:1;transform:none}
+    }
+
+/* ===== MAIN INDEX FIX: HEADER DATE/TIME BUTTON WIDTH ===== */
+/* This prevents main-index page button styles from overriding header modal buttons */
+
+#timeCalendarPopup .btn,
 #timeSettingsModal .btn,
-#timezoneModal .btn,
-#dateTimeSettingsModal .btn,
-#timeSettingsModal button:not(.modal-close),
-#timezoneModal button:not(.modal-close),
-#dateTimeSettingsModal button:not(.modal-close){
-  display:flex !important;
-  align-items:center;
-  justify-content:center;
-  width:100% !important;
-  min-height:50px;
-  padding:0 18px;
-  border:none;
-  border-radius:17px;
-  background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%) !important;
-  color:#fff !important;
-  font-weight:800;
-  text-decoration:none;
-  cursor:pointer;
-  box-shadow:0 14px 24px rgba(77,20,140,.16);
-  transition:.22s ease;
-  margin-top:18px;
+#timeSettingsModal #saveTimeSettings,
+#timeCalendarPopup #openTimeSettings {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  min-height: 54px !important;
+  padding: 0 18px !important;
+  border-radius: 18px !important;
+  border: none !important;
+  box-sizing: border-box !important;
 }
 
-#timeSettingsModal .btn:hover,
-#timezoneModal .btn:hover,
-#dateTimeSettingsModal .btn:hover,
-#timeSettingsModal button:not(.modal-close):hover,
-#timezoneModal button:not(.modal-close):hover,
-#dateTimeSettingsModal button:not(.modal-close):hover{
-  transform:translateY(-2px);
-  box-shadow:0 18px 30px rgba(77,20,140,.22);
+#timeSettingsModal #saveTimeSettings {
+  margin-top: 16px !important;
 }
 
-/* =========================
-   TOAST
-========================= */
-
-#toast{
-  position:fixed;
-  right:24px;
-  bottom:24px;
-  z-index:99999;
-  background:#111827;
-  color:#fff;
-  padding:12px 16px;
-  border-radius:14px;
-  box-shadow:0 16px 34px rgba(15,23,42,.18);
-  opacity:0;
-  transform:translateY(10px);
-  pointer-events:none;
-  transition:.22s ease;
-  font-size:13px;
-  font-weight:800;
+#timeCalendarPopup #openTimeSettings {
+  margin-top: 14px !important;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+    
+  
 
-@media (max-width:1180px){
-  .hero-grid,
-  .content-grid,
-  .reminder-grid{
-    grid-template-columns:1fr;
-  }
+    /* ===== FBC COMMENTS PAGE STYLE USING MAIN INDEX TEMPLATE ===== */
 
-  .hero-stats{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
-}
+    body{
+      background:
+        radial-gradient(circle at 12% 8%, rgba(109,40,217,.28), transparent 28%),
+        radial-gradient(circle at 82% 0%, rgba(255,102,0,.18), transparent 30%),
+        radial-gradient(circle at 40% 52%, rgba(77,20,140,.16), transparent 34%),
+        radial-gradient(circle at 88% 78%, rgba(255,102,0,.10), transparent 30%),
+        linear-gradient(180deg, #121033 0%, #091120 42%, #07111f 100%) !important;
+    }
 
-@media (max-width:720px){
-  .container{
-    width:min(calc(100% - 20px), var(--max));
-  }
+    body.modal-open{
+      overflow:hidden;
+      height:100vh;
+    }
 
-  .hero{
-    border-radius:28px;
-  }
+    .fbc-hero-title{
+      max-width:960px !important;
+    }
 
-  .hero-grid{
-    padding:24px;
-  }
+    .fbc-workspace{
+      padding:18px 0 58px;
+    }
 
-  .hero h1{
-    font-size:2.2rem;
-  }
+    .fbc-frame{
+      display:grid;
+      grid-template-columns:minmax(0,1.25fr) 370px;
+      gap:18px;
+      align-items:start;
+    }
 
-  .hero-stats{
-    grid-template-columns:1fr;
-  }
+    .fbc-main,
+    .fbc-side-card,
+    .fbc-reference-panel{
+      border-radius:var(--radius-2xl);
+      padding:20px;
+      background:rgba(255,255,255,.74);
+      border:1px solid rgba(255,255,255,.88);
+      box-shadow:var(--shadow-lg);
+      backdrop-filter:blur(18px);
+    }
 
-  .library-panel{
-    padding:20px;
-    border-radius:28px;
-  }
+    .fbc-main{
+      min-width:0;
+    }
 
-  .section-head-left h3{
-    font-size:30px;
-  }
+    .fbc-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
 
-  .section-note{
-    width:100%;
-    justify-content:center;
-    border-radius:16px;
-  }
+    .fbc-title-block h2{
+      margin:0 0 6px;
+      font-size:clamp(1.8rem, 3vw, 2.8rem);
+      line-height:1;
+      letter-spacing:-.06em;
+      color:var(--ink);
+    }
 
-  .select-grid,
-  .ai-grid,
-  .ai-control-row{
-    grid-template-columns:1fr;
-  }
+    .fbc-title-block p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.7;
+      max-width:760px;
+    }
 
-  .ai-toggle-row{
-    align-items:stretch;
-  }
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height:42px;
+      padding:0 14px;
+      border-radius:999px;
+      color:#fff;
+      background:linear-gradient(135deg, var(--dark), var(--teal));
+      box-shadow:0 16px 30px rgba(14,83,97,.18);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
 
-  .toggle-pill{
-    justify-content:center;
-  }
+    .fbc-search-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:center;
+      margin-bottom:18px;
+    }
 
-  .action-row{
-    flex-direction:column;
-  }
+    #fbcSearch{
+      width:100%;
+      min-height:62px;
+      border:none;
+      outline:none;
+      border-radius:20px;
+      padding:0 54px 0 50px;
+      background:#fff;
+      color:var(--ink);
+      font-weight:800;
+      font-size:16px;
+      box-shadow:inset 0 0 0 1px rgba(58,64,24,.12);
+      transition:.22s var(--ease);
+    }
 
-  .action-row .btn{
-    width:100%;
-  }
+    #fbcSearch:focus{
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.24), 0 0 0 7px rgba(77,20,140,.08);
+      transform:translateY(-1px);
+    }
 
-  .generate-inline-wrap{
-    justify-content:stretch;
-  }
+    #fbcSearch::placeholder{
+      color:#9aa697;
+      font-weight:600;
+    }
 
-  .generate-inline-wrap .btn{
-    width:100% !important;
-    max-width:none;
-  }
+    .fbc-search-btn{
+      min-height:62px;
+      padding:0 22px;
+      border:none;
+      border-radius:20px;
+      background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 16px 30px rgba(255,102,0,.20);
+      transition:.22s var(--ease);
+      white-space:nowrap;
+    }
 
-  .fbi-modal{
-    padding:12px;
-  }
+    .fbc-search-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 22px 38px rgba(255,102,0,.28);
+    }
 
-  .fbi-modal-content{
-    border-radius:24px;
-    max-height:92vh;
-  }
+    .comment-card,
+    .fbc-reference-panel,
+    .fbc-side-card{
+      position:relative;
+      overflow:hidden;
+    }
 
-  .fbi-modal-header,
-  .fbi-progress-wrap,
-  .fbi-modal-body,
-  .fbi-controls{
-    padding-left:16px;
-    padding-right:16px;
-  }
+    .comment-card{
+      border-radius:30px;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255,102,0,.08), transparent 28%),
+        rgba(255,255,255,.76);
+      border:1px solid rgba(255,255,255,.88);
+      box-shadow:var(--shadow-md);
+      backdrop-filter:blur(16px);
+      padding:18px;
+    }
 
-  .fbi-controls{
-    flex-direction:column;
-    align-items:stretch;
-  }
+    .comment-card::before,
+    .fbc-reference-panel::before,
+    .fbc-side-card::before{
+      content:"";
+      position:absolute;
+      left:18px;
+      right:18px;
+      top:0;
+      height:4px;
+      border-radius:0 0 999px 999px;
+      background:linear-gradient(90deg, var(--teal), var(--olive), var(--yellow));
+    }
 
-  .fbi-control-group{
-    width:100%;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-  }
+    .comment-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:16px;
+    }
 
-  .fbi-control-btn{
-    width:100%;
-  }
+    .comment-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid rgba(58,64,24,.08);
+      color:var(--olive-2);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.05em;
+      text-transform:uppercase;
+      box-shadow:0 10px 22px rgba(18,31,21,.05);
+      margin-bottom:10px;
+    }
 
-  .fbi-dots{
-    order:-1;
-    margin-bottom:4px;
-  }
+    .comment-title{
+      margin:0;
+      color:var(--ink);
+      font-size:22px;
+      line-height:1.1;
+      letter-spacing:-.04em;
+      font-weight:950;
+    }
 
-  .fbi-image-wrap img{
-    max-height:calc(92vh - 430px);
-  }
+    .comment-lead{
+      margin:8px 0 0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
 
-  #commentModal,
-  #allCommentsModal,
-  #helpModal{
-    padding:0 14px;
-  }
+    .comment-icon{
+      width:52px;
+      height:52px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      background:linear-gradient(135deg, var(--teal), var(--dark));
+      box-shadow:0 14px 26px rgba(14,83,97,.18);
+      flex-shrink:0;
+    }
 
-  #commentModal .modal-content,
-  #allCommentsModal .modal-content,
-  #helpModal .modal-content{
-    padding:20px;
-    border-radius:22px;
-    margin:96px auto 20px;
-  }
+    .select-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom:14px;
+    }
 
-  .comment-modal-footer{
-    flex-direction:column;
-    align-items:stretch;
-  }
+    .ai-grid{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:14px;
+      align-items:end;
+      margin-bottom:14px;
+    }
 
-  #commentModal .btn,
-  #allCommentsModal .btn,
-  #helpModal .btn,
-  #commentModal button:not(.modal-close),
-  #allCommentsModal button:not(.modal-close),
-  #helpModal button:not(.modal-close){
-    width:100%;
-  }
+    .field-label{
+      display:block;
+      font-size:12px;
+      font-weight:950;
+      color:#334155;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
 
-  #timeCalendarPopup .settings-btn,
-  #timeCalendarPopup .time-settings-btn,
-  #timeCalendarPopup button:last-of-type{
-    width:100% !important;
-  }
-}
-</style>
+    .select-wrap{
+      position:relative;
+    }
+
+    .select-wrap i{
+      position:absolute;
+      right:14px;
+      top:50%;
+      transform:translateY(-50%);
+      color:#64748b;
+      pointer-events:none;
+    }
+
+    #fbcBuilder select,
+    #fbcBuilder textarea,
+    #fbcBuilder input{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:16px;
+      background:#fff;
+      box-shadow:inset 0 0 0 1px rgba(148,163,184,.20);
+      padding:14px 16px;
+      color:#0f172a;
+      font-size:14px;
+      transition:.18s ease;
+    }
+
+    #fbcBuilder select{
+      appearance:none;
+      padding-right:42px;
+      cursor:pointer;
+    }
+
+    #fbcBuilder select:focus,
+    #fbcBuilder textarea:focus,
+    #fbcBuilder input:focus{
+      background:#fff;
+      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+    }
+
+    #fbcBuilder select:disabled{
+      opacity:.65;
+      cursor:not-allowed;
+    }
+
+    .generate-inline-wrap{
+      display:flex;
+      align-items:flex-end;
+      justify-content:flex-end;
+    }
+
+    #fbcBuilder .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 18px;
+      border-radius:17px;
+      text-decoration:none;
+      font-weight:900;
+      border:none;
+      cursor:pointer;
+      transition:.22s ease;
+      white-space:nowrap;
+    }
+
+    #fbcBuilder .btn-primary{
+      background:linear-gradient(135deg, var(--teal) 0%, var(--olive) 100%);
+      color:#fff;
+      box-shadow:0 14px 24px rgba(77,20,140,.16);
+    }
+
+    #fbcBuilder .btn-primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 30px rgba(77,20,140,.22);
+    }
+
+    #fbcBuilder .btn-dark{
+      background:#111827;
+      color:#fff;
+      box-shadow:0 8px 20px rgba(17,24,39,.14);
+    }
+
+    #fbcBuilder .btn-dark:hover{
+      transform:translateY(-1px);
+    }
+
+    .ai-panel{
+      margin:14px 0;
+      padding:16px;
+      border-radius:20px;
+      background:linear-gradient(180deg,#f8f6ff,#ffffff);
+      border:1px solid #eadfff;
+      box-shadow:0 12px 26px rgba(77,20,140,.06);
+    }
+
+    .ai-panel-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+
+    .ai-panel-title strong{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:#4d148c;
+      font-size:14px;
+    }
+
+    .ai-control-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .ai-helper-box{
+      padding:13px 14px;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid #e4ebf5;
+      color:#475569;
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .ai-suggestions{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .ai-toggle-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .toggle-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid #e2e8f0;
+      color:#334155;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .toggle-pill input{
+      width:auto !important;
+      box-shadow:none !important;
+      padding:0 !important;
+      accent-color:#4d148c;
+    }
+
+    .generated-toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+
+    .mini-status{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#f1f5f9;
+      color:#475569;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .mini-status.ready{
+      background:#ecfdf5;
+      color:#15803d;
+    }
+
+    .generated-output-wrap{
+      position:relative;
+    }
+
+    #fbcBuilder textarea.response-box{
+      min-height:76px !important;
+      max-height:220px !important;
+      resize:none !important;
+      overflow:hidden !important;
+      white-space:pre-wrap !important;
+      line-height:1.72 !important;
+      font-weight:950 !important;
+      font-size:17px !important;
+      letter-spacing:.012em !important;
+      color:#07111f !important;
+      padding:20px 116px 20px 20px !important;
+      border-radius:20px !important;
+      background:
+        radial-gradient(circle at top right, rgba(255,102,0,.12), transparent 28%),
+        linear-gradient(135deg,#ffffff 0%,#f8fafc 52%,#fff7ed 100%) !important;
+      border:2px solid rgba(77,20,140,.18) !important;
+      box-shadow:
+        0 18px 42px rgba(77,20,140,.14),
+        0 6px 18px rgba(15,23,42,.08),
+        inset 0 1px 0 rgba(255,255,255,.85) !important;
+    }
+
+    .copied-badge{
+      position:absolute;
+      top:12px;
+      right:12px;
+      z-index:2;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:linear-gradient(135deg,#16a34a,#22c55e);
+      color:#fff;
+      font-size:12px;
+      font-weight:900;
+      box-shadow:0 10px 22px rgba(22,163,74,.22);
+      opacity:0;
+      transform:translateY(-4px) scale(.96);
+      pointer-events:none;
+      transition:opacity .2s ease, transform .2s ease;
+    }
+
+    .copied-badge.show{
+      opacity:1;
+      transform:translateY(0) scale(1);
+    }
+
+    .action-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .action-row.right{
+      justify-content:flex-end;
+    }
+
+    .action-row.right .btn{
+      flex:0 0 auto;
+      width:220px;
+      max-width:100%;
+    }
+
+    .note-box{
+      margin-top:14px;
+      background:#f8fafc;
+      border-left:5px solid var(--teal);
+      padding:14px 16px;
+      border-radius:14px;
+      color:#334155;
+      font-size:14px;
+      line-height:1.7;
+    }
+
+    .case-warning{
+      display:none;
+      margin-top:8px;
+      color:#b91c1c;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .case-warning.show{display:block}
+
+    .fbc-side{
+      display:grid;
+      gap:18px;
+    }
+
+    .fbc-side-card{
+      padding:22px;
+    }
+
+    .fbc-side-card.reminder{
+      background:linear-gradient(180deg, rgba(255,247,237,.86), rgba(255,255,255,.78));
+      border-color:rgba(255,255,255,.9);
+    }
+
+    .side-card-head{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+      color:var(--ink);
+      font-weight:950;
+      letter-spacing:-.02em;
+    }
+
+    .side-card-head i{
+      color:var(--yellow);
+    }
+
+    .helper-text{
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .helper-list{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:14px;
+    }
+
+    .helper-list li + li{margin-top:4px}
+
+    .quick-stat{
+      padding:14px;
+      border-radius:18px;
+      background:#fff;
+      border:1px solid rgba(58,64,24,.08);
+      box-shadow:0 10px 22px rgba(18,31,21,.04);
+    }
+
+    .quick-stat + .quick-stat{margin-top:10px}
+
+    .quick-label{
+      display:block;
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      font-weight:900;
+      margin-bottom:6px;
+    }
+
+    .quick-value{
+      color:var(--ink);
+      font-size:20px;
+      font-weight:950;
+      letter-spacing:-.04em;
+      word-break:break-word;
+    }
+
+    .recent-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .recent-item{
+      padding:12px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid #e7edf4;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .recent-item:hover{
+      transform:translateY(-1px);
+      background:#fff;
+      box-shadow:0 12px 22px rgba(15,23,42,.08);
+    }
+
+    .recent-item strong{
+      display:block;
+      font-size:12px;
+      color:#4d148c;
+      margin-bottom:5px;
+    }
+
+    .recent-item span{
+      display:-webkit-box;
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+      font-size:12px;
+      line-height:1.5;
+      color:#475569;
+    }
+
+    .recent-actions{
+      display:flex;
+      justify-content:flex-end;
+      margin-top:12px;
+    }
+
+    .recent-actions button{
+      border:none;
+      border-radius:999px;
+      background:#f1f5f9;
+      color:#475569;
+      font-weight:800;
+      font-size:12px;
+      padding:9px 12px;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .recent-actions button:hover{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+
+    .guide-image-wrap{
+      display:grid;
+      gap:12px;
+    }
+
+    .guide-image{
+      width:100%;
+      border-radius:20px;
+      border:1px solid #e2e8f0;
+      box-shadow:0 16px 34px rgba(15,23,42,.10);
+      background:#f8fafc;
+      max-height:520px;
+      object-fit:contain;
+    }
+
+    .guide-image-placeholder{
+      display:grid;
+      place-items:center;
+      min-height:240px;
+      border-radius:20px;
+      border:1px dashed #cbd5e1;
+      background:linear-gradient(180deg,#ffffff,#f8fafc);
+      color:#64748b;
+      text-align:center;
+      padding:24px;
+      line-height:1.8;
+      font-weight:600;
+    }
+
+    .inline-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--teal);
+      font-weight:900;
+      text-decoration:none;
+      margin:14px 0 8px;
+    }
+
+    .inline-link:hover{text-decoration:underline}
+
+    .warning-copy{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      color:#b91c1c;
+      font-weight:800;
+      line-height:1.7;
+    }
+
+    #toast{
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      z-index:99999;
+      background:#111827;
+      color:#fff;
+      padding:12px 16px;
+      border-radius:14px;
+      box-shadow:0 16px 34px rgba(15,23,42,.18);
+      opacity:0;
+      transform:translateY(10px);
+      pointer-events:none;
+      transition:.22s ease;
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .fbi-modal,
+    .image-zoom-modal{
+      z-index:2147483647;
+    }
+
+    /* Header modal button width fix */
+    #timeCalendarPopup .btn,
+    #timeSettingsModal .btn,
+    #timeSettingsModal #saveTimeSettings,
+    #timeCalendarPopup #openTimeSettings {
+      width: 100% !important;
+      max-width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 10px !important;
+      min-height: 54px !important;
+      padding: 0 18px !important;
+      border-radius: 18px !important;
+      border: none !important;
+      box-sizing: border-box !important;
+    }
+
+    #timeSettingsModal #saveTimeSettings{margin-top:16px !important}
+    #timeCalendarPopup #openTimeSettings{margin-top:14px !important}
+
+    @media (max-width:1180px){
+      .fbc-frame{grid-template-columns:1fr}
+      .hero-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .ai-control-row{grid-template-columns:1fr}
+    }
+
+    @media (max-width:720px){
+      .fbc-search-row{grid-template-columns:1fr}
+      .fbc-search-btn{width:100%}
+      .hero-metrics{grid-template-columns:1fr}
+      .fbc-main,.fbc-side-card,.fbc-reference-panel{padding:16px;border-radius:28px}
+      .select-grid,.ai-grid{grid-template-columns:1fr}
+      .generate-inline-wrap{justify-content:stretch}
+      .generate-inline-wrap .btn{width:100%}
+      .ai-toggle-row{align-items:stretch}
+      .toggle-pill{justify-content:center}
+      .action-row.right .btn{width:100%}
+    }
+
+  </style>
 </head>
 <body data-page="fbc-comments">
-<div class="page">
-  <div id="site-header"></div>
-  <main>
-    <section class="hero-wrap">
-      <div class="container">
-        <div class="hero">
-          <div class="hero-grid">
-            <div class="hero-copy">
-              <div class="eyebrow"><i class="fa-solid fa-comments"></i> Premium comment workspace</div>
-              <h1>Build the correct FBC comment faster with the right queue and action.</h1>
-              <p>Use this page to review the FBC reminder, keep the structure consistent, and generate a ready-to-copy comment based on the queue type, action taken, and case number.</p>
-              <div class="hero-stats">
-                <div class="stat-card">
-                  <div class="stat-value" id="heroQueueCount">—</div>
-                  <div class="stat-label">Queue types available from the FBC comment file.</div>
+  <div class="page">
+    <div id="site-header"></div>
+
+    <main>
+      <section class="hero">
+        <div class="container">
+          <div class="hero-shell">
+            <div class="hero-card reveal delay-1">
+              <div class="hero-content">
+                <div class="pill"><i class="fa-solid fa-comments"></i> Premium comment workspace</div>
+                <h1 class="fbc-hero-title">Build the correct FBC comment faster with the right queue and action.</h1>
+                <p>
+                  Review the FBC reminder, keep the structure consistent, and generate a ready-to-copy comment based on the queue type, action taken, and case number.
+                </p>
+
+                <div class="hero-actions">
+                  <button class="hero-main-btn" type="button" onclick="scrollToBuilder()">Open FBC Comments Builder <i class="fa-solid fa-arrow-down"></i></button>
+                  <button class="hero-ghost-btn" type="button" onclick="focusFbcSearch()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
-                <div class="stat-card">
-                  <div class="stat-value" id="heroActionCount">—</div>
-                  <div class="stat-label">Available actions for the selected queue type.</div>
+
+                <div class="hero-metrics">
+                  <div class="metric">
+                    <strong id="heroQueueCount">—</strong>
+                    <span>Queue types available from the FBC comment file.</span>
+                  </div>
+                  <div class="metric">
+                    <strong id="heroActionCount">—</strong>
+                    <span>Available actions for the selected queue type.</span>
+                  </div>
+                  <div class="metric">
+                    <strong>Ready</strong>
+                    <span>Generator, copy action, and guide preview stay available while you work.</span>
+                  </div>
                 </div>
-                <div class="stat-card">
-                  <div class="stat-value">Ready</div>
-                  <div class="stat-label">Generator, copy action, and guide preview stay available while you work.</div>
-                </div>
-              </div>
-              <div style="margin-top:18px;">
-                <button class="hero-cta" onclick="scrollToBuilder()">Open FBC Comments Builder <i class="fa-solid fa-arrow-down"></i></button>
               </div>
             </div>
-            <div class="hero-side">
-              <div class="quick-panel">
-                <div>
-                  <div class="panel-title">
-                    <span>How to use</span>
-                    <span>4 steps</span>
-                  </div>
-                  <ul class="quick-list">
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-layer-group"></i></div>
-                      <div><strong>Select the queue type</strong><span>Choose the matching queue first so the correct actions appear.</span></div>
-                    </li>
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-list-check"></i></div>
-                      <div><strong>Choose the action taken</strong><span>Pick the exact action that matches the handling on the PRO.</span></div>
-                    </li>
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-hashtag"></i></div>
-                      <div><strong>Enter the case number</strong><span>Use the actual case number you are working, not the clone reference.</span></div>
-                    </li>
-                    <li class="quick-item">
-                      <div class="quick-icon"><i class="fa-solid fa-copy"></i></div>
-                      <div><strong>Copy the generated comment</strong><span>Review the final format, then copy it directly into your FBC comment.</span></div>
-                    </li>
-                  </ul>
+
+            <aside class="side-stack">
+              <div class="focus-card reveal delay-2">
+                <div class="card-label">
+                  <span><i class="fa-solid fa-compass"></i> How to use</span>
+                  <i class="fa-solid fa-route"></i>
                 </div>
-                <div class="live-strip">
+                <h2>Select the queue and action, then generate the approved comment.</h2>
+                <p>Use the builder to keep the comment structure clean and confirm the case number before copying.</p>
+
+                <div class="mini-list">
+                  <div class="mini-item">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <div><strong>Select the queue type</strong><span>Choose the matching queue first so the correct actions appear.</span></div>
+                  </div>
+                  <div class="mini-item">
+                    <i class="fa-solid fa-list-check"></i>
+                    <div><strong>Choose the action taken</strong><span>Pick the exact action that matches the handling on the PRO.</span></div>
+                  </div>
+                  <div class="mini-item">
+                    <i class="fa-solid fa-hashtag"></i>
+                    <div><strong>Enter the case number</strong><span>Use the actual case number you are working, not the clone reference.</span></div>
+                  </div>
+                  <div class="mini-item">
+                    <i class="fa-solid fa-copy"></i>
+                    <div><strong>Copy the generated comment</strong><span>Review the final format, then copy it directly into your FBC comment.</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="focus-card dark reveal delay-3">
+                <div class="card-label">
+                  <span><i class="fa-solid fa-shield-halved"></i> Builder ready</span>
+                  <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h2>Everything you need is ready in one place.</h2>
+                <p>Use the reminder, reference image, and smart builder to generate the right comment. Revise when needed so the final comment accurately reflects the case resolution.</p>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="fbc-workspace reveal delay-2">
+        <div class="container">
+          <div class="fbc-reference-panel">
+            <div class="fbc-top">
+              <div class="fbc-title-block">
+                <div class="section-kicker"><i class="fa-solid fa-circle-info"></i> Reminder and guide</div>
+                <h2>FBC Comments Guide</h2>
+                <p>Review the reminder below, then use the generator to build the correct comment format based on the FBC comment workbook.</p>
+              </div>
+            </div>
+
+            <div class="fbc-frame">
+              <section class="comment-card">
+                <div class="comment-head">
                   <div>
-                    <strong>Workspace ready</strong>
-                    <span>FBC reminders and comment generator are available.</span>
+                    <div class="comment-kicker"><i class="fa-solid fa-triangle-exclamation"></i> Important reminder</div>
+                    <h3 class="comment-title">Always add the correct FBC/FBI comment.</h3>
+                    <p class="comment-lead">Use the reminder below before building or copying the comment.</p>
                   </div>
-                  <div class="pulse"></div>
+                  <div class="comment-icon"><i class="fa-solid fa-bell"></i></div>
                 </div>
-              </div>
+
+                <ol class="helper-list">
+                  <li>Always enter FBC Comment (F9) even if no corrections or updates are made on the PROs.</li>
+                  <li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
+                </ol>
+
+                <a class="inline-link" href="#" onclick="openFbiModal(); return false;">
+                  <i class="fa-solid fa-link"></i>
+                  Click here for the steps on how to add comment in FBI
+                </a>
+
+                <div class="note-box" style="margin-top:6px;">
+                  <strong>For the Case #</strong> — Enter the case number of the actual case you are working. Example: if a clone case is assigned to you, in your FBC comment, enter the case number of the actual clone case you are working.
+                </div>
+
+                <div class="warning-copy">
+                  Note: This generated template serves as a guide. You may revise the comment as needed to accurately reflect the resolution of the case.
+                </div>
+              </section>
+
+              <aside class="fbc-side-card">
+                <div class="side-card-head"><i class="fa-solid fa-image"></i> FBC Comment Table</div>
+                <div class="helper-text" style="margin-bottom:12px;">
+                  Effective immediately, the structure below will guide the 2x4 comment format and help remove unnecessary 2x4 comments previously used.
+                </div>
+
+                <div class="guide-image-wrap">
+                  <img id="guidePreviewImage" class="guide-image" src="fbc-comments-guide-images/fbc-comments-guide-image.png" alt="FBC comments guide reference image" onerror="this.style.display='none';document.getElementById('guideImagePlaceholder').style.display='grid';">
+                  <div id="guideImagePlaceholder" class="guide-image-placeholder" style="display:none;">
+                    Add your next guide image here.<br>
+                    Save the screenshot as <strong>fbc-comments-guide-images/fbc-comments-guide-image.png</strong>
+                  </div>
+                </div>
+              </aside>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="workspace-wrap">
-      <div class="container">
-        <div class="library-panel">
-          <div class="section-head">
-            <div class="section-head-left">
-              <div class="section-overline"><i class="fa-solid fa-circle-info"></i> Reminder and guide</div>
-              <h3>FBC Comments Guide</h3>
-              <p>Review the reminder below, then use the generator to build the correct comment format based on the FBC comment workbook.</p>
-            </div>
-          </div>
+      <section id="fbcBuilder" class="fbc-workspace reveal delay-3">
+        <div class="container">
+          <div class="fbc-frame">
+            <section class="fbc-main">
+              <div class="fbc-top">
+                <div class="fbc-title-block">
+                  <div class="section-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> AI-assisted comment generator</div>
+                  <h2>FBC Comment Builder</h2>
+                  <p>Select the queue type and action taken, enter the case number, then let the assistant improve the comment while keeping the approved 2x4 format.</p>
+                </div>
 
-          <div class="reminder-grid">
-            <div class="side-card reminder-card">
-              <div class="work-top">
+                <div class="status-pill">
+                  <i class="fa-solid fa-bolt"></i>
+                  <span id="statusPill">Ready</span>
+                </div>
+              </div>
+
+              <div class="fbc-search-row">
+                <div class="search-input-wrap">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input id="fbcSearch" type="text" placeholder="Search queue type or action keyword.">
+                  <button id="clearSearchBtn" type="button" onclick="clearFbcSearch()">×</button>
+                </div>
+
+                <button class="fbc-search-btn" type="button" onclick="focusFbcSearch()">
+                  Focus search
+                </button>
+              </div>
+
+              <div class="comment-card">
+                <div class="comment-head">
+                  <div>
+                    <div class="comment-kicker"><i class="fa-solid fa-robot"></i> Smart builder</div>
+                    <h3 class="comment-title">Build your FBC comment</h3>
+                    <p class="comment-lead">Choose a queue, select the action, enter the case number, then generate the comment.</p>
+                  </div>
+                  <div class="comment-icon"><i class="fa-solid fa-comments"></i></div>
+                </div>
+
+                <div class="select-grid">
+                  <div>
+                    <label class="field-label">Queue Type</label>
+                    <div class="select-wrap">
+                      <select id="queueTypeSelect"><option value="">Select Queue Type</option></select>
+                      <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="field-label">Action Taken</label>
+                    <div class="select-wrap">
+                      <select id="actionTakenSelect" disabled><option value="">Select Action Taken</option></select>
+                      <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ai-grid">
+                  <div>
+                    <label class="field-label">Case #</label>
+                    <input id="caseNumberInput" type="text" placeholder="Enter Case #">
+                    <div id="caseWarning" class="case-warning">Case # should only contain numbers.</div>
+                  </div>
+
+                  <div class="generate-inline-wrap">
+                    <button class="btn btn-primary" type="button" onclick="generateFbcComment()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Comment</button>
+                  </div>
+                </div>
+
+                <div class="ai-panel">
+                  <div class="ai-panel-title">
+                    <strong><i class="fa-solid fa-sparkles"></i> Assistant Enhancer</strong>
+                    <span class="comment-kicker" style="margin-bottom:0;"><i class="fa-solid fa-shield-halved"></i> Local only</span>
+                  </div>
+
+                  <div class="ai-control-row">
+                    <div>
+                      <label class="field-label">Optional case context</label>
+                      <textarea id="aiContextInput" placeholder="Optional: Add short context, such as customer dispute reason, update completed, PRO status, or why no update was needed."></textarea>
+                    </div>
+
+                    <div>
+                      <label class="field-label">Assistant Checks</label>
+                      <div id="assistantChecks" class="ai-helper-box">Select Queue Type, Action Taken, and Case # to view smart checks.</div>
+                      <div id="aiSuggestions" class="ai-suggestions"></div>
+                    </div>
+                  </div>
+
+                  <div class="ai-toggle-row">
+                    <label class="toggle-pill"><input type="checkbox" id="autoCopyToggle" checked> Auto-copy after generate</label>
+                    <label class="toggle-pill"><input type="checkbox" id="editModeToggle"> Allow editing before copy</label>
+                    <label class="toggle-pill"><input type="checkbox" id="includeContextToggle" checked> Add optional context</label>
+                  </div>
+                </div>
+
                 <div>
-                  <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
-                  <h4 class="reminder-title">Important FBC comment reminder</h4>
+                  <div class="generated-toolbar">
+                    <label class="field-label" style="margin-bottom:0;">Generated FBC Comment</label>
+                    <span id="generatedMiniStatus" class="mini-status"><i class="fa-solid fa-circle"></i> Waiting</span>
+                  </div>
+
+                  <div class="generated-output-wrap">
+                    <span id="copiedBadge" class="copied-badge"><i class="fa-solid fa-check"></i> Copied</span>
+                    <textarea id="generatedCommentBox" class="response-box" readonly placeholder="Your generated FBC comment will appear here after clicking Generate Comment."></textarea>
+                  </div>
                 </div>
-                <div class="guide-icon"><i class="fa-solid fa-bell"></i></div>
-              </div>
 
-              <ol class="reminder-list">
-                <li>Always enter FBC Comment (F9) even if no corrections or updates are made on the PROs.</li>
-                <li>Always enter an FBC/FBI comment on the PRO every time you open the PRO in FBI/FBC and/or if you provided different information or resolution on the customer dispute.</li>
-              </ol>
-
-              <a class="inline-link" href="#" onclick="openFbiModal(); return false;">
-                <i class="fa-solid fa-link"></i>
-                Click here for the steps on how to add comment in FBI
-              </a>
-
-              <div class="note-box" style="margin-top:6px;">
-                <strong>For the Case #</strong> — Enter the case number of the actual case you are working. Example: if a clone case is assigned to you, in your FBC comment, enter the case number of the actual clone case you are working.
-              </div>
-
-              <div class="warning-copy">
-               Note: This Generated template serves as a guide. You may revise the comment as needed to accurately reflect the resolution of the case.
-              </div>
-            </div>
-
-            <div class="side-card reference-card">
-              <div class="work-top">
-                <div>
-                  <div class="badge"><i class="fa-solid fa-image"></i> Guide image</div>
-                  <h4>FBC Comment Table</h4>
+                <div class="action-row right">
+                  <button class="btn btn-dark" type="button" onclick="copyGeneratedComment()"><i class="fa-solid fa-copy"></i> Copy Comment</button>
+                  <button class="btn btn-dark" type="button" onclick="clearFbcBuilder()"><i class="fa-solid fa-rotate-left"></i> Clear</button>
                 </div>
-                <div class="guide-icon"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></div>
+
+                <div id="fbcNoteBox" class="note-box">
+                  Format: <strong>2x4 Comment - Case# - Recommended Comment</strong>. The assistant keeps the approved workbook comment as the base and highlights the case number for easier review.
+                </div>
+              </div>
+            </section>
+
+            <aside class="fbc-side">
+              <div class="fbc-side-card">
+                <div class="side-card-head"><i class="fa-solid fa-chart-simple"></i> Quick status</div>
+
+                <div class="quick-stat">
+                  <span class="quick-label">Selected Queue</span>
+                  <span class="quick-value" id="selectedQueueValue">—</span>
+                </div>
+
+                <div class="quick-stat">
+                  <span class="quick-label">Selected Action</span>
+                  <span class="quick-value" id="selectedActionValue">—</span>
+                </div>
+
+                <div class="quick-stat">
+                  <span class="quick-label">2x4 Comment</span>
+                  <span class="quick-value" id="selectedCodeValue">—</span>
+                </div>
+
+                <div class="quick-stat">
+                  <span class="quick-label">Generator Status</span>
+                  <span class="quick-value" id="generatorStatusValue">Waiting</span>
+                </div>
               </div>
 
-              <div class="reference-note">
-                <i class="fa-solid fa-circle-info"></i>
-                <span>Effective immediately, the structure below will guide the 2x4 comment format to help eliminate confusion on what 2x4 comment should be used whenever agents work on PROs and to remove unnecessary 2x4 comments previously used.</span>
-              </div>
-              <div class="guide-image-wrap">
-                <img id="guidePreviewImage" class="guide-image" src="fbc-comments-guide-images/fbc-comments-guide-image.png" alt="FBC comments guide reference image" onerror="this.style.display='none';document.getElementById('guideImagePlaceholder').style.display='grid';">
-                <div id="guideImagePlaceholder" class="guide-image-placeholder" style="display:none;">
-                  Add your next guide image here.<br>
-                  Save the screenshot as <strong>assets/images/fbc-comments-guide-reference.png</strong>
+              <div class="fbc-side-card">
+                <div class="side-card-head"><i class="fa-solid fa-clock-rotate-left"></i> Recent comments</div>
+                <div id="recentCommentsList" class="recent-list">
+                  <div class="helper-text">Generated comments will appear here for quick reuse during this browser session.</div>
                 </div>
-                <div class="helper-text">The instruction above and the reference screenshot are grouped together so you can review the 2x4 structure in one place.</div>
+                <div class="recent-actions">
+                  <button type="button" onclick="clearRecentComments()"><i class="fa-solid fa-trash-can"></i> Clear history</button>
+                </div>
               </div>
-            </div>
+
+              <div class="fbc-side-card reminder">
+                <div class="side-card-head"><i class="fa-solid fa-lightbulb"></i> Best practice</div>
+                <ul class="helper-list">
+                  <li>Use the actual case number that you are actively working.</li>
+                  <li>Use the generated preview to double-check the number before pasting.</li>
+                  <li>Click any recent comment to restore it instantly.</li>
+                  <li>The assistant does not send data anywhere. It only formats text inside this page.</li>
+                </ul>
+              </div>
+            </aside>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
-    <section id="fbcBuilder" class="workspace-wrap">
-      <div class="container">
-        <div class="library-panel">
-          <div class="section-head">
-            <div class="section-head-left">
-              <div class="section-overline"><i class="fa-solid fa-wand-magic-sparkles"></i> AI-assisted comment generator</div>
-              <h3>FBC Comment Builder</h3>
-              <p>Select the queue type and action taken, enter the case number, then let the assistant improve the comment using optional case context while keeping the approved 2x4 format.</p>
-            </div>
-            <div class="section-note"><i class="fa-solid fa-bolt"></i><span id="statusPill">Ready</span></div>
-          </div>
+    <div id="site-footer"></div>
+  </div>
 
-          <div class="content-grid">
-            <div class="work-card">
-              <div class="work-top"><div><div class="badge"><i class="fa-solid fa-robot"></i> Smart builder</div><h4>Build your FBC comment</h4></div><div class="guide-icon"><i class="fa-solid fa-comments"></i></div></div>
-              <div class="select-grid">
-                <div><label class="field-label">Queue Type</label><div class="select-wrap"><select id="queueTypeSelect"><option value="">Select Queue Type</option></select><i class="fa-solid fa-chevron-down"></i></div></div>
-                <div><label class="field-label">Action Taken</label><div class="select-wrap"><select id="actionTakenSelect" disabled><option value="">Select Action Taken</option></select><i class="fa-solid fa-chevron-down"></i></div></div>
-              </div>
-              <div class="ai-grid">
-                <div><label class="field-label">Case #</label><input id="caseNumberInput" type="text" placeholder="Enter Case #"><div id="caseWarning" class="case-warning">Case # should only contain numbers.</div></div>
-                <div class="generate-inline-wrap"><button class="btn btn-primary" type="button" onclick="generateFbcComment()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Comment</button></div>
-              </div>
-              <div class="ai-panel">
-                <div class="ai-panel-title"><strong><i class="fa-solid fa-sparkles"></i> Assistant Enhancer</strong><span class="badge"><i class="fa-solid fa-shield-halved"></i> Local only</span></div>
-                <div class="ai-control-row">
-                  <div><label class="field-label">Optional case context</label><textarea id="aiContextInput" placeholder="Optional: Add short context, such as customer dispute reason, update completed, PRO status, or why no update was needed."></textarea></div>
-                  <div><label class="field-label">Assistant Checks</label><div id="assistantChecks" class="ai-helper-box">Select Queue Type, Action Taken, and Case # to view smart checks.</div><div id="aiSuggestions" class="ai-suggestions"></div></div>
-                </div>
-                <div class="ai-toggle-row"><label class="toggle-pill"><input type="checkbox" id="autoCopyToggle" checked> Auto-copy after generate</label><label class="toggle-pill"><input type="checkbox" id="editModeToggle"> Allow editing before copy</label><label class="toggle-pill"><input type="checkbox" id="includeContextToggle" checked> Add optional context</label></div>
-              </div>
-              <div>
-                <div class="generated-toolbar">
-                  <label class="field-label" style="margin-bottom:0;">Generated FBC Comment</label>
-                  <span id="generatedMiniStatus" class="mini-status"><i class="fa-solid fa-circle"></i> Waiting</span>
-                </div>
-                <div class="generated-output-wrap">
-                  <span id="copiedBadge" class="copied-badge"><i class="fa-solid fa-check"></i> Copied</span>
-                  <textarea id="generatedCommentBox" class="response-box" readonly placeholder="Your generated FBC comment will appear here after clicking Generate Comment."></textarea>
-                </div>
-              </div>
-              <div class="action-row right"><button class="btn btn-dark btn-wide" type="button" onclick="copyGeneratedComment()"><i class="fa-solid fa-copy"></i> Copy Comment</button><button class="btn btn-dark btn-wide" type="button" onclick="clearFbcBuilder()"><i class="fa-solid fa-rotate-left"></i> Clear</button></div>
-              <div id="fbcNoteBox" class="note-box">Format: <strong>2x4 Comment - Case# - Recommended Comment</strong>. The assistant keeps the approved workbook comment as the base and highlights the case number for easier review.</div>
-            </div>
-            <div class="side-stack">
-              <div class="side-card"><div class="work-top"><div><div class="badge"><i class="fa-solid fa-chart-simple"></i> Snapshot</div><h4>Quick status</h4></div><div class="guide-icon"><i class="fa-solid fa-chart-pie"></i></div></div><div class="quick-stat"><span class="quick-label">Selected Queue</span><span class="quick-value" id="selectedQueueValue">—</span></div><div class="quick-stat"><span class="quick-label">Selected Action</span><span class="quick-value" id="selectedActionValue">—</span></div><div class="quick-stat"><span class="quick-label">2x4 Comment</span><span class="quick-value" id="selectedCodeValue">—</span></div><div class="quick-stat"><span class="quick-label">Generator Status</span><span class="quick-value" id="generatorStatusValue">Waiting</span></div></div>
-              <div class="side-card"><div class="work-top"><div><div class="badge"><i class="fa-solid fa-clock-rotate-left"></i> Recent</div><h4>Recent comments</h4></div><div class="guide-icon"><i class="fa-solid fa-history"></i></div></div><div id="recentCommentsList" class="recent-list"><div class="helper-text">Generated comments will appear here for quick reuse during this browser session.</div></div><div class="recent-actions"><button type="button" onclick="clearRecentComments()"><i class="fa-solid fa-trash-can"></i> Clear history</button></div></div>
-              <div class="side-card"><div class="work-top"><div><div class="badge"><i class="fa-solid fa-lightbulb"></i> Best practice</div><h4>Handling tip</h4></div><div class="guide-icon"><i class="fa-solid fa-circle-check"></i></div></div><ul class="helper-list"><li>Use the actual case number that you are actively working.</li><li>Use the highlighted Case # preview to double-check the number before pasting.</li><li>Click any recent comment to restore it instantly.</li><li>The assistant does not send data anywhere. It only formats text inside this page.</li></ul></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-  <div id="site-footer"></div>
-</div>
-<div id="toast">Copied!</div>
-  
+  <div id="toast">Copied!</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
-window.SITE_BASE = "./";
+window.SITE_BASE = "";
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -3347,5 +3304,112 @@ document.addEventListener("keydown", event => {
 <div id="imageZoomModal" class="image-zoom-modal" onclick="closeFbiZoom()">
   <img id="zoomedFbiImage" src="" alt="Zoomed FBI instruction image">
 </div>
+<script>
+
+function scrollToBuilder() {
+  const target = document.getElementById("fbcBuilder");
+  if (!target) return;
+  const y = target.getBoundingClientRect().top + window.scrollY - 20;
+  window.scrollTo({ top: y, behavior: "smooth" });
+}
+
+function focusFbcSearch() {
+  const input = document.getElementById("fbcSearch");
+  if (!input) {
+    scrollToBuilder();
+    return;
+  }
+  input.focus();
+  input.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function clearFbcSearch() {
+  const input = document.getElementById("fbcSearch");
+  const clearBtn = document.getElementById("clearSearchBtn");
+  if (!input) return;
+  input.value = "";
+  if (clearBtn) clearBtn.style.display = "none";
+  filterFbcOptions("");
+  input.focus();
+}
+
+function filterFbcOptions(query) {
+  const queueSelect = document.getElementById("queueTypeSelect");
+  const actionSelect = document.getElementById("actionTakenSelect");
+  const clearBtn = document.getElementById("clearSearchBtn");
+  if (!queueSelect) return;
+
+  query = String(query || "").toLowerCase().trim();
+  if (clearBtn) clearBtn.style.display = query ? "block" : "none";
+
+  const allOptions = Array.from(queueSelect.options)
+    .map(option => option.value)
+    .filter(Boolean);
+
+  if (!queueSelect.dataset.allQueues && allOptions.length) {
+    queueSelect.dataset.allQueues = JSON.stringify(allOptions);
+  }
+
+  let baseQueues = [];
+  try {
+    baseQueues = JSON.parse(queueSelect.dataset.allQueues || "[]");
+  } catch (error) {
+    baseQueues = allOptions;
+  }
+
+  const currentValue = queueSelect.value;
+
+  if (!query) {
+    queueSelect.innerHTML = '<option value="">Select Queue Type</option>';
+    baseQueues.forEach(queue => {
+      const opt = document.createElement("option");
+      opt.value = queue;
+      opt.textContent = queue;
+      queueSelect.appendChild(opt);
+    });
+    if (currentValue && baseQueues.includes(currentValue)) queueSelect.value = currentValue;
+    return;
+  }
+
+  const matches = baseQueues.filter(queue => queue.toLowerCase().includes(query));
+
+  queueSelect.innerHTML = '<option value="">Select Queue Type</option>';
+  matches.forEach(queue => {
+    const opt = document.createElement("option");
+    opt.value = queue;
+    opt.textContent = queue;
+    queueSelect.appendChild(opt);
+  });
+
+  if (actionSelect) {
+    actionSelect.innerHTML = '<option value="">Select Action Taken</option>';
+    actionSelect.disabled = true;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const fbcSearch = document.getElementById("fbcSearch");
+  const clearBtn = document.getElementById("clearSearchBtn");
+
+  if (fbcSearch && !fbcSearch.dataset.bound) {
+    fbcSearch.dataset.bound = "true";
+    fbcSearch.addEventListener("input", () => filterFbcOptions(fbcSearch.value));
+  }
+
+  if (clearBtn && !clearBtn.dataset.bound) {
+    clearBtn.dataset.bound = "true";
+    clearBtn.addEventListener("click", clearFbcSearch);
+  }
+
+  setTimeout(() => {
+    const queueSelect = document.getElementById("queueTypeSelect");
+    if (queueSelect && !queueSelect.dataset.allQueues) {
+      const queues = Array.from(queueSelect.options).map(o => o.value).filter(Boolean);
+      if (queues.length) queueSelect.dataset.allQueues = JSON.stringify(queues);
+    }
+  }, 900);
+});
+
+</script>
 </body>
 </html>
