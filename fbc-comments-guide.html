@@ -1899,6 +1899,198 @@
       .action-row.right .btn{width:100%}
     }
 
+  
+    /* ===== FBC COMMENT FINAL FIXES ===== */
+    .fbc-search-row,
+    #fbcSearch,
+    .fbc-search-btn{
+      display:none !important;
+    }
+
+    .view-table-btn{
+      width:100%;
+      min-height:50px;
+      margin:0 0 14px;
+      border:none;
+      border-radius:17px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      cursor:pointer;
+      color:#fff;
+      font-weight:900;
+      background:linear-gradient(135deg, var(--teal), var(--olive));
+      box-shadow:0 14px 24px rgba(77,20,140,.16);
+      transition:.22s ease;
+    }
+
+    .view-table-btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 30px rgba(77,20,140,.22);
+    }
+
+    .image-zoom-modal,
+    .fbi-modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:2147483647;
+      background:rgba(2,6,23,.68);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      overflow:auto;
+    }
+
+    .image-zoom-modal.is-open,
+    .fbi-modal.is-open{
+      display:flex !important;
+    }
+
+    .image-zoom-card,
+    .fbi-modal-card{
+      width:min(1100px, 100%);
+      max-height:min(88vh, 900px);
+      overflow:auto;
+      border-radius:30px;
+      background:linear-gradient(180deg,#ffffff 0%, #f8fafc 100%);
+      border:1px solid rgba(226,232,240,.96);
+      box-shadow:0 28px 90px rgba(2,6,23,.32);
+      padding:22px;
+      animation:fbcModalIn .22s ease;
+    }
+
+    @keyframes fbcModalIn{
+      from{opacity:0; transform:translateY(12px) scale(.98)}
+      to{opacity:1; transform:translateY(0) scale(1)}
+    }
+
+    .image-zoom-head,
+    .fbi-modal-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      padding-bottom:16px;
+      margin-bottom:16px;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+
+    .image-zoom-head h3,
+    .fbi-modal-head h3{
+      margin:0;
+      color:#0f172a;
+      font-size:26px;
+      line-height:1;
+      letter-spacing:-.05em;
+      font-weight:950;
+    }
+
+    .image-zoom-head p,
+    .fbi-modal-head p{
+      margin:8px 0 0;
+      color:#64748b;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .image-zoom-close,
+    .fbi-modal-close{
+      width:42px;
+      height:42px;
+      border:none;
+      border-radius:16px;
+      background:#f1f5f9;
+      color:#475569;
+      font-size:24px;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      transition:.2s ease;
+      flex-shrink:0;
+    }
+
+    .image-zoom-close:hover,
+    .fbi-modal-close:hover{
+      background:#e2e8f0;
+      color:#0f172a;
+      transform:translateY(-1px);
+    }
+
+    .image-zoom-body{
+      display:grid;
+      place-items:center;
+      border-radius:22px;
+      background:#fff;
+      border:1px solid #e2e8f0;
+      overflow:auto;
+      padding:16px;
+    }
+
+    .image-zoom-body img{
+      max-width:100%;
+      height:auto;
+      border-radius:16px;
+      display:block;
+    }
+
+    .fbi-step-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .fbi-step{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      padding:14px;
+      border-radius:18px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+    }
+
+    .fbi-step-number{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      flex-shrink:0;
+      background:linear-gradient(135deg, var(--teal), var(--olive));
+      color:#fff;
+      font-weight:950;
+    }
+
+    .fbi-step strong{
+      display:block;
+      color:#0f172a;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+
+    .fbi-step span{
+      display:block;
+      color:#64748b;
+      line-height:1.6;
+      font-size:13px;
+    }
+
+    @media (max-width:720px){
+      .image-zoom-modal,
+      .fbi-modal{
+        padding:14px;
+      }
+
+      .image-zoom-card,
+      .fbi-modal-card{
+        border-radius:24px;
+        padding:18px;
+      }
+    }
+
   </style>
 </head>
 <body data-page="fbc-comments">
@@ -1919,7 +2111,6 @@
 
                 <div class="hero-actions">
                   <button class="hero-main-btn" type="button" onclick="scrollToBuilder()">Open FBC Comments Builder <i class="fa-solid fa-arrow-down"></i></button>
-                  <button class="hero-ghost-btn" type="button" onclick="focusFbcSearch()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
 
                 <div class="hero-metrics">
@@ -2028,6 +2219,11 @@
                   Effective immediately, the structure below will guide the 2x4 comment format and help remove unnecessary 2x4 comments previously used.
                 </div>
 
+                <button class="view-table-btn" type="button" onclick="openFbcTableModal()">
+                  <i class="fa-solid fa-eye"></i>
+                  View FBC Comment Table
+                </button>
+
                 <div class="guide-image-wrap">
                   <img id="guidePreviewImage" class="guide-image" src="fbc-comments-guide-images/fbc-comments-guide-image.png" alt="FBC comments guide reference image" onerror="this.style.display='none';document.getElementById('guideImagePlaceholder').style.display='grid';">
                   <div id="guideImagePlaceholder" class="guide-image-placeholder" style="display:none;">
@@ -2056,18 +2252,6 @@
                   <i class="fa-solid fa-bolt"></i>
                   <span id="statusPill">Ready</span>
                 </div>
-              </div>
-
-              <div class="fbc-search-row">
-                <div class="search-input-wrap">
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                  <input id="fbcSearch" type="text" placeholder="Search queue type or action keyword.">
-                  <button id="clearSearchBtn" type="button" onclick="clearFbcSearch()">×</button>
-                </div>
-
-                <button class="fbc-search-btn" type="button" onclick="focusFbcSearch()">
-                  Focus search
-                </button>
               </div>
 
               <div class="comment-card">
@@ -2210,6 +2394,23 @@
     </main>
 
     <div id="site-footer"></div>
+  </div>
+
+
+  <div id="fbcTableModal" class="image-zoom-modal">
+    <div class="image-zoom-card">
+      <div class="image-zoom-head">
+        <div>
+          <h3>FBC Comment Table</h3>
+          <p>Use this enlarged view to review the comment table more clearly.</p>
+        </div>
+        <button class="image-zoom-close" type="button" onclick="closeFbcTableModal()">×</button>
+      </div>
+
+      <div class="image-zoom-body">
+        <img src="fbc-comments-guide-images/fbc-comments-guide-image.png" alt="FBC Comment Table enlarged view">
+      </div>
+    </div>
   </div>
 
   <div id="toast">Copied!</div>
@@ -3411,5 +3612,124 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 </script>
+
+<script>
+  function scrollToBuilder() {
+    const target = document.getElementById("fbcBuilder");
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.scrollY - 20;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+
+  function openFbcTableModal() {
+    const modal = document.getElementById("fbcTableModal");
+    if (!modal) return;
+    modal.classList.add("is-open");
+    modal.style.display = "flex";
+    document.body.classList.add("modal-open");
+  }
+
+  function closeFbcTableModal() {
+    const modal = document.getElementById("fbcTableModal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.style.display = "none";
+    document.body.classList.remove("modal-open");
+  }
+
+  function ensureFbiModal() {
+    let modal = document.getElementById("fbiModal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "fbiModal";
+    modal.className = "fbi-modal";
+    modal.innerHTML = `
+      <div class="fbi-modal-card">
+        <div class="fbi-modal-head">
+          <div>
+            <h3>How to add comment in FBI</h3>
+            <p>Follow these steps when adding the FBC/FBI comment.</p>
+          </div>
+          <button class="fbi-modal-close" type="button" onclick="closeFbiModal()">×</button>
+        </div>
+
+        <div class="fbi-step-grid">
+          <div class="fbi-step">
+            <div class="fbi-step-number">1</div>
+            <div>
+              <strong>Open the PRO in FBI/FBC</strong>
+              <span>Go to the PRO you are working and confirm that you are updating the correct shipment or case.</span>
+            </div>
+          </div>
+
+          <div class="fbi-step">
+            <div class="fbi-step-number">2</div>
+            <div>
+              <strong>Press F9 or open the comment area</strong>
+              <span>Use the comment function where FBC/FBI comments are added for the PRO.</span>
+            </div>
+          </div>
+
+          <div class="fbi-step">
+            <div class="fbi-step-number">3</div>
+            <div>
+              <strong>Paste the generated comment</strong>
+              <span>Use the generated 2x4 comment format and make sure the case number is correct.</span>
+            </div>
+          </div>
+
+          <div class="fbi-step">
+            <div class="fbi-step-number">4</div>
+            <div>
+              <strong>Save and confirm</strong>
+              <span>Save the comment, then review the PRO to make sure the comment was added successfully.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeFbiModal();
+    });
+    return modal;
+  }
+
+  function openFbiModal() {
+    const modal = ensureFbiModal();
+    modal.classList.add("is-open");
+    modal.style.display = "flex";
+    document.body.classList.add("modal-open");
+  }
+
+  function closeFbiModal() {
+    const modal = document.getElementById("fbiModal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.style.display = "none";
+    document.body.classList.remove("modal-open");
+  }
+
+  document.addEventListener("click", (event) => {
+    const tableModal = document.getElementById("fbcTableModal");
+    const fbiModal = document.getElementById("fbiModal");
+
+    if (event.target === tableModal) closeFbcTableModal();
+    if (event.target === fbiModal) closeFbiModal();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    closeFbcTableModal();
+    closeFbiModal();
+  });
+
+  window.openFbcTableModal = openFbcTableModal;
+  window.closeFbcTableModal = closeFbcTableModal;
+  window.openFbiModal = openFbiModal;
+  window.closeFbiModal = closeFbiModal;
+</script>
+
 </body>
 </html>
