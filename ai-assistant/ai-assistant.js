@@ -100,8 +100,17 @@
 
     const bubble = document.createElement("div");
     bubble.className = "fx-ai-bubble";
-    if (allowHTML) bubble.innerHTML = content;
-    else bubble.textContent = content;
+    if (allowHTML) {
+      bubble.classList.add("fx-ai-html-bubble");
+      bubble.style.whiteSpace = "normal";
+      bubble.style.padding = "10px";
+      bubble.innerHTML = String(content || "")
+        .replace(/>\s+</g, "><")
+        .replace(/\n\s+/g, " ")
+        .trim();
+    } else {
+      bubble.textContent = content;
+    }
 
     row.appendChild(bubble);
     els.messages.appendChild(row);
@@ -476,7 +485,7 @@
     const best = candidates[0];
 
     // If it only knows the branch but needs an answer, ask a relevant question instead of guessing.
-    if (!best || best.score < 40) return null;
+    if (!best || best.score < 55) return null;
 
     return {
       type: "recommendation",
@@ -885,7 +894,7 @@
   function showWelcome() {
     addMessage("assistant", `Hi, I’m your AI Decision Assistant.
 
-Type the customer’s concern. I’ll read the guide nodes, ask relevant questions, and give the recommended action.`);
+Type the customer concern. I’ll read the guide nodes, ask only what is missing, and give the recommended action.`);
 
     setSuggestions([
       { label: "Weight update per BOL", onClick: () => startNewConcern("weight update per bol. what is the corr code?") },
@@ -982,6 +991,25 @@ Type the customer’s concern. I’ll read the guide nodes, ask relevant questio
       }
     }, 80);
   }
+
+
+  window.FX_AI_DEBUG = async function () {
+    const registry = getRegistry();
+    const loaded = await loadAllGuideNodes();
+    const summary = loaded.map(item => ({
+      id: item.guide.id,
+      title: item.guide.title,
+      url: item.guide.url,
+      nodes: item.nodes.length,
+      hasActionAnswers: item.nodes.some(n => (n.choicesDetailed || []).some(c => c.action))
+    }));
+    console.table(summary);
+    return {
+      registryCount: registry.length,
+      loadedGuideCount: loaded.length,
+      guides: summary
+    };
+  };
 
   waitForMarkup();
 })();
