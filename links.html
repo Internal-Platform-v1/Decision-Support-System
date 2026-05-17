@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="page-protected">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2520,6 +2520,50 @@ if (!firebase.apps.length) {
 
 window.auth = firebase.auth();
 window.db = firebase.firestore();
+
+/* =========================================================
+   PAGE AUTH GUARD
+   Prevents direct URL access to links.html without login
+========================================================= */
+window.auth.onAuthStateChanged(async function(user) {
+  try {
+    if (!user) {
+      window.location.replace("index.html");
+      return;
+    }
+
+    await user.reload();
+
+    const refreshedUser = window.auth.currentUser;
+
+    if (!refreshedUser || !refreshedUser.emailVerified) {
+      window.location.replace("index.html");
+      return;
+    }
+
+    /*
+      Optional domain restriction.
+      Leave this OFF if you have approved users using @iqor.com, @gmail.com,
+      or other emails in Firebase Auth.
+
+      To turn it on, uncomment this block:
+
+      const email = refreshedUser.email.toLowerCase();
+      const allowedDomain = email.endsWith("@fedexfreight.com");
+
+      if (!allowedDomain) {
+        window.location.replace("index.html");
+        return;
+      }
+    */
+
+    document.documentElement.classList.remove("page-protected");
+
+  } catch (error) {
+    console.error("Auth guard error:", error);
+    window.location.replace("index.html");
+  }
+});
 </script>
 
 <script>window.SITE_BASE = "";</script>
