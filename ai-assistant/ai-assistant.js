@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = "fx_ai_assistant_state_v4";
+  const STORAGE_KEY = "fx_ai_assistant_state_v5";
 
   /*
     IMPORTANT:
@@ -16,7 +16,6 @@
 
   const nodeCache = new Map();
   let preloadStarted = false;
-
   let activeSession = null;
 
   function loadState() {
@@ -125,42 +124,6 @@
     return score;
   }
 
-  function scoreGuide(input, guide) {
-    let score = 0;
-
-    score += scoreText(input, guide.title, 12);
-    score += scoreText(input, guide.category, 3);
-    score += scoreText(input, guide.badge, 2);
-    score += scoreText(input, guide.description, 4);
-
-    (guide.keywords || []).forEach((keyword) => {
-      score += scoreText(input, keyword, 8);
-    });
-
-    return score;
-  }
-
-  function findBestGuide(input) {
-    const registry = getRegistry();
-    let best = null;
-    let bestScore = 0;
-
-    registry.forEach((guide) => {
-      const score = scoreGuide(input, guide);
-      if (score > bestScore) {
-        bestScore = score;
-        best = guide;
-      }
-    });
-
-    return bestScore > 0 ? best : null;
-  }
-
-  function getRecentGuide() {
-    const registry = getRegistry();
-    return registry.find((g) => g.id === state.lastMatchedGuideId) || null;
-  }
-
   function scrollToBottom() {
     const els = getEls();
 
@@ -204,7 +167,7 @@
     const thinkingHtml = `
       <div class="fx-ai-thinking">
         <div>
-          <div class="fx-ai-thinking-text">Thinking through the best next question...</div>
+          <div class="fx-ai-thinking-text">Reading guide nodes and choosing the next step...</div>
           <div class="fx-ai-thinking-dots">
             <span></span>
             <span></span>
@@ -248,70 +211,7 @@
   }
 
   /* ==========================================================
-     GROQ DECISION ASSISTANT
-  ========================================================== */
-
-  function buildSafeMatchForAI(match) {
-    if (!match) return null;
-
-    const guide = match.guide || {};
-    const node = match.node || {};
-
-    return {
-      score: match.score || 0,
-      guide: {
-        id: guide.id || node.guideId || "",
-        title: guide.title || node.guideTitle || "",
-        url: guide.url || node.guideUrl || "",
-        category: guide.category || node.category || "",
-        description: guide.description || ""
-      },
-      node: {
-        nodeId: node.nodeId || "",
-        type: node.type || "",
-        text: node.text || "",
-        help: node.help || "",
-        note: node.note || "",
-        choices: Array.isArray(node.choices) ? node.choices.slice(0, 8) : [],
-        finalRecommendation: node.finalRecommendation || ""
-      }
-    };
-  }
-
-  async function askDecisionAssistant(concern, matches, conversation = []) {
-    try {
-      if (!FX_AI_BACKEND_URL) return null;
-
-      const safeMatches = Array.isArray(matches)
-        ? matches.map(buildSafeMatchForAI).filter(Boolean).slice(0, 5)
-        : [];
-
-      const response = await fetch(`${FX_AI_BACKEND_URL}/api/ai-decision`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          concern,
-          matches: safeMatches,
-          conversation
-        })
-      });
-
-      if (!response.ok) throw new Error("AI backend request failed.");
-
-      const data = await response.json();
-      if (!data.ok || !data.result) throw new Error(data.error || "No AI result returned.");
-
-      return data.result;
-    } catch (error) {
-      console.error("AI decision assistant failed:", error);
-      return null;
-    }
-  }
-
-  /* ==========================================================
-     NODE INTELLIGENCE
+     NODE EXTRACTION
   ========================================================== */
 
   function findNodesObjectStart(html) {
@@ -431,18 +331,6 @@
 
   function normalizeGuideNodes(guide, nodes) {
     const rawEntries = Object.entries(nodes || {});
-    const nodesById = {};
-
-    const parentMap = {};
-    rawEntries.forEach(([nodeId, node]) => {
-      if (!Array.isArray(node.choices)) return;
-
-      node.choices.forEach((choice) => {
-        if (choice && choice.next && !parentMap[choice.next]) {
-          parentMap[choice.next] = nodeId;
-        }
-      });
-    });
 
     const normalizedNodes = rawEntries.map(([nodeId, node]) => {
       const choicesDetailed = Array.isArray(node.choices)
@@ -455,28 +343,19 @@
 
       const choices = choicesDetailed.map(choice => choice.label);
       const choiceDescriptions = choicesDetailed.map(choice => choice.desc).filter(Boolean);
-      const nextNodes = choicesDetailed.map(choice => choice.next).filter(Boolean);
       const isFinal = !Array.isArray(node.choices) || node.choices.length === 0;
 
-      const normalized = {
-        guideId: guide.id,
-        guideTitle: guide.title,
-        guideUrl: guide.url,
-        category: guide.category || "guide",
-        badge: guide.badge || "Guide",
+      return {
         nodeId,
         type: isFinal ? "final" : "question",
         text: node.text || "",
         help: node.help || "",
         note: node.note || "",
-        image: node.image || "",
         choices,
         choicesDetailed,
         choiceDescriptions,
-        nextNodes,
         finalRecommendation: isFinal ? node.text || "" : "",
-        parentMap,
-        keywords: [
+        searchText: [
           guide.title || "",
           guide.category || "",
           guide.badge || "",
@@ -486,22 +365,16 @@
           node.text || "",
           node.help || "",
           node.note || "",
-          node.image || "",
           ...choices,
           ...choiceDescriptions,
-          ...nextNodes
-        ]
+          ...choicesDetailed.map(choice => choice.next)
+        ].join(" ")
       };
-
-      nodesById[nodeId] = normalized;
-      return normalized;
     });
 
     return {
       guide,
-      nodes: normalizedNodes,
-      nodesById,
-      parentMap
+      nodes: normalizedNodes
     };
   }
 
@@ -536,107 +409,228 @@
     }
   }
 
+  async function loadAllGuideNodes() {
+    const registry = getRegistry();
+    const loaded = await Promise.all(registry.map(guide => loadGuideNodes(guide)));
+    return loaded.filter(Boolean);
+  }
+
   function startNodePreload() {
     if (preloadStarted) return;
     preloadStarted = true;
-
-    getRegistry().forEach((guide) => {
-      loadGuideNodes(guide);
-    });
+    loadAllGuideNodes();
   }
 
-  function scoreNodeMatch(input, node) {
-    let score = 0;
+  function scoreGuideNodeMap(input, guideData) {
+    const guide = guideData.guide || {};
+    const guideScore =
+      scoreText(input, guide.title, 14) +
+      scoreText(input, guide.category, 3) +
+      scoreText(input, guide.badge, 2) +
+      scoreText(input, guide.description, 5) +
+      (guide.keywords || []).reduce((sum, keyword) => sum + scoreText(input, keyword, 8), 0);
 
-    score += scoreText(input, node.guideTitle, 10);
-    score += scoreText(input, node.category, 2);
-    score += scoreText(input, node.badge, 2);
-    score += scoreText(input, node.nodeId, 3);
-    score += scoreText(input, node.text, node.type === "final" ? 12 : 8);
-    score += scoreText(input, node.help, 4);
-    score += scoreText(input, node.note, 4);
-    score += scoreText(input, node.finalRecommendation, 14);
+    const nodeScore = (guideData.nodes || []).reduce((sum, node) => {
+      return sum + scoreText(input, node.searchText, node.type === "final" ? 7 : 5);
+    }, 0);
 
-    (node.choices || []).forEach(choice => {
-      score += scoreText(input, choice, 7);
-    });
-
-    (node.choiceDescriptions || []).forEach(desc => {
-      score += scoreText(input, desc, 5);
-    });
-
-    (node.keywords || []).forEach(keyword => {
-      score += scoreText(input, keyword, 3);
-    });
-
-    if (node.type === "final") score += 3;
-
-    return score;
+    return guideScore + nodeScore;
   }
 
-  async function findTopNodeMatches(input, limit = 5) {
-    const registry = getRegistry();
-    const results = [];
+  async function findRelevantGuideNodeMaps(input, limit = 3) {
+    const allGuideData = await loadAllGuideNodes();
 
-    const allGuideNodeData = await Promise.all(
-      registry.map(guide => loadGuideNodes(guide))
-    );
-
-    allGuideNodeData.forEach((guideNodeData) => {
-      if (!guideNodeData || !Array.isArray(guideNodeData.nodes)) return;
-
-      guideNodeData.nodes.forEach(node => {
-        const score = scoreNodeMatch(input, node);
-
-        if (score > 0) {
-          results.push({
-            guide: guideNodeData.guide,
-            node,
-            score,
-            parentMap: guideNodeData.parentMap || {},
-            guideNodeData
-          });
-        }
-      });
-    });
-
-    return results
+    return allGuideData
+      .map(guideData => ({
+        ...guideData,
+        score: scoreGuideNodeMap(input, guideData)
+      }))
+      .filter(item => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
   }
 
-  function getNodePath(match) {
-    if (!match || !match.node || !match.parentMap) return [];
+  /* ==========================================================
+     BACKEND CALL - SEND FULL NODE MAPS
+  ========================================================== */
 
-    const path = [];
-    const seen = new Set();
-    let current = match.node.nodeId;
-
-    while (current && !seen.has(current)) {
-      seen.add(current);
-      path.unshift(current);
-      current = match.parentMap[current];
-    }
-
-    return path;
+  function buildGuidePayload(guideData) {
+    return {
+      score: guideData.score || 0,
+      guide: {
+        id: guideData.guide.id || "",
+        title: guideData.guide.title || "",
+        url: guideData.guide.url || "",
+        category: guideData.guide.category || "",
+        description: guideData.guide.description || ""
+      },
+      nodes: (guideData.nodes || []).slice(0, 120).map(node => ({
+        nodeId: node.nodeId,
+        type: node.type,
+        text: node.text,
+        help: node.help,
+        note: node.note,
+        choicesDetailed: node.choicesDetailed,
+        choices: node.choices,
+        finalRecommendation: node.finalRecommendation
+      }))
+    };
   }
 
-  function renderCompactPath(match) {
-    const path = getNodePath(match);
-    if (!path.length) return "";
+  async function askDecisionAssistant(concern, guideMaps, conversation = []) {
+    try {
+      if (!FX_AI_BACKEND_URL) return null;
 
-    const lastItems = path.slice(-4);
+      const guides = Array.isArray(guideMaps)
+        ? guideMaps.map(buildGuidePayload).slice(0, 3)
+        : [];
 
-    return `
-      <div class="fx-ai-compact-path">
-        ${lastItems.map(item => `<span>${escapeHtml(item)}</span>`).join("<i class='fa-solid fa-angle-right'></i>")}
-      </div>
-    `;
+      const response = await fetch(`${FX_AI_BACKEND_URL}/api/ai-decision`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          concern,
+          guides,
+          conversation
+        })
+      });
+
+      if (!response.ok) throw new Error("AI backend request failed.");
+
+      const data = await response.json();
+      if (!data.ok || !data.result) throw new Error(data.error || "No AI result returned.");
+
+      return data.result;
+    } catch (error) {
+      console.error("AI decision assistant failed:", error);
+      return null;
+    }
   }
 
   /* ==========================================================
      RENDERERS
   ========================================================== */
+
+  function findGuideDataByTitle(guideMaps, title) {
+    const target = normalizeText(title);
+    if (!target) return guideMaps?.[0] || null;
+
+    return (guideMaps || []).find(item => {
+      return normalizeText(item.guide?.title).includes(target) || target.includes(normalizeText(item.guide?.title));
+    }) || guideMaps?.[0] || null;
+  }
+
+  function findNodeInGuide(guideData, nodeId) {
+    const target = normalizeText(nodeId);
+    if (!target || !guideData) return null;
+
+    return (guideData.nodes || []).find(node => normalizeText(node.nodeId) === target) || null;
+  }
+
+  function renderMatchedGuideDetails(guideData, result) {
+    if (!guideData) return "";
+
+    const guide = guideData.guide || {};
+    const node = findNodeInGuide(guideData, result?.nodeId);
+    const safeUrl = escapeHtml(resolveGuideUrl(guide.url || ""));
+    const directUrl = node ? `${safeUrl}?node=${encodeURIComponent(node.nodeId || "")}` : safeUrl;
+    const displayText = compactText(node?.finalRecommendation || node?.text || guide.description || "Open the matched guide to review.", 220);
+
+    return `
+      <details class="fx-ai-source-details">
+        <summary>View matched guide</summary>
+
+        <div class="fx-ai-source-card">
+          <div class="fx-ai-source-head">
+            <span>${node?.type === "final" ? "Official Final Match" : "Matched Guide"}</span>
+            <strong>${escapeHtml(guide.title || "Recommended Guide")}</strong>
+          </div>
+
+          <p>${escapeHtml(displayText)}</p>
+
+          <div class="fx-ai-guide-meta">
+            <span class="fx-ai-tag">${escapeHtml(guide.category || "Guide")}</span>
+            ${node?.nodeId ? `<span class="fx-ai-tag">${escapeHtml(node.nodeId)}</span>` : ""}
+          </div>
+
+          <div class="fx-ai-guide-actions">
+            <a class="fx-ai-link primary" href="${safeUrl}">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Open Guide</span>
+            </a>
+
+            ${node?.nodeId ? `
+              <a class="fx-ai-link secondary" href="${directUrl}">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Open Step</span>
+              </a>
+            ` : ""}
+          </div>
+        </div>
+      </details>
+    `;
+  }
+
+  function renderDecisionResult(result, guideMaps) {
+    const guideData = findGuideDataByTitle(guideMaps, result?.guideTitle);
+
+    if (!result) {
+      return `
+        <div class="fx-ai-decision-card">
+          <div class="fx-ai-decision-kicker">Need more detail</div>
+          <h4>I reviewed the guide nodes, but I need one clearer detail before deciding.</h4>
+          <p>Type the missing detail in your own words, or use the backup options below.</p>
+        </div>
+        ${renderMatchedGuideDetails(guideData, result)}
+      `;
+    }
+
+    if (result.type === "question") {
+      return `
+        <div class="fx-ai-decision-card">
+          <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Need one detail")}</div>
+          <h4>${escapeHtml(result.message || "I need one more detail before deciding.")}</h4>
+        </div>
+        ${renderMatchedGuideDetails(guideData, result)}
+      `;
+    }
+
+    if (result.type === "backup") {
+      return `
+        <div class="fx-ai-decision-card fx-ai-backup-card">
+          <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Backup Plan")}</div>
+          <h4>${escapeHtml(result.message || "The listed options do not clearly fit this concern.")}</h4>
+          ${result.nextStep ? `<p>${escapeHtml(result.nextStep)}</p>` : ""}
+        </div>
+        ${renderMatchedGuideDetails(guideData, result)}
+      `;
+    }
+
+    return `
+      <div class="fx-ai-decision-card">
+        <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Recommended Action")}</div>
+        <h4>${escapeHtml(result.action || "Review the matched guide.")}</h4>
+
+        ${result.reason ? `
+          <div class="fx-ai-answer-row">
+            <span>Why</span>
+            <p>${escapeHtml(result.reason)}</p>
+          </div>
+        ` : ""}
+
+        ${result.nextStep ? `
+          <div class="fx-ai-answer-row">
+            <span>Next Step</span>
+            <p>${escapeHtml(result.nextStep)}</p>
+          </div>
+        ` : ""}
+      </div>
+
+      ${renderMatchedGuideDetails(guideData, result)}
+    `;
+  }
 
   function renderGuideCard(guide) {
     const safeTitle = escapeHtml(guide.title);
@@ -661,107 +655,6 @@
           </a>
         </div>
       </div>
-    `;
-  }
-
-  function renderSourceDetails(match) {
-    if (!match) return "";
-
-    const guide = match.guide || {};
-    const node = match.node || {};
-    const safeUrl = escapeHtml(resolveGuideUrl(guide.url || node.guideUrl || ""));
-    const directUrl = `${safeUrl}?node=${encodeURIComponent(node.nodeId || "")}`;
-    const recommendation = compactText(node.finalRecommendation || node.text || "Review this guide step.", 220);
-
-    return `
-      <details class="fx-ai-source-details">
-        <summary>View matched guide</summary>
-
-        <div class="fx-ai-source-card">
-          <div class="fx-ai-source-head">
-            <span>${node.type === "final" ? "Official Final Match" : "Official Decision Step"}</span>
-            <strong>${escapeHtml(guide.title || node.guideTitle || "Recommended Guide")}</strong>
-          </div>
-
-          <p>${escapeHtml(recommendation)}</p>
-
-          ${renderCompactPath(match)}
-
-          <div class="fx-ai-guide-meta">
-            <span class="fx-ai-tag">${escapeHtml(guide.category || node.category || "Guide")}</span>
-            <span class="fx-ai-tag">${escapeHtml(node.nodeId || "step")}</span>
-          </div>
-
-          <div class="fx-ai-guide-actions">
-            <a class="fx-ai-link primary" href="${safeUrl}">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              <span>Open Guide</span>
-            </a>
-
-            <a class="fx-ai-link secondary" href="${directUrl}">
-              <i class="fa-solid fa-location-dot"></i>
-              <span>Open Step</span>
-            </a>
-          </div>
-        </div>
-      </details>
-    `;
-  }
-
-  function renderDecisionResult(result, match) {
-    if (!result) {
-      return `
-        <div class="fx-ai-decision-card">
-          <div class="fx-ai-decision-kicker">Need more detail</div>
-          <h4>I found possible matches, but I need one clearer detail before deciding.</h4>
-          <p>Type the missing detail in your own words, or use the backup options below.</p>
-        </div>
-        ${renderSourceDetails(match)}
-      `;
-    }
-
-    if (result.type === "question") {
-      return `
-        <div class="fx-ai-decision-card">
-          <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Need one detail")}</div>
-          <h4>${escapeHtml(result.message || "I need one more detail before deciding.")}</h4>
-        </div>
-        ${renderSourceDetails(match)}
-      `;
-    }
-
-    if (result.type === "backup") {
-      return `
-        <div class="fx-ai-decision-card fx-ai-backup-card">
-          <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Backup Plan")}</div>
-          <h4>${escapeHtml(result.message || "The listed options do not clearly fit this concern.")}</h4>
-          ${result.nextStep ? `<p>${escapeHtml(result.nextStep)}</p>` : ""}
-        </div>
-        ${renderSourceDetails(match)}
-      `;
-    }
-
-    return `
-      <div class="fx-ai-decision-card">
-        <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Recommended Action")}</div>
-        <h4>${escapeHtml(result.action || "Review the matched guide.")}</h4>
-
-        ${result.reason ? `
-          <div class="fx-ai-answer-row">
-            <span>Why</span>
-            <p>${escapeHtml(result.reason)}</p>
-          </div>
-        ` : ""}
-
-        ${result.nextStep ? `
-          <div class="fx-ai-answer-row">
-            <span>Next Step</span>
-            <p>${escapeHtml(result.nextStep)}</p>
-          </div>
-        ` : ""}
-      </div>
-
-      ${renderSourceDetails(match)}
     `;
   }
 
@@ -801,7 +694,7 @@
       "assistant",
       `Hi, I’m your AI Decision Assistant.
 
-Type the customer’s concern. I’ll ask only the relevant question needed to reach the right action.`
+Type the customer’s concern. I’ll review the guide nodes, ask relevant questions, and give the recommended action.`
     );
 
     setSuggestions([
@@ -829,74 +722,56 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     );
   }
 
-  function buildCombinedConcern(session) {
-    if (!session) return "";
-
-    const answerText = session.conversation.map(item => {
-      if (item.question || item.answer) {
-        return `${item.question || ""} ${item.answer || ""}`;
-      }
-
-      return item.detail || "";
-    }).join(" ");
-
-    return `${session.originalConcern} ${answerText}`.trim();
-  }
-
-  async function runDecisionTurn(userTextForDisplay = null) {
+  async function runDecisionTurn() {
     if (!activeSession) return;
 
     clearSuggestions();
-
     const thinkingRow = addThinkingMessage();
 
-    const combinedConcern = buildCombinedConcern(activeSession);
-    const topMatches = await findTopNodeMatches(combinedConcern, 5);
-    const bestMatch = topMatches.length ? topMatches[0] : activeSession.lastMatch;
+    const allText = [
+      activeSession.originalConcern,
+      ...activeSession.conversation.map(item => item.content)
+    ].join(" ");
 
-    activeSession.lastMatches = topMatches;
-    activeSession.lastMatch = bestMatch || null;
+    const guideMaps = await findRelevantGuideNodeMaps(allText, 3);
+    activeSession.guideMaps = guideMaps;
 
-    let result = null;
+    const result = await askDecisionAssistant(
+      activeSession.originalConcern,
+      guideMaps,
+      activeSession.conversation
+    );
 
-    if (topMatches.length) {
-      result = await askDecisionAssistant(
-        activeSession.originalConcern,
-        topMatches,
-        activeSession.conversation
-      );
-    }
+    activeSession.lastResult = result;
 
     await wait(200);
     removeThinkingMessage(thinkingRow);
 
-    if (!bestMatch && !result) {
+    if (!guideMaps.length && !result) {
       showNoMatch();
-      setBackupSuggestions(null);
+      setBackupSuggestions();
       return;
     }
 
-    activeSession.lastResult = result;
-
-    if (bestMatch?.guide?.id) {
-      state.lastMatchedGuideId = bestMatch.guide.id;
+    if (guideMaps?.[0]?.guide?.id) {
+      state.lastMatchedGuideId = guideMaps[0].guide.id;
       saveState();
     }
 
-    addMessage("assistant", renderDecisionResult(result, bestMatch), true);
+    addMessage("assistant", renderDecisionResult(result, guideMaps), true);
 
     if (result?.type === "question") {
-      activeSession.lastQuestion = result.message || "Please confirm the correct detail.";
-      setQuestionSuggestions(result, bestMatch);
+      setQuestionSuggestions(result);
       return;
     }
 
     if (result?.type === "backup") {
-      setBackupSuggestions(bestMatch);
+      setBackupSuggestions();
       return;
     }
 
     activeSession = null;
+
     setSuggestions([
       {
         label: "Open recent match",
@@ -915,7 +790,7 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     bindDynamicActions();
   }
 
-  function setQuestionSuggestions(result, match) {
+  function setQuestionSuggestions(result) {
     const choices = Array.isArray(result.choices) ? result.choices.filter(Boolean).slice(0, 5) : [];
 
     const items = choices.map(choice => ({
@@ -926,25 +801,25 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     items.push({
       label: "None of these fit",
       className: "fx-ai-suggestion-btn fx-ai-backup-option",
-      onClick: () => useBackupPlan("None of these fit")
+      onClick: () => continueWithAnswer("None of these fit")
     });
 
     items.push({
       label: "Add details",
       className: "fx-ai-suggestion-btn fx-ai-backup-option",
-      onClick: () => askForMoreDetails()
+      onClick: askForMoreDetails
     });
 
     setSuggestions(items);
     bindDynamicActions();
   }
 
-  function setBackupSuggestions(match) {
-    const items = [
+  function setBackupSuggestions() {
+    setSuggestions([
       {
         label: "Add details",
         className: "fx-ai-suggestion-btn fx-ai-backup-option",
-        onClick: () => askForMoreDetails()
+        onClick: askForMoreDetails
       },
       {
         label: "Browse guides",
@@ -954,57 +829,21 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
         label: "Start over",
         onClick: clearChat
       }
-    ];
+    ]);
 
-    if (match?.guide?.url) {
-      items.unshift({
-        label: "Open matched guide",
-        onClick: () => {
-          window.location.href = resolveGuideUrl(match.guide.url);
-        }
-      });
-    }
-
-    setSuggestions(items);
     bindDynamicActions();
   }
 
   function askForMoreDetails() {
     addMessage(
       "assistant",
-      `Please type the missing detail in your own words. For example, include what the customer is asking, what the BOL shows, or what system detail you already checked.`
+      `Please type the missing detail in your own words. Include what the customer is asking, what the BOL/LOA/system shows, or what you already checked.`
     );
 
     clearSuggestions();
 
     const els = getEls();
     setTimeout(() => els.input?.focus(), 50);
-  }
-
-  async function useBackupPlan(answer) {
-    if (!activeSession) return;
-
-    addMessage("user", answer);
-
-    activeSession.conversation.push({
-      question: activeSession.lastQuestion || "Available choices did not fit.",
-      answer
-    });
-
-    addMessage(
-      "assistant",
-      `
-        <div class="fx-ai-decision-card fx-ai-backup-card">
-          <div class="fx-ai-decision-kicker">Backup Plan</div>
-          <h4>The listed options do not clearly fit this concern.</h4>
-          <p>Add the missing detail in your own words, or open the matched guide to review manually.</p>
-        </div>
-        ${renderSourceDetails(activeSession.lastMatch)}
-      `,
-      true
-    );
-
-    setBackupSuggestions(activeSession.lastMatch);
   }
 
   async function continueWithAnswer(answer) {
@@ -1016,11 +855,11 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     addMessage("user", answer);
 
     activeSession.conversation.push({
-      question: activeSession.lastQuestion || "Previous question",
-      answer
+      role: "user",
+      content: `Answer to "${activeSession.lastResult?.message || "previous question"}": ${answer}`
     });
 
-    await runDecisionTurn(answer);
+    await runDecisionTurn();
   }
 
   async function startNewConcern(text) {
@@ -1030,10 +869,8 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     activeSession = {
       originalConcern: trimmed,
       conversation: [],
-      lastQuestion: "",
       lastResult: null,
-      lastMatch: null,
-      lastMatches: []
+      guideMaps: []
     };
 
     state.lastConcern = trimmed;
@@ -1045,51 +882,28 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     await runDecisionTurn();
   }
 
-  async function handleFreeTextDuringSession(text) {
-    if (!activeSession) {
-      await startNewConcern(text);
-      return;
-    }
-
-    addMessage("user", text);
-
-    activeSession.conversation.push({
-      detail: text
-    });
-
-    await runDecisionTurn(text);
-  }
-
   async function handleConcern(text) {
     const trimmed = String(text || "").trim();
     if (!trimmed) return;
 
     if (activeSession) {
-      await handleFreeTextDuringSession(trimmed);
+      addMessage("user", trimmed);
+
+      activeSession.conversation.push({
+        role: "user",
+        content: trimmed
+      });
+
+      await runDecisionTurn();
       return;
     }
 
     await startNewConcern(trimmed);
   }
 
-  function showSimilarGuides(baseGuide) {
-    const registry = getRegistry();
-    const similar = registry
-      .filter((g) => g.id !== baseGuide.id && g.category === baseGuide.category)
-      .slice(0, 5);
-
-    addMessage(
-      "assistant",
-      renderGuideList(similar, `Other ${baseGuide.category || "Related"} Guides`),
-      true
-    );
-
-    bindDynamicActions();
-  }
-
   function browseAllGuides() {
-    const registry = getRegistry();
     activeSession = null;
+    const registry = getRegistry();
     addMessage("assistant", renderGuideList(registry, "All Registered Guides"), true);
     bindDynamicActions();
     clearSuggestions();
@@ -1125,18 +939,6 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
   }
 
   function bindDynamicActions() {
-    document.querySelectorAll("[data-role='show-related']").forEach((btn) => {
-      if (btn.dataset.bound === "true") return;
-      btn.dataset.bound = "true";
-
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-guide-id");
-        const registry = getRegistry();
-        const guide = registry.find((g) => g.id === id);
-        if (guide) showSimilarGuides(guide);
-      });
-    });
-
     document.querySelectorAll("[data-guide-open]").forEach((item) => {
       if (item.dataset.bound === "true") return;
       item.dataset.bound = "true";
@@ -1219,7 +1021,7 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
 
         if (action === "find-guide") {
           activeSession = null;
-          addMessage("assistant", "Type the concern and I’ll ask only the relevant question needed to decide.");
+          addMessage("assistant", "Type the concern and I’ll review the guide nodes for the best next question.");
           clearSuggestions();
         }
 
