@@ -32,7 +32,11 @@
   }
 
   function saveState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (err) {
+      console.error("Failed to save AI assistant state:", err);
+    }
   }
 
   function getEls() {
@@ -67,6 +71,12 @@
       .trim();
   }
 
+  function compactText(text, maxLength = 180) {
+    const clean = String(text || "").replace(/\s+/g, " ").trim();
+    if (clean.length <= maxLength) return clean;
+    return clean.slice(0, maxLength - 1).trim() + "…";
+  }
+
   function getRegistry() {
     return Array.isArray(window.GUIDE_REGISTRY) ? window.GUIDE_REGISTRY : [];
   }
@@ -85,27 +95,42 @@
     return `${base}${url}`;
   }
 
+  function scoreText(input, value, points) {
+    const normalizedInput = normalizeText(input);
+    const normalizedValue = normalizeText(value);
+
+    if (!normalizedInput || !normalizedValue) return 0;
+
+    let score = 0;
+
+    if (normalizedInput.includes(normalizedValue)) {
+      score += points;
+    }
+
+    if (normalizedValue.includes(normalizedInput) && normalizedInput.length >= 5) {
+      score += Math.floor(points / 2);
+    }
+
+    const inputWords = new Set(normalizedInput.split(" ").filter(word => word.length >= 3));
+    const valueWords = normalizedValue.split(" ").filter(word => word.length >= 3);
+
+    valueWords.forEach((word) => {
+      if (inputWords.has(word)) score += 1;
+    });
+
+    return score;
+  }
+
   function scoreGuide(input, guide) {
     const normalized = normalizeText(input);
     if (!normalized) return 0;
 
     let score = 0;
 
-    if (normalizeText(guide.title) && normalized.includes(normalizeText(guide.title))) {
-      score += 12;
-    }
-
-    if (normalizeText(guide.category) && normalized.includes(normalizeText(guide.category))) {
-      score += 3;
-    }
-
-    if (normalizeText(guide.badge) && normalized.includes(normalizeText(guide.badge))) {
-      score += 2;
-    }
-
-    if (normalizeText(guide.description)) {
-      score += scoreText(input, guide.description, 4);
-    }
+    score += scoreText(input, guide.title, 12);
+    score += scoreText(input, guide.category, 3);
+    score += scoreText(input, guide.badge, 2);
+    score += scoreText(input, guide.description, 4);
 
     (guide.keywords || []).forEach((keyword) => {
       const key = normalizeText(keyword);
@@ -185,7 +210,7 @@
     const thinkingHtml = `
       <div class="fx-ai-thinking">
         <div>
-          <div class="fx-ai-thinking-text">Checking guide decision nodes and AI recommendation...</div>
+          <div class="fx-ai-thinking-text">Checking the best guide match...</div>
           <div class="fx-ai-thinking-dots">
             <span></span>
             <span></span>
@@ -253,7 +278,7 @@
         text: node.text || "",
         help: node.help || "",
         note: node.note || "",
-        choices: Array.isArray(node.choices) ? node.choices : [],
+        choices: Array.isArray(node.choices) ? node.choices.slice(0, 6) : [],
         finalRecommendation: node.finalRecommendation || ""
       }
     };
@@ -315,9 +340,7 @@
       const afterEquals = match.index + match[0].length;
       const braceIndex = html.indexOf("{", afterEquals);
 
-      if (braceIndex !== -1) {
-        return braceIndex;
-      }
+      if (braceIndex !== -1) return braceIndex;
     }
 
     return -1;
@@ -355,9 +378,7 @@
       }
 
       if (char === "\\") {
-        if (inSingle || inDouble || inTemplate) {
-          escaped = true;
-        }
+        if (inSingle || inDouble || inTemplate) escaped = true;
         continue;
       }
 
@@ -388,13 +409,9 @@
         continue;
       }
 
-      if (inSingle || inDouble || inTemplate) {
-        continue;
-      }
+      if (inSingle || inDouble || inTemplate) continue;
 
-      if (char === "{") {
-        depth++;
-      }
+      if (char === "{") depth++;
 
       if (char === "}") {
         depth--;
@@ -410,16 +427,10 @@
 
   function extractNodesFromHtml(html) {
     const startIndex = findNodesObjectStart(html);
-
-    if (startIndex === -1) {
-      return null;
-    }
+    if (startIndex === -1) return null;
 
     const objectText = extractBalancedObject(html, startIndex);
-
-    if (!objectText) {
-      return null;
-    }
+    if (!objectText) return null;
 
     try {
       return new Function(`return (${objectText});`)();
@@ -539,39 +550,9 @@
     if (preloadStarted) return;
     preloadStarted = true;
 
-    const registry = getRegistry();
-
-    registry.forEach((guide) => {
+    getRegistry().forEach((guide) => {
       loadGuideNodes(guide);
     });
-  }
-
-  function scoreText(input, value, points) {
-    const normalizedInput = normalizeText(input);
-    const normalizedValue = normalizeText(value);
-
-    if (!normalizedInput || !normalizedValue) return 0;
-
-    let score = 0;
-
-    if (normalizedInput.includes(normalizedValue)) {
-      score += points;
-    }
-
-    if (normalizedValue.includes(normalizedInput) && normalizedInput.length >= 5) {
-      score += Math.floor(points / 2);
-    }
-
-    const inputWords = new Set(normalizedInput.split(" ").filter(word => word.length >= 3));
-    const valueWords = normalizedValue.split(" ").filter(word => word.length >= 3);
-
-    valueWords.forEach((word) => {
-      if (inputWords.has(word)) {
-        score += 1;
-      }
-    });
-
-    return score;
   }
 
   function scoreNodeMatch(input, node) {
@@ -582,8 +563,8 @@
     score += scoreText(input, node.badge, 2);
     score += scoreText(input, node.nodeId, 3);
     score += scoreText(input, node.text, node.type === "final" ? 12 : 8);
-    score += scoreText(input, node.help, 5);
-    score += scoreText(input, node.note, 5);
+    score += scoreText(input, node.help, 4);
+    score += scoreText(input, node.note, 4);
     score += scoreText(input, node.finalRecommendation, 14);
 
     (node.choices || []).forEach(choice => {
@@ -598,9 +579,7 @@
       score += scoreText(input, keyword, 3);
     });
 
-    if (node.type === "final") {
-      score += 3;
-    }
+    if (node.type === "final") score += 3;
 
     return score;
   }
@@ -635,11 +614,6 @@
       .slice(0, limit);
   }
 
-  async function findBestNodeMatch(input) {
-    const topMatches = await findTopNodeMatches(input, 1);
-    return topMatches.length ? topMatches[0] : null;
-  }
-
   function getNodePath(match) {
     if (!match || !match.node || !match.parentMap) return [];
 
@@ -656,16 +630,15 @@
     return path;
   }
 
-  function renderNodePath(match) {
+  function renderCompactPath(match) {
     const path = getNodePath(match);
     if (!path.length) return "";
 
+    const lastItems = path.slice(-4);
+
     return `
-      <div class="fx-ai-node-section">
-        <div class="fx-ai-node-label">Suggested Path</div>
-        <div class="fx-ai-node-path">
-          ${path.map(item => `<span>${escapeHtml(item)}</span>`).join("<i class='fa-solid fa-angle-right'></i>")}
-        </div>
+      <div class="fx-ai-compact-path">
+        ${lastItems.map(item => `<span>${escapeHtml(item)}</span>`).join("<i class='fa-solid fa-angle-right'></i>")}
       </div>
     `;
   }
@@ -676,13 +649,13 @@
 
   function renderGuideCard(guide) {
     const safeTitle = escapeHtml(guide.title);
-    const safeDesc = escapeHtml(guide.description || "No guide description available.");
+    const safeDesc = escapeHtml(compactText(guide.description || "No guide description available.", 140));
     const safeCategory = escapeHtml(guide.category || "Guide");
     const safeUrl = escapeHtml(resolveGuideUrl(guide.url));
 
     return `
-      <div class="fx-ai-card">
-        <div class="fx-ai-card-title">Best Match</div>
+      <div class="fx-ai-card fx-ai-result-card">
+        <div class="fx-ai-card-title">Best Guide Match</div>
         <div class="fx-ai-guide-title">${safeTitle}</div>
         <div class="fx-ai-guide-desc">${safeDesc}</div>
         <div class="fx-ai-guide-meta">
@@ -695,7 +668,7 @@
           </a>
           <button class="fx-ai-btn secondary" type="button" data-guide-id="${escapeHtml(guide.id)}" data-role="show-related">
             <i class="fa-solid fa-list-ul"></i>
-            <span>Similar Guides</span>
+            <span>Similar</span>
           </button>
         </div>
       </div>
@@ -710,60 +683,54 @@
     const safeCategory = escapeHtml(guide.category || node.category || "Guide");
     const safeUrl = escapeHtml(resolveGuideUrl(guide.url || node.guideUrl || ""));
     const safeNodeId = escapeHtml(node.nodeId || "recommended step");
-    const safeNodeText = escapeHtml(node.text || "");
-    const safeHelp = escapeHtml(node.help || "");
-    const safeNote = escapeHtml(node.note || "");
-    const safeRecommendation = escapeHtml(node.finalRecommendation || node.text || "Review this guide step.");
+    const recommendation = node.finalRecommendation || node.text || "Review this guide step.";
     const directUrl = `${safeUrl}?node=${encodeURIComponent(node.nodeId || "")}`;
 
     return `
-      <div class="fx-ai-card fx-ai-node-card">
-        <div class="fx-ai-card-title">Best Node Match</div>
+      <div class="fx-ai-card fx-ai-node-card fx-ai-result-card">
+        <div class="fx-ai-card-title">Official Guide Match</div>
 
         <div class="fx-ai-guide-title">${safeGuideTitle}</div>
 
         <div class="fx-ai-guide-meta">
           <span class="fx-ai-tag">${safeCategory}</span>
-          <span class="fx-ai-tag">Node: ${safeNodeId}</span>
-          <span class="fx-ai-tag">${node.type === "final" ? "Final Recommendation" : "Decision Step"}</span>
+          <span class="fx-ai-tag">${node.type === "final" ? "Final" : "Step"}</span>
         </div>
 
-        ${renderNodePath(match)}
-
-        <div class="fx-ai-node-section">
-          <div class="fx-ai-node-label">Suggested Step</div>
-          <div class="fx-ai-guide-desc">${safeNodeText}</div>
+        <div class="fx-ai-mini-block">
+          <div class="fx-ai-mini-label">${node.type === "final" ? "Official Action" : "Suggested Step"}</div>
+          <div class="fx-ai-mini-text">${escapeHtml(compactText(recommendation, 220))}</div>
         </div>
 
-        ${safeHelp ? `
-          <div class="fx-ai-node-section">
-            <div class="fx-ai-node-label">Guide Help</div>
-            <div class="fx-ai-guide-desc">${safeHelp}</div>
-          </div>
-        ` : ""}
+        ${renderCompactPath(match)}
 
-        ${safeNote ? `
-          <div class="fx-ai-node-section">
-            <div class="fx-ai-node-label">Important Note</div>
-            <div class="fx-ai-guide-desc">${safeNote}</div>
-          </div>
-        ` : ""}
-
-        ${node.type === "final" ? `
-          <div class="fx-ai-node-section">
-            <div class="fx-ai-node-label">Recommended Action</div>
-            <div class="fx-ai-copy-box">${safeRecommendation}</div>
-          </div>
-        ` : ""}
-
-        ${Array.isArray(node.choices) && node.choices.length ? `
-          <div class="fx-ai-node-section">
-            <div class="fx-ai-node-label">Possible Next Answers</div>
-            <div class="fx-ai-choice-list">
-              ${node.choices.map(choice => `<span>${escapeHtml(choice)}</span>`).join("")}
+        <details class="fx-ai-details">
+          <summary>View guide details</summary>
+          <div class="fx-ai-detail-grid">
+            <div>
+              <strong>Node</strong>
+              <span>${safeNodeId}</span>
             </div>
+            ${node.help ? `
+              <div>
+                <strong>Help</strong>
+                <span>${escapeHtml(compactText(node.help, 220))}</span>
+              </div>
+            ` : ""}
+            ${node.note ? `
+              <div>
+                <strong>Note</strong>
+                <span>${escapeHtml(compactText(node.note, 220))}</span>
+              </div>
+            ` : ""}
+            ${Array.isArray(node.choices) && node.choices.length ? `
+              <div>
+                <strong>Next Answers</strong>
+                <span>${node.choices.slice(0, 6).map(choice => escapeHtml(choice)).join(", ")}</span>
+              </div>
+            ` : ""}
           </div>
-        ` : ""}
+        </details>
 
         <div class="fx-ai-guide-actions">
           <a class="fx-ai-link primary" href="${safeUrl}">
@@ -773,7 +740,7 @@
 
           <a class="fx-ai-link secondary" href="${directUrl}">
             <i class="fa-solid fa-location-dot"></i>
-            <span>Open Suggested Step</span>
+            <span>Open Step</span>
           </a>
         </div>
       </div>
@@ -785,7 +752,11 @@
 
     return `
       <div class="fx-ai-groq-answer">
-        ${escapeHtml(answer)}
+        <div class="fx-ai-groq-label">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          AI Recommendation
+        </div>
+        <div class="fx-ai-groq-text">${escapeHtml(answer)}</div>
       </div>
     `;
   }
@@ -805,8 +776,8 @@
     const items = guides.map((guide) => {
       return `
         <div class="fx-ai-list-item" data-guide-open="${escapeHtml(resolveGuideUrl(guide.url))}">
-          <strong>${escapeHtml(guide.title)}</strong><br>
-          <span style="font-size:0.82rem; color:#a1a1aa;">${escapeHtml(guide.description || "")}</span>
+          <strong>${escapeHtml(guide.title)}</strong>
+          <span>${escapeHtml(compactText(guide.description || "", 95))}</span>
         </div>
       `;
     }).join("");
@@ -826,7 +797,7 @@
       "assistant",
       `Hi, I’m your AI Decision Assistant.
 
-Describe the concern, issue, or case type and I’ll check the guide decision nodes to find the best recommendation.`
+Type the case concern and I’ll suggest the best guide action.`
     );
 
     setSuggestions([
@@ -850,15 +821,7 @@ Describe the concern, issue, or case type and I’ll check the guide decision no
       "assistant",
       `I couldn’t confidently match that concern yet.
 
-Try using terms like:
-• weight update per BOL
-• pallet weight
-• RVSL
-• LOA rebill
-• debtor update
-• service level mismatch
-• delayed delivery
-• pricing queue`
+Try a few more details like the dispute type, BOL note, LOA status, service level, or queue name.`
     );
   }
 
@@ -884,7 +847,7 @@ Try using terms like:
       aiAnswer = await askGroqAssistant(trimmed, topNodeMatches);
     }
 
-    await wait(250);
+    await wait(200);
     removeThinkingMessage(thinkingRow);
 
     if (bestNodeMatch) {
@@ -894,8 +857,7 @@ Try using terms like:
       addMessage(
         "assistant",
         `
-${aiAnswer ? renderGroqAnswer(aiAnswer) : `<div>I checked the guide decision nodes and found the strongest match.</div>`}
-
+${aiAnswer ? renderGroqAnswer(aiAnswer) : `<div class="fx-ai-simple-note">I found the strongest guide match.</div>`}
 ${renderNodeMatchCard(bestNodeMatch)}
         `,
         true
@@ -909,7 +871,7 @@ ${renderNodeMatchCard(bestNodeMatch)}
           onClick: openRecentGuide
         },
         {
-          label: "Browse all guides",
+          label: "Browse guides",
           onClick: browseAllGuides
         }
       ]);
@@ -921,7 +883,7 @@ ${renderNodeMatchCard(bestNodeMatch)}
       showNoMatch();
       setSuggestions([
         {
-          label: "Browse all guides",
+          label: "Browse guides",
           onClick: browseAllGuides
         }
       ]);
@@ -945,7 +907,7 @@ ${renderNodeMatchCard(bestNodeMatch)}
         onClick: openRecentGuide
       },
       {
-        label: "Show similar guides",
+        label: "Similar guides",
         onClick: () => showSimilarGuides(bestGuide)
       }
     ]);
@@ -1052,7 +1014,7 @@ ${renderNodeMatchCard(bestNodeMatch)}
     if (!els.input) return;
 
     els.input.style.height = "auto";
-    els.input.style.height = Math.min(els.input.scrollHeight, 120) + "px";
+    els.input.style.height = Math.min(els.input.scrollHeight, 96) + "px";
   }
 
   async function sendInput() {
@@ -1091,7 +1053,7 @@ ${renderNodeMatchCard(bestNodeMatch)}
         const action = button.getAttribute("data-ai-action");
 
         if (action === "find-guide") {
-          addMessage("assistant", "Describe the concern and I’ll check the guide nodes for the best matching recommendation.");
+          addMessage("assistant", "Type the concern and I’ll find the best guide action.");
         }
 
         if (action === "recent-guide") {
