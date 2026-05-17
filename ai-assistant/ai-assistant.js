@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = "fx_ai_assistant_state_v2";
+  const STORAGE_KEY = "fx_ai_assistant_state_v4";
 
   /*
     IMPORTANT:
@@ -11,12 +11,13 @@
   const state = {
     lastConcern: "",
     lastMatchedGuideId: "",
-    isOpen: false,
-    conversation: []
+    isOpen: false
   };
 
   const nodeCache = new Map();
   let preloadStarted = false;
+
+  let activeSession = null;
 
   function loadState() {
     try {
@@ -27,7 +28,6 @@
       state.lastConcern = parsed.lastConcern || "";
       state.lastMatchedGuideId = parsed.lastMatchedGuideId || "";
       state.isOpen = !!parsed.isOpen;
-      state.conversation = Array.isArray(parsed.conversation) ? parsed.conversation.slice(-8) : [];
     } catch (err) {
       console.error("Failed to load AI assistant state:", err);
     }
@@ -38,22 +38,11 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         lastConcern: state.lastConcern,
         lastMatchedGuideId: state.lastMatchedGuideId,
-        isOpen: state.isOpen,
-        conversation: state.conversation.slice(-8)
+        isOpen: state.isOpen
       }));
     } catch (err) {
       console.error("Failed to save AI assistant state:", err);
     }
-  }
-
-  function remember(role, content) {
-    state.conversation.push({
-      role,
-      content: String(content || "").slice(0, 900)
-    });
-
-    state.conversation = state.conversation.slice(-8);
-    saveState();
   }
 
   function getEls() {
@@ -215,7 +204,7 @@
     const thinkingHtml = `
       <div class="fx-ai-thinking">
         <div>
-          <div class="fx-ai-thinking-text">Thinking through the decision path...</div>
+          <div class="fx-ai-thinking-text">Thinking through the best next question...</div>
           <div class="fx-ai-thinking-dots">
             <span></span>
             <span></span>
@@ -251,7 +240,7 @@
 
     items.forEach((item) => {
       const btn = document.createElement("button");
-      btn.className = "fx-ai-suggestion-btn";
+      btn.className = item.className || "fx-ai-suggestion-btn";
       btn.textContent = item.label;
       btn.addEventListener("click", item.onClick);
       els.suggestions.appendChild(btn);
@@ -289,12 +278,12 @@
     };
   }
 
-  async function askDecisionAssistant(concern, matches) {
+  async function askDecisionAssistant(concern, matches, conversation = []) {
     try {
       if (!FX_AI_BACKEND_URL) return null;
 
       const safeMatches = Array.isArray(matches)
-        ? matches.map(buildSafeMatchForAI).filter(Boolean).slice(0, 3)
+        ? matches.map(buildSafeMatchForAI).filter(Boolean).slice(0, 5)
         : [];
 
       const response = await fetch(`${FX_AI_BACKEND_URL}/api/ai-decision`, {
@@ -305,7 +294,7 @@
         body: JSON.stringify({
           concern,
           matches: safeMatches,
-          conversation: state.conversation.slice(-8)
+          conversation
         })
       });
 
@@ -442,6 +431,7 @@
 
   function normalizeGuideNodes(guide, nodes) {
     const rawEntries = Object.entries(nodes || {});
+    const nodesById = {};
 
     const parentMap = {};
     rawEntries.forEach(([nodeId, node]) => {
@@ -455,21 +445,20 @@
     });
 
     const normalizedNodes = rawEntries.map(([nodeId, node]) => {
-      const choices = Array.isArray(node.choices)
-        ? node.choices.map(choice => choice.label || "").filter(Boolean)
+      const choicesDetailed = Array.isArray(node.choices)
+        ? node.choices.map(choice => ({
+            label: choice.label || "",
+            next: choice.next || "",
+            desc: choice.desc || ""
+          })).filter(choice => choice.label)
         : [];
 
-      const choiceDescriptions = Array.isArray(node.choices)
-        ? node.choices.map(choice => choice.desc || "").filter(Boolean)
-        : [];
-
-      const nextNodes = Array.isArray(node.choices)
-        ? node.choices.map(choice => choice.next || "").filter(Boolean)
-        : [];
-
+      const choices = choicesDetailed.map(choice => choice.label);
+      const choiceDescriptions = choicesDetailed.map(choice => choice.desc).filter(Boolean);
+      const nextNodes = choicesDetailed.map(choice => choice.next).filter(Boolean);
       const isFinal = !Array.isArray(node.choices) || node.choices.length === 0;
 
-      return {
+      const normalized = {
         guideId: guide.id,
         guideTitle: guide.title,
         guideUrl: guide.url,
@@ -482,6 +471,7 @@
         note: node.note || "",
         image: node.image || "",
         choices,
+        choicesDetailed,
         choiceDescriptions,
         nextNodes,
         finalRecommendation: isFinal ? node.text || "" : "",
@@ -502,11 +492,15 @@
           ...nextNodes
         ]
       };
+
+      nodesById[nodeId] = normalized;
+      return normalized;
     });
 
     return {
       guide,
       nodes: normalizedNodes,
+      nodesById,
       parentMap
     };
   }
@@ -580,7 +574,7 @@
     return score;
   }
 
-  async function findTopNodeMatches(input, limit = 3) {
+  async function findTopNodeMatches(input, limit = 5) {
     const registry = getRegistry();
     const results = [];
 
@@ -599,7 +593,8 @@
             guide: guideNodeData.guide,
             node,
             score,
-            parentMap: guideNodeData.parentMap || {}
+            parentMap: guideNodeData.parentMap || {},
+            guideNodeData
           });
         }
       });
@@ -717,9 +712,9 @@
     if (!result) {
       return `
         <div class="fx-ai-decision-card">
-          <div class="fx-ai-decision-kicker">Recommendation</div>
-          <h4>Review the matched guide.</h4>
-          <p>I found a possible guide match, but the AI response was unavailable.</p>
+          <div class="fx-ai-decision-kicker">Need more detail</div>
+          <h4>I found possible matches, but I need one clearer detail before deciding.</h4>
+          <p>Type the missing detail in your own words, or use the backup options below.</p>
         </div>
         ${renderSourceDetails(match)}
       `;
@@ -730,6 +725,17 @@
         <div class="fx-ai-decision-card">
           <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Need one detail")}</div>
           <h4>${escapeHtml(result.message || "I need one more detail before deciding.")}</h4>
+        </div>
+        ${renderSourceDetails(match)}
+      `;
+    }
+
+    if (result.type === "backup") {
+      return `
+        <div class="fx-ai-decision-card fx-ai-backup-card">
+          <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Backup Plan")}</div>
+          <h4>${escapeHtml(result.message || "The listed options do not clearly fit this concern.")}</h4>
+          ${result.nextStep ? `<p>${escapeHtml(result.nextStep)}</p>` : ""}
         </div>
         ${renderSourceDetails(match)}
       `;
@@ -795,21 +801,21 @@
       "assistant",
       `Hi, I’m your AI Decision Assistant.
 
-Type the case concern and I’ll either give the recommended action or ask one follow-up question.`
+Type the customer’s concern. I’ll ask only the relevant question needed to reach the right action.`
     );
 
     setSuggestions([
       {
         label: "Weight update per BOL",
-        onClick: () => handleConcern("Customer wants to apply the weight shown on the BOL.")
+        onClick: () => startNewConcern("Customer wants to apply the weight shown on the BOL.")
       },
       {
         label: "RVSL refusal",
-        onClick: () => handleConcern("Customer is refusing charges and wants reversal.")
+        onClick: () => startNewConcern("Customer is refusing charges and wants reversal.")
       },
       {
         label: "Service level mismatch",
-        onClick: () => handleConcern("Customer says the service level should be Economy but FBC shows Priority.")
+        onClick: () => startNewConcern("Customer says the service level should be Economy but FBC shows Priority.")
       }
     ]);
   }
@@ -823,103 +829,247 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     );
   }
 
-  async function handleConcern(text) {
-    const trimmed = String(text || "").trim();
-    if (!trimmed) return;
+  function buildCombinedConcern(session) {
+    if (!session) return "";
 
-    state.lastConcern = trimmed;
-    remember("user", trimmed);
+    const answerText = session.conversation.map(item => {
+      if (item.question || item.answer) {
+        return `${item.question || ""} ${item.answer || ""}`;
+      }
 
-    addMessage("user", trimmed);
+      return item.detail || "";
+    }).join(" ");
+
+    return `${session.originalConcern} ${answerText}`.trim();
+  }
+
+  async function runDecisionTurn(userTextForDisplay = null) {
+    if (!activeSession) return;
+
     clearSuggestions();
 
     const thinkingRow = addThinkingMessage();
 
-    const topNodeMatches = await findTopNodeMatches(trimmed, 3);
-    const bestNodeMatch = topNodeMatches.length ? topNodeMatches[0] : null;
-    const bestGuide = findBestGuide(trimmed);
+    const combinedConcern = buildCombinedConcern(activeSession);
+    const topMatches = await findTopNodeMatches(combinedConcern, 5);
+    const bestMatch = topMatches.length ? topMatches[0] : activeSession.lastMatch;
+
+    activeSession.lastMatches = topMatches;
+    activeSession.lastMatch = bestMatch || null;
 
     let result = null;
 
-    if (bestNodeMatch) {
-      result = await askDecisionAssistant(trimmed, topNodeMatches);
+    if (topMatches.length) {
+      result = await askDecisionAssistant(
+        activeSession.originalConcern,
+        topMatches,
+        activeSession.conversation
+      );
     }
 
     await wait(200);
     removeThinkingMessage(thinkingRow);
 
-    if (bestNodeMatch) {
-      state.lastMatchedGuideId = bestNodeMatch.guide.id;
-      saveState();
-
-      const assistantMemory = result?.type === "question"
-        ? result.message
-        : result?.action || "Recommendation provided.";
-
-      remember("assistant", assistantMemory);
-
-      addMessage(
-        "assistant",
-        renderDecisionResult(result, bestNodeMatch),
-        true
-      );
-
-      if (result?.type === "question" && Array.isArray(result.choices) && result.choices.length) {
-        setSuggestions(
-          result.choices.slice(0, 5).map(choice => ({
-            label: choice,
-            onClick: () => handleConcern(`${state.lastConcern}\nAnswer: ${choice}`)
-          }))
-        );
-      } else {
-        setSuggestions([
-          {
-            label: "Open recent match",
-            onClick: openRecentGuide
-          },
-          {
-            label: "Browse guides",
-            onClick: browseAllGuides
-          }
-        ]);
-      }
-
-      bindDynamicActions();
-      return;
-    }
-
-    if (!bestGuide) {
+    if (!bestMatch && !result) {
       showNoMatch();
-      setSuggestions([
-        {
-          label: "Browse guides",
-          onClick: browseAllGuides
-        }
-      ]);
+      setBackupSuggestions(null);
       return;
     }
 
-    state.lastMatchedGuideId = bestGuide.id;
-    saveState();
+    activeSession.lastResult = result;
 
-    addMessage(
-      "assistant",
-      `I found the most relevant guide for this concern.${renderGuideCard(bestGuide)}`,
-      true
-    );
+    if (bestMatch?.guide?.id) {
+      state.lastMatchedGuideId = bestMatch.guide.id;
+      saveState();
+    }
 
-    bindDynamicActions();
+    addMessage("assistant", renderDecisionResult(result, bestMatch), true);
 
+    if (result?.type === "question") {
+      activeSession.lastQuestion = result.message || "Please confirm the correct detail.";
+      setQuestionSuggestions(result, bestMatch);
+      return;
+    }
+
+    if (result?.type === "backup") {
+      setBackupSuggestions(bestMatch);
+      return;
+    }
+
+    activeSession = null;
     setSuggestions([
       {
         label: "Open recent match",
         onClick: openRecentGuide
       },
       {
-        label: "Similar guides",
-        onClick: () => showSimilarGuides(bestGuide)
+        label: "Browse guides",
+        onClick: browseAllGuides
+      },
+      {
+        label: "Start over",
+        onClick: clearChat
       }
     ]);
+
+    bindDynamicActions();
+  }
+
+  function setQuestionSuggestions(result, match) {
+    const choices = Array.isArray(result.choices) ? result.choices.filter(Boolean).slice(0, 5) : [];
+
+    const items = choices.map(choice => ({
+      label: choice,
+      onClick: () => continueWithAnswer(choice)
+    }));
+
+    items.push({
+      label: "None of these fit",
+      className: "fx-ai-suggestion-btn fx-ai-backup-option",
+      onClick: () => useBackupPlan("None of these fit")
+    });
+
+    items.push({
+      label: "Add details",
+      className: "fx-ai-suggestion-btn fx-ai-backup-option",
+      onClick: () => askForMoreDetails()
+    });
+
+    setSuggestions(items);
+    bindDynamicActions();
+  }
+
+  function setBackupSuggestions(match) {
+    const items = [
+      {
+        label: "Add details",
+        className: "fx-ai-suggestion-btn fx-ai-backup-option",
+        onClick: () => askForMoreDetails()
+      },
+      {
+        label: "Browse guides",
+        onClick: browseAllGuides
+      },
+      {
+        label: "Start over",
+        onClick: clearChat
+      }
+    ];
+
+    if (match?.guide?.url) {
+      items.unshift({
+        label: "Open matched guide",
+        onClick: () => {
+          window.location.href = resolveGuideUrl(match.guide.url);
+        }
+      });
+    }
+
+    setSuggestions(items);
+    bindDynamicActions();
+  }
+
+  function askForMoreDetails() {
+    addMessage(
+      "assistant",
+      `Please type the missing detail in your own words. For example, include what the customer is asking, what the BOL shows, or what system detail you already checked.`
+    );
+
+    clearSuggestions();
+
+    const els = getEls();
+    setTimeout(() => els.input?.focus(), 50);
+  }
+
+  async function useBackupPlan(answer) {
+    if (!activeSession) return;
+
+    addMessage("user", answer);
+
+    activeSession.conversation.push({
+      question: activeSession.lastQuestion || "Available choices did not fit.",
+      answer
+    });
+
+    addMessage(
+      "assistant",
+      `
+        <div class="fx-ai-decision-card fx-ai-backup-card">
+          <div class="fx-ai-decision-kicker">Backup Plan</div>
+          <h4>The listed options do not clearly fit this concern.</h4>
+          <p>Add the missing detail in your own words, or open the matched guide to review manually.</p>
+        </div>
+        ${renderSourceDetails(activeSession.lastMatch)}
+      `,
+      true
+    );
+
+    setBackupSuggestions(activeSession.lastMatch);
+  }
+
+  async function continueWithAnswer(answer) {
+    if (!activeSession) {
+      await startNewConcern(answer);
+      return;
+    }
+
+    addMessage("user", answer);
+
+    activeSession.conversation.push({
+      question: activeSession.lastQuestion || "Previous question",
+      answer
+    });
+
+    await runDecisionTurn(answer);
+  }
+
+  async function startNewConcern(text) {
+    const trimmed = String(text || "").trim();
+    if (!trimmed) return;
+
+    activeSession = {
+      originalConcern: trimmed,
+      conversation: [],
+      lastQuestion: "",
+      lastResult: null,
+      lastMatch: null,
+      lastMatches: []
+    };
+
+    state.lastConcern = trimmed;
+    saveState();
+
+    addMessage("user", trimmed);
+    clearSuggestions();
+
+    await runDecisionTurn();
+  }
+
+  async function handleFreeTextDuringSession(text) {
+    if (!activeSession) {
+      await startNewConcern(text);
+      return;
+    }
+
+    addMessage("user", text);
+
+    activeSession.conversation.push({
+      detail: text
+    });
+
+    await runDecisionTurn(text);
+  }
+
+  async function handleConcern(text) {
+    const trimmed = String(text || "").trim();
+    if (!trimmed) return;
+
+    if (activeSession) {
+      await handleFreeTextDuringSession(trimmed);
+      return;
+    }
+
+    await startNewConcern(trimmed);
   }
 
   function showSimilarGuides(baseGuide) {
@@ -939,6 +1089,7 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
 
   function browseAllGuides() {
     const registry = getRegistry();
+    activeSession = null;
     addMessage("assistant", renderGuideList(registry, "All Registered Guides"), true);
     bindDynamicActions();
     clearSuggestions();
@@ -965,7 +1116,7 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
     const els = getEls();
     if (els.messages) els.messages.innerHTML = "";
 
-    state.conversation = [];
+    activeSession = null;
     state.lastConcern = "";
     saveState();
 
@@ -1067,7 +1218,9 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
         const action = button.getAttribute("data-ai-action");
 
         if (action === "find-guide") {
-          addMessage("assistant", "Type the concern and I’ll help decide the next action.");
+          activeSession = null;
+          addMessage("assistant", "Type the concern and I’ll ask only the relevant question needed to decide.");
+          clearSuggestions();
         }
 
         if (action === "recent-guide") {
@@ -1075,6 +1228,7 @@ Please add a few more details, like the dispute type, BOL note, LOA status, serv
         }
 
         if (action === "show-guides") {
+          activeSession = null;
           browseAllGuides();
         }
 
