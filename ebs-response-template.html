@@ -1199,58 +1199,6 @@
       white-space:nowrap;
     }
 
-    .builder-search-row{
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:14px;
-      align-items:center;
-      margin-bottom:18px;
-    }
-
-    #templateSearch{
-      width:100%;
-      min-height:62px;
-      border:none;
-      outline:none;
-      border-radius:20px;
-      padding:0 54px 0 50px;
-      background:#fff;
-      color:var(--ink);
-      font-weight:800;
-      font-size:16px;
-      box-shadow:inset 0 0 0 1px rgba(58,64,24,.12);
-      transition:.22s var(--ease);
-    }
-
-    #templateSearch:focus{
-      box-shadow:inset 0 0 0 2px rgba(77,20,140,.24), 0 0 0 7px rgba(77,20,140,.08);
-      transform:translateY(-1px);
-    }
-
-    #templateSearch::placeholder{
-      color:#9aa697;
-      font-weight:600;
-    }
-
-    .builder-search-btn{
-      min-height:62px;
-      padding:0 22px;
-      border:none;
-      border-radius:20px;
-      background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
-      color:#fff;
-      font-weight:900;
-      cursor:pointer;
-      box-shadow:0 16px 30px rgba(255,102,0,.20);
-      transition:.22s var(--ease);
-      white-space:nowrap;
-    }
-
-    .builder-search-btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 22px 38px rgba(255,102,0,.28);
-    }
-
     .template-card{
       position:relative;
       overflow:hidden;
@@ -1594,8 +1542,6 @@
     }
 
     @media (max-width:720px){
-      .builder-search-row{grid-template-columns:1fr}
-      .builder-search-btn{width:100%}
       .hero-metrics{grid-template-columns:1fr}
       .builder-main,.builder-side-card{padding:16px;border-radius:28px}
       .select-grid{grid-template-columns:1fr}
@@ -1625,7 +1571,7 @@
 
                 <div class="hero-actions">
                   <button class="hero-main-btn" type="button" onclick="scrollToBuilder()">Explore EBS Response Builder <i class="fa-solid fa-arrow-down"></i></button>
-                  <button class="hero-ghost-btn" type="button" onclick="focusTemplateSearch()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
+                  <button class="hero-ghost-btn" type="button" onclick="scrollToBuilder()">Open builder <i class="fa-solid fa-envelope"></i></button>
                 </div>
 
                 <div class="hero-metrics">
@@ -1680,7 +1626,7 @@
                   <i class="fa-solid fa-truck-fast"></i>
                 </div>
                 <h2>Everything you need is ready in one place.</h2>
-                <p>Use the search, concern list, and template builder to find the right response faster. Reword when needed and avoid sending duplicate responses on reopened cases.</p>
+                <p>Use the concern list and template builder to create the right response faster. Reword when needed and avoid sending duplicate responses on reopened cases.</p>
               </div>
             </aside>
           </div>
@@ -1703,20 +1649,7 @@
                   <span id="statusPill">Ready</span>
                 </div>
               </div>
-
-              <div class="builder-search-row">
-                <div class="search-input-wrap">
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                  <input id="templateSearch" type="text" placeholder="Search concern, type, template text, or note.">
-                  <button id="clearSearchBtn" type="button" onclick="clearTemplateSearch()">×</button>
-                </div>
-
-                <button class="builder-search-btn" type="button" onclick="focusTemplateSearch()">
-                  Focus search
-                </button>
-              </div>
-
-              <div class="template-card">
+<div class="template-card">
                 <div class="template-head">
                   <div>
                     <div class="template-kicker"><i class="fa-solid fa-wand-magic-sparkles"></i> Template builder</div>
@@ -2063,63 +1996,6 @@ function initEbsPage() {
     });
   };
 
-
-  window.focusTemplateSearch = function () {
-    const target = document.getElementById("templateSearch");
-    if (!target) {
-      scrollToBuilder();
-      return;
-    }
-
-    target.focus();
-    target.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
-  window.clearTemplateSearch = function () {
-    const input = document.getElementById("templateSearch");
-    const clearBtn = document.getElementById("clearSearchBtn");
-    if (!input) return;
-    input.value = "";
-    if (clearBtn) clearBtn.style.display = "none";
-    filterEbsOptions("");
-    input.focus();
-  };
-
-  function filterEbsOptions(query) {
-    query = String(query || "").toLowerCase().trim();
-    const clearBtn = document.getElementById("clearSearchBtn");
-    if (clearBtn) clearBtn.style.display = query ? "block" : "none";
-
-    if (!DATA.length) return;
-
-    const concerns = [...new Set(DATA.map(r => r.Concern).filter(Boolean))].sort();
-
-    if (!query) {
-      populateConcernOptions(concerns);
-      return;
-    }
-
-    const matchingConcerns = concerns.filter(concern => {
-      const rows = DATA.filter(r => r.Concern === concern);
-      return rows.some(r => {
-        return [
-          r.Concern,
-          r.Description,
-          r.Type,
-          r["Response Template"],
-          r.Note
-        ].join(" ").toLowerCase().includes(query);
-      });
-    });
-
-    populateConcernOptions(matchingConcerns);
-    typeSelect.innerHTML = `<option value="">Select Type</option>`;
-    typeSelect.disabled = true;
-    descBox.textContent = matchingConcerns.length ? "Select a matching concern to view the description." : "No matching concern found.";
-    descBox.classList.toggle("empty", !matchingConcerns.length);
-    clearTemplateState();
-  }
-
   function showToast(msg = "Copied!") {
     const toast = document.getElementById("toast");
     toast.textContent = msg;
@@ -2251,19 +2127,6 @@ function initEbsPage() {
       const fullConcernList = [...new Set(DATA.map(r => r.Concern).filter(Boolean))].sort();
       populateConcernOptions(fullConcernList);
       updateSnapshot();
-
-      const templateSearch = document.getElementById("templateSearch");
-      const templateClearBtn = document.getElementById("clearSearchBtn");
-      if (templateSearch && !templateSearch.dataset.bound) {
-        templateSearch.dataset.bound = "true";
-        templateSearch.addEventListener("input", () => {
-          filterEbsOptions(templateSearch.value);
-        });
-      }
-      if (templateClearBtn && !templateClearBtn.dataset.bound) {
-        templateClearBtn.dataset.bound = "true";
-        templateClearBtn.addEventListener("click", clearTemplateSearch);
-      }
     })
     .catch(err => {
       console.error(err);
