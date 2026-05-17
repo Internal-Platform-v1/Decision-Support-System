@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = "fx_ai_assistant_state_v8";
+  const STORAGE_KEY = "fx_ai_assistant_state_v10";
   const FX_AI_BACKEND_URL = "https://fx-ai-groq-server.onrender.com";
 
   const state = { isOpen: false, lastMatchedGuideId: "" };
@@ -45,6 +45,12 @@
 
   function getRegistry() {
     return Array.isArray(window.GUIDE_REGISTRY) ? window.GUIDE_REGISTRY : [];
+  }
+
+  function getNodeGuideRegistry() {
+    return getRegistry().filter(guide => {
+      return !guide.type || guide.type === "node-guide";
+    });
   }
 
   function getBasePath() {
@@ -343,7 +349,7 @@
   }
 
   async function loadAllGuideNodes() {
-    const registry = getRegistry();
+    const registry = getNodeGuideRegistry();
     const loaded = await Promise.all(registry.map(guide => loadGuideNodes(guide)));
     return loaded.filter(Boolean);
   }
@@ -485,7 +491,7 @@
     const best = candidates[0];
 
     // If it only knows the branch but needs an answer, ask a relevant question instead of guessing.
-    if (!best || best.score < 55) return null;
+    if (!best || best.score < 40) return null;
 
     return {
       type: "recommendation",
@@ -550,7 +556,7 @@
           guides: guideMaps.map(buildGuidePayload),
           allGuideSummaries: buildGuideSummaryPayload(),
           conversation,
-          localAnswer: localAnswer?.type === "recommendation" ? localAnswer : null
+          localAnswerHint: localAnswer?.type === "recommendation" ? localAnswer : null
         })
       });
 
@@ -559,11 +565,8 @@
       const data = await response.json();
       if (!data.ok || !data.result) throw new Error(data.error || "No result.");
 
-      // Corr-code questions should never return a vague question when a local node answer exists.
-      if (asksForCorrCode(concern) && data.result.type === "question" && localAnswer) {
-        return localAnswer;
-      }
-
+      // Groq/server should verify the final answer from the full node map.
+      // Do not force the browser's local shortcut when the scenario is ambiguous.
       return data.result;
     } catch (err) {
       console.error("AI backend failed:", err);
@@ -894,7 +897,7 @@
   function showWelcome() {
     addMessage("assistant", `Hi, I’m your AI Decision Assistant.
 
-Type the customer concern. I’ll read the guide nodes, ask only what is missing, and give the recommended action.`);
+Type the customer’s concern. I’ll read the guide nodes, ask relevant questions, and give the recommended action.`);
 
     setSuggestions([
       { label: "Weight update per BOL", onClick: () => startNewConcern("weight update per bol. what is the corr code?") },
@@ -991,25 +994,6 @@ Type the customer concern. I’ll read the guide nodes, ask only what is missing
       }
     }, 80);
   }
-
-
-  window.FX_AI_DEBUG = async function () {
-    const registry = getRegistry();
-    const loaded = await loadAllGuideNodes();
-    const summary = loaded.map(item => ({
-      id: item.guide.id,
-      title: item.guide.title,
-      url: item.guide.url,
-      nodes: item.nodes.length,
-      hasActionAnswers: item.nodes.some(n => (n.choicesDetailed || []).some(c => c.action))
-    }));
-    console.table(summary);
-    return {
-      registryCount: registry.length,
-      loadedGuideCount: loaded.length,
-      guides: summary
-    };
-  };
 
   waitForMarkup();
 })();
