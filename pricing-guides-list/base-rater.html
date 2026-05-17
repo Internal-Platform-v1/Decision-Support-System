@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-protected">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -20,6 +20,10 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <style>
+    html.page-protected,
+    html.page-protected body{
+      visibility:hidden;
+    }
     :root{
       --bg:#07111f;
       --bg-soft:#0c1728;
@@ -1528,6 +1532,34 @@
 
     window.auth = firebase.auth();
     window.db = firebase.firestore();
+
+    /* =========================================================
+       PAGE AUTH GUARD
+       Prevents direct URL access without login
+    ========================================================= */
+    window.auth.onAuthStateChanged(async function(user) {
+      try {
+        if (!user) {
+          window.location.replace("../index.html");
+          return;
+        }
+
+        await user.reload();
+
+        const refreshedUser = window.auth.currentUser;
+
+        if (!refreshedUser || !refreshedUser.emailVerified) {
+          window.location.replace("../index.html");
+          return;
+        }
+
+        document.documentElement.classList.remove("page-protected");
+
+      } catch (error) {
+        console.error("Auth guard error:", error);
+        window.location.replace("../index.html");
+      }
+    });
   </script>
 
   <script src="../assets/js/header-loader.js"></script>
