@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = "fx_ai_assistant_state_v1";
+  const STORAGE_KEY = "fx_ai_assistant_state_v2";
 
   /*
     IMPORTANT:
@@ -11,7 +11,8 @@
   const state = {
     lastConcern: "",
     lastMatchedGuideId: "",
-    isOpen: false
+    isOpen: false,
+    conversation: []
   };
 
   const nodeCache = new Map();
@@ -26,6 +27,7 @@
       state.lastConcern = parsed.lastConcern || "";
       state.lastMatchedGuideId = parsed.lastMatchedGuideId || "";
       state.isOpen = !!parsed.isOpen;
+      state.conversation = Array.isArray(parsed.conversation) ? parsed.conversation.slice(-8) : [];
     } catch (err) {
       console.error("Failed to load AI assistant state:", err);
     }
@@ -33,10 +35,25 @@
 
   function saveState() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        lastConcern: state.lastConcern,
+        lastMatchedGuideId: state.lastMatchedGuideId,
+        isOpen: state.isOpen,
+        conversation: state.conversation.slice(-8)
+      }));
     } catch (err) {
       console.error("Failed to save AI assistant state:", err);
     }
+  }
+
+  function remember(role, content) {
+    state.conversation.push({
+      role,
+      content: String(content || "").slice(0, 900)
+    });
+
+    state.conversation = state.conversation.slice(-8);
+    saveState();
   }
 
   function getEls() {
@@ -103,9 +120,7 @@
 
     let score = 0;
 
-    if (normalizedInput.includes(normalizedValue)) {
-      score += points;
-    }
+    if (normalizedInput.includes(normalizedValue)) score += points;
 
     if (normalizedValue.includes(normalizedInput) && normalizedInput.length >= 5) {
       score += Math.floor(points / 2);
@@ -122,9 +137,6 @@
   }
 
   function scoreGuide(input, guide) {
-    const normalized = normalizeText(input);
-    if (!normalized) return 0;
-
     let score = 0;
 
     score += scoreText(input, guide.title, 12);
@@ -133,14 +145,7 @@
     score += scoreText(input, guide.description, 4);
 
     (guide.keywords || []).forEach((keyword) => {
-      const key = normalizeText(keyword);
-      if (!key) return;
-
-      if (normalized.includes(key)) score += 8;
-
-      key.split(/\s+/).forEach((part) => {
-        if (part && part.length >= 3 && normalized.includes(part)) score += 1;
-      });
+      score += scoreText(input, keyword, 8);
     });
 
     return score;
@@ -210,7 +215,7 @@
     const thinkingHtml = `
       <div class="fx-ai-thinking">
         <div>
-          <div class="fx-ai-thinking-text">Checking the best guide match...</div>
+          <div class="fx-ai-thinking-text">Thinking through the decision path...</div>
           <div class="fx-ai-thinking-dots">
             <span></span>
             <span></span>
@@ -254,7 +259,7 @@
   }
 
   /* ==========================================================
-     GROQ BACKEND CONNECTION
+     GROQ DECISION ASSISTANT
   ========================================================== */
 
   function buildSafeMatchForAI(match) {
@@ -278,15 +283,15 @@
         text: node.text || "",
         help: node.help || "",
         note: node.note || "",
-        choices: Array.isArray(node.choices) ? node.choices.slice(0, 6) : [],
+        choices: Array.isArray(node.choices) ? node.choices.slice(0, 8) : [],
         finalRecommendation: node.finalRecommendation || ""
       }
     };
   }
 
-  async function askGroqAssistant(concern, matches) {
+  async function askDecisionAssistant(concern, matches) {
     try {
-      if (!FX_AI_BACKEND_URL) return "";
+      if (!FX_AI_BACKEND_URL) return null;
 
       const safeMatches = Array.isArray(matches)
         ? matches.map(buildSafeMatchForAI).filter(Boolean).slice(0, 3)
@@ -299,30 +304,25 @@
         },
         body: JSON.stringify({
           concern,
-          matches: safeMatches
+          matches: safeMatches,
+          conversation: state.conversation.slice(-8)
         })
       });
 
-      if (!response.ok) {
-        throw new Error("AI backend request failed.");
-      }
+      if (!response.ok) throw new Error("AI backend request failed.");
 
       const data = await response.json();
+      if (!data.ok || !data.result) throw new Error(data.error || "No AI result returned.");
 
-      if (!data.ok || !data.answer) {
-        throw new Error(data.error || "No AI answer returned.");
-      }
-
-      return data.answer;
+      return data.result;
     } catch (error) {
-      console.error("Groq assistant failed:", error);
-      return "";
+      console.error("AI decision assistant failed:", error);
+      return null;
     }
   }
 
   /* ==========================================================
      NODE INTELLIGENCE
-     The assistant reads const NODES directly from each guide page.
   ========================================================== */
 
   function findNodesObjectStart(html) {
@@ -514,13 +514,10 @@
   async function loadGuideNodes(guide) {
     if (!guide || !guide.id || !guide.url) return null;
 
-    if (nodeCache.has(guide.id)) {
-      return nodeCache.get(guide.id);
-    }
+    if (nodeCache.has(guide.id)) return nodeCache.get(guide.id);
 
     try {
-      const url = resolveGuideUrl(guide.url);
-      const response = await fetch(url, { cache: "force-cache" });
+      const response = await fetch(resolveGuideUrl(guide.url), { cache: "force-cache" });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch guide page: ${guide.url}`);
@@ -537,7 +534,6 @@
 
       const normalized = normalizeGuideNodes(guide, nodes);
       nodeCache.set(guide.id, normalized);
-
       return normalized;
     } catch (error) {
       console.error("Failed to load guide nodes:", guide.title, error);
@@ -649,15 +645,17 @@
 
   function renderGuideCard(guide) {
     const safeTitle = escapeHtml(guide.title);
-    const safeDesc = escapeHtml(compactText(guide.description || "No guide description available.", 140));
+    const safeDesc = escapeHtml(compactText(guide.description || "No guide description available.", 120));
     const safeCategory = escapeHtml(guide.category || "Guide");
     const safeUrl = escapeHtml(resolveGuideUrl(guide.url));
 
     return `
-      <div class="fx-ai-card fx-ai-result-card">
-        <div class="fx-ai-card-title">Best Guide Match</div>
-        <div class="fx-ai-guide-title">${safeTitle}</div>
-        <div class="fx-ai-guide-desc">${safeDesc}</div>
+      <div class="fx-ai-source-card">
+        <div class="fx-ai-source-head">
+          <span>Matched Guide</span>
+          <strong>${safeTitle}</strong>
+        </div>
+        <p>${safeDesc}</p>
         <div class="fx-ai-guide-meta">
           <span class="fx-ai-tag">${safeCategory}</span>
         </div>
@@ -666,98 +664,98 @@
             <i class="fa-solid fa-arrow-up-right-from-square"></i>
             <span>Open Guide</span>
           </a>
-          <button class="fx-ai-btn secondary" type="button" data-guide-id="${escapeHtml(guide.id)}" data-role="show-related">
-            <i class="fa-solid fa-list-ul"></i>
-            <span>Similar</span>
-          </button>
         </div>
       </div>
     `;
   }
 
-  function renderNodeMatchCard(match) {
+  function renderSourceDetails(match) {
+    if (!match) return "";
+
     const guide = match.guide || {};
     const node = match.node || {};
-
-    const safeGuideTitle = escapeHtml(guide.title || node.guideTitle || "Recommended Guide");
-    const safeCategory = escapeHtml(guide.category || node.category || "Guide");
     const safeUrl = escapeHtml(resolveGuideUrl(guide.url || node.guideUrl || ""));
-    const safeNodeId = escapeHtml(node.nodeId || "recommended step");
-    const recommendation = node.finalRecommendation || node.text || "Review this guide step.";
     const directUrl = `${safeUrl}?node=${encodeURIComponent(node.nodeId || "")}`;
+    const recommendation = compactText(node.finalRecommendation || node.text || "Review this guide step.", 220);
 
     return `
-      <div class="fx-ai-card fx-ai-node-card fx-ai-result-card">
-        <div class="fx-ai-card-title">Official Guide Match</div>
+      <details class="fx-ai-source-details">
+        <summary>View matched guide</summary>
 
-        <div class="fx-ai-guide-title">${safeGuideTitle}</div>
-
-        <div class="fx-ai-guide-meta">
-          <span class="fx-ai-tag">${safeCategory}</span>
-          <span class="fx-ai-tag">${node.type === "final" ? "Final" : "Step"}</span>
-        </div>
-
-        <div class="fx-ai-mini-block">
-          <div class="fx-ai-mini-label">${node.type === "final" ? "Official Action" : "Suggested Step"}</div>
-          <div class="fx-ai-mini-text">${escapeHtml(compactText(recommendation, 220))}</div>
-        </div>
-
-        ${renderCompactPath(match)}
-
-        <details class="fx-ai-details">
-          <summary>View guide details</summary>
-          <div class="fx-ai-detail-grid">
-            <div>
-              <strong>Node</strong>
-              <span>${safeNodeId}</span>
-            </div>
-            ${node.help ? `
-              <div>
-                <strong>Help</strong>
-                <span>${escapeHtml(compactText(node.help, 220))}</span>
-              </div>
-            ` : ""}
-            ${node.note ? `
-              <div>
-                <strong>Note</strong>
-                <span>${escapeHtml(compactText(node.note, 220))}</span>
-              </div>
-            ` : ""}
-            ${Array.isArray(node.choices) && node.choices.length ? `
-              <div>
-                <strong>Next Answers</strong>
-                <span>${node.choices.slice(0, 6).map(choice => escapeHtml(choice)).join(", ")}</span>
-              </div>
-            ` : ""}
+        <div class="fx-ai-source-card">
+          <div class="fx-ai-source-head">
+            <span>${node.type === "final" ? "Official Final Match" : "Official Decision Step"}</span>
+            <strong>${escapeHtml(guide.title || node.guideTitle || "Recommended Guide")}</strong>
           </div>
-        </details>
 
-        <div class="fx-ai-guide-actions">
-          <a class="fx-ai-link primary" href="${safeUrl}">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            <span>Open Guide</span>
-          </a>
+          <p>${escapeHtml(recommendation)}</p>
 
-          <a class="fx-ai-link secondary" href="${directUrl}">
-            <i class="fa-solid fa-location-dot"></i>
-            <span>Open Step</span>
-          </a>
+          ${renderCompactPath(match)}
+
+          <div class="fx-ai-guide-meta">
+            <span class="fx-ai-tag">${escapeHtml(guide.category || node.category || "Guide")}</span>
+            <span class="fx-ai-tag">${escapeHtml(node.nodeId || "step")}</span>
+          </div>
+
+          <div class="fx-ai-guide-actions">
+            <a class="fx-ai-link primary" href="${safeUrl}">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <span>Open Guide</span>
+            </a>
+
+            <a class="fx-ai-link secondary" href="${directUrl}">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>Open Step</span>
+            </a>
+          </div>
         </div>
-      </div>
+      </details>
     `;
   }
 
-  function renderGroqAnswer(answer) {
-    if (!answer) return "";
+  function renderDecisionResult(result, match) {
+    if (!result) {
+      return `
+        <div class="fx-ai-decision-card">
+          <div class="fx-ai-decision-kicker">Recommendation</div>
+          <h4>Review the matched guide.</h4>
+          <p>I found a possible guide match, but the AI response was unavailable.</p>
+        </div>
+        ${renderSourceDetails(match)}
+      `;
+    }
+
+    if (result.type === "question") {
+      return `
+        <div class="fx-ai-decision-card">
+          <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Need one detail")}</div>
+          <h4>${escapeHtml(result.message || "I need one more detail before deciding.")}</h4>
+        </div>
+        ${renderSourceDetails(match)}
+      `;
+    }
 
     return `
-      <div class="fx-ai-groq-answer">
-        <div class="fx-ai-groq-label">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-          AI Recommendation
-        </div>
-        <div class="fx-ai-groq-text">${escapeHtml(answer)}</div>
+      <div class="fx-ai-decision-card">
+        <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Recommended Action")}</div>
+        <h4>${escapeHtml(result.action || "Review the matched guide.")}</h4>
+
+        ${result.reason ? `
+          <div class="fx-ai-answer-row">
+            <span>Why</span>
+            <p>${escapeHtml(result.reason)}</p>
+          </div>
+        ` : ""}
+
+        ${result.nextStep ? `
+          <div class="fx-ai-answer-row">
+            <span>Next Step</span>
+            <p>${escapeHtml(result.nextStep)}</p>
+          </div>
+        ` : ""}
       </div>
+
+      ${renderSourceDetails(match)}
     `;
   }
 
@@ -797,7 +795,7 @@
       "assistant",
       `Hi, I’m your AI Decision Assistant.
 
-Type the case concern and I’ll suggest the best guide action.`
+Type the case concern and I’ll either give the recommended action or ask one follow-up question.`
     );
 
     setSuggestions([
@@ -819,9 +817,9 @@ Type the case concern and I’ll suggest the best guide action.`
   function showNoMatch() {
     addMessage(
       "assistant",
-      `I couldn’t confidently match that concern yet.
+      `I couldn’t confidently match that yet.
 
-Try a few more details like the dispute type, BOL note, LOA status, service level, or queue name.`
+Please add a few more details, like the dispute type, BOL note, LOA status, service level, or queue name.`
     );
   }
 
@@ -830,7 +828,7 @@ Try a few more details like the dispute type, BOL note, LOA status, service leve
     if (!trimmed) return;
 
     state.lastConcern = trimmed;
-    saveState();
+    remember("user", trimmed);
 
     addMessage("user", trimmed);
     clearSuggestions();
@@ -841,10 +839,10 @@ Try a few more details like the dispute type, BOL note, LOA status, service leve
     const bestNodeMatch = topNodeMatches.length ? topNodeMatches[0] : null;
     const bestGuide = findBestGuide(trimmed);
 
-    let aiAnswer = "";
+    let result = null;
 
     if (bestNodeMatch) {
-      aiAnswer = await askGroqAssistant(trimmed, topNodeMatches);
+      result = await askDecisionAssistant(trimmed, topNodeMatches);
     }
 
     await wait(200);
@@ -854,28 +852,39 @@ Try a few more details like the dispute type, BOL note, LOA status, service leve
       state.lastMatchedGuideId = bestNodeMatch.guide.id;
       saveState();
 
+      const assistantMemory = result?.type === "question"
+        ? result.message
+        : result?.action || "Recommendation provided.";
+
+      remember("assistant", assistantMemory);
+
       addMessage(
         "assistant",
-        `
-${aiAnswer ? renderGroqAnswer(aiAnswer) : `<div class="fx-ai-simple-note">I found the strongest guide match.</div>`}
-${renderNodeMatchCard(bestNodeMatch)}
-        `,
+        renderDecisionResult(result, bestNodeMatch),
         true
       );
 
+      if (result?.type === "question" && Array.isArray(result.choices) && result.choices.length) {
+        setSuggestions(
+          result.choices.slice(0, 5).map(choice => ({
+            label: choice,
+            onClick: () => handleConcern(`${state.lastConcern}\nAnswer: ${choice}`)
+          }))
+        );
+      } else {
+        setSuggestions([
+          {
+            label: "Open recent match",
+            onClick: openRecentGuide
+          },
+          {
+            label: "Browse guides",
+            onClick: browseAllGuides
+          }
+        ]);
+      }
+
       bindDynamicActions();
-
-      setSuggestions([
-        {
-          label: "Open recent match",
-          onClick: openRecentGuide
-        },
-        {
-          label: "Browse guides",
-          onClick: browseAllGuides
-        }
-      ]);
-
       return;
     }
 
@@ -955,6 +964,11 @@ ${renderNodeMatchCard(bestNodeMatch)}
   function clearChat() {
     const els = getEls();
     if (els.messages) els.messages.innerHTML = "";
+
+    state.conversation = [];
+    state.lastConcern = "";
+    saveState();
+
     clearSuggestions();
     showWelcome();
   }
@@ -1053,7 +1067,7 @@ ${renderNodeMatchCard(bestNodeMatch)}
         const action = button.getAttribute("data-ai-action");
 
         if (action === "find-guide") {
-          addMessage("assistant", "Type the concern and I’ll find the best guide action.");
+          addMessage("assistant", "Type the concern and I’ll help decide the next action.");
         }
 
         if (action === "recent-guide") {
@@ -1078,9 +1092,7 @@ ${renderNodeMatchCard(bestNodeMatch)}
 
     setTimeout(startNodePreload, 800);
 
-    if (state.isOpen) {
-      openPanel();
-    }
+    if (state.isOpen) openPanel();
   }
 
   function waitForMarkup() {
