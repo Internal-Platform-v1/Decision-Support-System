@@ -1,6 +1,13 @@
 (function () {
   const STORAGE_KEY = "fx_ai_assistant_state_v1";
 
+  /*
+    IMPORTANT:
+    Replace this URL if your Render service URL is different.
+    Do NOT add /health or /api/ai-decision here.
+  */
+  const FX_AI_BACKEND_URL = "https://fx-ai-groq-server.onrender.com";
+
   const state = {
     lastConcern: "",
     lastMatchedGuideId: "",
@@ -178,7 +185,7 @@
     const thinkingHtml = `
       <div class="fx-ai-thinking">
         <div>
-          <div class="fx-ai-thinking-text">Checking guide decision nodes...</div>
+          <div class="fx-ai-thinking-text">Checking guide decision nodes and AI recommendation...</div>
           <div class="fx-ai-thinking-dots">
             <span></span>
             <span></span>
@@ -219,6 +226,73 @@
       btn.addEventListener("click", item.onClick);
       els.suggestions.appendChild(btn);
     });
+  }
+
+  /* ==========================================================
+     GROQ BACKEND CONNECTION
+  ========================================================== */
+
+  function buildSafeMatchForAI(match) {
+    if (!match) return null;
+
+    const guide = match.guide || {};
+    const node = match.node || {};
+
+    return {
+      score: match.score || 0,
+      guide: {
+        id: guide.id || node.guideId || "",
+        title: guide.title || node.guideTitle || "",
+        url: guide.url || node.guideUrl || "",
+        category: guide.category || node.category || "",
+        description: guide.description || ""
+      },
+      node: {
+        nodeId: node.nodeId || "",
+        type: node.type || "",
+        text: node.text || "",
+        help: node.help || "",
+        note: node.note || "",
+        choices: Array.isArray(node.choices) ? node.choices : [],
+        finalRecommendation: node.finalRecommendation || ""
+      }
+    };
+  }
+
+  async function askGroqAssistant(concern, matches) {
+    try {
+      if (!FX_AI_BACKEND_URL) return "";
+
+      const safeMatches = Array.isArray(matches)
+        ? matches.map(buildSafeMatchForAI).filter(Boolean).slice(0, 3)
+        : [];
+
+      const response = await fetch(`${FX_AI_BACKEND_URL}/api/ai-decision`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          concern,
+          matches: safeMatches
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("AI backend request failed.");
+      }
+
+      const data = await response.json();
+
+      if (!data.ok || !data.answer) {
+        throw new Error(data.error || "No AI answer returned.");
+      }
+
+      return data.answer;
+    } catch (error) {
+      console.error("Groq assistant failed:", error);
+      return "";
+    }
   }
 
   /* ==========================================================
@@ -531,11 +605,9 @@
     return score;
   }
 
-  async function findBestNodeMatch(input) {
+  async function findTopNodeMatches(input, limit = 3) {
     const registry = getRegistry();
-
-    let best = null;
-    let bestScore = 0;
+    const results = [];
 
     const allGuideNodeData = await Promise.all(
       registry.map(guide => loadGuideNodes(guide))
@@ -547,19 +619,25 @@
       guideNodeData.nodes.forEach(node => {
         const score = scoreNodeMatch(input, node);
 
-        if (score > bestScore) {
-          bestScore = score;
-          best = {
+        if (score > 0) {
+          results.push({
             guide: guideNodeData.guide,
             node,
             score,
             parentMap: guideNodeData.parentMap || {}
-          };
+          });
         }
       });
     });
 
-    return bestScore > 0 ? best : null;
+    return results
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
+  }
+
+  async function findBestNodeMatch(input) {
+    const topMatches = await findTopNodeMatches(input, 1);
+    return topMatches.length ? topMatches[0] : null;
   }
 
   function getNodePath(match) {
@@ -702,6 +780,16 @@
     `;
   }
 
+  function renderGroqAnswer(answer) {
+    if (!answer) return "";
+
+    return `
+      <div class="fx-ai-groq-answer">
+        ${escapeHtml(answer)}
+      </div>
+    `;
+  }
+
   function renderGuideList(guides, title = "Available Guides") {
     if (!guides.length) {
       return `
@@ -786,8 +874,15 @@ Try using terms like:
 
     const thinkingRow = addThinkingMessage();
 
-    const bestNodeMatch = await findBestNodeMatch(trimmed);
+    const topNodeMatches = await findTopNodeMatches(trimmed, 3);
+    const bestNodeMatch = topNodeMatches.length ? topNodeMatches[0] : null;
     const bestGuide = findBestGuide(trimmed);
+
+    let aiAnswer = "";
+
+    if (bestNodeMatch) {
+      aiAnswer = await askGroqAssistant(trimmed, topNodeMatches);
+    }
 
     await wait(250);
     removeThinkingMessage(thinkingRow);
@@ -798,7 +893,11 @@ Try using terms like:
 
       addMessage(
         "assistant",
-        `I checked the guide decision nodes and found the strongest match.${renderNodeMatchCard(bestNodeMatch)}`,
+        `
+${aiAnswer ? renderGroqAnswer(aiAnswer) : `<div>I checked the guide decision nodes and found the strongest match.</div>`}
+
+${renderNodeMatchCard(bestNodeMatch)}
+        `,
         true
       );
 
