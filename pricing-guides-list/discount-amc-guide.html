@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>DISCOUNT-AMC</title>
 
+  <script>
+    window.SITE_BASE = "../";
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -12,15 +16,56 @@
   <link rel="stylesheet" href="../assets/css/header-footer-style.css">
   
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    window.auth = firebase.auth();
+    window.db = firebase.firestore();
+
+    /* =========================================================
+       PAGE AUTH GUARD
+       Prevents direct URL access without login
+    ========================================================= */
+    window.auth.onAuthStateChanged(async function(user) {
+      try {
+        if (!user) {
+          window.location.replace("../index.html");
+          return;
+        }
+
+        await user.reload();
+
+        const refreshedUser = window.auth.currentUser;
+
+        if (!refreshedUser || !refreshedUser.emailVerified) {
+          window.location.replace("../index.html");
+          return;
+        }
+
+        document.documentElement.classList.remove("page-protected");
+      } catch (error) {
+        console.error("Auth guard error:", error);
+        window.location.replace("../index.html");
+      }
+    });
+  </script>
+
+
  <style>
-
-  html.page-protected,
-  html.page-protected body{
-    visibility:hidden;
-  }
-
 
   html.page-protected,
   html.page-protected body{
@@ -1785,6 +1830,17 @@ Follow this guide to resolve DISCOUNT-AMC dispute or any related concern.
 <script src="../assets/js/footer-loader.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    });
+  }
+
   const db = window.db || firebase.firestore();
   const TEMPLATE_COLLECTION = "discount_amc_template";
   const FEEDBACK_COLLECTION = "feedback";
