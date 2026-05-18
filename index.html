@@ -507,7 +507,7 @@
       <div id="message" class="message"></div>
 
       <div class="foot-note">
-        Only verified, approved, and trusted-device users can access the main guide page.
+        Only verified and approved users can access the main guide page.
       </div>
     </section>
   </div>
@@ -577,8 +577,6 @@
       if (isLoading) {
         if (stage === "checking") {
           text = "Checking account access...";
-        } else if (stage === "device") {
-          text = "Checking trusted device...";
         } else if (stage === "redirect") {
           text = "Preparing your workspace...";
         }
@@ -587,36 +585,6 @@
       loginBtn.innerHTML = isLoading
         ? `<span class="btn-loading-content"><span class="btn-spinner"></span><span>${text}</span></span>`
         : `Sign In`;
-    }
-
-    function createDeviceId() {
-      if (window.crypto && typeof window.crypto.randomUUID === "function") {
-        return window.crypto.randomUUID();
-      }
-
-      return "device-" + Date.now() + "-" + Math.random().toString(16).slice(2);
-    }
-
-    function getDeviceId() {
-      let deviceId = localStorage.getItem("decisionGuideDeviceId");
-
-      if (!deviceId) {
-        deviceId = createDeviceId();
-        localStorage.setItem("decisionGuideDeviceId", deviceId);
-      }
-
-      return deviceId;
-    }
-
-    function getDeviceLabel() {
-      const ua = navigator.userAgent || "Unknown device";
-
-      if (/Edg\//i.test(ua)) return "Microsoft Edge browser";
-      if (/Chrome\//i.test(ua)) return "Google Chrome browser";
-      if (/Firefox\//i.test(ua)) return "Firefox browser";
-      if (/Safari\//i.test(ua)) return "Safari browser";
-
-      return "Browser device";
     }
 
     async function checkApprovedUser(email) {
@@ -651,75 +619,6 @@
       };
     }
 
-    async function handleDeviceCheck(user, userData, docRef) {
-      const deviceId = getDeviceId();
-      const email = normalizeEmail(user.email);
-      const devices = Array.isArray(userData.devices) ? userData.devices : [];
-      const now = Date.now();
-      const deviceLabel = getDeviceLabel();
-      const existingIndex = devices.findIndex(device => device && device.id === deviceId);
-      const existingDevice = existingIndex >= 0 ? devices[existingIndex] : null;
-
-      if (existingDevice && existingDevice.verified === false) {
-        existingDevice.lastAttemptAt = now;
-        existingDevice.label = existingDevice.label || deviceLabel;
-        existingDevice.userAgent = navigator.userAgent || "";
-        devices[existingIndex] = existingDevice;
-        await docRef.update({ devices });
-        await auth.signOut();
-
-        showMessage(
-          "This device is still waiting for admin approval. Please contact your administrator before trying again.",
-          "error"
-        );
-        return false;
-      }
-
-      if (existingDevice && existingDevice.verified !== false) {
-        existingDevice.verified = true;
-        existingDevice.lastLoginAt = now;
-        existingDevice.label = existingDevice.label || deviceLabel;
-        existingDevice.userAgent = navigator.userAgent || "";
-        devices[existingIndex] = existingDevice;
-        await docRef.update({ devices });
-        return true;
-      }
-
-      if (devices.length === 0) {
-        devices.push({
-          id: deviceId,
-          verified: true,
-          label: deviceLabel,
-          userAgent: navigator.userAgent || "",
-          firstTrustedDevice: true,
-          addedAt: now,
-          lastLoginAt: now
-        });
-
-        await docRef.update({ devices });
-        return true;
-      }
-
-      devices.push({
-        id: deviceId,
-        verified: false,
-        label: deviceLabel,
-        userAgent: navigator.userAgent || "",
-        pendingApproval: true,
-        addedAt: now,
-        lastAttemptAt: now
-      });
-
-      await docRef.update({ devices });
-      await auth.signOut();
-
-      showMessage(
-        "New device detected. For security, this device must be approved by an administrator before access is allowed.",
-        "error"
-      );
-      return false;
-    }
-
     async function continueAfterSecurityChecks(user) {
       if (!user) {
         showMessage("Unable to sign in right now.");
@@ -751,10 +650,6 @@
         showMessage(approvalCheck.reason || "You are not authorized to access this system.");
         return;
       }
-
-      setLoadingState(true, "device");
-      const deviceAllowed = await handleDeviceCheck(user, approvalCheck.data, approvalCheck.docRef);
-      if (!deviceAllowed) return;
 
       if (approvalCheck.data.forcePasswordChange === true) {
         window.location.href = CHANGE_PASSWORD_PAGE;
