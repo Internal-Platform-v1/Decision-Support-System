@@ -2033,3 +2033,107 @@ body[data-page="links"] .tab[data-page="links"]::before{
 .user-trigger::before{
   display:none !important;
 }
+
+/* =========================================================
+   FINAL TAB TEXT STYLE
+   Bright white text, no background, selected tab glows brighter
+   Paste at the bottom of header-footer-style.css
+   ========================================================= */
+
+/* Remove nav container background completely */
+.nav-tabs{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  padding:0 !important;
+  gap:18px !important;
+}
+
+/* Default tab: bright white text only */
+.tab{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:8px 0 !important;
+  min-height:auto !important;
+
+  color:#ffffff !important;
+  font-weight:950 !important;
+
+  text-shadow:
+    0 0 6px rgba(255,255,255,.42),
+    0 0 14px rgba(216,180,254,.26) !important;
+
+  transition:
+    color .22s var(--header-ease),
+    text-shadow .22s var(--header-ease),
+    transform .22s var(--header-ease) !important;
+}
+
+/* Remove any old white pill / sweep */
+.tab::before{
+  display:none !important;
+}
+
+/* Selected / hover: still no background, just brighter glow */
+.tab:hover,
+.tab.active,
+body[data-page="home"] .tab[data-page="home"],
+body[data-page="case-directory"] .tab[data-page="case-directory"],
+body[data-page="ebs-response"] .tab[data-page="ebs-response"],
+body[data-page="fbc-comments"] .tab[data-page="fbc-comments"],
+body[data-page="links"] .tab[data-page="links"]{
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+
+  color:#ffffff !important;
+  transform:translateY(-1px) !important;
+
+  text-shadow:
+    0 0 8px rgba(255,255,255,.80),
+    0 0 18px rgba(216,180,254,.62),
+    0 0 30px rgba(109,40,217,.46),
+    0 0 42px rgba(255,102,0,.18) !important;
+}
+
+/* Keep only a small neon underline for selected / hover */
+.tab::after{
+  left:0 !important;
+  right:0 !important;
+  bottom:1px !important;
+  height:2px !important;
+  border-radius:999px !important;
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,102,0,.95),
+    rgba(255,255,255,.95),
+    rgba(216,180,254,.95),
+    transparent
+  ) !important;
+
+  box-shadow:
+    0 0 8px rgba(255,102,0,.45),
+    0 0 14px rgba(255,255,255,.35),
+    0 0 18px rgba(216,180,254,.35) !important;
+
+  opacity:0 !important;
+  transform:scaleX(.45) !important;
+}
+
+/* Show underline only when selected or hovered */
+.tab:hover::after,
+.tab.active::after,
+body[data-page="home"] .tab[data-page="home"]::after,
+body[data-page="case-directory"] .tab[data-page="case-directory"]::after,
+body[data-page="ebs-response"] .tab[data-page="ebs-response"]::after,
+body[data-page="fbc-comments"] .tab[data-page="fbc-comments"]::after,
+body[data-page="links"] .tab[data-page="links"]::after{
+  opacity:1 !important;
+  transform:scaleX(1) !important;
+}
