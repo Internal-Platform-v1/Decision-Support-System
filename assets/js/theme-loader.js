@@ -4,12 +4,14 @@
   const ALLOWED_THEMES = ["theme-fedex", "theme-atlas"];
 
   function getSavedTheme() {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    return ALLOWED_THEMES.includes(saved) ? saved : DEFAULT_THEME;
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    return ALLOWED_THEMES.includes(savedTheme) ? savedTheme : DEFAULT_THEME;
   }
 
   function applyTheme(themeName) {
     const safeTheme = ALLOWED_THEMES.includes(themeName) ? themeName : DEFAULT_THEME;
+
+    if (!document.body) return;
 
     document.body.classList.remove(...ALLOWED_THEMES);
     document.body.classList.add(safeTheme);
@@ -29,8 +31,11 @@
     const status = document.getElementById("themeSaveStatus");
     if (status) {
       status.textContent = "Theme saved";
-      setTimeout(() => {
+      status.classList.add("show");
+
+      setTimeout(function () {
         status.textContent = "";
+        status.classList.remove("show");
       }, 1800);
     }
   }
@@ -45,6 +50,10 @@
 
     selector.value = savedTheme;
     applyTheme(savedTheme);
+
+    if (selector.dataset.themeBound === "true") return true;
+
+    selector.dataset.themeBound = "true";
 
     selector.addEventListener("change", function () {
       applyTheme(this.value);
@@ -61,12 +70,14 @@
     applyTheme(getSavedTheme());
 
     let attempts = 0;
-    const maxAttempts = 40;
+    const maxAttempts = 80;
 
-    const timer = setInterval(() => {
+    const timer = setInterval(function () {
       attempts++;
 
-      if (setupThemeSelector() || attempts >= maxAttempts) {
+      const ready = setupThemeSelector();
+
+      if (ready || attempts >= maxAttempts) {
         clearInterval(timer);
       }
     }, 100);
@@ -79,8 +90,8 @@
   }
 
   window.DSSTheme = {
-    applyTheme,
-    saveTheme,
-    getSavedTheme
+    applyTheme: applyTheme,
+    saveTheme: saveTheme,
+    getSavedTheme: getSavedTheme
   };
 })();
