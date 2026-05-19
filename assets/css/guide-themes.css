@@ -1,9 +1,8 @@
 /* =========================================================
    DSS GUIDE THEMES
    FedEx = exact current FedEx guide look
-   Atlas = Atlas Green with the same premium/radiant title treatment
-   IMPORTANT:
-   Load this AFTER the guide page's internal <style> block.
+   Atlas = Atlas Green with FedEx-style radiant title only
+   IMPORTANT: Load this AFTER the guide page's internal CSS.
    ========================================================= */
 
 /* =========================================================
@@ -23,6 +22,7 @@ body.theme-fedex{
   --theme-accent-warm:#fff7ed;
 
   --theme-main-button:linear-gradient(135deg,#4d148c,#6d28d9);
+  --theme-main-button-hover:linear-gradient(135deg,#3b0f73,#6d28d9);
   --theme-choice-selected:linear-gradient(135deg,#4d148c,#6d28d9);
   --theme-progress:linear-gradient(90deg,#4d148c 0%,#6d28d9 58%,#ff6600 100%);
 
@@ -66,7 +66,6 @@ body.theme-fedex{
   --theme-shadow-md:0 16px 40px rgba(15,23,42,.08);
   --theme-shadow-choice:0 18px 36px rgba(77,20,140,.10);
   --theme-shadow-selected:0 18px 38px rgba(77,20,140,.24);
-  --theme-active-shadow:0 0 0 4px rgba(77,20,140,.10);
 }
 
 body.theme-atlas{
@@ -81,8 +80,10 @@ body.theme-atlas{
   --theme-accent-soft-2:#fbfff7;
   --theme-accent-warm:#fffbea;
 
-  --theme-main-button:linear-gradient(135deg,#3a4018,#0e5361);
-  --theme-choice-selected:linear-gradient(135deg,#0e5361,#3a4018);
+  /* Apple-green style buttons: solid, not radiant */
+  --theme-main-button:#0e5361;
+  --theme-main-button-hover:#083f4b;
+  --theme-choice-selected:#0e5361;
   --theme-progress:linear-gradient(90deg,#0e5361,#5b7f08,#c9c936);
 
   --theme-body-bg:
@@ -101,7 +102,7 @@ body.theme-atlas{
   --theme-frame-bg:rgba(255,255,255,.68);
   --theme-frame-border:rgba(255,255,255,.88);
 
-  /* Atlas version of the FedEx radiant title panel */
+  /* Atlas title keeps the premium radiant treatment only here */
   --theme-title-bg:
     radial-gradient(circle at 16% 16%, rgba(225,223,106,.26), transparent 28%),
     radial-gradient(circle at 82% 0%, rgba(14,83,97,.18), transparent 30%),
@@ -124,8 +125,7 @@ body.theme-atlas{
   --theme-shadow-xl:0 34px 90px rgba(18,31,21,.22);
   --theme-shadow-md:0 16px 40px rgba(18,31,21,.08);
   --theme-shadow-choice:0 18px 36px rgba(18,31,21,.10);
-  --theme-shadow-selected:0 18px 38px rgba(14,83,97,.22);
-  --theme-active-shadow:0 0 0 4px rgba(14,83,97,.10);
+  --theme-shadow-selected:0 16px 30px rgba(14,83,97,.20);
 }
 
 /* =========================================================
@@ -177,7 +177,7 @@ body.theme-atlas .app-frame{
   -webkit-backdrop-filter:blur(18px) !important;
 }
 
-/* Radiant title/topbar for BOTH themes */
+/* Radiant title/topbar for both themes */
 body.theme-fedex .main-topbar,
 body.theme-atlas .main-topbar{
   background:var(--theme-title-bg) !important;
@@ -216,11 +216,18 @@ body.theme-atlas .pill i{
 }
 
 body.theme-fedex .pill.primary,
-body.theme-atlas .pill.primary{
+body.theme-atlas .pill.primary,
+body.theme-fedex #statusPill,
+body.theme-atlas #statusPill{
   background:var(--theme-main-button) !important;
   color:#fff !important;
   border:none !important;
-  box-shadow:0 16px 30px rgba(0,0,0,.16) !important;
+  box-shadow:0 12px 22px rgba(0,0,0,.16) !important;
+}
+
+body.theme-atlas .pill.primary i,
+body.theme-atlas #statusPill i{
+  color:#e1df6a !important;
 }
 
 /* =========================================================
@@ -254,7 +261,7 @@ body.theme-atlas .stage-card{
 }
 
 /* =========================================================
-   PROGRESS
+   TEXT COLORS
    ========================================================= */
 
 body.theme-fedex .progress-title,
@@ -289,6 +296,10 @@ body.theme-atlas .path-answer{
   color:var(--theme-muted) !important;
 }
 
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
 body.theme-fedex .progress-bar,
 body.theme-atlas .progress-bar{
   background:var(--theme-accent-soft) !important;
@@ -316,8 +327,7 @@ body.theme-atlas .badge.alt{
   color:var(--theme-accent) !important;
 }
 
-body.theme-fedex .question-card,
-body.theme-atlas .question-card{
+body.theme-fedex .question-card{
   background:
     radial-gradient(circle at top right, rgba(109,40,217,.12), transparent 30%),
     linear-gradient(180deg,var(--theme-card),var(--theme-card-tint)) !important;
@@ -329,6 +339,7 @@ body.theme-atlas .question-card{
     radial-gradient(circle at top right, rgba(201,201,54,.17), transparent 30%),
     radial-gradient(circle at 0% 0%, rgba(14,83,97,.09), transparent 26%),
     linear-gradient(180deg,var(--theme-card),var(--theme-card-tint)) !important;
+  border-color:var(--theme-line-soft) !important;
 }
 
 body.theme-fedex .question-label,
@@ -402,7 +413,22 @@ body.theme-atlas .template-copy,
 body.theme-atlas .smart-link{
   background:var(--theme-main-button) !important;
   color:#fff !important;
-  box-shadow:0 14px 24px rgba(0,0,0,.16) !important;
+  box-shadow:0 12px 22px rgba(0,0,0,.14) !important;
+}
+
+body.theme-fedex .btn:hover,
+body.theme-fedex .app-btn.primary:hover,
+body.theme-fedex .template-copy:hover,
+body.theme-fedex .smart-link:hover{
+  background:var(--theme-main-button-hover) !important;
+}
+
+body.theme-atlas .btn:hover,
+body.theme-atlas .app-btn.primary:hover,
+body.theme-atlas .template-copy:hover,
+body.theme-atlas .smart-link:hover{
+  background:var(--theme-main-button-hover) !important;
+  box-shadow:0 16px 28px rgba(14,83,97,.22) !important;
 }
 
 body.theme-fedex .app-btn.secondary,
@@ -475,7 +501,25 @@ body.theme-atlas .path-empty,
 body.theme-atlas .path-item,
 body.theme-atlas .path-jump{
   background:var(--theme-card-soft) !important;
-  border-color:#e7edf4 !important;
+  border:1px solid #e7edf4 !important;
+  box-shadow:none !important;
+}
+
+/* Important: selected path should NOT become colored */
+body.theme-fedex .path-jump.active,
+body.theme-atlas .path-jump.active{
+  background:var(--theme-card-soft) !important;
+  border:1px solid #e7edf4 !important;
+  box-shadow:none !important;
+}
+
+body.theme-fedex .path-jump.active .path-step,
+body.theme-fedex .path-jump.active .path-question,
+body.theme-fedex .path-jump.active .path-answer,
+body.theme-atlas .path-jump.active .path-step,
+body.theme-atlas .path-jump.active .path-question,
+body.theme-atlas .path-jump.active .path-answer{
+  color:inherit !important;
 }
 
 body.theme-fedex .path-jump:hover,
@@ -487,12 +531,6 @@ body.theme-atlas .template-tag:hover{
   background:var(--theme-accent-soft) !important;
   border-color:var(--theme-line-soft) !important;
   color:var(--theme-accent) !important;
-}
-
-body.theme-fedex .path-jump.active,
-body.theme-atlas .path-jump.active{
-  border:2px solid var(--theme-accent) !important;
-  box-shadow:var(--theme-active-shadow) !important;
 }
 
 body.theme-fedex .template-card,
@@ -580,115 +618,4 @@ body.theme-fedex mark.search-highlight,
 body.theme-atlas mark.search-highlight{
   background:rgba(255,102,0,.20) !important;
   color:#07111f !important;
-}
-
-/* =========================================================
-   ATLAS GREEN FIX
-   Removes purple active path states and removes radiant buttons.
-   Paste at the very bottom of assets/css/guide-themes.css
-   ========================================================= */
-
-/* Atlas button colors should be solid, not radiant */
-body.theme-atlas{
-  --theme-main-button:#0e5361;
-  --theme-choice-selected:#0e5361;
-  --theme-button-hover:#083f4b;
-  --theme-button-shadow:0 12px 22px rgba(14,83,97,.18);
-}
-
-/* Main action buttons */
-body.theme-atlas .btn,
-body.theme-atlas .smart-link,
-body.theme-atlas .template-copy,
-body.theme-atlas .pill.primary{
-  background:#0e5361 !important;
-  color:#ffffff !important;
-  box-shadow:var(--theme-button-shadow) !important;
-}
-
-body.theme-atlas .btn:hover,
-body.theme-atlas .smart-link:hover,
-body.theme-atlas .template-copy:hover,
-body.theme-atlas .pill.primary:hover{
-  background:#083f4b !important;
-  box-shadow:0 16px 28px rgba(14,83,97,.24) !important;
-}
-
-/* Start Over / primary action buttons */
-body.theme-atlas .app-btn.primary{
-  background:#0e5361 !important;
-  color:#ffffff !important;
-  box-shadow:var(--theme-button-shadow) !important;
-}
-
-body.theme-atlas .app-btn.primary:hover{
-  background:#083f4b !important;
-}
-
-/* Selected choices should be solid Atlas green */
-body.theme-atlas .choice.selected{
-  background:#0e5361 !important;
-  color:#ffffff !important;
-  border-color:transparent !important;
-  box-shadow:0 16px 30px rgba(14,83,97,.20) !important;
-}
-
-/* Fix selected path purple border/text */
-body.theme-atlas .path-jump.active{
-  background:#fbfff7 !important;
-  border:2px solid #0e5361 !important;
-  box-shadow:0 0 0 4px rgba(14,83,97,.10) !important;
-}
-
-body.theme-atlas .path-jump.active .path-step,
-body.theme-atlas .path-jump.active .path-question,
-body.theme-atlas .path-jump.active .path-answer{
-  color:#0e5361 !important;
-}
-
-/* Normal path step text */
-body.theme-atlas .path-step{
-  color:#0e5361 !important;
-}
-
-/* Path hover should be Atlas green, not purple */
-body.theme-atlas .path-jump:hover{
-  background:#f6fbef !important;
-  border-color:rgba(14,83,97,.28) !important;
-  box-shadow:0 10px 22px rgba(14,83,97,.08) !important;
-}
-
-/* Template edit/copy buttons and icon hover should stay Atlas */
-body.theme-atlas .template-icon-btn:hover,
-body.theme-atlas .template-tag:hover{
-  background:#eef3df !important;
-  border-color:rgba(14,83,97,.22) !important;
-  color:#0e5361 !important;
-}
-
-/* Icons inside side/template panels */
-body.theme-atlas .summary-head i,
-body.theme-atlas .template-icon,
-body.theme-atlas .question-label,
-body.theme-atlas .badge{
-  color:#0e5361 !important;
-}
-
-/* Keep the title radiant, but Atlas only */
-body.theme-atlas .main-topbar{
-  background:
-    radial-gradient(circle at 16% 16%, rgba(201,201,54,.18), transparent 28%),
-    linear-gradient(135deg, rgba(14,83,97,.96), rgba(8,63,75,.94) 52%, rgba(58,64,24,.96)) !important;
-}
-
-/* Ready / Completed pill should be solid Atlas */
-body.theme-atlas #statusPill,
-body.theme-atlas .pill.primary{
-  background:#0e5361 !important;
-  color:#ffffff !important;
-}
-
-body.theme-atlas #statusPill i,
-body.theme-atlas .pill.primary i{
-  color:#e1df6a !important;
 }
