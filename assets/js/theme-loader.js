@@ -1,7 +1,7 @@
 (function () {
   const THEME_STORAGE_KEY = "dssGuideTheme";
   const DEFAULT_THEME = "theme-fedex";
-  const ALLOWED_THEMES = ["theme-fedex", "theme-atlas", "theme-basic"];
+  const ALLOWED_THEMES = ["theme-fedex", "theme-atlas", "theme-basic", "theme-simple"];
 
   function getSavedTheme() {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
