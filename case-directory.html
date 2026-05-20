@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="assets/css/guide-themes.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
@@ -1779,9 +1780,1054 @@
       }
     }
 
+/* =========================================================
+   SHARED PAGE THEME BRIDGE
+   FedEx keeps the current Case Directory look.
+   Atlas, Basic, and Simple follow the shared theme selector.
+   Load after the Case Directory base CSS.
+   ========================================================= */
+
+/* -------------------------
+   Theme variable mapping
+   ------------------------- */
+
+body.theme-fedex{
+  --cream:#f7f8fb;
+  --cream-2:#edf0f6;
+  --cream-3:#dfe4ee;
+  --yellow:#ff6600;
+  --yellow-soft:#ff8a33;
+  --olive:#6d28d9;
+  --olive-2:#4d148c;
+  --teal:#4d148c;
+  --teal-2:#3b0f73;
+  --dark:#1e293b;
+  --dark-2:#07111f;
+  --ink:#0f172a;
+  --muted:#475569;
+  --line:rgba(148,163,184,.18);
+  --white:rgba(255,255,255,.86);
+  --shadow-xl:0 34px 90px rgba(2,6,23,.22);
+  --shadow-lg:0 24px 60px rgba(2,6,23,.16);
+  --shadow-md:0 14px 34px rgba(15,23,42,.10);
+}
+
+body.theme-atlas{
+  --cream:#f5f7ef;
+  --cream-2:#eef3df;
+  --cream-3:#dfe9c6;
+  --yellow:#c9c936;
+  --yellow-soft:#e1df6a;
+  --olive:#5b7f08;
+  --olive-2:#0e5361;
+  --teal:#0e5361;
+  --teal-2:#083f4b;
+  --dark:#3a4018;
+  --dark-2:#22270d;
+  --ink:#162018;
+  --muted:#677262;
+  --line:rgba(58,64,24,.14);
+  --white:rgba(255,255,255,.88);
+  --shadow-xl:0 34px 90px rgba(18,31,21,.22);
+  --shadow-lg:0 24px 60px rgba(18,31,21,.16);
+  --shadow-md:0 14px 34px rgba(18,31,21,.10);
+}
+
+body.theme-basic{
+  --cream:#f3f4f6;
+  --cream-2:#e5e7eb;
+  --cream-3:#d1d5db;
+  --yellow:#ffffff;
+  --yellow-soft:#e5e7eb;
+  --olive:#374151;
+  --olive-2:#111827;
+  --teal:#111827;
+  --teal-2:#030712;
+  --dark:#111827;
+  --dark-2:#030712;
+  --ink:#111827;
+  --muted:#6b7280;
+  --line:rgba(17,24,39,.14);
+  --white:rgba(255,255,255,.88);
+  --shadow-xl:0 34px 90px rgba(0,0,0,.22);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.16);
+  --shadow-md:0 14px 34px rgba(0,0,0,.10);
+}
+
+body.theme-simple{
+  --cream:#f8fafc;
+  --cream-2:#eef4fb;
+  --cream-3:#dbeafe;
+  --yellow:#2563eb;
+  --yellow-soft:#60a5fa;
+  --olive:#2563eb;
+  --olive-2:#1d4ed8;
+  --teal:#2563eb;
+  --teal-2:#1d4ed8;
+  --dark:#1f2937;
+  --dark-2:#111827;
+  --ink:#1f2937;
+  --muted:#6b7280;
+  --line:rgba(148,163,184,.20);
+  --white:rgba(255,255,255,.90);
+  --shadow-xl:0 30px 80px rgba(15,23,42,.12);
+  --shadow-lg:0 22px 54px rgba(15,23,42,.10);
+  --shadow-md:0 12px 30px rgba(15,23,42,.08);
+}
+
+/* -------------------------
+   Page backgrounds
+   ------------------------- */
+
+body.theme-fedex{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(109,40,217,.28), transparent 28%),
+    radial-gradient(circle at 82% 0%, rgba(255,102,0,.18), transparent 30%),
+    radial-gradient(circle at 40% 52%, rgba(77,20,140,.16), transparent 34%),
+    radial-gradient(circle at 88% 78%, rgba(255,102,0,.10), transparent 30%),
+    linear-gradient(180deg, #121033 0%, #091120 42%, #07111f 100%) !important;
+}
+
+body.theme-atlas{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(201,201,54,.26), transparent 28%),
+    radial-gradient(circle at 80% 0%, rgba(14,83,97,.22), transparent 30%),
+    linear-gradient(180deg,#f5f7ef 0%,#eef3df 48%,#f9fbf3 100%) !important;
+}
+
+body.theme-basic{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255,255,255,.08), transparent 26%),
+    radial-gradient(circle at 82% 0%, rgba(156,163,175,.14), transparent 30%),
+    linear-gradient(180deg,#111827 0%,#1f2937 42%,#f3f4f6 42%,#ffffff 100%) !important;
+}
+
+body.theme-simple{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(37,99,235,.08), transparent 28%),
+    radial-gradient(circle at 88% 12%, rgba(148,163,184,.12), transparent 30%),
+    linear-gradient(180deg,#f8fafc 0%,#eef4fb 45%,#ffffff 100%) !important;
+}
+
+body.theme-atlas::before,
+body.theme-basic::before,
+body.theme-simple::before{
+  background:
+    linear-gradient(rgba(148,163,184,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,.08) 1px, transparent 1px) !important;
+  background-size:44px 44px !important;
+}
+
+body.theme-atlas::after{
+  background:radial-gradient(circle, rgba(91,127,8,.18), transparent 66%) !important;
+}
+
+body.theme-basic::after{
+  background:radial-gradient(circle, rgba(255,255,255,.10), transparent 66%) !important;
+}
+
+body.theme-simple::after{
+  background:radial-gradient(circle, rgba(37,99,235,.08), transparent 66%) !important;
+}
+
+/* -------------------------
+   Hero and panels
+   ------------------------- */
+
+body.theme-atlas .hero-card{
+  background:
+    radial-gradient(circle at 16% 16%, rgba(225,223,106,.26), transparent 26%),
+    linear-gradient(135deg, #0e5361 0%, #083f4b 50%, #22270d 100%) !important;
+}
+
+body.theme-atlas .hero-card::before{
+  background:conic-gradient(from 180deg, transparent, rgba(225,223,106,.22), transparent, rgba(255,255,255,.10), transparent) !important;
+}
+
+body.theme-atlas .hero-card::after{
+  background:
+    radial-gradient(circle at 78% 24%, rgba(255,255,255,.12), transparent 20%),
+    linear-gradient(135deg, rgba(14,83,97,.96), rgba(8,63,75,.94) 50%, rgba(58,64,24,.96)) !important;
+}
+
+body.theme-basic .hero-card{
+  background:
+    radial-gradient(circle at 16% 16%, rgba(255,255,255,.16), transparent 26%),
+    linear-gradient(135deg, #111827 0%, #374151 50%, #030712 100%) !important;
+}
+
+body.theme-basic .hero-card::before{
+  background:conic-gradient(from 180deg, transparent, rgba(255,255,255,.14), transparent, rgba(156,163,175,.12), transparent) !important;
+}
+
+body.theme-basic .hero-card::after{
+  background:
+    radial-gradient(circle at 78% 24%, rgba(255,255,255,.10), transparent 20%),
+    linear-gradient(135deg, rgba(17,24,39,.98), rgba(31,41,55,.96) 50%, rgba(3,7,18,.98)) !important;
+}
+
+body.theme-simple .hero-card{
+  background:
+    radial-gradient(circle at 16% 16%, rgba(96,165,250,.18), transparent 26%),
+    linear-gradient(135deg, #ffffff 0%, #f8fafc 48%, #eef4fb 100%) !important;
+  color:var(--ink) !important;
+  border:1px solid rgba(226,232,240,.90) !important;
+}
+
+body.theme-simple .hero-card::before{
+  background:conic-gradient(from 180deg, transparent, rgba(37,99,235,.12), transparent, rgba(148,163,184,.10), transparent) !important;
+  opacity:.55 !important;
+}
+
+body.theme-simple .hero-card::after{
+  background:
+    radial-gradient(circle at 78% 24%, rgba(37,99,235,.08), transparent 20%),
+    linear-gradient(135deg, rgba(255,255,255,.98), rgba(248,250,252,.96) 50%, rgba(239,246,255,.98)) !important;
+}
+
+body.theme-simple .hero h1{
+  color:var(--ink) !important;
+}
+
+body.theme-simple .hero p,
+body.theme-simple .metric span{
+  color:var(--muted) !important;
+}
+
+body.theme-simple .metric,
+body.theme-simple .pill,
+body.theme-simple .hero-ghost-btn{
+  background:rgba(255,255,255,.78) !important;
+  border-color:rgba(148,163,184,.22) !important;
+  color:var(--ink) !important;
+}
+
+/* Side panel theme */
+body.theme-atlas .how-use-panel,
+body.theme-atlas .focus-card.dark,
+body.theme-atlas .support-panel{
+  background:
+    radial-gradient(circle at 18% 8%, rgba(255,255,255,.16), transparent 26%),
+    radial-gradient(circle at 88% 92%, rgba(201,201,54,.16), transparent 30%),
+    linear-gradient(135deg, rgba(14,83,97,.98), rgba(8,63,75,.94) 48%, rgba(58,64,24,.92)) !important;
+}
+
+body.theme-basic .how-use-panel,
+body.theme-basic .focus-card.dark,
+body.theme-basic .support-panel{
+  background:
+    radial-gradient(circle at 18% 8%, rgba(255,255,255,.12), transparent 26%),
+    linear-gradient(135deg, rgba(17,24,39,.98), rgba(31,41,55,.96) 48%, rgba(3,7,18,.94)) !important;
+}
+
+body.theme-simple .how-use-panel,
+body.theme-simple .focus-card.dark,
+body.theme-simple .support-panel{
+  background:linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+}
+
+/* -------------------------
+   Buttons and interactive pieces
+   ------------------------- */
+
+body.theme-atlas .hero-main-btn,
+body.theme-atlas .search-btn,
+body.theme-atlas .filter-chip.active,
+body.theme-atlas .guide-tile-link{
+  background:#0e5361 !important;
+  box-shadow:0 16px 30px rgba(14,83,97,.18) !important;
+  color:#fff !important;
+}
+
+body.theme-atlas .hero-main-btn:hover,
+body.theme-atlas .search-btn:hover,
+body.theme-atlas .guide-tile-link:hover{
+  background:#083f4b !important;
+  box-shadow:0 22px 38px rgba(14,83,97,.24) !important;
+}
+
+body.theme-basic .hero-main-btn,
+body.theme-basic .search-btn,
+body.theme-basic .filter-chip.active,
+body.theme-basic .guide-tile-link{
+  background:#111827 !important;
+  box-shadow:0 16px 30px rgba(0,0,0,.18) !important;
+  color:#fff !important;
+}
+
+body.theme-basic .hero-main-btn:hover,
+body.theme-basic .search-btn:hover,
+body.theme-basic .guide-tile-link:hover{
+  background:#030712 !important;
+}
+
+body.theme-simple .hero-main-btn,
+body.theme-simple .search-btn,
+body.theme-simple .filter-chip.active,
+body.theme-simple .guide-tile-link{
+  background:#2563eb !important;
+  box-shadow:0 16px 30px rgba(37,99,235,.16) !important;
+  color:#fff !important;
+}
+
+body.theme-simple .hero-main-btn:hover,
+body.theme-simple .search-btn:hover,
+body.theme-simple .guide-tile-link:hover{
+  background:#1d4ed8 !important;
+}
+
+/* Cards, search, chips, filters */
+body.theme-atlas .focus-card,
+body.theme-atlas .search-panel,
+body.theme-atlas .guide-tile,
+body.theme-atlas .tips-panel,
+body.theme-basic .focus-card,
+body.theme-basic .search-panel,
+body.theme-basic .guide-tile,
+body.theme-basic .tips-panel,
+body.theme-simple .focus-card,
+body.theme-simple .search-panel,
+body.theme-simple .guide-tile,
+body.theme-simple .tips-panel{
+  background:rgba(255,255,255,.76) !important;
+  border-color:rgba(255,255,255,.88) !important;
+  box-shadow:var(--shadow-md) !important;
+}
+
+body.theme-atlas .chip,
+body.theme-atlas .filter-chip,
+body.theme-atlas #resultsCount span,
+body.theme-atlas #noResults span,
+body.theme-atlas .guide-tile-meta,
+body.theme-basic .chip,
+body.theme-basic .filter-chip,
+body.theme-basic #resultsCount span,
+body.theme-basic #noResults span,
+body.theme-basic .guide-tile-meta,
+body.theme-simple .chip,
+body.theme-simple .filter-chip,
+body.theme-simple #resultsCount span,
+body.theme-simple #noResults span,
+body.theme-simple .guide-tile-meta{
+  background:#fff !important;
+  color:var(--olive-2) !important;
+  border-color:var(--line) !important;
+}
+
+body.theme-atlas .guide-tile-icon{
+  background:linear-gradient(135deg, #0e5361, #3a4018) !important;
+  box-shadow:0 14px 26px rgba(14,83,97,.18) !important;
+}
+
+body.theme-basic .guide-tile-icon{
+  background:linear-gradient(135deg, #111827, #374151) !important;
+  box-shadow:0 14px 26px rgba(0,0,0,.16) !important;
+}
+
+body.theme-simple .guide-tile-icon{
+  background:linear-gradient(135deg, #2563eb, #60a5fa) !important;
+  box-shadow:0 14px 26px rgba(37,99,235,.14) !important;
+}
+
+body.theme-atlas #guideSearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(14,83,97,.26), 0 0 0 7px rgba(14,83,97,.08) !important;
+}
+
+body.theme-basic #guideSearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(17,24,39,.26), 0 0 0 7px rgba(17,24,39,.08) !important;
+}
+
+body.theme-simple #guideSearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(37,99,235,.22), 0 0 0 7px rgba(37,99,235,.08) !important;
+}
+
+/* Library title readability by theme */
+body.theme-fedex #guideLibrarySection .section-title,
+body.theme-fedex #guideLibrarySection .section-copy,
+body.theme-basic #guideLibrarySection .section-title,
+body.theme-basic #guideLibrarySection .section-copy{
+  color:#fff !important;
+}
+
+body.theme-fedex #guideLibrarySection .section-copy,
+body.theme-basic #guideLibrarySection .section-copy{
+  color:rgba(255,255,255,.78) !important;
+}
+
+body.theme-atlas #guideLibrarySection .section-title,
+body.theme-simple #guideLibrarySection .section-title{
+  color:var(--ink) !important;
+  text-shadow:none !important;
+}
+
+body.theme-atlas #guideLibrarySection .section-copy,
+body.theme-simple #guideLibrarySection .section-copy{
+  color:var(--muted) !important;
+  text-shadow:none !important;
+}
+
+body.theme-atlas #guideLibrarySection .section-kicker,
+body.theme-simple #guideLibrarySection .section-kicker{
+  color:var(--olive-2) !important;
+  background:rgba(255,255,255,.70) !important;
+  border-color:var(--line) !important;
+  box-shadow:var(--shadow-md) !important;
+}
+
+body.theme-basic #guideLibrarySection .section-kicker{
+  color:#ffffff !important;
+  background:rgba(17,24,39,.50) !important;
+  border-color:rgba(255,255,255,.12) !important;
+}
+
+/* Simple theme text cleanup */
+body.theme-simple .focus-card h2,
+body.theme-simple .search-copy h2,
+body.theme-simple .section-title,
+body.theme-simple .guide-tile h3{
+  color:var(--ink) !important;
+}
+
+body.theme-simple .focus-card p,
+body.theme-simple .search-copy p,
+body.theme-simple .section-copy,
+body.theme-simple .guide-tile p,
+body.theme-simple .mini-item span,
+body.theme-simple .tips-panel ul{
+  color:var(--muted) !important;
+}
+
+
+/* =========================================================
+   MAIN INDEX HERO METRICS FIX
+   Keeps the 40+ / 1 / Live cards readable on FedEx, Atlas,
+   and Basic themes. Simple Light keeps its clean white cards.
+   ========================================================= */
+
+body.theme-fedex .hero-card .hero-metrics .metric,
+body.theme-atlas .hero-card .hero-metrics .metric,
+body.theme-basic .hero-card .hero-metrics .metric{
+  background:rgba(255,255,255,.10) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  color:#ffffff !important;
+  box-shadow:none !important;
+  backdrop-filter:blur(10px) !important;
+  -webkit-backdrop-filter:blur(10px) !important;
+}
+
+body.theme-fedex .hero-card .hero-metrics .metric strong,
+body.theme-atlas .hero-card .hero-metrics .metric strong,
+body.theme-basic .hero-card .hero-metrics .metric strong{
+  color:#ffffff !important;
+}
+
+body.theme-fedex .hero-card .hero-metrics .metric span,
+body.theme-atlas .hero-card .hero-metrics .metric span,
+body.theme-basic .hero-card .hero-metrics .metric span{
+  color:rgba(255,255,255,.66) !important;
+}
+
+body.theme-simple .hero-card .hero-metrics .metric{
+  background:rgba(255,255,255,.78) !important;
+  border:1px solid rgba(148,163,184,.22) !important;
+  color:var(--ink) !important;
+  box-shadow:0 14px 34px rgba(15,23,42,.07) !important;
+}
+
+body.theme-simple .hero-card .hero-metrics .metric strong{
+  color:var(--ink) !important;
+}
+
+body.theme-simple .hero-card .hero-metrics .metric span{
+  color:var(--muted) !important;
+}
+
+
+
+
+/* =========================================================
+   MAIN INDEX ATLAS / THEME POLISH FIX
+   Atlas hero follows the original Atlas main index reference.
+   Also removes leftover FedEx orange icon color from non-FedEx themes.
+   ========================================================= */
+
+/* Atlas Browse button should be yellow/olive like the original Atlas main index */
+body.theme-atlas .hero-main-btn{
+  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft)) !important;
+  color:var(--dark-2) !important;
+  box-shadow:0 18px 34px rgba(201,201,54,.22) !important;
+}
+
+body.theme-atlas .hero-main-btn:hover{
+  background:linear-gradient(135deg, #c9c936, #f1ef7d) !important;
+  box-shadow:0 22px 38px rgba(201,201,54,.26) !important;
+}
+
+/* Atlas Search button / tile buttons remain deep green */
+body.theme-atlas .search-btn,
+body.theme-atlas .filter-chip.active,
+body.theme-atlas .guide-tile-link{
+  background:linear-gradient(135deg, var(--dark), var(--teal)) !important;
+  color:#ffffff !important;
+  box-shadow:0 16px 30px rgba(14,83,97,.18) !important;
+}
+
+body.theme-atlas .search-btn:hover,
+body.theme-atlas .guide-tile-link:hover{
+  background:linear-gradient(135deg, var(--dark-2), var(--teal-2)) !important;
+  box-shadow:0 22px 38px rgba(14,83,97,.24) !important;
+}
+
+/* Atlas Guide Workspace pill should look like the Atlas reference, not white */
+body.theme-atlas #guideLibrarySection .section-kicker{
+  color:var(--olive-2) !important;
+  background:rgba(225,223,106,.28) !important;
+  border:1px solid rgba(91,127,8,.12) !important;
+  box-shadow:0 10px 22px rgba(18,31,21,.06) !important;
+}
+
+/* Remove leftover FedEx orange from the Guide Workspace icon in non-FedEx themes */
+body.theme-atlas #guideLibrarySection .section-kicker i{
+  color:var(--olive-2) !important;
+}
+
+body.theme-basic #guideLibrarySection .section-kicker i{
+  color:#d1d5db !important;
+}
+
+body.theme-simple #guideLibrarySection .section-kicker i{
+  color:#2563eb !important;
+}
+
+/* Keep FedEx icon orange only in FedEx theme */
+body.theme-fedex #guideLibrarySection .section-kicker i{
+  color:#ff8a33 !important;
+}
+
+/* ===== MAIN INDEX FIX: HEADER DATE/TIME BUTTON WIDTH ===== */
+/* This prevents main-index page button styles from overriding header modal buttons */
+
+#timeCalendarPopup .btn,
+#timeSettingsModal .btn,
+#timeSettingsModal #saveTimeSettings,
+#timeCalendarPopup #openTimeSettings {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  min-height: 54px !important;
+  padding: 0 18px !important;
+  border-radius: 18px !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+#timeSettingsModal #saveTimeSettings {
+  margin-top: 16px !important;
+}
+
+#timeCalendarPopup #openTimeSettings {
+  margin-top: 14px !important;
+}
+
+    
+
+
+/* =========================================================
+   CASE DIRECTORY THEME BRIDGE
+   Applies FedEx / Atlas / Basic / Simple to Case Directory
+   ========================================================= */
+
+/* Page containers */
+body.theme-fedex .directory-main,
+body.theme-fedex .directory-side-card,
+body.theme-atlas .directory-main,
+body.theme-atlas .directory-side-card,
+body.theme-basic .directory-main,
+body.theme-basic .directory-side-card,
+body.theme-simple .directory-main,
+body.theme-simple .directory-side-card{
+  background:rgba(255,255,255,.74) !important;
+  border:1px solid rgba(255,255,255,.88) !important;
+  box-shadow:var(--shadow-lg) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+}
+
+body.theme-basic .directory-main,
+body.theme-basic .directory-side-card{
+  background:rgba(255,255,255,.78) !important;
+}
+
+body.theme-simple .directory-main,
+body.theme-simple .directory-side-card{
+  background:rgba(255,255,255,.88) !important;
+  border-color:rgba(226,232,240,.95) !important;
+  box-shadow:0 24px 60px rgba(15,23,42,.10) !important;
+}
+
+/* Directory text */
+body.theme-fedex .directory-title-block h2,
+body.theme-fedex .routing-title,
+body.theme-fedex .side-card-head,
+body.theme-fedex .quick-value,
+body.theme-atlas .directory-title-block h2,
+body.theme-atlas .routing-title,
+body.theme-atlas .side-card-head,
+body.theme-atlas .quick-value,
+body.theme-basic .directory-title-block h2,
+body.theme-basic .routing-title,
+body.theme-basic .side-card-head,
+body.theme-basic .quick-value,
+body.theme-simple .directory-title-block h2,
+body.theme-simple .routing-title,
+body.theme-simple .side-card-head,
+body.theme-simple .quick-value{
+  color:var(--ink) !important;
+}
+
+body.theme-fedex .directory-title-block p,
+body.theme-fedex .routing-lead,
+body.theme-fedex .section-note,
+body.theme-fedex .helper-text,
+body.theme-fedex .helper-list,
+body.theme-fedex .quick-label,
+body.theme-atlas .directory-title-block p,
+body.theme-atlas .routing-lead,
+body.theme-atlas .section-note,
+body.theme-atlas .helper-text,
+body.theme-atlas .helper-list,
+body.theme-atlas .quick-label,
+body.theme-basic .directory-title-block p,
+body.theme-basic .routing-lead,
+body.theme-basic .section-note,
+body.theme-basic .helper-text,
+body.theme-basic .helper-list,
+body.theme-basic .quick-label,
+body.theme-simple .directory-title-block p,
+body.theme-simple .routing-lead,
+body.theme-simple .section-note,
+body.theme-simple .helper-text,
+body.theme-simple .helper-list,
+body.theme-simple .quick-label{
+  color:var(--muted) !important;
+}
+
+/* Hero buttons / status / search buttons */
+body.theme-fedex .directory-search-btn,
+body.theme-fedex .status-pill,
+body.theme-fedex .routing-icon,
+body.theme-atlas .directory-search-btn,
+body.theme-atlas .status-pill,
+body.theme-atlas .routing-icon,
+body.theme-basic .directory-search-btn,
+body.theme-basic .status-pill,
+body.theme-basic .routing-icon,
+body.theme-simple .directory-search-btn,
+body.theme-simple .status-pill,
+body.theme-simple .routing-icon{
+  background:linear-gradient(135deg, var(--dark), var(--teal)) !important;
+  color:#fff !important;
+  box-shadow:0 16px 30px rgba(14,83,97,.18) !important;
+}
+
+body.theme-fedex .directory-search-btn{
+  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft)) !important;
+  box-shadow:0 16px 30px rgba(255,102,0,.20) !important;
+}
+
+body.theme-atlas .directory-search-btn,
+body.theme-atlas .status-pill,
+body.theme-atlas .routing-icon{
+  background:#0e5361 !important;
+  box-shadow:0 16px 30px rgba(14,83,97,.18) !important;
+}
+
+body.theme-basic .directory-search-btn,
+body.theme-basic .status-pill,
+body.theme-basic .routing-icon{
+  background:#111827 !important;
+  box-shadow:0 16px 30px rgba(0,0,0,.18) !important;
+}
+
+body.theme-simple .directory-search-btn,
+body.theme-simple .status-pill,
+body.theme-simple .routing-icon{
+  background:#2563eb !important;
+  box-shadow:0 16px 30px rgba(37,99,235,.16) !important;
+}
+
+body.theme-fedex .directory-search-btn:hover{
+  box-shadow:0 22px 38px rgba(255,102,0,.28) !important;
+}
+
+body.theme-atlas .directory-search-btn:hover,
+body.theme-atlas .status-pill:hover,
+body.theme-atlas .routing-icon:hover{
+  background:#083f4b !important;
+}
+
+body.theme-basic .directory-search-btn:hover{
+  background:#000 !important;
+}
+
+body.theme-simple .directory-search-btn:hover{
+  background:#1d4ed8 !important;
+}
+
+/* Search inputs */
+body.theme-fedex #directorySearch,
+body.theme-atlas #directorySearch,
+body.theme-basic #directorySearch,
+body.theme-simple #directorySearch{
+  background:#fff !important;
+  color:var(--ink) !important;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.22) !important;
+}
+
+body.theme-fedex #directorySearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.24), 0 0 0 7px rgba(77,20,140,.08) !important;
+}
+
+body.theme-atlas #directorySearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(14,83,97,.28), 0 0 0 7px rgba(14,83,97,.08) !important;
+}
+
+body.theme-basic #directorySearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(17,24,39,.28), 0 0 0 7px rgba(17,24,39,.07) !important;
+}
+
+body.theme-simple #directorySearch:focus{
+  box-shadow:inset 0 0 0 2px rgba(37,99,235,.28), 0 0 0 7px rgba(37,99,235,.08) !important;
+}
+
+body.theme-fedex #clearSearchBtn,
+body.theme-atlas #clearSearchBtn,
+body.theme-basic #clearSearchBtn,
+body.theme-simple #clearSearchBtn{
+  background:var(--cream-2) !important;
+  color:var(--dark) !important;
+}
+
+/* Routing card */
+body.theme-fedex .routing-card,
+body.theme-atlas .routing-card,
+body.theme-basic .routing-card,
+body.theme-simple .routing-card{
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255,102,0,.08), transparent 28%),
+    rgba(255,255,255,.76) !important;
+  border:1px solid rgba(255,255,255,.88) !important;
+  box-shadow:var(--shadow-md) !important;
+}
+
+body.theme-atlas .routing-card{
+  background:
+    radial-gradient(circle at 10% 0%, rgba(201,201,54,.16), transparent 28%),
+    rgba(255,255,255,.76) !important;
+}
+
+body.theme-basic .routing-card{
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255,255,255,.08), transparent 28%),
+    rgba(255,255,255,.78) !important;
+}
+
+body.theme-simple .routing-card{
+  background:#ffffff !important;
+  border-color:rgba(226,232,240,.95) !important;
+}
+
+body.theme-fedex .routing-card::before,
+body.theme-fedex .detail-modal-content::before{
+  background:linear-gradient(90deg, #4d148c, #6d28d9, #ff6600) !important;
+}
+
+body.theme-atlas .routing-card::before,
+body.theme-atlas .detail-modal-content::before{
+  background:linear-gradient(90deg, #0e5361, #5b7f08, #c9c936) !important;
+}
+
+body.theme-basic .routing-card::before,
+body.theme-basic .detail-modal-content::before{
+  background:linear-gradient(90deg, #111827, #374151, #9ca3af) !important;
+}
+
+body.theme-simple .routing-card::before,
+body.theme-simple .detail-modal-content::before{
+  background:linear-gradient(90deg, #2563eb, #60a5fa, #dbeafe) !important;
+}
+
+body.theme-fedex .routing-kicker,
+body.theme-atlas .routing-kicker,
+body.theme-basic .routing-kicker,
+body.theme-simple .routing-kicker{
+  background:#fff !important;
+  border-color:rgba(148,163,184,.18) !important;
+  color:var(--olive-2) !important;
+}
+
+body.theme-atlas .routing-kicker,
+body.theme-atlas .routing-kicker i{
+  color:#0e5361 !important;
+}
+
+body.theme-basic .routing-kicker,
+body.theme-basic .routing-kicker i{
+  color:#111827 !important;
+}
+
+body.theme-simple .routing-kicker,
+body.theme-simple .routing-kicker i{
+  color:#2563eb !important;
+}
+
+/* Quick side cards */
+body.theme-fedex .quick-stat,
+body.theme-atlas .quick-stat,
+body.theme-basic .quick-stat,
+body.theme-simple .quick-stat{
+  background:#fff !important;
+  border-color:rgba(148,163,184,.16) !important;
+  box-shadow:0 10px 22px rgba(15,23,42,.04) !important;
+}
+
+body.theme-fedex .directory-side-card.reminder{
+  background:linear-gradient(180deg, rgba(255,247,237,.86), rgba(255,255,255,.78)) !important;
+}
+
+body.theme-atlas .directory-side-card.reminder{
+  background:linear-gradient(180deg, rgba(255,251,234,.86), rgba(255,255,255,.78)) !important;
+}
+
+body.theme-basic .directory-side-card.reminder{
+  background:linear-gradient(180deg, rgba(249,250,251,.94), rgba(255,255,255,.82)) !important;
+}
+
+body.theme-simple .directory-side-card.reminder{
+  background:linear-gradient(180deg, #eff6ff, #ffffff) !important;
+}
+
+body.theme-fedex .side-card-head i{
+  color:#ff6600 !important;
+}
+
+body.theme-atlas .side-card-head i{
+  color:#0e5361 !important;
+}
+
+body.theme-basic .side-card-head i{
+  color:#111827 !important;
+}
+
+body.theme-simple .side-card-head i{
+  color:#2563eb !important;
+}
+
+/* Table */
+body.theme-fedex .table-wrap,
+body.theme-atlas .table-wrap,
+body.theme-basic .table-wrap,
+body.theme-simple .table-wrap{
+  border-color:#e2e8f0 !important;
+  background:#fff !important;
+  box-shadow:0 16px 36px rgba(15,23,42,.06) !important;
+}
+
+body.theme-fedex thead th,
+body.theme-atlas thead th,
+body.theme-basic thead th,
+body.theme-simple thead th{
+  background:#f8fafc !important;
+  color:#475569 !important;
+  border-bottom-color:#e2e8f0 !important;
+}
+
+body.theme-fedex tbody td,
+body.theme-atlas tbody td,
+body.theme-basic tbody td,
+body.theme-simple tbody td{
+  color:#0f172a !important;
+  border-bottom-color:#eef2f7 !important;
+}
+
+body.theme-fedex tbody tr:nth-child(odd),
+body.theme-atlas tbody tr:nth-child(odd),
+body.theme-basic tbody tr:nth-child(odd),
+body.theme-simple tbody tr:nth-child(odd){
+  background:#fcfdff !important;
+}
+
+body.theme-fedex tbody tr:hover{
+  background:#fbfaff !important;
+}
+
+body.theme-atlas tbody tr:hover{
+  background:#fbfff7 !important;
+}
+
+body.theme-basic tbody tr:hover{
+  background:#f9fafb !important;
+}
+
+body.theme-simple tbody tr:hover{
+  background:#eff6ff !important;
+}
+
+body.theme-fedex .queue-link{
+  color:#0f172a !important;
+}
+
+body.theme-fedex .queue-link:hover{
+  color:#4d148c !important;
+}
+
+body.theme-atlas .queue-link:hover{
+  color:#0e5361 !important;
+}
+
+body.theme-basic .queue-link:hover{
+  color:#111827 !important;
+}
+
+body.theme-simple .queue-link:hover{
+  color:#2563eb !important;
+}
+
+body.theme-fedex pre,
+body.theme-atlas pre,
+body.theme-basic pre,
+body.theme-simple pre{
+  background:#f8fafc !important;
+  border-color:#e7edf4 !important;
+  color:#334155 !important;
+}
+
+/* Detail modal */
+body.theme-fedex .detail-modal,
+body.theme-atlas .detail-modal,
+body.theme-basic .detail-modal,
+body.theme-simple .detail-modal{
+  background:rgba(2,6,23,.52) !important;
+}
+
+body.theme-fedex .detail-modal-content,
+body.theme-atlas .detail-modal-content,
+body.theme-basic .detail-modal-content,
+body.theme-simple .detail-modal-content{
+  background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%) !important;
+  border-color:#dbe4f0 !important;
+  box-shadow:0 34px 90px rgba(2,6,23,.28) !important;
+}
+
+body.theme-fedex .detail-modal-title,
+body.theme-atlas .detail-modal-title,
+body.theme-basic .detail-modal-title,
+body.theme-simple .detail-modal-title{
+  color:#0f172a !important;
+}
+
+body.theme-fedex .detail-col,
+body.theme-atlas .detail-col,
+body.theme-basic .detail-col,
+body.theme-simple .detail-col{
+  background:#f8fafc !important;
+  border-color:#e5edf6 !important;
+}
+
+body.theme-fedex .detail-label,
+body.theme-atlas .detail-label,
+body.theme-basic .detail-label,
+body.theme-simple .detail-label{
+  color:#64748b !important;
+}
+
+body.theme-fedex .detail-col div,
+body.theme-atlas .detail-col div,
+body.theme-basic .detail-col div,
+body.theme-simple .detail-col div{
+  color:#0f172a !important;
+}
+
+body.theme-fedex .premium-card,
+body.theme-atlas .premium-card,
+body.theme-basic .premium-card,
+body.theme-simple .premium-card{
+  background:linear-gradient(180deg,#ffffff 0%, #f8fbff 100%) !important;
+  border-color:#e4ebf5 !important;
+}
+
+body.theme-atlas .premium-card{
+  background:linear-gradient(180deg,#ffffff 0%, #fbfff7 100%) !important;
+}
+
+body.theme-basic .premium-card{
+  background:linear-gradient(180deg,#ffffff 0%, #f9fafb 100%) !important;
+}
+
+body.theme-simple .premium-card{
+  background:linear-gradient(180deg,#ffffff 0%, #eff6ff 100%) !important;
+}
+
+body.theme-fedex .premium-card-title i{
+  color:#4d148c !important;
+}
+
+body.theme-atlas .premium-card-title i{
+  color:#0e5361 !important;
+}
+
+body.theme-basic .premium-card-title i{
+  color:#111827 !important;
+}
+
+body.theme-simple .premium-card-title i{
+  color:#2563eb !important;
+}
+
+body.theme-fedex .view-toggle-icon.active{
+  background:linear-gradient(135deg,#4d148c,#6d28d9) !important;
+}
+
+body.theme-atlas .view-toggle-icon.active{
+  background:#0e5361 !important;
+}
+
+body.theme-basic .view-toggle-icon.active{
+  background:#111827 !important;
+}
+
+body.theme-simple .view-toggle-icon.active{
+  background:#2563eb !important;
+}
+
+/* Highlight */
+body.theme-fedex mark.search-highlight{
+  background:rgba(255,102,0,.20) !important;
+  color:#07111f !important;
+}
+
+body.theme-atlas mark.search-highlight{
+  background:rgba(225,223,106,.52) !important;
+  color:#22270d !important;
+}
+
+body.theme-basic mark.search-highlight{
+  background:rgba(209,213,219,.72) !important;
+  color:#111827 !important;
+}
+
+body.theme-simple mark.search-highlight{
+  background:#dbeafe !important;
+  color:#1d4ed8 !important;
+}
+
+
   </style>
 </head>
-<body data-page="case-directory">
+<body data-page="case-directory" class="theme-fedex">
   <div class="page">
     <div id="site-header"></div>
 
@@ -2035,6 +3081,7 @@ window.auth.onAuthStateChanged(async function(user) {
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
+<script src="assets/js/theme-loader.js"></script>
 
 <script>
 let caseDirectoryInitialized = false;
