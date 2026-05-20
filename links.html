@@ -3081,36 +3081,48 @@ body.theme-simple mark.search-highlight{
 }
 
 /* =========================================================
-   ONECLICK LAUNCHER THEME FIX
-   Makes Oneclick modal follow FedEx / Atlas / Basic / Simple
+   ONECLICK MODAL THEME FIX — REAL CLASS VERSION
+   Uses the actual Oneclick modal classes:
+   oneclick-option, oneclick-btn, oneclick-mini-badge,
+   oneclick-selected-item, oneclick-panel, etc.
    ========================================================= */
 
 body.theme-fedex,
 body.theme-atlas,
 body.theme-basic,
 body.theme-simple{
-  --oneclick-accent:var(--theme-accent);
-  --oneclick-accent-2:var(--theme-accent-2);
-  --oneclick-accent-3:var(--theme-accent-3);
-  --oneclick-soft:var(--theme-accent-soft);
-  --oneclick-tint:var(--theme-card-tint);
-  --oneclick-line:var(--theme-line-soft);
-  --oneclick-text:var(--theme-text);
-  --oneclick-muted:var(--theme-muted);
-  --oneclick-button:var(--theme-main-button);
-  --oneclick-button-hover:var(--theme-main-button-hover);
+  --oc-text:var(--theme-text);
+  --oc-muted:var(--theme-muted);
+  --oc-accent:var(--theme-accent);
+  --oc-accent-2:var(--theme-accent-2);
+  --oc-accent-3:var(--theme-accent-3);
+  --oc-soft:var(--theme-accent-soft);
+  --oc-tint:var(--theme-card-tint);
+  --oc-line:var(--theme-line-soft);
+  --oc-button:var(--theme-main-button);
+  --oc-button-hover:var(--theme-main-button-hover);
 }
 
-/* Main Oneclick modal */
+/* Modal wrapper/background */
+body.theme-fedex #oneclickModal,
+body.theme-atlas #oneclickModal,
+body.theme-basic #oneclickModal,
+body.theme-simple #oneclickModal{
+  background:rgba(2,6,23,.56) !important;
+  backdrop-filter:blur(10px) !important;
+  -webkit-backdrop-filter:blur(10px) !important;
+}
+
+/* Main modal content */
 body.theme-fedex .oneclick-modal-content,
 body.theme-atlas .oneclick-modal-content,
 body.theme-basic .oneclick-modal-content,
 body.theme-simple .oneclick-modal-content{
+  color:var(--oc-text) !important;
   background:
-    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--oneclick-accent) 10%, transparent), transparent 28%),
-    linear-gradient(180deg, #ffffff 0%, var(--oneclick-tint) 100%) !important;
-  border-color:var(--oneclick-line) !important;
-  color:var(--oneclick-text) !important;
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--oc-accent) 10%, transparent), transparent 28%),
+    linear-gradient(180deg,#ffffff 0%,var(--oc-tint) 100%) !important;
+  border-color:var(--oc-line) !important;
 }
 
 /* Header icon */
@@ -3118,36 +3130,28 @@ body.theme-fedex .oneclick-modal-icon,
 body.theme-atlas .oneclick-modal-icon,
 body.theme-basic .oneclick-modal-icon,
 body.theme-simple .oneclick-modal-icon{
-  background:var(--oneclick-button) !important;
+  background:var(--oc-button) !important;
   color:#ffffff !important;
-  box-shadow:0 16px 30px color-mix(in srgb, var(--oneclick-accent) 22%, transparent) !important;
+  box-shadow:0 16px 32px color-mix(in srgb, var(--oc-accent) 24%, transparent) !important;
 }
 
-/* Main title and subtitle */
-body.theme-fedex .oneclick-modal-title,
-body.theme-atlas .oneclick-modal-title,
-body.theme-basic .oneclick-modal-title,
-body.theme-simple .oneclick-modal-title,
-body.theme-fedex .oneclick-modal-content h2,
-body.theme-atlas .oneclick-modal-content h2,
-body.theme-basic .oneclick-modal-content h2,
-body.theme-simple .oneclick-modal-content h2,
-body.theme-fedex .oneclick-panel-title,
-body.theme-atlas .oneclick-panel-title,
-body.theme-basic .oneclick-panel-title,
-body.theme-simple .oneclick-panel-title{
-  color:var(--oneclick-text) !important;
+/* Title/subtitle */
+body.theme-fedex .oneclick-modal-title h3,
+body.theme-atlas .oneclick-modal-title h3,
+body.theme-basic .oneclick-modal-title h3,
+body.theme-simple .oneclick-modal-title h3,
+body.theme-fedex .oneclick-panel-title h4,
+body.theme-atlas .oneclick-panel-title h4,
+body.theme-basic .oneclick-panel-title h4,
+body.theme-simple .oneclick-panel-title h4{
+  color:var(--oc-text) !important;
 }
 
-body.theme-fedex .oneclick-modal-subtitle,
-body.theme-atlas .oneclick-modal-subtitle,
-body.theme-basic .oneclick-modal-subtitle,
-body.theme-simple .oneclick-modal-subtitle,
-body.theme-fedex .oneclick-panel-subtitle,
-body.theme-atlas .oneclick-panel-subtitle,
-body.theme-basic .oneclick-panel-subtitle,
-body.theme-simple .oneclick-panel-subtitle{
-  color:var(--oneclick-muted) !important;
+body.theme-fedex .oneclick-modal-title p,
+body.theme-atlas .oneclick-modal-title p,
+body.theme-basic .oneclick-modal-title p,
+body.theme-simple .oneclick-modal-title p{
+  color:var(--oc-muted) !important;
 }
 
 /* Close button */
@@ -3155,129 +3159,151 @@ body.theme-fedex .oneclick-close,
 body.theme-atlas .oneclick-close,
 body.theme-basic .oneclick-close,
 body.theme-simple .oneclick-close{
-  background:var(--oneclick-soft) !important;
-  color:var(--oneclick-accent) !important;
-  border-color:var(--oneclick-line) !important;
+  background:var(--oc-soft) !important;
+  color:var(--oc-accent) !important;
+  border-color:var(--oc-line) !important;
 }
 
 body.theme-fedex .oneclick-close:hover,
 body.theme-atlas .oneclick-close:hover,
 body.theme-basic .oneclick-close:hover,
 body.theme-simple .oneclick-close:hover{
-  background:var(--oneclick-accent) !important;
+  background:var(--oc-accent) !important;
   color:#ffffff !important;
 }
 
-/* Oneclick panels */
+/* Modal divider */
+body.theme-fedex .oneclick-modal-divider,
+body.theme-atlas .oneclick-modal-divider,
+body.theme-basic .oneclick-modal-divider,
+body.theme-simple .oneclick-modal-divider{
+  background:var(--oc-line) !important;
+}
+
+/* Panels */
 body.theme-fedex .oneclick-panel,
 body.theme-atlas .oneclick-panel,
 body.theme-basic .oneclick-panel,
 body.theme-simple .oneclick-panel{
-  background:linear-gradient(180deg,#ffffff,var(--oneclick-tint)) !important;
-  border-color:var(--oneclick-line) !important;
-  box-shadow:0 18px 42px color-mix(in srgb, var(--oneclick-accent) 10%, transparent) !important;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--oc-accent) 7%, transparent), transparent 30%),
+    linear-gradient(180deg,#ffffff,var(--oc-tint)) !important;
+  border-color:var(--oc-line) !important;
+  box-shadow:0 18px 42px color-mix(in srgb, var(--oc-accent) 10%, transparent) !important;
 }
 
+/* Top line of panels */
 body.theme-fedex .oneclick-panel::before,
 body.theme-atlas .oneclick-panel::before,
 body.theme-basic .oneclick-panel::before,
 body.theme-simple .oneclick-panel::before{
-  background:linear-gradient(90deg,var(--oneclick-accent),var(--oneclick-accent-2),var(--oneclick-accent-3)) !important;
+  background:linear-gradient(90deg,var(--oc-accent),var(--oc-accent-2),var(--oc-accent-3)) !important;
 }
 
-/* Section pills / labels */
-body.theme-fedex .oneclick-badge,
-body.theme-atlas .oneclick-badge,
-body.theme-basic .oneclick-badge,
-body.theme-simple .oneclick-badge,
-body.theme-fedex .oneclick-category-label,
-body.theme-atlas .oneclick-category-label,
-body.theme-basic .oneclick-category-label,
-body.theme-simple .oneclick-category-label{
-  background:var(--oneclick-soft) !important;
-  color:var(--oneclick-accent) !important;
-  border-color:var(--oneclick-line) !important;
+/* Mini badges: Tools Library / Saved Locally / Custom */
+body.theme-fedex .oneclick-mini-badge,
+body.theme-atlas .oneclick-mini-badge,
+body.theme-basic .oneclick-mini-badge,
+body.theme-simple .oneclick-mini-badge{
+  background:var(--oc-soft) !important;
+  color:var(--oc-accent) !important;
+  border-color:var(--oc-line) !important;
 }
 
-body.theme-fedex .oneclick-category-label i,
-body.theme-atlas .oneclick-category-label i,
-body.theme-basic .oneclick-category-label i,
-body.theme-simple .oneclick-category-label i{
-  color:var(--oneclick-accent) !important;
+body.theme-fedex .oneclick-mini-badge i,
+body.theme-atlas .oneclick-mini-badge i,
+body.theme-basic .oneclick-mini-badge i,
+body.theme-simple .oneclick-mini-badge i{
+  color:var(--oc-accent) !important;
 }
 
-/* Search input */
-body.theme-fedex .oneclick-search,
-body.theme-atlas .oneclick-search,
-body.theme-basic .oneclick-search,
-body.theme-simple .oneclick-search,
-body.theme-fedex .oneclick-manual-input,
-body.theme-atlas .oneclick-manual-input,
-body.theme-basic .oneclick-manual-input,
-body.theme-simple .oneclick-manual-input{
+/* Search/input fields */
+body.theme-fedex .oneclick-input,
+body.theme-atlas .oneclick-input,
+body.theme-basic .oneclick-input,
+body.theme-simple .oneclick-input{
   background:#ffffff !important;
-  color:var(--oneclick-text) !important;
-  border-color:var(--oneclick-line) !important;
-  box-shadow:inset 0 0 0 1px var(--oneclick-line) !important;
+  color:var(--oc-text) !important;
+  border-color:var(--oc-line) !important;
+  box-shadow:inset 0 0 0 1px var(--oc-line) !important;
 }
 
-body.theme-fedex .oneclick-search:focus,
-body.theme-atlas .oneclick-search:focus,
-body.theme-basic .oneclick-search:focus,
-body.theme-simple .oneclick-search:focus,
-body.theme-fedex .oneclick-manual-input:focus,
-body.theme-atlas .oneclick-manual-input:focus,
-body.theme-basic .oneclick-manual-input:focus,
-body.theme-simple .oneclick-manual-input:focus{
+body.theme-fedex .oneclick-input:focus,
+body.theme-atlas .oneclick-input:focus,
+body.theme-basic .oneclick-input:focus,
+body.theme-simple .oneclick-input:focus{
   box-shadow:
-    inset 0 0 0 2px color-mix(in srgb, var(--oneclick-accent) 32%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--oneclick-accent) 10%, transparent) !important;
+    inset 0 0 0 2px color-mix(in srgb, var(--oc-accent) 34%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--oc-accent) 10%, transparent) !important;
 }
 
-/* Filter chips */
-body.theme-fedex .oneclick-filter,
-body.theme-atlas .oneclick-filter,
-body.theme-basic .oneclick-filter,
-body.theme-simple .oneclick-filter{
-  background:var(--oneclick-soft) !important;
-  color:var(--oneclick-muted) !important;
-  border-color:var(--oneclick-line) !important;
+/* Filter tabs */
+body.theme-fedex .oneclick-tab,
+body.theme-atlas .oneclick-tab,
+body.theme-basic .oneclick-tab,
+body.theme-simple .oneclick-tab{
+  background:var(--oc-soft) !important;
+  color:var(--oc-muted) !important;
+  border-color:var(--oc-line) !important;
 }
 
-body.theme-fedex .oneclick-filter.active,
-body.theme-atlas .oneclick-filter.active,
-body.theme-basic .oneclick-filter.active,
-body.theme-simple .oneclick-filter.active{
-  background:var(--oneclick-accent) !important;
+body.theme-fedex .oneclick-tab i,
+body.theme-atlas .oneclick-tab i,
+body.theme-basic .oneclick-tab i,
+body.theme-simple .oneclick-tab i{
+  color:inherit !important;
+}
+
+body.theme-fedex .oneclick-tab.active,
+body.theme-atlas .oneclick-tab.active,
+body.theme-basic .oneclick-tab.active,
+body.theme-simple .oneclick-tab.active{
+  background:var(--oc-accent) !important;
   color:#ffffff !important;
-  box-shadow:0 12px 22px color-mix(in srgb, var(--oneclick-accent) 18%, transparent) !important;
+  box-shadow:0 12px 22px color-mix(in srgb, var(--oc-accent) 18%, transparent) !important;
 }
 
-/* Tool cards */
-body.theme-fedex .oneclick-tool-card,
-body.theme-atlas .oneclick-tool-card,
-body.theme-basic .oneclick-tool-card,
-body.theme-simple .oneclick-tool-card{
+/* Group title: SYSTEM / TOOLS / DIRECTORY */
+body.theme-fedex .oneclick-group-title,
+body.theme-atlas .oneclick-group-title,
+body.theme-basic .oneclick-group-title,
+body.theme-simple .oneclick-group-title{
+  color:var(--oc-text) !important;
+}
+
+body.theme-fedex .oneclick-group-title i,
+body.theme-atlas .oneclick-group-title i,
+body.theme-basic .oneclick-group-title i,
+body.theme-simple .oneclick-group-title i{
+  color:var(--oc-accent) !important;
+}
+
+/* Option cards */
+body.theme-fedex .oneclick-option,
+body.theme-atlas .oneclick-option,
+body.theme-basic .oneclick-option,
+body.theme-simple .oneclick-option{
   background:#ffffff !important;
-  border-color:var(--oneclick-line) !important;
-  color:var(--oneclick-text) !important;
+  border-color:var(--oc-line) !important;
+  color:var(--oc-text) !important;
 }
 
-body.theme-fedex .oneclick-tool-card:hover,
-body.theme-atlas .oneclick-tool-card:hover,
-body.theme-basic .oneclick-tool-card:hover,
-body.theme-simple .oneclick-tool-card:hover{
-  border-color:color-mix(in srgb, var(--oneclick-accent) 34%, transparent) !important;
-  box-shadow:0 16px 32px color-mix(in srgb, var(--oneclick-accent) 12%, transparent) !important;
+body.theme-fedex .oneclick-option:hover,
+body.theme-atlas .oneclick-option:hover,
+body.theme-basic .oneclick-option:hover,
+body.theme-simple .oneclick-option:hover{
+  border-color:color-mix(in srgb, var(--oc-accent) 35%, transparent) !important;
+  box-shadow:0 16px 32px color-mix(in srgb, var(--oc-accent) 12%, transparent) !important;
 }
 
-body.theme-fedex .oneclick-tool-card.selected,
-body.theme-atlas .oneclick-tool-card.selected,
-body.theme-basic .oneclick-tool-card.selected,
-body.theme-simple .oneclick-tool-card.selected{
-  background:linear-gradient(180deg,#ffffff,var(--oneclick-tint)) !important;
-  border-color:var(--oneclick-accent) !important;
-  box-shadow:0 0 0 4px color-mix(in srgb, var(--oneclick-accent) 10%, transparent) !important;
+/* Selected option cards */
+body.theme-fedex .oneclick-option.active,
+body.theme-atlas .oneclick-option.active,
+body.theme-basic .oneclick-option.active,
+body.theme-simple .oneclick-option.active{
+  background:linear-gradient(180deg,#ffffff,var(--oc-tint)) !important;
+  border-color:var(--oc-accent) !important;
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--oc-accent) 10%, transparent) !important;
 }
 
 /* Checkbox circle */
@@ -3285,118 +3311,172 @@ body.theme-fedex .oneclick-check,
 body.theme-atlas .oneclick-check,
 body.theme-basic .oneclick-check,
 body.theme-simple .oneclick-check{
-  border-color:var(--oneclick-accent) !important;
+  border-color:var(--oc-accent) !important;
   color:transparent !important;
 }
 
-body.theme-fedex .oneclick-tool-card.selected .oneclick-check,
-body.theme-atlas .oneclick-tool-card.selected .oneclick-check,
-body.theme-basic .oneclick-tool-card.selected .oneclick-check,
-body.theme-simple .oneclick-tool-card.selected .oneclick-check{
-  background:var(--oneclick-accent) !important;
+body.theme-fedex .oneclick-option.active .oneclick-check,
+body.theme-atlas .oneclick-option.active .oneclick-check,
+body.theme-basic .oneclick-option.active .oneclick-check,
+body.theme-simple .oneclick-option.active .oneclick-check{
+  background:var(--oc-accent) !important;
   color:#ffffff !important;
 }
 
-/* Oneclick list items */
-body.theme-fedex .oneclick-saved-item,
-body.theme-atlas .oneclick-saved-item,
-body.theme-basic .oneclick-saved-item,
-body.theme-simple .oneclick-saved-item{
+/* Option card text */
+body.theme-fedex .oneclick-option-title strong,
+body.theme-atlas .oneclick-option-title strong,
+body.theme-basic .oneclick-option-title strong,
+body.theme-simple .oneclick-option-title strong,
+body.theme-fedex .oneclick-selected-info strong,
+body.theme-atlas .oneclick-selected-info strong,
+body.theme-basic .oneclick-selected-info strong,
+body.theme-simple .oneclick-selected-info strong{
+  color:var(--oc-text) !important;
+}
+
+body.theme-fedex .oneclick-option-title strong i,
+body.theme-atlas .oneclick-option-title strong i,
+body.theme-basic .oneclick-option-title strong i,
+body.theme-simple .oneclick-option-title strong i,
+body.theme-fedex .oneclick-selected-info strong i,
+body.theme-atlas .oneclick-selected-info strong i,
+body.theme-basic .oneclick-selected-info strong i,
+body.theme-simple .oneclick-selected-info strong i{
+  color:var(--oc-accent) !important;
+}
+
+body.theme-fedex .oneclick-option-title span,
+body.theme-atlas .oneclick-option-title span,
+body.theme-basic .oneclick-option-title span,
+body.theme-simple .oneclick-option-title span,
+body.theme-fedex .oneclick-selected-info span,
+body.theme-atlas .oneclick-selected-info span,
+body.theme-basic .oneclick-selected-info span,
+body.theme-simple .oneclick-selected-info span{
+  color:var(--oc-muted) !important;
+}
+
+/* Saved Oneclick list items */
+body.theme-fedex .oneclick-selected-item,
+body.theme-atlas .oneclick-selected-item,
+body.theme-basic .oneclick-selected-item,
+body.theme-simple .oneclick-selected-item{
   background:#ffffff !important;
-  border-color:var(--oneclick-line) !important;
-  color:var(--oneclick-text) !important;
+  border-color:var(--oc-line) !important;
+  color:var(--oc-text) !important;
 }
 
-body.theme-fedex .oneclick-saved-item small,
-body.theme-atlas .oneclick-saved-item small,
-body.theme-basic .oneclick-saved-item small,
-body.theme-simple .oneclick-saved-item small{
-  color:var(--oneclick-muted) !important;
-}
-
-/* Remove button can stay red but cleaner */
-body.theme-fedex .oneclick-remove,
-body.theme-atlas .oneclick-remove,
-body.theme-basic .oneclick-remove,
-body.theme-simple .oneclick-remove{
+/* Remove/delete buttons */
+body.theme-fedex .oneclick-remove-btn,
+body.theme-atlas .oneclick-remove-btn,
+body.theme-basic .oneclick-remove-btn,
+body.theme-simple .oneclick-remove-btn,
+body.theme-fedex .oneclick-delete-manual-btn,
+body.theme-atlas .oneclick-delete-manual-btn,
+body.theme-basic .oneclick-delete-manual-btn,
+body.theme-simple .oneclick-delete-manual-btn,
+body.theme-fedex .oneclick-manual-delete-btn,
+body.theme-atlas .oneclick-manual-delete-btn,
+body.theme-basic .oneclick-manual-delete-btn,
+body.theme-simple .oneclick-manual-delete-btn{
   background:#fee2e2 !important;
   color:#dc2626 !important;
+  border-color:#fecaca !important;
 }
 
-/* Main buttons */
-body.theme-fedex .oneclick-open-all,
-body.theme-atlas .oneclick-open-all,
-body.theme-basic .oneclick-open-all,
-body.theme-simple .oneclick-open-all,
-body.theme-fedex .oneclick-add-manual,
-body.theme-atlas .oneclick-add-manual,
-body.theme-basic .oneclick-add-manual,
-body.theme-simple .oneclick-add-manual{
-  background:var(--oneclick-button) !important;
+/* Main Oneclick buttons */
+body.theme-fedex .oneclick-btn.orange,
+body.theme-atlas .oneclick-btn.orange,
+body.theme-basic .oneclick-btn.orange,
+body.theme-simple .oneclick-btn.orange,
+body.theme-fedex .oneclick-btn.primary,
+body.theme-atlas .oneclick-btn.primary,
+body.theme-basic .oneclick-btn.primary,
+body.theme-simple .oneclick-btn.primary{
+  background:var(--oc-button) !important;
   color:#ffffff !important;
-  box-shadow:0 16px 30px color-mix(in srgb, var(--oneclick-accent) 22%, transparent) !important;
+  box-shadow:0 16px 30px color-mix(in srgb, var(--oc-accent) 22%, transparent) !important;
 }
 
-body.theme-fedex .oneclick-open-all:hover,
-body.theme-atlas .oneclick-open-all:hover,
-body.theme-basic .oneclick-open-all:hover,
-body.theme-simple .oneclick-open-all:hover,
-body.theme-fedex .oneclick-add-manual:hover,
-body.theme-atlas .oneclick-add-manual:hover,
-body.theme-basic .oneclick-add-manual:hover,
-body.theme-simple .oneclick-add-manual:hover{
-  background:var(--oneclick-button-hover) !important;
+body.theme-fedex .oneclick-btn.orange:hover,
+body.theme-atlas .oneclick-btn.orange:hover,
+body.theme-basic .oneclick-btn.orange:hover,
+body.theme-simple .oneclick-btn.orange:hover,
+body.theme-fedex .oneclick-btn.primary:hover,
+body.theme-atlas .oneclick-btn.primary:hover,
+body.theme-basic .oneclick-btn.primary:hover,
+body.theme-simple .oneclick-btn.primary:hover{
+  background:var(--oc-button-hover) !important;
 }
 
-/* Secondary buttons */
-body.theme-fedex .oneclick-clear,
-body.theme-atlas .oneclick-clear,
-body.theme-basic .oneclick-clear,
-body.theme-simple .oneclick-clear{
-  background:var(--oneclick-soft) !important;
-  color:var(--oneclick-text) !important;
-  border-color:var(--oneclick-line) !important;
+/* Secondary clear button */
+body.theme-fedex .oneclick-btn.light,
+body.theme-atlas .oneclick-btn.light,
+body.theme-basic .oneclick-btn.light,
+body.theme-simple .oneclick-btn.light{
+  background:var(--oc-soft) !important;
+  color:var(--oc-text) !important;
+  border-color:var(--oc-line) !important;
 }
 
-body.theme-fedex .oneclick-clear:hover,
-body.theme-atlas .oneclick-clear:hover,
-body.theme-basic .oneclick-clear:hover,
-body.theme-simple .oneclick-clear:hover{
-  background:var(--oneclick-accent) !important;
+body.theme-fedex .oneclick-btn.light:hover,
+body.theme-atlas .oneclick-btn.light:hover,
+body.theme-basic .oneclick-btn.light:hover,
+body.theme-simple .oneclick-btn.light:hover{
+  background:var(--oc-accent) !important;
   color:#ffffff !important;
 }
 
-/* Warning / info boxes */
-body.theme-fedex .oneclick-warning,
-body.theme-atlas .oneclick-warning,
-body.theme-basic .oneclick-warning,
-body.theme-simple .oneclick-warning,
+/* Warning/note boxes */
 body.theme-fedex .oneclick-note,
 body.theme-atlas .oneclick-note,
 body.theme-basic .oneclick-note,
 body.theme-simple .oneclick-note{
   background:var(--theme-note-bg) !important;
-  border-color:var(--oneclick-line) !important;
-  color:var(--oneclick-text) !important;
+  border-color:var(--oc-line) !important;
+  color:var(--oc-text) !important;
 }
 
-/* Atlas specific: keep the Add Manual Link button yellow-green like your Atlas style */
-body.theme-atlas .oneclick-add-manual{
+/* Empty state */
+body.theme-fedex .oneclick-empty,
+body.theme-atlas .oneclick-empty,
+body.theme-basic .oneclick-empty,
+body.theme-simple .oneclick-empty{
+  color:var(--oc-muted) !important;
+  background:var(--oc-soft) !important;
+  border-color:var(--oc-line) !important;
+}
+
+/* ATLAS: keep Add Manual Link yellow-green like your current Atlas screenshot */
+body.theme-atlas .oneclick-btn.primary{
   background:#c9c936 !important;
   color:#22270d !important;
-  box-shadow:0 16px 30px rgba(91,127,8,.18) !important;
+  box-shadow:0 16px 30px rgba(91,127,8,.20) !important;
 }
 
-body.theme-atlas .oneclick-add-manual:hover{
+body.theme-atlas .oneclick-btn.primary:hover{
   background:#e1df6a !important;
+  color:#22270d !important;
 }
 
-/* Basic theme: keep everything neutral */
+/* ATLAS: Open All should be green, not orange */
+body.theme-atlas .oneclick-btn.orange{
+  background:#0e5361 !important;
+  color:#ffffff !important;
+  box-shadow:0 16px 30px rgba(14,83,97,.20) !important;
+}
+
+body.theme-atlas .oneclick-btn.orange:hover{
+  background:#083f4b !important;
+}
+
+/* BASIC: neutral panel top line */
 body.theme-basic .oneclick-panel::before{
   background:linear-gradient(90deg,#111827,#374151,#9ca3af) !important;
 }
 
-/* Simple theme: clean blue only */
+/* SIMPLE: clean blue panel top line */
 body.theme-simple .oneclick-panel::before{
   background:linear-gradient(90deg,#2563eb,#60a5fa,#dbeafe) !important;
 }
