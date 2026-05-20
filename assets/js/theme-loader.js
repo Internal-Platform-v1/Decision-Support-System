@@ -22,22 +22,49 @@
     }
   }
 
+  function closeUserDropdown() {
+    const userMenu = document.getElementById("userMenu");
+    const userDropdown = document.getElementById("userDropdown");
+    const userMenuBtn = document.getElementById("userMenuBtn");
+
+    if (userMenu) userMenu.classList.remove("open", "active", "show");
+    if (userDropdown) userDropdown.classList.remove("open", "active", "show");
+
+    if (userDropdown) {
+      userDropdown.style.display = "";
+    }
+
+    if (userMenuBtn) {
+      userMenuBtn.setAttribute("aria-expanded", "false");
+    }
+
+    document.body.classList.remove("user-menu-open");
+  }
+
+  function showThemeSavedStatus() {
+    const status = document.getElementById("themeSaveStatus");
+
+    if (!status) return;
+
+    status.textContent = "Theme saved!";
+    status.classList.add("show");
+
+    setTimeout(function () {
+      status.textContent = "";
+      status.classList.remove("show");
+    }, 1300);
+  }
+
   function saveTheme(themeName) {
     const safeTheme = ALLOWED_THEMES.includes(themeName) ? themeName : DEFAULT_THEME;
 
     localStorage.setItem(THEME_STORAGE_KEY, safeTheme);
     applyTheme(safeTheme);
+    showThemeSavedStatus();
 
-    const status = document.getElementById("themeSaveStatus");
-    if (status) {
-      status.textContent = "Theme saved";
-      status.classList.add("show");
-
-      setTimeout(function () {
-        status.textContent = "";
-        status.classList.remove("show");
-      }, 1800);
-    }
+    setTimeout(function () {
+      closeUserDropdown();
+    }, 550);
   }
 
   function setupThemeSelector() {
