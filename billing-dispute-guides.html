@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="assets/css/header-footer-style.css">
+<link rel="stylesheet" href="assets/css/guide-themes.css">
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -660,7 +661,7 @@ button{-webkit-tap-highlight-color:transparent}
 
 .guide-grid{
   display:grid;
-  grid-template-columns:repeat(3, minmax(0,1fr));
+  grid-template-columns:repeat(4, minmax(0,1fr));
   gap:18px;
   align-items:stretch;
   perspective:1200px;
@@ -1190,11 +1191,12 @@ footer{
 }
 
 @media (max-width:1280px){
-  .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .guide-grid{grid-template-columns:repeat(3, minmax(0,1fr))}
 }
 
 @media (max-width:1080px){
   .hero-shell{grid-template-columns:1fr}
+  .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
   .hero-card{min-height:auto}
   .toolbar{grid-template-columns:1fr}
   .filter-row{justify-content:flex-start}
@@ -1260,10 +1262,486 @@ footer{
   margin-top: 14px !important;
 }
   
+
+/* =========================================================
+   GROUP GUIDE THEME BRIDGE
+   Applies FedEx / Atlas / Basic / Simple themes to group pages
+   and aligns the style with the updated EBS/FBC/Links pages.
+   ========================================================= */
+
+body.theme-fedex,
+body.theme-atlas,
+body.theme-basic,
+body.theme-simple{
+  --group-text:var(--theme-text);
+  --group-muted:var(--theme-muted);
+  --group-accent:var(--theme-accent);
+  --group-accent-2:var(--theme-accent-2);
+  --group-accent-3:var(--theme-accent-3);
+  --group-soft:var(--theme-accent-soft);
+  --group-tint:var(--theme-card-tint);
+  --group-line:var(--theme-line-soft);
+  --group-button:var(--theme-main-button);
+  --group-button-hover:var(--theme-main-button-hover);
+
+  color:var(--group-text) !important;
+  background:var(--theme-body-bg) !important;
+}
+
+body.theme-fedex::before,
+body.theme-atlas::before,
+body.theme-basic::before,
+body.theme-simple::before{
+  background:var(--theme-body-grid) !important;
+  background-size:var(--theme-body-grid-size) !important;
+  mask-image:var(--theme-body-mask) !important;
+}
+
+body.theme-fedex::after,
+body.theme-atlas::after,
+body.theme-basic::after,
+body.theme-simple::after{
+  background:var(--theme-body-orb) !important;
+}
+
+/* Main hero card */
+body.theme-fedex .hero-card,
+body.theme-atlas .hero-card,
+body.theme-basic .hero-card{
+  background:var(--theme-title-bg) !important;
+  box-shadow:var(--theme-shadow-xl) !important;
+}
+
+body.theme-fedex .hero-card::after,
+body.theme-atlas .hero-card::after,
+body.theme-basic .hero-card::after{
+  background:var(--theme-title-bg) !important;
+}
+
+body.theme-fedex .hero-card::before,
+body.theme-atlas .hero-card::before,
+body.theme-basic .hero-card::before{
+  background:conic-gradient(from 180deg, transparent, color-mix(in srgb, var(--group-accent-3) 18%, transparent), transparent, rgba(255,255,255,.10), transparent) !important;
+}
+
+body.theme-simple .hero-card,
+body.theme-simple .hero-card::after{
+  background:linear-gradient(135deg,#ffffff,#f8fafc) !important;
+  color:var(--group-text) !important;
+}
+
+body.theme-simple .hero-card::before{
+  background:conic-gradient(from 180deg, transparent, rgba(37,99,235,.08), transparent, rgba(148,163,184,.08), transparent) !important;
+}
+
+body.theme-simple .hero h1,
+body.theme-simple .hero p{
+  color:var(--group-text) !important;
+}
+
+body.theme-simple .hero p{color:var(--group-muted) !important;}
+
+/* Labels / pills */
+body.theme-fedex .pill,
+body.theme-atlas .pill,
+body.theme-basic .pill{
+  background:rgba(255,255,255,.12) !important;
+  border-color:rgba(255,255,255,.16) !important;
+  color:rgba(255,255,255,.88) !important;
+}
+
+body.theme-simple .pill{
+  background:var(--group-soft) !important;
+  border-color:var(--group-line) !important;
+  color:var(--group-accent) !important;
+}
+
+body.theme-fedex .pill i,
+body.theme-atlas .pill i,
+body.theme-basic .pill i,
+body.theme-simple .pill i{
+  color:var(--group-accent-3) !important;
+}
+
+/* Hero metrics readability */
+body.theme-fedex .metric,
+body.theme-atlas .metric,
+body.theme-basic .metric{
+  background:rgba(255,255,255,.10) !important;
+  border-color:rgba(255,255,255,.14) !important;
+}
+
+body.theme-fedex .metric strong,
+body.theme-fedex .metric span,
+body.theme-atlas .metric strong,
+body.theme-atlas .metric span,
+body.theme-basic .metric strong,
+body.theme-basic .metric span{
+  color:#ffffff !important;
+}
+
+body.theme-fedex .metric span,
+body.theme-atlas .metric span,
+body.theme-basic .metric span{
+  color:rgba(255,255,255,.68) !important;
+}
+
+body.theme-simple .metric{
+  background:#ffffff !important;
+  border-color:var(--group-line) !important;
+}
+
+body.theme-simple .metric strong{color:var(--group-text) !important;}
+body.theme-simple .metric span{color:var(--group-muted) !important;}
+
+/* Cards and panels */
+body.theme-fedex .focus-card,
+body.theme-fedex .search-panel,
+body.theme-fedex .guide-card,
+body.theme-fedex .tips-panel,
+body.theme-atlas .focus-card,
+body.theme-atlas .search-panel,
+body.theme-atlas .guide-card,
+body.theme-atlas .tips-panel,
+body.theme-basic .focus-card,
+body.theme-basic .search-panel,
+body.theme-basic .guide-card,
+body.theme-basic .tips-panel,
+body.theme-simple .focus-card,
+body.theme-simple .search-panel,
+body.theme-simple .guide-card,
+body.theme-simple .tips-panel{
+  background:linear-gradient(180deg,#ffffff,var(--group-tint)) !important;
+  border-color:var(--group-line) !important;
+  box-shadow:var(--theme-shadow-md) !important;
+}
+
+body.theme-fedex .guide-card,
+body.theme-atlas .guide-card,
+body.theme-basic .guide-card,
+body.theme-simple .guide-card{
+  background:
+    radial-gradient(circle at var(--mx) var(--my), color-mix(in srgb, var(--group-accent) 9%, transparent), transparent 32%),
+    linear-gradient(180deg,#ffffff,var(--group-tint)) !important;
+}
+
+body.theme-fedex .guide-card::before,
+body.theme-atlas .guide-card::before,
+body.theme-basic .guide-card::before,
+body.theme-simple .guide-card::before{
+  background:linear-gradient(135deg, color-mix(in srgb, var(--group-accent) 28%, transparent), color-mix(in srgb, var(--group-accent-3) 22%, transparent), rgba(255,255,255,.30)) !important;
+}
+
+/* Text */
+body.theme-fedex .focus-card h2,
+body.theme-fedex .quick-item strong,
+body.theme-fedex .search-copy h2,
+body.theme-fedex .guide-card h3,
+body.theme-atlas .focus-card h2,
+body.theme-atlas .quick-item strong,
+body.theme-atlas .search-copy h2,
+body.theme-atlas .guide-card h3,
+body.theme-basic .focus-card h2,
+body.theme-basic .quick-item strong,
+body.theme-basic .search-copy h2,
+body.theme-basic .guide-card h3,
+body.theme-simple .focus-card h2,
+body.theme-simple .quick-item strong,
+body.theme-simple .search-copy h2,
+body.theme-simple .guide-card h3{
+  color:var(--group-text) !important;
+}
+
+body.theme-fedex .focus-card p,
+body.theme-fedex .quick-item span,
+body.theme-fedex .search-copy p,
+body.theme-fedex .lead,
+body.theme-fedex .small,
+body.theme-fedex .section-copy,
+body.theme-fedex .tips-panel ul,
+body.theme-atlas .focus-card p,
+body.theme-atlas .quick-item span,
+body.theme-atlas .search-copy p,
+body.theme-atlas .lead,
+body.theme-atlas .small,
+body.theme-atlas .section-copy,
+body.theme-atlas .tips-panel ul,
+body.theme-basic .focus-card p,
+body.theme-basic .quick-item span,
+body.theme-basic .search-copy p,
+body.theme-basic .lead,
+body.theme-basic .small,
+body.theme-basic .section-copy,
+body.theme-basic .tips-panel ul,
+body.theme-simple .focus-card p,
+body.theme-simple .quick-item span,
+body.theme-simple .search-copy p,
+body.theme-simple .lead,
+body.theme-simple .small,
+body.theme-simple .section-copy,
+body.theme-simple .tips-panel ul{
+  color:var(--group-muted) !important;
+}
+
+/* Section title treatment */
+body.theme-fedex .section-title,
+body.theme-atlas .section-title,
+body.theme-basic .section-title{
+  color:#ffffff !important;
+  text-shadow:0 18px 44px rgba(2,6,23,.28) !important;
+}
+
+body.theme-simple .section-title{
+  color:var(--group-text) !important;
+  text-shadow:none !important;
+}
+
+body.theme-fedex .section-copy,
+body.theme-atlas .section-copy,
+body.theme-basic .section-copy{
+  color:rgba(226,232,240,.78) !important;
+}
+
+body.theme-simple .section-copy{color:var(--group-muted) !important;}
+
+body.theme-fedex .section-kicker,
+body.theme-atlas .section-kicker,
+body.theme-basic .section-kicker,
+body.theme-simple .section-kicker,
+body.theme-fedex .guide-meta,
+body.theme-atlas .guide-meta,
+body.theme-basic .guide-meta,
+body.theme-simple .guide-meta,
+body.theme-fedex .meta-pill,
+body.theme-atlas .meta-pill,
+body.theme-basic .meta-pill,
+body.theme-simple .meta-pill,
+body.theme-fedex .chip,
+body.theme-atlas .chip,
+body.theme-basic .chip,
+body.theme-simple .chip{
+  background:var(--group-soft) !important;
+  color:var(--group-accent) !important;
+  border-color:var(--group-line) !important;
+}
+
+body.theme-fedex .section-kicker i,
+body.theme-atlas .section-kicker i,
+body.theme-basic .section-kicker i,
+body.theme-simple .section-kicker i,
+body.theme-fedex .guide-meta i,
+body.theme-atlas .guide-meta i,
+body.theme-basic .guide-meta i,
+body.theme-simple .guide-meta i,
+body.theme-fedex .chip i,
+body.theme-atlas .chip i,
+body.theme-basic .chip i,
+body.theme-simple .chip i{
+  color:var(--group-accent) !important;
+}
+
+/* Buttons */
+body.theme-fedex .hero-main-btn,
+body.theme-fedex .filter-btn.active,
+body.theme-fedex .guide-link,
+body.theme-atlas .hero-main-btn,
+body.theme-atlas .filter-btn.active,
+body.theme-atlas .guide-link,
+body.theme-basic .hero-main-btn,
+body.theme-basic .filter-btn.active,
+body.theme-basic .guide-link,
+body.theme-simple .hero-main-btn,
+body.theme-simple .filter-btn.active,
+body.theme-simple .guide-link{
+  background:var(--group-button) !important;
+  color:#ffffff !important;
+  box-shadow:0 16px 30px color-mix(in srgb, var(--group-accent) 22%, transparent) !important;
+}
+
+body.theme-fedex .hero-main-btn:hover,
+body.theme-fedex .guide-link:hover,
+body.theme-atlas .hero-main-btn:hover,
+body.theme-atlas .guide-link:hover,
+body.theme-basic .hero-main-btn:hover,
+body.theme-basic .guide-link:hover,
+body.theme-simple .hero-main-btn:hover,
+body.theme-simple .guide-link:hover{
+  background:var(--group-button-hover) !important;
+}
+
+body.theme-fedex .hero-ghost-btn,
+body.theme-atlas .hero-ghost-btn,
+body.theme-basic .hero-ghost-btn{
+  background:rgba(255,255,255,.10) !important;
+  color:#ffffff !important;
+  border-color:rgba(255,255,255,.15) !important;
+}
+
+body.theme-simple .hero-ghost-btn{
+  background:var(--group-soft) !important;
+  color:var(--group-accent) !important;
+  border-color:var(--group-line) !important;
+}
+
+body.theme-fedex .filter-btn,
+body.theme-atlas .filter-btn,
+body.theme-basic .filter-btn,
+body.theme-simple .filter-btn{
+  background:var(--group-soft) !important;
+  color:var(--group-muted) !important;
+  box-shadow:inset 0 0 0 1px var(--group-line) !important;
+}
+
+body.theme-fedex .filter-btn:hover,
+body.theme-atlas .filter-btn:hover,
+body.theme-basic .filter-btn:hover,
+body.theme-simple .filter-btn:hover{
+  color:var(--group-accent) !important;
+  background:#ffffff !important;
+}
+
+/* Inputs */
+body.theme-fedex #guideSearch,
+body.theme-atlas #guideSearch,
+body.theme-basic #guideSearch,
+body.theme-simple #guideSearch{
+  background:#ffffff !important;
+  color:var(--group-text) !important;
+  box-shadow:inset 0 0 0 1px var(--group-line) !important;
+}
+
+body.theme-fedex #guideSearch:focus,
+body.theme-atlas #guideSearch:focus,
+body.theme-basic #guideSearch:focus,
+body.theme-simple #guideSearch:focus{
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--group-accent) 28%, transparent),
+    0 0 0 7px color-mix(in srgb, var(--group-accent) 8%, transparent) !important;
+}
+
+/* Icons / quick list */
+body.theme-fedex .quick-icon,
+body.theme-atlas .quick-icon,
+body.theme-basic .quick-icon,
+body.theme-simple .quick-icon,
+body.theme-fedex .guide-icon,
+body.theme-atlas .guide-icon,
+body.theme-basic .guide-icon,
+body.theme-simple .guide-icon{
+  background:var(--group-button) !important;
+  color:#ffffff !important;
+}
+
+body.theme-fedex .quick-item,
+body.theme-atlas .quick-item,
+body.theme-basic .quick-item,
+body.theme-simple .quick-item{
+  background:#ffffff !important;
+  border-color:var(--group-line) !important;
+}
+
+/* Dark side card matches the updated tab pages */
+body.theme-fedex .focus-card.dark,
+body.theme-atlas .focus-card.dark,
+body.theme-basic .focus-card.dark{
+  background:var(--theme-title-bg) !important;
+  color:#ffffff !important;
+  border:none !important;
+}
+
+body.theme-simple .focus-card.dark{
+  background:#111827 !important;
+  color:#ffffff !important;
+  border:none !important;
+}
+
+body.theme-fedex .focus-card.dark h2,
+body.theme-atlas .focus-card.dark h2,
+body.theme-basic .focus-card.dark h2,
+body.theme-simple .focus-card.dark h2{
+  color:#ffffff !important;
+}
+
+body.theme-fedex .focus-card.dark p,
+body.theme-atlas .focus-card.dark p,
+body.theme-basic .focus-card.dark p,
+body.theme-simple .focus-card.dark p{
+  color:rgba(255,255,255,.72) !important;
+}
+
+body.theme-fedex .focus-card.dark .card-label span,
+body.theme-fedex .focus-card.dark .card-label span i{
+  color:#ff8a33 !important;
+  text-shadow:0 0 10px rgba(255,102,0,.28) !important;
+}
+
+body.theme-atlas .focus-card.dark .card-label span,
+body.theme-atlas .focus-card.dark .card-label span i{
+  color:#e1df6a !important;
+  text-shadow:0 0 10px rgba(201,201,54,.28) !important;
+}
+
+body.theme-basic .focus-card.dark .card-label span,
+body.theme-basic .focus-card.dark .card-label span i{
+  color:#d1d5db !important;
+  text-shadow:0 0 10px rgba(255,255,255,.18) !important;
+}
+
+body.theme-simple .focus-card.dark .card-label span,
+body.theme-simple .focus-card.dark .card-label span i{
+  color:#60a5fa !important;
+  text-shadow:none !important;
+}
+
+body.theme-fedex .focus-card.dark .card-label i:last-child,
+body.theme-atlas .focus-card.dark .card-label i:last-child,
+body.theme-basic .focus-card.dark .card-label i:last-child,
+body.theme-simple .focus-card.dark .card-label i:last-child{
+  background:#ffffff !important;
+  color:var(--group-accent) !important;
+}
+
+/* Support panel */
+body.theme-fedex .support-panel,
+body.theme-atlas .support-panel,
+body.theme-basic .support-panel{
+  background:var(--theme-title-bg) !important;
+  color:#ffffff !important;
+}
+
+body.theme-simple .support-panel{
+  background:#111827 !important;
+  color:#ffffff !important;
+}
+
+body.theme-fedex .support-panel span,
+body.theme-atlas .support-panel span,
+body.theme-basic .support-panel span,
+body.theme-simple .support-panel span{
+  color:rgba(255,255,255,.72) !important;
+}
+
+/* 4-column desktop grid like the main index */
+.guide-grid{
+  grid-template-columns:repeat(4, minmax(0,1fr)) !important;
+}
+
+@media (max-width:1280px){
+  .guide-grid{grid-template-columns:repeat(3, minmax(0,1fr)) !important;}
+}
+
+@media (max-width:1080px){
+  .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr)) !important;}
+}
+
+@media (max-width:760px){
+  .guide-grid{grid-template-columns:1fr !important;}
+}
+
 </style>
 </head>
 
-<body>
+<body class="theme-fedex">
 <div class="page">
   <div id="site-header"></div>
 
@@ -1502,6 +1980,7 @@ window.SITE_BASE = "";
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
+<script src="assets/js/theme-loader.js"></script>
 
 <script>
 const db = window.db;
