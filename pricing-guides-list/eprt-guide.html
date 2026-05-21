@@ -10,56 +10,58 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/guide-themes.css">
   
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-    authDomain: "bdgg-database.firebaseapp.com",
-    projectId: "bdgg-database",
-    storageBucket: "bdgg-database.appspot.com",
-    messagingSenderId: "43574975434",
-    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-  };
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+  authDomain: "bdgg-database.firebaseapp.com",
+  projectId: "bdgg-database",
+  storageBucket: "bdgg-database.appspot.com",
+  messagingSenderId: "43574975434",
+  appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+};
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
-  window.auth = firebase.auth();
-  window.db = firebase.firestore();
+window.auth = firebase.auth();
+window.db = firebase.firestore();
 
-  /* =========================================================
-     PAGE AUTH GUARD
-     Prevents direct URL access without login
-  ========================================================= */
-  window.auth.onAuthStateChanged(async function(user) {
-    try {
-      if (!user) {
-        window.location.replace("../index.html");
-        return;
-      }
-
-      await user.reload();
-
-      const refreshedUser = window.auth.currentUser;
-
-      if (!refreshedUser || !refreshedUser.emailVerified) {
-        window.location.replace("../index.html");
-        return;
-      }
-
-      document.documentElement.classList.remove("page-protected");
-
-    } catch (error) {
-      console.error("Auth guard error:", error);
+/* =========================================================
+   PAGE AUTH GUARD
+   Prevents direct URL access without login
+========================================================= */
+window.auth.onAuthStateChanged(async function(user) {
+  try {
+    if (!user) {
       window.location.replace("../index.html");
+      return;
     }
-  });
-  </script>
+
+    await user.reload();
+
+    const refreshedUser = window.auth.currentUser;
+
+    if (!refreshedUser || !refreshedUser.emailVerified) {
+      window.location.replace("../index.html");
+      return;
+    }
+
+    document.documentElement.classList.remove("page-protected");
+
+  } catch (error) {
+    console.error("Auth guard error:", error);
+    window.location.replace("../index.html");
+  }
+});
+</script>
+
 
  <style>
   html.page-protected,
@@ -1631,7 +1633,7 @@
 
 </style>
 </head>
-<body data-page="">
+<body class="theme-fedex" data-page="">
   <div class="page">
 <div id="site-header"></div>
 
@@ -1823,9 +1825,22 @@
 <script src="../assets/js/header-loader.js"></script>
 <script src="../assets/js/header.js"></script>
 <script src="../assets/js/footer-loader.js"></script>
+<script src="../assets/js/theme-loader.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const db = window.db || firebase.firestore();
+  if (!firebase.apps.length) {
+    firebase.initializeApp({
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    });
+  }
+  
+  const auth = firebase.auth();
+  const db = firebase.firestore();
   const TEMPLATE_COLLECTION = "eprt_template";
   const FEEDBACK_COLLECTION = "feedback";
   const MAX_STEPS = 8;
@@ -2168,6 +2183,7 @@ const NODES = {
   }
 
 };
+
 
  function escapeHtml(value){
     return String(value ?? "")
