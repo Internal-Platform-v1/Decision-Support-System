@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Surcharge</title>
+  <title>Surcharge Pricing</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/guide-themes.css">
   
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -60,6 +61,7 @@ window.auth.onAuthStateChanged(async function(user) {
   }
 });
 </script>
+
 
  <style>
   html.page-protected,
@@ -1631,7 +1633,7 @@ window.auth.onAuthStateChanged(async function(user) {
 
 </style>
 </head>
-<body data-page="">
+<body class="theme-fedex" data-page="">
   <div class="page">
 <div id="site-header"></div>
 
@@ -1641,7 +1643,7 @@ window.auth.onAuthStateChanged(async function(user) {
           <div class="main-topbar">
             <div>
 <div class="page-title-block">
-  <h1>Surcharge</h1>
+  <h1>Surcharge Pricing</h1>
   <p class="page-subtitle">
     Use this guide to verify if a surcharge is valid, confirm the correct billing party, check for surcharge exceptions, and choose the right action for rerates or customer updates.
   </p>
@@ -1823,6 +1825,7 @@ window.auth.onAuthStateChanged(async function(user) {
 <script src="../assets/js/header-loader.js"></script>
 <script src="../assets/js/header.js"></script>
 <script src="../assets/js/footer-loader.js"></script>
+<script src="../assets/js/theme-loader.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   if (!firebase.apps.length) {
@@ -1835,7 +1838,8 @@ document.addEventListener("DOMContentLoaded", () => {
       appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
     });
   }
-
+  
+  const auth = firebase.auth();
   const db = firebase.firestore();
   const TEMPLATE_COLLECTION = "surcharge_template";
   const FEEDBACK_COLLECTION = "feedback";
@@ -2143,7 +2147,6 @@ const NODES = {
   }
 
 };
-
  function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
