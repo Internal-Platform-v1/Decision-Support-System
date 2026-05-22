@@ -37,7 +37,7 @@
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
-    // Auth guard
+    // Auth guard (same as ePRT guide)
     window.auth.onAuthStateChanged(async function(user) {
       try {
         if (!user) {
@@ -59,7 +59,7 @@
   </script>
 
   <style>
-    /* ----- BASE STYLES (same as ePRT guide) ----- */
+    /* ----- BASE STYLES (exact match to ePRT guide) ----- */
     html.page-protected,
     html.page-protected body { visibility: hidden; }
 
@@ -138,13 +138,6 @@
     .step-body::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:linear-gradient(180deg,#4d148c,#ff6600); }
     .step-title{ margin:0; font-size:clamp(28px,3vw,44px); line-height:1.05; letter-spacing:-.06em; font-weight:900; color:#0f172a; }
     .step-content{ margin-top:18px; font-size:15px; line-height:1.85; color:#475569; white-space:pre-line; max-width:960px; }
-    .step-images{ display:flex; flex-direction:column; gap:18px; margin-top:24px; }
-    .step-images img{ width:100%; max-height:460px; object-fit:contain; border-radius:20px; border:1px solid #e5e7eb; background:#fff; box-shadow:0 18px 45px rgba(15,23,42,.14); cursor:zoom-in; transition:.25s ease; }
-    .step-images img:hover{ transform:scale(1.015); box-shadow:0 24px 60px rgba(15,23,42,.22); }
-    .step-body.animate-left{ animation:slideLeft .38s ease; }
-    .step-body.animate-right{ animation:slideRight .38s ease; }
-    @keyframes slideLeft{ from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)} }
-    @keyframes slideRight{ from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)} }
     .step-navigation{ display:flex; justify-content:space-between; gap:12px; margin-top:18px; }
     .step-nav-btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; padding:0 20px; border:none; border-radius:16px; font-size:14px; font-weight:900; cursor:pointer; transition:.2s ease; }
     .step-nav-btn:hover{ transform:translateY(-2px); }
@@ -173,7 +166,6 @@
     .path-jump.active span{ background:#6d28d9; color:#fff; }
     .path-jump strong{ display:block; font-size:11px; line-height:1.25; }
     .path-jump small{ display:block; margin-top:2px; color:#64748b; line-height:1.25; font-size:10px; font-weight:700; }
-    .path-jump.active small{ color:#4d148c; }
     .section-note{ font-size:12px; color:#64748b; line-height:1.6; margin-top:-2px; }
     .reminder-list{ display:grid; gap:10px; }
     .reminder{ display:flex; align-items:flex-start; gap:10px; padding:13px; border-radius:17px; background:#f8fafc; border:1px solid #e7edf4; color:#475569; font-size:13px; line-height:1.6; }
@@ -197,7 +189,7 @@
     .image-preview-close{ position:absolute; top:18px; right:18px; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.12); color:#fff; font-size:30px; cursor:pointer; transition:.2s ease; }
     .image-preview-close:hover{ background:rgba(255,255,255,.2); }
 
-    /* ----- THEME BRIDGE (exactly as ePRT guide) ----- */
+    /* ----- THEME BRIDGE (exact copy from ePRT guide) ----- */
     body.theme-fedex, body.theme-atlas, body.theme-basic, body.theme-simple {
       --eprt-text:var(--theme-text, #0f172a);
       --eprt-muted:var(--theme-muted, #64748b);
@@ -220,7 +212,7 @@
     body.theme-fedex .path-jump.active,
     body.theme-atlas .path-jump.active,
     body.theme-basic .path-jump.active,
-    body.theme-simple .path-jump.active { border-color:var(--eprt-primary) !important; background:var(--eprt-soft) !important; box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-primary) 15%, transparent) !important; }
+    body.theme-simple .path-jump.active { border-color:var(--eprt-primary) !important; background:var(--eprt-soft) !important; box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-primary) 12%, transparent) !important; }
     body.theme-fedex .path-jump.active span,
     body.theme-atlas .path-jump.active span,
     body.theme-basic .path-jump.active span,
@@ -285,7 +277,7 @@
                     </div>
                     <div class="step-shell">
                       <div class="step-top"><div class="step-counter" id="stepCounter"></div><div class="mini-progress-bar"><div class="mini-progress-fill" id="miniProgressFill"></div></div></div>
-                      <div class="step-body" id="stepBody"><h2 class="step-title" id="stepTitle"></h2><div class="step-content" id="stepContent"></div><div class="step-images" id="stepImages"></div></div>
+                      <div class="step-body" id="stepBody"><h2 class="step-title" id="stepTitle"></h2><div class="step-content" id="stepContent"></div></div>
                       <div class="step-navigation"><button class="step-nav-btn prev" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button><button class="step-nav-btn next" id="nextBtn">Next <i class="fa-solid fa-arrow-right"></i></button></div>
                       <div id="stepDots" class="step-dots"></div>
                     </div>
@@ -298,7 +290,7 @@
 
         <aside class="side-panel">
           <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Key Reminders</div><div class="reminder-list"><div class="reminder"><i class="fa-solid fa-circle-check"></i><span>Always validate actual effective agreement version (Customer Signed Agreement).</span></div><div class="reminder"><i class="fa-solid fa-ban"></i><span>Do NOT use Dup Load / Dupe Load Successful versions for pricing validation.</span></div><div class="reminder"><i class="fa-solid fa-calendar-check"></i><span>Customer signature date controls the actual effective date.</span></div><div class="reminder"><i class="fa-solid fa-file-contract"></i><span>Use Customer Signed Agreement first, then Legal Modified Agreement if needed.</span></div></div></div>
-          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div><div class="summary-grid"><div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">18</span></div><div class="metric"><span class="metric-k">Images</span><span class="metric-v" id="metricImages">6</span></div><div class="metric"><span class="metric-k">Search Options</span><span class="metric-v">2</span></div><div class="metric"><span class="metric-k">Flow</span><span class="metric-v">ePRS</span></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div><div class="summary-grid"><div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">18</span></div><div class="metric"><span class="metric-k">Max AWB / PRO</span><span class="metric-v">N/A</span></div><div class="metric"><span class="metric-k">Search Options</span><span class="metric-v">2</span></div><div class="metric"><span class="metric-k">Flow</span><span class="metric-v">ePRS</span></div></div></div>
           <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-route"></i> Quick Jump</div><div class="path-list" id="quickJumpList"></div></div>
         </aside>
 
@@ -319,7 +311,7 @@
   <script src="../assets/js/theme-loader.js"></script>
 
   <script>
-    // ==================== ePRS STEPS (18 steps) ====================
+    // ==================== ePRS STEPS (18 steps, no images) ====================
     const steps = [
       { title:"Open SolutionPoint or Direct ePRS", content:"Using iSPI Browser/Citrix Browser, go to SolutionPoint (https://fdx.highspot.com) or direct ePRS link (https://myapps.secure.fedex.com/pricing/eprs)." },
       { title:"Click Pricing", content:"Click on 'Pricing' (same as to view a PRS agreement)." },
@@ -332,41 +324,38 @@
       { title:"Alternative Search: Agreement Number", content:"Hover over 'Research' → click Research. Update Start Date (go back to 2013/2014). Select 'Agreement #', enter agreement number, click Search." },
       { title:"Important Agreement Notes", content:"Typed effective date is not valid; customer signature date controls. Past versions may still affect surcharge rules. ePRS agreements have hard cancel dates — watch Term Dates. Surcharge exceptions often shown as discount off." },
       { title:"ePRS Agreement – Table of Contents", content:"Table of Contents lists services. CUSTOMER SIGNATURE DATE is the correct effective date if later than typed effective date. Note AMC Discount off." },
-      { title:"ePRS Surcharge Terms (Example)", images:["images/snippet1.png"], content:"This agreement signed by customer on 8/13/2018." },
-      { title:"Surcharge Term Rules", images:["images/snippet2.png"], content:"Term 1 for listed exceptions: applies from signature date but ends after 12 months. Term 2 has no end date; FXF Rules apply to all surcharges." },
-      { title:"US Export Pricing Example", images:["images/snippet3.png"], content:"US Export Outbound prepaid (OP) from Territory(US) to Geography(CA) with 3P bill-to US Country level." },
-      { title:"US Import Pricing Example", images:["images/snippet4.png"], content:"US Import Inbound Collect (IC) from Geography(CA) to Territory(US) with 3P bill-to US Country level." },
-      { title:"CA Export Pricing Example", images:["images/snippet5.png"], content:"CA Export Outbound Prepaid (OP) from Territory(CA) to Geography(US) with 3P bill-to CA Country level." },
-      { title:"CA Import Pricing Example", images:["images/snippet6.png"], content:"CA Import Inbound Collect (IC) from Geography(US) to Territory(CA) with 3P bill-to CA Country level." },
-      { title:"Proposal ID Attachment", content:"Some contract documents uploaded under Proposal ID. Click Proposal ID > Attachments > scroll down to Attachments section." }
+      { title:"ePRS Surcharge Terms", content:"The agreement includes Term 1 and Term 2 for surcharge exceptions. Term 1 exceptions apply from customer signature date but end after 12 months. Term 2 has no end date; FXF Rules apply to all surcharges." },
+      { title:"Surcharge Term Rules", content:"If Term 1 start date is later than the customer signature date, Term 1 effective date is followed. Term 2 does not have an end date — per notes, FXF Rules apply to all surcharges." },
+      { title:"US Export Pricing Example", content:"US Export Outbound prepaid (OP) from Territory(US) to Geography(CA) with 3P bill-to US Country level. Also Third Party (3P) US Export example." },
+      { title:"US Import Pricing Example", content:"US Import Inbound Collect (IC) from Geography(CA) to Territory(US) with 3P bill-to US Country level. Third Party (3P) US Import example." },
+      { title:"CA Export Pricing Example", content:"CA Export Outbound Prepaid (OP) from Territory(CA) to Geography(US) with 3P bill-to CA Country level. Third Party (3P) CA Export example." },
+      { title:"CA Import Pricing Example", content:"CA Import Inbound Collect (IC) from Geography(US) to Territory(CA) with 3P bill-to CA Country level. Third Party (3P) CA Import example." },
+      { title:"Proposal ID Attachment", content:"Some contract documents/attachments are uploaded under Proposal ID. Click Proposal ID > Attachments > scroll all the way down and look for Attachments section." }
     ];
 
     let currentStep = 0;
     const els = {
-      stepTitle:document.getElementById("stepTitle"), stepContent:document.getElementById("stepContent"), stepImages:document.getElementById("stepImages"),
+      stepTitle:document.getElementById("stepTitle"), stepContent:document.getElementById("stepContent"),
       stepCounter:document.getElementById("stepCounter"), miniProgressFill:document.getElementById("miniProgressFill"),
       progressFill:document.getElementById("progressFill"), progressText:document.getElementById("progressText"),
       prevBtn:document.getElementById("prevBtn"), nextBtn:document.getElementById("nextBtn"),
       stepDots:document.getElementById("stepDots"), stepBody:document.getElementById("stepBody"),
-      quickJumpList:document.getElementById("quickJumpList"), metricSteps:document.getElementById("metricSteps"), metricImages:document.getElementById("metricImages")
+      quickJumpList:document.getElementById("quickJumpList"), metricSteps:document.getElementById("metricSteps")
     };
 
-    function countImages(){ return steps.reduce((t,s)=>t+(Array.isArray(s.images)?s.images.length:0),0); }
     function renderQuickJump(){ if(els.quickJumpList){ els.quickJumpList.innerHTML=""; steps.forEach((s,i)=>{ const btn=document.createElement("button"); btn.className="path-jump"; btn.type="button"; btn.dataset.jump=i; btn.innerHTML=`<span>${i+1}</span><div><strong>${escapeHtml(s.title)}</strong><small>Step ${i+1}</small></div>`; btn.onclick=()=>goToStep(i,true); els.quickJumpList.appendChild(btn); }); } }
     function updateQuickJump(){ document.querySelectorAll(".path-jump").forEach(btn=>{ const idx=Number(btn.dataset.jump); btn.classList.toggle("active",idx===currentStep); }); }
     function renderDots(){ if(els.stepDots){ els.stepDots.innerHTML=""; steps.forEach((_,i)=>{ const dot=document.createElement("div"); dot.className="step-dot"; if(i===currentStep) dot.classList.add("active"); dot.onclick=()=>goToStep(i,true); els.stepDots.appendChild(dot); }); } }
-    function renderStep(){ const step=steps[currentStep]; const progress=((currentStep+1)/steps.length*100)+"%"; if(els.stepTitle) els.stepTitle.textContent=step.title; if(els.stepContent) els.stepContent.textContent=step.content; if(els.stepImages){ els.stepImages.innerHTML=""; if(Array.isArray(step.images)){ step.images.forEach(img=>{ const image=document.createElement("img"); image.src=img; image.alt=step.title; image.loading="lazy"; els.stepImages.appendChild(image); }); } } if(els.stepCounter) els.stepCounter.textContent=`Step ${currentStep+1} of ${steps.length}`; if(els.progressText) els.progressText.textContent=`Step ${currentStep+1} of ${steps.length}`; if(els.progressFill) els.progressFill.style.width=progress; if(els.miniProgressFill) els.miniProgressFill.style.width=progress; if(els.metricSteps) els.metricSteps.textContent=steps.length; if(els.metricImages) els.metricImages.textContent=countImages(); if(els.prevBtn) els.prevBtn.disabled=currentStep===0; if(els.nextBtn){ if(currentStep===steps.length-1){ els.nextBtn.innerHTML=`Finish <i class="fa-solid fa-circle-check"></i>`; els.nextBtn.classList.add("finish"); }else{ els.nextBtn.innerHTML=`Next <i class="fa-solid fa-arrow-right"></i>`; els.nextBtn.classList.remove("finish"); } } renderDots(); updateQuickJump(); }
+    function renderStep(){ const step=steps[currentStep]; const progress=((currentStep+1)/steps.length*100)+"%"; if(els.stepTitle) els.stepTitle.textContent=step.title; if(els.stepContent) els.stepContent.textContent=step.content; if(els.stepCounter) els.stepCounter.textContent=`Step ${currentStep+1} of ${steps.length}`; if(els.progressText) els.progressText.textContent=`Step ${currentStep+1} of ${steps.length}`; if(els.progressFill) els.progressFill.style.width=progress; if(els.miniProgressFill) els.miniProgressFill.style.width=progress; if(els.metricSteps) els.metricSteps.textContent=steps.length; if(els.prevBtn) els.prevBtn.disabled=currentStep===0; if(els.nextBtn){ if(currentStep===steps.length-1){ els.nextBtn.innerHTML=`Finish <i class="fa-solid fa-circle-check"></i>`; els.nextBtn.classList.add("finish"); }else{ els.nextBtn.innerHTML=`Next <i class="fa-solid fa-arrow-right"></i>`; els.nextBtn.classList.remove("finish"); } } renderDots(); updateQuickJump(); }
     function animateStep(direction){ if(els.stepBody){ els.stepBody.classList.remove("animate-left","animate-right"); void els.stepBody.offsetWidth; els.stepBody.classList.add(direction==="left"?"animate-left":"animate-right"); } }
     function goToStep(index,shouldScroll=false){ if(index<0||index>=steps.length) return; const direction=index>=currentStep?"left":"right"; currentStep=index; animateStep(direction); renderStep(); if(shouldScroll){ const sec=document.getElementById("stepsSection"); if(sec) sec.scrollIntoView({ behavior:"smooth", block:"start" }); } }
     function exploreSteps(){ goToStep(0,true); }
     window.goToStep=goToStep; window.exploreSteps=exploreSteps;
     if(els.nextBtn) els.nextBtn.onclick=()=>{ if(currentStep<steps.length-1){ currentStep++; animateStep("left"); renderStep(); }else{ alert("ePRS checking guide completed."); currentStep=0; animateStep("left"); renderStep(); } };
     if(els.prevBtn) els.prevBtn.onclick=()=>{ if(currentStep>0){ currentStep--; animateStep("right"); renderStep(); } };
-    document.addEventListener("keydown",e=>{ if(e.key==="ArrowRight"&&els.nextBtn) els.nextBtn.click(); if(e.key==="ArrowLeft"&&els.prevBtn) els.prevBtn.click(); if(e.key==="Escape") closeImagePreview(); });
-    document.addEventListener("click",e=>{ if(e.target.matches(".step-images img")){ const modal=document.getElementById("imagePreviewModal"); const img=document.getElementById("imagePreview"); if(modal&&img){ modal.style.display="flex"; img.src=e.target.src; document.body.style.overflow="hidden"; } } if(e.target.matches(".image-preview-close")||e.target.id==="imagePreviewModal") closeImagePreview(); });
-    function closeImagePreview(){ const modal=document.getElementById("imagePreviewModal"); const img=document.getElementById("imagePreview"); if(modal) modal.style.display="none"; if(img) img.src=""; document.body.style.overflow=""; }
+    document.addEventListener("keydown",e=>{ if(e.key==="ArrowRight"&&els.nextBtn) els.nextBtn.click(); if(e.key==="ArrowLeft"&&els.prevBtn) els.prevBtn.click(); });
     function copyText(id,btn){ const el=document.getElementById(id); if(!el) return; const text=el.innerText.trim(); if(!text) return; navigator.clipboard.writeText(text).then(()=>{ const old=btn.textContent; btn.classList.add("copied"); btn.textContent="Copied ✓"; setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent=old; },1400); }).catch(()=>{ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); const old=btn.textContent; btn.classList.add("copied"); btn.textContent="Copied ✓"; setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent=old; },1400); }); }
-    window.copyText=copyText; window.closeImagePreview=closeImagePreview;
+    window.copyText=copyText;
     function escapeHtml(str){ return String(str??"").replace(/[&<>]/g,function(m){ if(m==="&") return "&amp;"; if(m==="<") return "&lt;"; if(m===">") return "&gt;"; return m; }); }
     renderQuickJump(); renderStep();
   </script>
