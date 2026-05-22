@@ -591,6 +591,9 @@
       box-shadow:none;
     }
 
+    /* =========================================================
+       STEP DOTS - ORANGE ACTIVE STATE (FIXED)
+    ========================================================= */
     .step-dots{
       display:flex;
       flex-wrap:wrap;
@@ -605,12 +608,27 @@
       border-radius:999px;
       background:#d1d5db;
       cursor:pointer;
-      transition:.2s ease;
+      transition:all .2s ease;
     }
 
-    .step-dot:hover{transform:scale(1.3);background:#6d28d9}
-    .step-dot.active{width:30px;background:#ff6600}
+    .step-dot:hover{
+      transform:scale(1.3);
+      background:#6d28d9;
+    }
 
+    .step-dot.active{
+      width:30px;
+      background:#ff6600 !important;
+    }
+
+    /* Theme-specific active dot colors */
+    body.theme-atlas .step-dot.active{background:#ff8c42 !important;}
+    body.theme-basic .step-dot.active{background:#f59e0b !important;}
+    body.theme-simple .step-dot.active{background:#3b82f6 !important;}
+
+    /* =========================================================
+       QUICK JUMP - ACTIVE BORDER (FIXED)
+    ========================================================= */
     .side-panel,
     .template-panel{
       padding:18px 18px 18px 0;
@@ -702,10 +720,24 @@
       box-shadow:0 8px 18px rgba(37,99,235,.08);
     }
 
+    /* ACTIVE STATE - Purple border like ePRT guide */
     .path-jump.active{
       border:2px solid #6d28d9 !important;
       background:#f3e8ff !important;
       box-shadow:0 0 0 3px rgba(109,40,217,.15) !important;
+    }
+
+    .path-jump.active span{
+      background:#6d28d9 !important;
+      color:#fff !important;
+    }
+
+    .path-jump.active strong{
+      color:#4d148c !important;
+    }
+
+    .path-jump.active small{
+      color:#6d28d9 !important;
     }
 
     .path-jump span{
@@ -719,17 +751,11 @@
       font-size:10px;
       font-weight:900;
       flex:0 0 auto;
-    }
-
-    .path-jump.active span{
-      background:#6d28d9 !important;
-      color:#fff !important;
+      transition:all .18s ease;
     }
 
     .path-jump strong{display:block;font-size:11px;line-height:1.25}
     .path-jump small{display:block;margin-top:2px;color:#64748b;line-height:1.25;font-size:10px;font-weight:700}
-
-    .path-jump.active small{color:#4d148c !important;}
 
     .section-note{
       font-size:12px;
@@ -882,95 +908,13 @@
 
     .image-preview-close:hover{background:rgba(255,255,255,.2);}
 
-    /* =========================================================
-       FULL THEME SUPPORT - FIXED ACTIVE STATES
-    ========================================================= */
-    body.theme-fedex,
-    body.theme-atlas,
-    body.theme-basic,
-    body.theme-simple{
-      --eprt-text:var(--theme-text, #0f172a);
-      --eprt-muted:var(--theme-muted, #64748b);
-      --eprt-primary:var(--theme-primary, #4d148c);
-      --eprt-primary-2:var(--theme-primary-2, #6d28d9);
-      --eprt-accent:var(--theme-accent, #ff6600);
-      --eprt-soft:var(--theme-primary-soft, #f3e8ff);
-      --eprt-accent-soft:var(--theme-accent-soft, #fff7ed);
-      --eprt-card:var(--theme-card, #ffffff);
-      --eprt-card-soft:var(--theme-card-soft, #f8fafc);
-      --eprt-card-tint:var(--theme-card-blue-soft, #f8fbff);
-      --eprt-line:var(--theme-line-soft, #e2e8f0);
-      --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
-      --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
-    }
-
-    body.theme-fedex .pill.primary,
-    body.theme-atlas .pill.primary,
-    body.theme-basic .pill.primary,
-    body.theme-simple .pill.primary,
-    body.theme-fedex .volume-btn,
-    body.theme-atlas .volume-btn,
-    body.theme-basic .volume-btn,
-    body.theme-simple .volume-btn,
-    body.theme-fedex .step-nav-btn.next,
-    body.theme-atlas .step-nav-btn.next,
-    body.theme-basic .step-nav-btn.next,
-    body.theme-simple .step-nav-btn.next,
-    body.theme-fedex .step-viewer-title i,
-    body.theme-atlas .step-viewer-title i,
-    body.theme-basic .step-viewer-title i,
-    body.theme-simple .step-viewer-title i{
-      background:var(--eprt-button) !important;
-      color:#ffffff !important;
-    }
-
-    body.theme-fedex .progress-fill,
-    body.theme-atlas .progress-fill,
-    body.theme-basic .progress-fill,
-    body.theme-simple .progress-fill,
-    body.theme-fedex .mini-progress-fill,
-    body.theme-atlas .mini-progress-fill,
-    body.theme-basic .mini-progress-fill,
-    body.theme-simple .mini-progress-fill{
-      background:var(--eprt-progress) !important;
-    }
-
-    body.theme-fedex .step-dot.active,
-    body.theme-atlas .step-dot.active,
-    body.theme-basic .step-dot.active,
-    body.theme-simple .step-dot.active{
-      background:var(--eprt-accent) !important;
-      width:30px;
-    }
-
-    body.theme-fedex .step-dot:hover,
-    body.theme-atlas .step-dot:hover,
-    body.theme-basic .step-dot:hover,
-    body.theme-simple .step-dot:hover{
-      background:var(--eprt-primary) !important;
-    }
-
-    body.theme-fedex .path-jump.active,
-    body.theme-atlas .path-jump.active,
-    body.theme-basic .path-jump.active,
-    body.theme-simple .path-jump.active{
-      border-color:var(--eprt-primary) !important;
-      background:var(--eprt-soft) !important;
-      box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-primary) 15%, transparent) !important;
-    }
-
-    body.theme-fedex .path-jump.active span,
-    body.theme-atlas .path-jump.active span,
-    body.theme-basic .path-jump.active span,
-    body.theme-simple .path-jump.active span{
-      background:var(--eprt-primary) !important;
-      color:#fff !important;
-    }
-
-    body.theme-atlas .step-dot.active{background:#ff8c42 !important;}
+    /* Theme overrides */
     body.theme-atlas .path-jump.active{border-color:#0e5361 !important; background:#e6f4f5 !important;}
-    body.theme-basic .step-dot.active{background:#f59e0b !important;}
-    body.theme-simple .step-dot.active{background:#3b82f6 !important;}
+    body.theme-atlas .path-jump.active span{background:#0e5361 !important;}
+    body.theme-basic .path-jump.active{border-color:#374151 !important; background:#f3f4f6 !important;}
+    body.theme-basic .path-jump.active span{background:#374151 !important;}
+    body.theme-simple .path-jump.active{border-color:#2563eb !important; background:#eff6ff !important;}
+    body.theme-simple .path-jump.active span{background:#2563eb !important;}
 
     @media (max-width:1450px){.app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}}
     @media (max-width:1220px){.app-frame{grid-template-columns:1fr}.side-panel,.template-panel{padding:0 18px 18px}}
@@ -1065,7 +1009,7 @@
   <script src="../assets/js/theme-loader.js"></script>
 
   <script>
-    // ==================== ePRS STEPS ====================
+    // ePRS STEPS (same as before)
     const steps = [
       { title:"Open SolutionPoint or Direct ePRS", content:"Using iSPI Browser/Citrix Browser, go to SolutionPoint (https://fdx.highspot.com) or direct ePRS link (https://myapps.secure.fedex.com/pricing/eprs)." },
       { title:"Click Pricing", content:"Click on 'Pricing' (same as to view a PRS agreement)." },
@@ -1105,7 +1049,7 @@
     function goToStep(index,shouldScroll=false){if(index<0||index>=steps.length)return;const direction=index>=currentStep?"left":"right";currentStep=index;animateStep(direction);renderStep();if(shouldScroll){const sec=document.getElementById("stepsSection");if(sec)sec.scrollIntoView({behavior:"smooth",block:"start"});}}
     function exploreSteps(){goToStep(0,true);}
     window.goToStep=goToStep; window.exploreSteps=exploreSteps;
-    if(els.nextBtn)els.nextBtn.onclick=()=>{if(currentStep<steps.length-1){currentStep++;animateStep("left");renderStep();}else{alert("ePRS checking guide completed. The guide will restart.");currentStep=0;animateStep("left");renderStep();}};
+    if(els.nextBtn)els.nextBtn.onclick=()=>{if(currentStep<steps.length-1){currentStep++;animateStep("left");renderStep();}else{alert("ePRS checking guide completed.");currentStep=0;animateStep("left");renderStep();}};
     if(els.prevBtn)els.prevBtn.onclick=()=>{if(currentStep>0){currentStep--;animateStep("right");renderStep();}};
     document.addEventListener("keydown",e=>{if(e.key==="ArrowRight"&&els.nextBtn)els.nextBtn.click();if(e.key==="ArrowLeft"&&els.prevBtn)els.prevBtn.click();if(e.key==="Escape")closeImagePreview();});
     document.addEventListener("click",e=>{if(e.target.matches(".step-images img")){const modal=document.getElementById("imagePreviewModal");const img=document.getElementById("imagePreview");if(modal&&img){modal.style.display="flex";img.src=e.target.src;document.body.style.overflow="hidden";}}if(e.target.matches(".image-preview-close")||e.target.id==="imagePreviewModal")closeImagePreview();});
