@@ -37,28 +37,19 @@
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
-    /* =========================================================
-       PAGE AUTH GUARD
-       Prevents direct URL access without login
-    ========================================================= */
     window.auth.onAuthStateChanged(async function(user) {
       try {
         if (!user) {
           window.location.replace("../index.html");
           return;
         }
-
         await user.reload();
-
         const refreshedUser = window.auth.currentUser;
-
         if (!refreshedUser || !refreshedUser.emailVerified) {
           window.location.replace("../index.html");
           return;
         }
-
         document.documentElement.classList.remove("page-protected");
-
       } catch (error) {
         console.error("Auth guard error:", error);
         window.location.replace("../index.html");
@@ -822,6 +813,12 @@
       font-weight:800;
       color:#64748b;
       text-decoration:none;
+      transition:all .2s ease;
+    }
+
+    .template-tag:hover{
+      background:#eef4ff;
+      color:#1d4ed8;
     }
 
     .template-copy{
@@ -877,7 +874,28 @@
 
     .image-preview-close:hover{background:rgba(255,255,255,.2)}
 
-    /* Theme overrides to match ePRT guide style */
+    /* =========================================================
+       FULL THEME SUPPORT (matches ePRT Submission Guide)
+    ========================================================= */
+    body.theme-fedex,
+    body.theme-atlas,
+    body.theme-basic,
+    body.theme-simple{
+      --eprt-text:var(--theme-text, #0f172a);
+      --eprt-muted:var(--theme-muted, #64748b);
+      --eprt-primary:var(--theme-primary, #4d148c);
+      --eprt-primary-2:var(--theme-primary-2, #6d28d9);
+      --eprt-accent:var(--theme-accent, #ff6600);
+      --eprt-soft:var(--theme-primary-soft, #f3e8ff);
+      --eprt-accent-soft:var(--theme-accent-soft, #fff7ed);
+      --eprt-card:var(--theme-card, #ffffff);
+      --eprt-card-soft:var(--theme-card-soft, #f8fafc);
+      --eprt-card-tint:var(--theme-card-blue-soft, #f8fbff);
+      --eprt-line:var(--theme-line-soft, #e2e8f0);
+      --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
+      --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
+    }
+
     body.theme-fedex .pill.primary,
     body.theme-atlas .pill.primary,
     body.theme-basic .pill.primary,
@@ -894,8 +912,10 @@
     body.theme-atlas .step-viewer-title i,
     body.theme-basic .step-viewer-title i,
     body.theme-simple .step-viewer-title i{
-      background:linear-gradient(135deg,#4d148c,#6d28d9) !important;
+      background:var(--eprt-button) !important;
+      color:#ffffff !important;
     }
+
     body.theme-fedex .progress-fill,
     body.theme-atlas .progress-fill,
     body.theme-basic .progress-fill,
@@ -904,20 +924,86 @@
     body.theme-atlas .mini-progress-fill,
     body.theme-basic .mini-progress-fill,
     body.theme-simple .mini-progress-fill{
-      background:linear-gradient(90deg,#4d148c,#6d28d9,#ff6600) !important;
+      background:var(--eprt-progress) !important;
     }
+
+    body.theme-fedex .question-card,
+    body.theme-atlas .question-card,
+    body.theme-basic .question-card,
+    body.theme-simple .question-card,
+    body.theme-fedex .step-body,
+    body.theme-atlas .step-body,
+    body.theme-basic .step-body,
+    body.theme-simple .step-body{
+      background: radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
+                  linear-gradient(180deg, var(--eprt-card), var(--eprt-card-tint)) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    body.theme-fedex .step-body::before,
+    body.theme-atlas .step-body::before,
+    body.theme-basic .step-body::before,
+    body.theme-simple .step-body::before{
+      background:var(--eprt-progress) !important;
+    }
+
+    body.theme-fedex .summary-card,
+    body.theme-atlas .summary-card,
+    body.theme-basic .summary-card,
+    body.theme-simple .summary-card{
+      background:var(--eprt-card) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    body.theme-fedex .reminder,
+    body.theme-atlas .reminder,
+    body.theme-basic .reminder,
+    body.theme-simple .reminder{
+      background:var(--eprt-card-soft) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    body.theme-fedex .reminder i,
+    body.theme-atlas .reminder i,
+    body.theme-basic .reminder i,
+    body.theme-simple .reminder i{
+      color:var(--eprt-accent) !important;
+    }
+
+    body.theme-fedex .path-jump,
+    body.theme-atlas .path-jump,
+    body.theme-basic .path-jump,
+    body.theme-simple .path-jump{
+      background:var(--eprt-card-soft) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    body.theme-fedex .path-jump.active,
+    body.theme-atlas .path-jump.active,
+    body.theme-basic .path-jump.active,
+    body.theme-simple .path-jump.active{
+      border-color:var(--eprt-primary) !important;
+    }
+
+    body.theme-fedex .template-copy,
+    body.theme-atlas .template-copy,
+    body.theme-basic .template-copy,
+    body.theme-simple .template-copy{
+      background:var(--eprt-button) !important;
+    }
+
+    body.theme-atlas .template-copy{background:#0e5361 !important;}
+    body.theme-basic .template-copy{background:#111827 !important;}
+    body.theme-simple .template-copy{background:#2563eb !important;}
+
     @media (max-width:1450px){.app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}}
     @media (max-width:1220px){.app-frame{grid-template-columns:1fr}.side-panel,.template-panel{padding:0 18px 18px}}
     @media (max-width:760px){
       .app-shell{width:min(calc(100% - 20px), var(--max));margin:16px auto}
       .app-frame{min-height:100vh;border-radius:24px}
       .main{padding:18px}
-      .main-topbar{flex-direction:column;align-items:flex-start}
       .question-text{font-size:28px}
-      .summary-grid{grid-template-columns:1fr}
-      .step-viewer-head{flex-direction:column;align-items:flex-start}
-      .step-body{padding:22px;min-height:460px}
-      .path-list{gap:8px}
+      .step-body{padding:22px}
     }
   </style>
 </head>
@@ -932,7 +1018,7 @@
           <div class="main-topbar">
             <div class="page-title-block">
               <h1>Steps on How to Check ePRS</h1>
-              <p class="page-subtitle">Complete walkthrough to review ePRS agreements, verify effective versions, validate surcharge terms, and locate supporting attachments — built with the same interactive guide style as ePRT Submission.</p>
+              <p class="page-subtitle">Complete walkthrough to review ePRS agreements, verify effective versions, validate surcharge terms, and locate supporting attachments — with full theme support matching the ePRT Submission Guide.</p>
             </div>
             <div class="main-status">
               <div class="pill primary"><i class="fa-solid fa-file-contract"></i> ePRS Review</div>
@@ -1003,26 +1089,26 @@
   <script src="../assets/js/theme-loader.js"></script>
 
   <script>
-    // ==================== ePRS STEPS (refreshed from ePRT style) ====================
+    // ==================== ePRS STEPS ====================
     const steps = [
-      { title:"Open SolutionPoint or Direct ePRS", content:`Using iSPI Browser/Citrix Browser, go to SolutionPoint (https://fdx.highspot.com) or direct ePRS link (https://myapps.secure.fedex.com/pricing/eprs).` },
-      { title:"Click Pricing", content:`Click on “Pricing” (same as to view a PRS agreement).` },
-      { title:"Choose Agreement Type", content:`Choose between ePRS for ePRS Agreement or PRS Rerate for Tariff.` },
-      { title:"Select Level ID", content:`Click the Level ID in the Research Type dropdown menu.` },
-      { title:"Search Options – Hierarchy Level", content:`Search by Country ID, Group or Subgroup ID. Do NOT search by account code — ePRS agreements are loaded at hierarchy level. Use proposal number if available. Recommended: Country Code.` },
-      { title:"Start Searching by Level ID", content:`Change Research Type to Level ID, enter your Level number (Country Level code), click Search / Find Next.` },
-      { title:"Agreement Versions & Proposal Status", content:`ePRS screen shows different versions. Look for Proposal Status “Pricing Implementation Complete” — that indicates the agreement actually became effective. “Dup Load” versions are for internal correction; do NOT use them for pricing validation.` },
-      { title:"Agreement Version Logic", content:`Version numbers do NOT indicate effective order. Actual effective date = Customer Signature Date (if later than typed effective date). Always select Customer Signed Agreement first. If surcharge missing, review Legal Modified Agreement.` },
-      { title:"Alternative Search: Agreement Number", content:`Hover over “Research” → click Research. Update Start Date (go back to 2013/2014). Select “Agreement #”, enter agreement number, click Search.` },
-      { title:"Important Agreement Notes", content:`Typed effective date is not valid; customer signature date controls. Past versions may still affect surcharge rules. ePRS agreements have hard cancel dates — watch Term Dates. Surcharge exceptions often shown as discount off.` },
-      { title:"ePRS Agreement – Table of Contents", content:`Table of Contents lists services. CUSTOMER SIGNATURE DATE is the correct effective date if later than typed effective date. Note AMC Discount off.` },
-      { title:"ePRS Surcharge Terms (Example)", images:["images/snippet1.png"], content:`This agreement signed by customer on 8/13/2018.` },
-      { title:"Surcharge Term Rules", images:["images/snippet2.png"], content:`Term 1 for listed exceptions: applies from signature date but ends after 12 months. Term 2 has no end date; FXF Rules apply to all surcharges.` },
-      { title:"US Export Pricing Example", images:["images/snippet3.png"], content:`US Export Outbound prepaid (OP) from Territory(US) to Geography(CA) with 3P bill-to US Country level. Also Third Party (3P) US Export example.` },
-      { title:"US Import Pricing Example", images:["images/snippet4.png"], content:`US Import Inbound Collect (IC) from Geography(CA) to Territory(US) with 3P bill-to US Country level. Third Party (3P) US Import example.` },
-      { title:"CA Export Pricing Example", images:["images/snippet5.png"], content:`CA Export Outbound Prepaid (OP) from Territory(CA) to Geography(US) with 3P bill-to CA Country level. Third Party (3P) CA Export example.` },
-      { title:"CA Import Pricing Example", images:["images/snippet6.png"], content:`CA Import Inbound Collect (IC) from Geography(US) to Territory(CA) with 3P bill-to CA Country level. Third Party (3P) CA Import example.` },
-      { title:"Proposal ID Attachment", content:`Some contract documents uploaded under Proposal ID. Click Proposal ID > Attachments > scroll down to Attachments section.` }
+      { title:"Open SolutionPoint or Direct ePRS", content:"Using iSPI Browser/Citrix Browser, go to SolutionPoint (https://fdx.highspot.com) or direct ePRS link (https://myapps.secure.fedex.com/pricing/eprs)." },
+      { title:"Click Pricing", content:"Click on 'Pricing' (same as to view a PRS agreement)." },
+      { title:"Choose Agreement Type", content:"Choose between ePRS for ePRS Agreement or PRS Rerate for Tariff." },
+      { title:"Select Level ID", content:"Click the Level ID in the Research Type dropdown menu." },
+      { title:"Search Options – Hierarchy Level", content:"Search by Country ID, Group or Subgroup ID. Do NOT search by account code — ePRS agreements are loaded at hierarchy level. Use proposal number if available. Recommended: Country Code." },
+      { title:"Start Searching by Level ID", content:"Change Research Type to Level ID, enter your Level number (Country Level code), click Search / Find Next." },
+      { title:"Agreement Versions & Proposal Status", content:"ePRS screen shows different versions. Look for Proposal Status 'Pricing Implementation Complete' — that indicates the agreement actually became effective. 'Dup Load' versions are for internal correction; do NOT use them for pricing validation." },
+      { title:"Agreement Version Logic", content:"Version numbers do NOT indicate effective order. Actual effective date = Customer Signature Date (if later than typed effective date). Always select Customer Signed Agreement first. If surcharge missing, review Legal Modified Agreement." },
+      { title:"Alternative Search: Agreement Number", content:"Hover over 'Research' → click Research. Update Start Date (go back to 2013/2014). Select 'Agreement #', enter agreement number, click Search." },
+      { title:"Important Agreement Notes", content:"Typed effective date is not valid; customer signature date controls. Past versions may still affect surcharge rules. ePRS agreements have hard cancel dates — watch Term Dates. Surcharge exceptions often shown as discount off." },
+      { title:"ePRS Agreement – Table of Contents", content:"Table of Contents lists services. CUSTOMER SIGNATURE DATE is the correct effective date if later than typed effective date. Note AMC Discount off." },
+      { title:"ePRS Surcharge Terms (Example)", images:["images/snippet1.png"], content:"This agreement signed by customer on 8/13/2018." },
+      { title:"Surcharge Term Rules", images:["images/snippet2.png"], content:"Term 1 for listed exceptions: applies from signature date but ends after 12 months. Term 2 has no end date; FXF Rules apply to all surcharges." },
+      { title:"US Export Pricing Example", images:["images/snippet3.png"], content:"US Export Outbound prepaid (OP) from Territory(US) to Geography(CA) with 3P bill-to US Country level." },
+      { title:"US Import Pricing Example", images:["images/snippet4.png"], content:"US Import Inbound Collect (IC) from Geography(CA) to Territory(US) with 3P bill-to US Country level." },
+      { title:"CA Export Pricing Example", images:["images/snippet5.png"], content:"CA Export Outbound Prepaid (OP) from Territory(CA) to Geography(US) with 3P bill-to CA Country level." },
+      { title:"CA Import Pricing Example", images:["images/snippet6.png"], content:"CA Import Inbound Collect (IC) from Geography(US) to Territory(CA) with 3P bill-to CA Country level." },
+      { title:"Proposal ID Attachment", content:"Some contract documents uploaded under Proposal ID. Click Proposal ID > Attachments > scroll down to Attachments section." }
     ];
 
     let currentStep = 0;
@@ -1043,7 +1129,7 @@
     function goToStep(index,shouldScroll=false){if(index<0||index>=steps.length)return;const direction=index>=currentStep?"left":"right";currentStep=index;animateStep(direction);renderStep();if(shouldScroll){const sec=document.getElementById("stepsSection");if(sec)sec.scrollIntoView({behavior:"smooth",block:"start"});}}
     function exploreSteps(){goToStep(0,true);}
     window.goToStep=goToStep; window.exploreSteps=exploreSteps;
-    if(els.nextBtn)els.nextBtn.onclick=()=>{if(currentStep<steps.length-1){currentStep++;animateStep("left");renderStep();}else{alert("ePRS checking guide completed.");currentStep=0;animateStep("left");renderStep();}};
+    if(els.nextBtn)els.nextBtn.onclick=()=>{if(currentStep<steps.length-1){currentStep++;animateStep("left");renderStep();}else{alert("ePRS checking guide completed. The guide will restart.");currentStep=0;animateStep("left");renderStep();}};
     if(els.prevBtn)els.prevBtn.onclick=()=>{if(currentStep>0){currentStep--;animateStep("right");renderStep();}};
     document.addEventListener("keydown",e=>{if(e.key==="ArrowRight"&&els.nextBtn)els.nextBtn.click();if(e.key==="ArrowLeft"&&els.prevBtn)els.prevBtn.click();if(e.key==="Escape")closeImagePreview();});
     document.addEventListener("click",e=>{if(e.target.matches(".step-images img")){const modal=document.getElementById("imagePreviewModal");const img=document.getElementById("imagePreview");if(modal&&img){modal.style.display="flex";img.src=e.target.src;document.body.style.overflow="hidden";}}if(e.target.matches(".image-preview-close")||e.target.id==="imagePreviewModal")closeImagePreview();});
