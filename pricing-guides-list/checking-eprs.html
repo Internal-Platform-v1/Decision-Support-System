@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ePRS Agreement Check | Step-by-Step Guide</title>
+  <title>ePRS Agreement Check | FedEx Style Guide</title>
 
   <script>
     window.SITE_BASE = "../";
@@ -37,7 +37,7 @@
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
-    // Auth guard (same as ePRT guide)
+    // Auth guard
     window.auth.onAuthStateChanged(async function(user) {
       try {
         if (!user) {
@@ -59,7 +59,10 @@
   </script>
 
   <style>
-    /* ----- BASE STYLES (exact match to ePRT guide) ----- */
+    /* =========================================================
+       COMPLETE THEME STYLES (exact match to ePRT guide)
+       No external dependencies - all colors defined inline
+    ========================================================= */
     html.page-protected,
     html.page-protected body { visibility: hidden; }
 
@@ -99,31 +102,26 @@
     }
     .main{ padding:18px; display:flex; flex-direction:column; gap:16px; min-width:0; }
     .main-topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:24px; background:rgba(255,255,255,.85); border:1px solid rgba(219,228,240,.9); box-shadow:var(--shadow-md); }
-    .page-title-block{ display:flex; flex-direction:column; gap:6px; }
     .page-title-block h1{ margin:0; font-size:24px; font-weight:900; letter-spacing:-.03em; color:#0f172a; }
     .page-subtitle{ margin:0; font-size:13px; color:#64748b; line-height:1.6; max-width:720px; }
-    .main-status{ display:flex; gap:10px; flex-wrap:wrap; }
-    .pill{ display:inline-flex; align-items:center; gap:8px; padding:11px 14px; border-radius:999px; background:#fff; border:1px solid #dbe4f0; font-size:12px; font-weight:800; color:#0f172a; white-space:nowrap; }
-    .pill.primary{ background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border:none; }
-    .workspace{ display:grid; grid-template-rows:auto 1fr; gap:16px; min-height:0; }
+    .pill.primary{ background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border:none; display:inline-flex; align-items:center; gap:8px; padding:11px 14px; border-radius:999px; font-size:12px; font-weight:800; }
     .progress-card{ background:#fff; border:1px solid #dbe4f0; border-radius:22px; padding:16px 18px; box-shadow:var(--shadow-md); }
     .progress-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
     .progress-title{ font-size:14px; font-weight:800; color:#0f172a; }
     .progress-status{ font-size:12px; font-weight:800; color:#64748b; }
     .progress-bar{ height:12px; background:#eaf0f7; border-radius:999px; overflow:hidden; }
-    .progress-fill{ height:100%; width:0%; border-radius:inherit; background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%); transition:width .28s ease; }
+    .progress-fill{ height:100%; width:0%; border-radius:inherit; background:linear-gradient(90deg,#4d148c 0%, #6d28d9 48%, #ff6600 100%); transition:width .28s ease; }
     .stage-card{ background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); border:1px solid #dbe4f0; border-radius:30px; box-shadow:var(--shadow-card); min-height:640px; display:flex; flex-direction:column; overflow:hidden; }
     .stage-top{ padding:22px 22px 0; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
     .badge{ display:inline-flex; align-items:center; gap:8px; padding:10px 13px; border-radius:999px; background:#eef4ff; color:#1d4ed8; font-size:12px; font-weight:800; }
     .badge.alt{ background:#f8fafc; color:#334155; }
     .question-wrap{ padding:22px; display:flex; flex-direction:column; gap:18px; flex:1; }
-    .question-card{ position:relative; padding:30px; border-radius:28px; background: radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%), linear-gradient(180deg,#ffffff,#f8fbff); border:1px solid #e6edf7; box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
-    .question-card::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.7); }
-    .question-label{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; color:#334155; position:relative; z-index:1; }
-    .question-text{ margin:18px 0 0; font-size:36px; line-height:1.08; letter-spacing:-.045em; font-weight:900; position:relative; z-index:1; }
-    .question-help{ margin:14px 0 0; color:#64748b; font-size:14px; line-height:1.75; max-width:800px; position:relative; z-index:1; }
-    .step-actions{ margin-top:22px; display:flex; flex-wrap:wrap; gap:10px; position:relative; z-index:1; }
-    .volume-btn{ appearance:none; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; padding:0 18px; border-radius:16px; background:linear-gradient(135deg,#4d148c,#6d28d9); color:#fff; font-size:13px; font-weight:900; box-shadow:0 14px 24px rgba(77,20,140,.18); transition:transform .18s ease, box-shadow .18s ease; }
+    .question-card{ position:relative; padding:30px; border-radius:28px; background: radial-gradient(circle at top right, rgba(109,40,217,.08), transparent 30%), linear-gradient(180deg,#ffffff,#f8fbff); border:1px solid #e6edf7; box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
+    .question-label{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; color:#334155; }
+    .question-text{ margin:18px 0 0; font-size:36px; line-height:1.08; letter-spacing:-.045em; font-weight:900; }
+    .question-help{ margin:14px 0 0; color:#64748b; font-size:14px; line-height:1.75; max-width:800px; }
+    .step-actions{ margin-top:22px; display:flex; flex-wrap:wrap; gap:10px; }
+    .volume-btn{ appearance:none; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; padding:0 18px; border-radius:16px; background:linear-gradient(135deg,#4d148c,#6d28d9); color:#fff; font-size:13px; font-weight:900; box-shadow:0 14px 24px rgba(77,20,140,.18); transition:transform .18s ease; }
     .volume-btn:hover{ transform:translateY(-2px); box-shadow:0 18px 30px rgba(77,20,140,.24); }
     .step-viewer{ background:#fff; border:1px solid #dbe4f0; border-radius:24px; box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
     .step-viewer-head{ padding:18px 20px; border-bottom:1px solid #eef2f7; display:flex; align-items:center; justify-content:space-between; gap:12px; background:linear-gradient(180deg,#fff,#fbfdff); }
@@ -144,7 +142,7 @@
     .step-nav-btn.prev{ background:#f8fafc; color:#334155; border:1px solid #dbe4f0; }
     .step-nav-btn.next{ background:linear-gradient(135deg,#4d148c,#6d28d9); color:#fff; box-shadow:0 14px 24px rgba(77,20,140,.18); }
     .step-nav-btn.finish{ background:linear-gradient(135deg,#16a34a,#22c55e); }
-    .step-nav-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+    .step-nav-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
     .step-dots{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; }
     .step-dot{ width:11px; height:11px; border-radius:999px; background:#d1d5db; cursor:pointer; transition:.2s ease; }
     .step-dot:hover{ transform:scale(1.3); background:#6d28d9; }
@@ -152,21 +150,20 @@
     .side-panel, .template-panel{ padding:18px 18px 18px 0; display:flex; flex-direction:column; gap:14px; min-width:0; }
     .side-panel{ padding-right:14px; }
     .summary-card{ background:#fff; border:1px solid #dbe4f0; border-radius:22px; padding:18px; box-shadow:var(--shadow-md); }
-    .summary-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:14px; font-weight:900; }
+    .summary-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:14px; font-weight:900; color:#0f172a; }
     .summary-head i{ color:#7c3aed; }
     .summary-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .metric{ padding:14px; border-radius:18px; background:#f8fafc; border:1px solid #e7edf4; }
     .metric-k{ display:block; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:#64748b; font-weight:800; margin-bottom:6px; }
-    .metric-v{ font-size:18px; font-weight:900; letter-spacing:-.03em; word-break:break-word; }
-    .path-list{ display:flex; flex-direction:column; gap:6px; overflow:visible; max-height:none; padding-right:0; }
+    .metric-v{ font-size:18px; font-weight:900; letter-spacing:-.03em; }
+    .path-list{ display:flex; flex-direction:column; gap:6px; }
     .path-jump{ width:100%; text-align:left; padding:8px 9px; border-radius:13px; background:#f8fafc; border:1px solid #e7edf4; cursor:pointer; transition:.18s ease; display:flex; gap:8px; align-items:flex-start; color:#0f172a; }
-    .path-jump:hover{ transform:translateY(-1px); background:#eef4ff; border-color:#cfe0ff; box-shadow:0 8px 18px rgba(37,99,235,.08); }
+    .path-jump:hover{ transform:translateY(-1px); background:#eef4ff; border-color:#cfe0ff; }
     .path-jump.active{ border:2px solid #6d28d9; background:#f3e8ff; box-shadow:0 0 0 3px rgba(109,40,217,.15); }
     .path-jump span{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:10px; font-weight:900; flex:0 0 auto; }
     .path-jump.active span{ background:#6d28d9; color:#fff; }
     .path-jump strong{ display:block; font-size:11px; line-height:1.25; }
     .path-jump small{ display:block; margin-top:2px; color:#64748b; line-height:1.25; font-size:10px; font-weight:700; }
-    .section-note{ font-size:12px; color:#64748b; line-height:1.6; margin-top:-2px; }
     .reminder-list{ display:grid; gap:10px; }
     .reminder{ display:flex; align-items:flex-start; gap:10px; padding:13px; border-radius:17px; background:#f8fafc; border:1px solid #e7edf4; color:#475569; font-size:13px; line-height:1.6; }
     .reminder i{ color:#ff6600; margin-top:3px; }
@@ -174,68 +171,23 @@
     .template-card{ border:1px solid #e5ebf4; border-radius:18px; background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); overflow:hidden; }
     .template-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 14px 10px; }
     .template-title-wrap{ display:flex; align-items:center; gap:10px; min-width:0; }
-    .template-icon{ width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:#f3e8ff; color:#7c3aed; flex:0 0 auto; }
+    .template-icon{ width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:#f3e8ff; color:#7c3aed; }
     .template-title{ font-size:14px; font-weight:900; color:#0f172a; }
     .template-sub{ font-size:12px; color:#64748b; margin-top:2px; }
     .template-body{ padding:0 14px 14px; }
-    .template-box{ min-height:100px; padding:14px; border-radius:14px; background:#f8fbff; border:1px solid #e4ebf5; font-size:13px; line-height:1.7; color:#334155; white-space:pre-wrap; }
+    .template-box{ padding:14px; border-radius:14px; background:#f8fbff; border:1px solid #e4ebf5; font-size:13px; line-height:1.7; color:#334155; white-space:pre-wrap; min-height:80px; }
     .template-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 14px 14px; }
-    .template-tag{ display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:800; color:#64748b; text-decoration:none; transition:all .2s ease; }
+    .template-tag{ display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:800; color:#64748b; text-decoration:none; }
     .template-tag:hover{ background:#eef4ff; color:#1d4ed8; }
-    .template-copy{ appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:12px; background:#111827; color:#fff; font-size:12px; font-weight:800; transition:all .18s ease; }
-    .template-copy.copied{ background:#dcfce7 !important; color:#166534 !important; border-color:#bbf7d0 !important; }
-    .image-preview-modal{ display:none; position:fixed; inset:0; z-index:99999; background:rgba(2,6,23,.88); align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(8px); }
-    .image-preview-modal img{ max-width:94vw; max-height:90vh; border-radius:18px; background:#fff; box-shadow:0 30px 80px rgba(0,0,0,.45); }
-    .image-preview-close{ position:absolute; top:18px; right:18px; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.12); color:#fff; font-size:30px; cursor:pointer; transition:.2s ease; }
-    .image-preview-close:hover{ background:rgba(255,255,255,.2); }
-
-    /* ----- THEME BRIDGE (exact copy from ePRT guide) ----- */
-    body.theme-fedex, body.theme-atlas, body.theme-basic, body.theme-simple {
-      --eprt-text:var(--theme-text, #0f172a);
-      --eprt-muted:var(--theme-muted, #64748b);
-      --eprt-primary:var(--theme-primary, #4d148c);
-      --eprt-primary-2:var(--theme-primary-2, #6d28d9);
-      --eprt-accent:var(--theme-accent, #ff6600);
-      --eprt-soft:var(--theme-primary-soft, #f3e8ff);
-      --eprt-accent-soft:var(--theme-accent-soft, #fff7ed);
-      --eprt-card:var(--theme-card, #ffffff);
-      --eprt-card-soft:var(--theme-card-soft, #f8fafc);
-      --eprt-card-tint:var(--theme-card-blue-soft, #f8fbff);
-      --eprt-line:var(--theme-line-soft, #e2e8f0);
-      --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
-      --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
-    }
-    body.theme-fedex .step-dot.active,
-    body.theme-atlas .step-dot.active,
-    body.theme-basic .step-dot.active,
-    body.theme-simple .step-dot.active { background:var(--eprt-accent) !important; width:30px; }
-    body.theme-fedex .path-jump.active,
-    body.theme-atlas .path-jump.active,
-    body.theme-basic .path-jump.active,
-    body.theme-simple .path-jump.active { border-color:var(--eprt-primary) !important; background:var(--eprt-soft) !important; box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-primary) 12%, transparent) !important; }
-    body.theme-fedex .path-jump.active span,
-    body.theme-atlas .path-jump.active span,
-    body.theme-basic .path-jump.active span,
-    body.theme-simple .path-jump.active span { background:var(--eprt-primary) !important; color:#fff !important; }
-    body.theme-atlas .step-dot.active { background:#ff8c42 !important; }
-    body.theme-atlas .path-jump.active { border-color:#0e5361 !important; background:#e6f4f5 !important; }
-    body.theme-basic .step-dot.active { background:#f59e0b !important; }
-    body.theme-simple .step-dot.active { background:#3b82f6 !important; }
-
+    .template-copy{ border:none; cursor:pointer; padding:10px 14px; border-radius:12px; background:linear-gradient(135deg,#4d148c,#6d28d9); color:#fff; font-size:12px; font-weight:800; transition:all .18s ease; }
+    .template-copy.copied{ background:#dcfce7 !important; color:#166534 !important; }
     @media (max-width:1450px){ .app-frame{ grid-template-columns:minmax(0,1fr) 340px 360px; } }
     @media (max-width:1220px){ .app-frame{ grid-template-columns:1fr; } .side-panel, .template-panel{ padding:0 18px 18px; } }
-    @media (max-width:760px){
-      .app-shell{ width:min(calc(100% - 20px), var(--max)); margin:16px auto; }
-      .app-frame{ min-height:100vh; border-radius:24px; }
-      .main{ padding:18px; }
-      .question-text{ font-size:28px; }
-      .step-body{ padding:22px; min-height:460px; }
-      .path-jump{ padding:10px 11px; }
-    }
+    @media (max-width:760px){ .question-text{ font-size:28px; } .step-body{ padding:22px; min-height:460px; } }
   </style>
 </head>
 
-<body class="theme-fedex" data-page="checking-eprs">
+<body>
   <div class="page">
     <div id="site-header"></div>
 
@@ -245,7 +197,7 @@
           <div class="main-topbar">
             <div class="page-title-block">
               <h1>Steps on How to Check ePRS</h1>
-              <p class="page-subtitle">Complete walkthrough to review ePRS agreements, verify effective versions, validate surcharge terms, and locate supporting attachments — with full theme support matching the ePRT Submission Guide.</p>
+              <p class="page-subtitle">Complete walkthrough to review ePRS agreements, verify effective versions, validate surcharge terms, and locate supporting attachments — with full FedEx theme support.</p>
             </div>
             <div class="main-status"><div class="pill primary"><i class="fa-solid fa-file-contract"></i> ePRS Review</div></div>
           </div>
@@ -266,7 +218,7 @@
                   <section class="question-card">
                     <div class="question-label"><i class="fa-solid fa-route"></i> ePRS Agreement Workflow</div>
                     <h2 class="question-text">Review ePRS agreements with the correct effective version and supporting agreement details.</h2>
-                    <p class="question-help">Follow these updated steps to open SolutionPoint/ePRS, search at the correct hierarchy level, avoid Dup Load versions, validate signature dates, review surcharge terms, and find proposal attachments.</p>
+                    <p class="question-help">Follow these steps to open SolutionPoint/ePRS, search at the correct hierarchy level, avoid Dup Load versions, validate signature dates, review surcharge terms, and find proposal attachments.</p>
                     <div class="step-actions"><button class="volume-btn" onclick="exploreSteps()">Explore Steps <i class="fa-solid fa-arrow-right"></i></button></div>
                   </section>
 
@@ -290,28 +242,25 @@
 
         <aside class="side-panel">
           <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Key Reminders</div><div class="reminder-list"><div class="reminder"><i class="fa-solid fa-circle-check"></i><span>Always validate actual effective agreement version (Customer Signed Agreement).</span></div><div class="reminder"><i class="fa-solid fa-ban"></i><span>Do NOT use Dup Load / Dupe Load Successful versions for pricing validation.</span></div><div class="reminder"><i class="fa-solid fa-calendar-check"></i><span>Customer signature date controls the actual effective date.</span></div><div class="reminder"><i class="fa-solid fa-file-contract"></i><span>Use Customer Signed Agreement first, then Legal Modified Agreement if needed.</span></div></div></div>
-          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div><div class="summary-grid"><div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">18</span></div><div class="metric"><span class="metric-k">Max AWB / PRO</span><span class="metric-v">N/A</span></div><div class="metric"><span class="metric-k">Search Options</span><span class="metric-v">2</span></div><div class="metric"><span class="metric-k">Flow</span><span class="metric-v">ePRS</span></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div><div class="summary-grid"><div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">18</span></div><div class="metric"><span class="metric-k">Max AWB/PRO</span><span class="metric-v">N/A</span></div><div class="metric"><span class="metric-k">Search Options</span><span class="metric-v">2</span></div><div class="metric"><span class="metric-k">Flow</span><span class="metric-v">ePRS</span></div></div></div>
           <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-route"></i> Quick Jump</div><div class="path-list" id="quickJumpList"></div></div>
         </aside>
 
         <aside class="template-panel">
           <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-link"></i> Direct Links</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div><div><div class="template-title">SolutionPoint</div><div class="template-sub">Open homepage</div></div></div></div><div class="template-body"><div id="solutionPointLink" class="template-box">https://fdx.highspot.com</div></div><div class="template-foot"><a class="template-tag" href="https://fdx.highspot.com" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open</a><button class="template-copy" onclick="copyText('solutionPointLink', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div><div><div class="template-title">Direct ePRS</div><div class="template-sub">Pricing app</div></div></div></div><div class="template-body"><div id="eprsLink" class="template-box">https://myapps.secure.fedex.com/pricing/eprs</div></div><div class="template-foot"><a class="template-tag" href="https://myapps.secure.fedex.com/pricing/eprs" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open</a><button class="template-copy" onclick="copyText('eprsLink', this)">Copy</button></div></div></div></div>
-          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Notes</div><div class="section-note">Copy these templates for case documentation.</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-file-lines"></i></div><div><div class="template-title">Internal Case Note</div><div class="template-sub">Agreement review</div></div></div></div><div class="template-body"><div id="internalNote" class="template-box">Reviewed ePRS agreement details. Verified agreement level, proposal status, customer signed agreement availability, effective version, customer signature date, surcharge terms, and applicable agreement notes for pricing validation.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span><button class="template-copy" onclick="copyText('internalNote', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="template-title">Dup Load Reminder</div><div class="template-sub">Do not use</div></div></div></div><div class="template-body"><div id="dupLoadNote" class="template-box">Do not use Dup Load / Dupe Load Successful agreement versions to verify customer pricing exceptions. These versions are loaded for internal correction purposes and may not contain the complete customer agreement.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-ban"></i> Reminder</span><button class="template-copy" onclick="copyText('dupLoadNote', this)">Copy</button></div></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Notes</div><div class="section-note" style="font-size:12px; color:#64748b; margin-top:-2px;">Copy these templates for case documentation.</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-file-lines"></i></div><div><div class="template-title">Internal Case Note</div><div class="template-sub">Agreement review</div></div></div></div><div class="template-body"><div id="internalNote" class="template-box">Reviewed ePRS agreement details. Verified agreement level, proposal status, customer signed agreement availability, effective version, customer signature date, surcharge terms, and applicable agreement notes for pricing validation.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span><button class="template-copy" onclick="copyText('internalNote', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="template-title">Dup Load Reminder</div><div class="template-sub">Do not use</div></div></div></div><div class="template-body"><div id="dupLoadNote" class="template-box">Do not use Dup Load / Dupe Load Successful agreement versions to verify customer pricing exceptions. These versions are loaded for internal correction purposes and may not contain the complete customer agreement.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-ban"></i> Reminder</span><button class="template-copy" onclick="copyText('dupLoadNote', this)">Copy</button></div></div></div></div>
         </aside>
       </div>
     </div>
     <div id="site-footer"></div>
   </div>
 
-  <div id="imagePreviewModal" class="image-preview-modal"><span class="image-preview-close">×</span><img id="imagePreview" src="" alt="Preview"></div>
-
   <script src="../assets/js/header-loader.js"></script>
   <script src="../assets/js/header.js"></script>
   <script src="../assets/js/footer-loader.js"></script>
-  <script src="../assets/js/theme-loader.js"></script>
 
   <script>
-    // ==================== ePRS STEPS (18 steps, no images) ====================
+    // ==================== ePRS STEPS ====================
     const steps = [
       { title:"Open SolutionPoint or Direct ePRS", content:"Using iSPI Browser/Citrix Browser, go to SolutionPoint (https://fdx.highspot.com) or direct ePRS link (https://myapps.secure.fedex.com/pricing/eprs)." },
       { title:"Click Pricing", content:"Click on 'Pricing' (same as to view a PRS agreement)." },
