@@ -160,10 +160,12 @@
     .path-list{ display:flex; flex-direction:column; gap:6px; overflow:visible; max-height:none; padding-right:0; }
     .path-jump{ width:100%; text-align:left; padding:8px 9px; border-radius:13px; background:#f8fafc; border:1px solid #e7edf4; cursor:pointer; transition:.18s ease; display:flex; gap:8px; align-items:flex-start; color:#0f172a; }
     .path-jump:hover{ transform:translateY(-1px); background:#eef4ff; border-color:#cfe0ff; box-shadow:0 8px 18px rgba(37,99,235,.08); }
-    .path-jump.active{ border:2px solid #2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.10); }
-    .path-jump span{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:10px; font-weight:900; flex:0 0 auto; }
+    .path-jump.active{ border:2px solid #6d28d9; background:#f3e8ff; box-shadow:0 0 0 3px rgba(109,40,217,.15); }
+    .path-jump span{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:10px; font-weight:900; flex:0 0 auto; transition:all .18s ease; }
+    .path-jump.active span{ background:#6d28d9; color:#fff; }
     .path-jump strong{ display:block; font-size:11px; line-height:1.25; }
     .path-jump small{ display:block; margin-top:2px; color:#64748b; line-height:1.25; font-size:10px; font-weight:700; }
+    .path-jump.active small{ color:#4d148c; }
     .section-note{ font-size:12px; color:#64748b; line-height:1.6; margin-top:-2px; }
     .reminder-list{ display:grid; gap:10px; }
     .reminder{ display:flex; align-items:flex-start; gap:10px; padding:13px; border-radius:17px; background:#f8fafc; border:1px solid #e7edf4; color:#475569; font-size:13px; line-height:1.6; }
@@ -172,7 +174,7 @@
     .template-card{ border:1px solid #e5ebf4; border-radius:18px; background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); overflow:hidden; }
     .template-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 14px 10px; }
     .template-title-wrap{ display:flex; align-items:center; gap:10px; min-width:0; }
-    .template-icon{ width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:#f3e8ff; color:#7c3aed; flex:0 0 auto; }
+    .template-icon{ width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:#f3e8ff; color:#7c3aed; flex:0 0 auto; transition:all .18s ease; }
     .template-title{ font-size:14px; font-weight:900; color:#0f172a; }
     .template-sub{ font-size:12px; color:#64748b; margin-top:2px; }
     .template-body{ padding:0 14px 14px; }
@@ -188,7 +190,7 @@
     .image-preview-close:hover{ background:rgba(255,255,255,.2); }
 
     /* =========================================================
-       FULL THEME BRIDGE (copied exactly from ePRT guide + icon fixes)
+       FULL THEME BRIDGE (exactly as ePRT guide with icon fixes)
     ========================================================= */
     body.theme-fedex,
     body.theme-atlas,
@@ -333,13 +335,22 @@
       background:var(--eprt-accent) !important;
     }
 
-    /* Quick Jump active state */
+    /* Quick Jump active state (purple border + purple number) */
     body.theme-fedex .path-jump.active,
     body.theme-atlas .path-jump.active,
     body.theme-basic .path-jump.active,
     body.theme-simple .path-jump.active{
       border-color:var(--eprt-primary) !important;
+      background:var(--eprt-soft) !important;
       box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-primary) 12%, transparent) !important;
+    }
+
+    body.theme-fedex .path-jump.active span,
+    body.theme-atlas .path-jump.active span,
+    body.theme-basic .path-jump.active span,
+    body.theme-simple .path-jump.active span{
+      background:var(--eprt-primary) !important;
+      color:#ffffff !important;
     }
 
     body.theme-fedex .path-jump span,
@@ -350,8 +361,7 @@
       color:var(--eprt-primary) !important;
     }
 
-    /* ========== ICON FIXES ========== */
-    /* Summary head icons (lightbulb, chart, route, link, magic) */
+    /* ICON FIXES - ensures all icons use theme accent color */
     body.theme-fedex .summary-head i,
     body.theme-atlas .summary-head i,
     body.theme-basic .summary-head i,
@@ -359,7 +369,6 @@
       color:var(--eprt-accent) !important;
     }
 
-    /* Reminder icons */
     body.theme-fedex .reminder i,
     body.theme-atlas .reminder i,
     body.theme-basic .reminder i,
@@ -367,7 +376,6 @@
       color:var(--eprt-accent) !important;
     }
 
-    /* Template icon backgrounds and colors */
     body.theme-fedex .template-icon,
     body.theme-atlas .template-icon,
     body.theme-basic .template-icon,
@@ -447,6 +455,9 @@
     body.theme-atlas .template-copy{ background:#0e5361 !important; }
     body.theme-basic .template-copy{ background:#111827 !important; }
     body.theme-simple .template-copy{ background:#2563eb !important; }
+    body.theme-atlas .path-jump.active span{ background:#0e5361 !important; }
+    body.theme-basic .path-jump.active span{ background:#374151 !important; }
+    body.theme-simple .path-jump.active span{ background:#2563eb !important; }
 
     @media (max-width:1450px){ .app-frame{ grid-template-columns:minmax(0,1fr) 340px 360px; } }
     @media (max-width:1220px){ .app-frame{ grid-template-columns:1fr; } .side-panel, .template-panel{ padding:0 18px 18px; } }
