@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Steps on How to Check ePRS</title>
+  <title>ePRS Agreement Check | Step-by-Step Guide</title>
 
   <script>
     window.SITE_BASE = "../";
@@ -14,6 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/guide-themes.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -359,7 +360,6 @@
       z-index:1;
     }
 
-    /* Shared header/modal buttons rely on this .btn style, same as Rate & Volume page */
     .btn{
       display:inline-flex;
       align-items:center;
@@ -821,6 +821,7 @@
       font-size:11px;
       font-weight:800;
       color:#64748b;
+      text-decoration:none;
     }
 
     .template-copy{
@@ -876,111 +877,37 @@
 
     .image-preview-close:hover{background:rgba(255,255,255,.2)}
 
-    #commentModal,
-    #allCommentsModal,
-    #helpModal{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(2,6,23,.52);
-      justify-content:center;
-      align-items:center;
-      padding:0 24px;
-      z-index:2147483647;
-      backdrop-filter:blur(8px);
-      overflow-y:auto;
+    /* Theme overrides to match ePRT guide style */
+    body.theme-fedex .pill.primary,
+    body.theme-atlas .pill.primary,
+    body.theme-basic .pill.primary,
+    body.theme-simple .pill.primary,
+    body.theme-fedex .volume-btn,
+    body.theme-atlas .volume-btn,
+    body.theme-basic .volume-btn,
+    body.theme-simple .volume-btn,
+    body.theme-fedex .step-nav-btn.next,
+    body.theme-atlas .step-nav-btn.next,
+    body.theme-basic .step-nav-btn.next,
+    body.theme-simple .step-nav-btn.next,
+    body.theme-fedex .step-viewer-title i,
+    body.theme-atlas .step-viewer-title i,
+    body.theme-basic .step-viewer-title i,
+    body.theme-simple .step-viewer-title i{
+      background:linear-gradient(135deg,#4d148c,#6d28d9) !important;
     }
-
-    #commentModal .modal-content,
-    #allCommentsModal .modal-content,
-    #helpModal .modal-content{
-      width:100%;
-      background:#fff;
-      border-radius:28px;
-      padding:26px;
-      box-shadow:0 24px 80px rgba(2,6,23,.18);
-      max-height:min(84vh, 900px);
-      overflow:auto;
-      border:1px solid rgba(148,163,184,.16);
-      margin:110px auto 32px;
+    body.theme-fedex .progress-fill,
+    body.theme-atlas .progress-fill,
+    body.theme-basic .progress-fill,
+    body.theme-simple .progress-fill,
+    body.theme-fedex .mini-progress-fill,
+    body.theme-atlas .mini-progress-fill,
+    body.theme-basic .mini-progress-fill,
+    body.theme-simple .mini-progress-fill{
+      background:linear-gradient(90deg,#4d148c,#6d28d9,#ff6600) !important;
     }
-
-    #commentModal .feedback-modal{max-width:640px;border-radius:28px;padding:20px 20px 22px}
-    #allCommentsModal .modal-content{max-width:760px}
-    #helpModal .help-modal{max-width:760px;border-radius:30px;padding:18px}
-
-    #commentModal .modal-header,
-    #allCommentsModal .modal-header,
-    #helpModal .modal-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      font-size:22px;
-      font-weight:800;
-      letter-spacing:-.03em;
-      margin-bottom:14px;
-      color:#0f172a;
-    }
-
-    #commentModal .modal-close,
-    #allCommentsModal .modal-close,
-    #helpModal .modal-close{
-      cursor:pointer;
-      width:40px;
-      height:40px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      color:#64748b;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-      transition:.2s ease;
-      flex-shrink:0;
-      font-size:22px;
-      line-height:1;
-    }
-
-    #commentModal .modal-close:hover,
-    #allCommentsModal .modal-close:hover,
-    #helpModal .modal-close:hover{color:#0f172a;background:#eef2ff}
-
-    #commentModal .rating-container{display:flex;justify-content:center;gap:14px;margin:16px 0 18px}
-    #commentModal .rating-star{cursor:pointer;font-size:26px;color:#d1d5db;transition:transform .18s ease, color .18s ease}
-    #commentModal .rating-star:hover{transform:translateY(-1px) scale(1.06)}
-    #commentModal .rating-star.selected{color:#ff6600}
-
-    #commentModal input,
-    #commentModal textarea{
-      width:100%;
-      border:none;
-      outline:none;
-      border-radius:16px;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-      padding:14px 16px;
-      color:#0f172a;
-      font-size:14px;
-      transition:.18s ease;
-    }
-
-    #commentModal input{margin-top:4px;margin-bottom:10px}
-    #commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
-    #commentModal input:focus,#commentModal textarea:focus{background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06)}
-    #commentModal .feedback-submit-btn{margin:16px 0 8px;min-height:54px;border-radius:18px}
-    #commentModal .link-text{color:#4d148c;cursor:pointer;text-decoration:none;font-size:14px;font-weight:700}
-    #commentModal .link-text:hover{text-decoration:underline}
-    #allCommentsModal .comment-list-item{padding:14px 0;border-bottom:1px solid rgba(148,163,184,.18)}
-    #allCommentsModal .comment-list-item:last-child{border-bottom:none}
-    #allCommentsModal .stars{color:#ff6600;font-size:18px;margin-bottom:6px;display:block}
-
     @media (max-width:1450px){.app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}}
-
-    @media (max-width:1220px){
-      .app-frame{grid-template-columns:1fr}
-      .side-panel,.template-panel{padding:0 18px 18px}
-    }
-
+    @media (max-width:1220px){.app-frame{grid-template-columns:1fr}.side-panel,.template-panel{padding:0 18px 18px}}
     @media (max-width:760px){
       .app-shell{width:min(calc(100% - 20px), var(--max));margin:16px auto}
       .app-frame{min-height:100vh;border-radius:24px}
@@ -991,16 +918,11 @@
       .step-viewer-head{flex-direction:column;align-items:flex-start}
       .step-body{padding:22px;min-height:460px}
       .path-list{gap:8px}
-      .path-jump{padding:10px 11px}
-      .path-jump strong{font-size:12px}
-      .path-jump small{font-size:10px}
-      #commentModal,#allCommentsModal,#helpModal{padding:0 14px}
-      #commentModal .modal-content,#allCommentsModal .modal-content,#helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
     }
   </style>
 </head>
 
-<body data-page="checking-eprs">
+<body class="theme-fedex" data-page="checking-eprs">
   <div class="page">
     <div id="site-header"></div>
 
@@ -1010,16 +932,10 @@
           <div class="main-topbar">
             <div class="page-title-block">
               <h1>Steps on How to Check ePRS</h1>
-              <p class="page-subtitle">
-                Follow this clean Rate & Volume style guide to check ePRS agreements, verify the correct agreement version, review surcharge terms, and validate proposal attachment details.
-              </p>
+              <p class="page-subtitle">Complete walkthrough to review ePRS agreements, verify effective versions, validate surcharge terms, and locate supporting attachments — built with the same interactive guide style as ePRT Submission.</p>
             </div>
-
             <div class="main-status">
-              <div class="pill primary" id="statusPill">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
-                Ready
-              </div>
+              <div class="pill primary"><i class="fa-solid fa-file-contract"></i> ePRS Review</div>
             </div>
           </div>
 
@@ -1027,87 +943,34 @@
             <section class="progress-card">
               <div class="progress-head">
                 <div class="progress-title">Guide Progress</div>
-                <div class="progress-status" id="progressText">Step 1 of 19</div>
+                <div class="progress-status" id="progressText">Step 1 of 18</div>
               </div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-              </div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
             </section>
 
             <section class="stage-area">
-              <div class="stage-card" id="stageCard">
+              <div class="stage-card">
                 <div class="stage-top">
-                  <span class="badge">
-                    <i class="fa-solid fa-file-contract"></i>
-                    ePRS Agreement Review
-                  </span>
-                  <span class="badge alt">
-                    <i class="fa-solid fa-keyboard"></i>
-                    Arrow Keys Supported
-                  </span>
+                  <span class="badge"><i class="fa-solid fa-file-contract"></i> ePRS Agreement Review</span>
+                  <span class="badge alt"><i class="fa-solid fa-keyboard"></i> Arrow Keys Supported</span>
                 </div>
-
                 <div class="question-wrap">
                   <section class="question-card">
-                    <div class="question-label">
-                      <i class="fa-solid fa-route"></i>
-                      ePRS Agreement Workflow
-                    </div>
-
+                    <div class="question-label"><i class="fa-solid fa-route"></i> ePRS Agreement Workflow</div>
                     <h2 class="question-text">Review ePRS agreements with the correct effective version and supporting agreement details.</h2>
-
-                    <p class="question-help">
-                      Use the steps below to open SolutionPoint or ePRS, search by the correct hierarchy level, avoid duplicate load records, validate signed agreement dates, and review surcharge terms and attached proposal documents.
-                    </p>
-
-                    <div class="step-actions">
-                      <button class="volume-btn" type="button" onclick="exploreSteps()">
-                        Explore Steps
-                        <i class="fa-solid fa-arrow-right"></i>
-                      </button>
-                    </div>
+                    <p class="question-help">Follow these updated steps to open SolutionPoint/ePRS, search at the correct hierarchy level, avoid Dup Load versions, validate signature dates, review surcharge terms, and find proposal attachments.</p>
+                    <div class="step-actions"><button class="volume-btn" onclick="exploreSteps()">Explore Steps <i class="fa-solid fa-arrow-right"></i></button></div>
                   </section>
 
                   <section class="step-viewer" id="stepsSection">
                     <div class="step-viewer-head">
-                      <div class="step-viewer-title">
-                        <i class="fa-solid fa-display"></i>
-                        Guided ePRS Walkthrough
-                      </div>
-
-                      <span class="badge alt">
-                        <i class="fa-solid fa-circle-check"></i>
-                        Interactive guide
-                      </span>
+                      <div class="step-viewer-title"><i class="fa-solid fa-display"></i> Guided ePRS Walkthrough</div>
+                      <span class="badge alt"><i class="fa-solid fa-circle-check"></i> Interactive guide</span>
                     </div>
-
                     <div class="step-shell">
-                      <div class="step-top">
-                        <div class="step-counter" id="stepCounter"></div>
-
-                        <div class="mini-progress-bar">
-                          <div class="mini-progress-fill" id="miniProgressFill"></div>
-                        </div>
-                      </div>
-
-                      <div class="step-body" id="stepBody">
-                        <h2 class="step-title" id="stepTitle"></h2>
-                        <div class="step-content" id="stepContent"></div>
-                        <div class="step-images" id="stepImages"></div>
-                      </div>
-
-                      <div class="step-navigation">
-                        <button class="step-nav-btn prev" id="prevBtn" type="button">
-                          <i class="fa-solid fa-arrow-left"></i>
-                          Previous
-                        </button>
-
-                        <button class="step-nav-btn next" id="nextBtn" type="button">
-                          Next
-                          <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                      </div>
-
+                      <div class="step-top"><div class="step-counter" id="stepCounter"></div><div class="mini-progress-bar"><div class="mini-progress-fill" id="miniProgressFill"></div></div></div>
+                      <div class="step-body" id="stepBody"><h2 class="step-title" id="stepTitle"></h2><div class="step-content" id="stepContent"></div><div class="step-images" id="stepImages"></div></div>
+                      <div class="step-navigation"><button class="step-nav-btn prev" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button><button class="step-nav-btn next" id="nextBtn">Next <i class="fa-solid fa-arrow-right"></i></button></div>
                       <div id="stepDots" class="step-dots"></div>
                     </div>
                   </section>
@@ -1118,913 +981,77 @@
         </main>
 
         <aside class="side-panel">
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-lightbulb"></i>
-              Key Reminders
-            </div>
-
-            <div class="reminder-list">
-              <div class="reminder">
-                <i class="fa-solid fa-circle-check"></i>
-                <span>Always validate the actual effective agreement version.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-ban"></i>
-                <span>Do not use Dup Load / Dupe Load Successful agreements for pricing exception validation.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-calendar-check"></i>
-                <span>Customer signature date may control the actual effective date.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-file-contract"></i>
-                <span>Use Customer Signed Agreement first, then review Legal Modified Agreement when needed.</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-chart-simple"></i>
-              Quick Snapshot
-            </div>
-
-            <div class="summary-grid">
-              <div class="metric">
-                <span class="metric-k">Steps</span>
-                <span class="metric-v" id="metricSteps">19</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Images</span>
-                <span class="metric-v" id="metricImages">6</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Search Options</span>
-                <span class="metric-v">2</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Flow</span>
-                <span class="metric-v">ePRS</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-route"></i>
-              Quick Jump
-            </div>
-
-            <div class="path-list" id="quickJumpList"></div>
-          </div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Key Reminders</div><div class="reminder-list"><div class="reminder"><i class="fa-solid fa-circle-check"></i><span>Always validate actual effective agreement version (Customer Signed Agreement).</span></div><div class="reminder"><i class="fa-solid fa-ban"></i><span>Do NOT use Dup Load / Dupe Load Successful versions for pricing validation.</span></div><div class="reminder"><i class="fa-solid fa-calendar-check"></i><span>Customer signature date controls the actual effective date.</span></div><div class="reminder"><i class="fa-solid fa-file-contract"></i><span>Use Customer Signed Agreement first, then Legal Modified Agreement if needed.</span></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div><div class="summary-grid"><div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">18</span></div><div class="metric"><span class="metric-k">Images</span><span class="metric-v" id="metricImages">6</span></div><div class="metric"><span class="metric-k">Search Options</span><span class="metric-v">2</span></div><div class="metric"><span class="metric-k">Flow</span><span class="metric-v">ePRS</span></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-route"></i> Quick Jump</div><div class="path-list" id="quickJumpList"></div></div>
         </aside>
 
         <aside class="template-panel">
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-link"></i>
-              Direct Links
-            </div>
-
-            <div class="template-stack">
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-                    <div>
-                      <div class="template-title">SolutionPoint</div>
-                      <div class="template-sub">Open homepage</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="solutionPointLink" class="template-box">https://fdx.highspot.com</div>
-                </div>
-
-                <div class="template-foot">
-                  <a class="template-tag" href="https://fdx.highspot.com" target="_blank" rel="noopener">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    Open
-                  </a>
-                  <button class="template-copy" type="button" onclick="copyText('solutionPointLink', this)">Copy</button>
-                </div>
-              </div>
-
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
-                    <div>
-                      <div class="template-title">Direct ePRS</div>
-                      <div class="template-sub">Pricing app</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="eprsLink" class="template-box">https://myapps.secure.fedex.com/pricing/eprs</div>
-                </div>
-
-                <div class="template-foot">
-                  <a class="template-tag" href="https://myapps.secure.fedex.com/pricing/eprs" target="_blank" rel="noopener">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    Open
-                  </a>
-                  <button class="template-copy" type="button" onclick="copyText('eprsLink', this)">Copy</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
-              Suggested Notes
-            </div>
-
-            <div class="section-note">
-              Use these copyable notes when documenting an ePRS agreement review.
-            </div>
-
-            <div class="template-stack">
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-file-lines"></i></div>
-                    <div>
-                      <div class="template-title">Internal Case Note</div>
-                      <div class="template-sub">Agreement review</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="internalNote" class="template-box">Reviewed ePRS agreement details. Verified agreement level, proposal status, customer signed agreement availability, effective version, customer signature date, surcharge terms, and applicable agreement notes for pricing validation.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag">
-                    <i class="fa-solid fa-file-lines"></i>
-                    Case comment
-                  </span>
-                  <button class="template-copy" type="button" onclick="copyText('internalNote', this)">Copy</button>
-                </div>
-              </div>
-
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                    <div>
-                      <div class="template-title">Dup Load Reminder</div>
-                      <div class="template-sub">Use when needed</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="dupLoadNote" class="template-box">Do not use Dup Load / Dupe Load Successful agreement versions to verify customer pricing exceptions. These versions are loaded for internal correction purposes and may not contain the complete customer agreement.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag">
-                    <i class="fa-solid fa-ban"></i>
-                    Reminder
-                  </span>
-                  <button class="template-copy" type="button" onclick="copyText('dupLoadNote', this)">Copy</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-link"></i> Direct Links</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div><div><div class="template-title">SolutionPoint</div><div class="template-sub">Open homepage</div></div></div></div><div class="template-body"><div id="solutionPointLink" class="template-box">https://fdx.highspot.com</div></div><div class="template-foot"><a class="template-tag" href="https://fdx.highspot.com" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open</a><button class="template-copy" onclick="copyText('solutionPointLink', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-arrow-up-right-from-square"></i></div><div><div class="template-title">Direct ePRS</div><div class="template-sub">Pricing app</div></div></div></div><div class="template-body"><div id="eprsLink" class="template-box">https://myapps.secure.fedex.com/pricing/eprs</div></div><div class="template-foot"><a class="template-tag" href="https://myapps.secure.fedex.com/pricing/eprs" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open</a><button class="template-copy" onclick="copyText('eprsLink', this)">Copy</button></div></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Notes</div><div class="section-note">Copy these templates for case documentation.</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-file-lines"></i></div><div><div class="template-title">Internal Case Note</div><div class="template-sub">Agreement review</div></div></div></div><div class="template-body"><div id="internalNote" class="template-box">Reviewed ePRS agreement details. Verified agreement level, proposal status, customer signed agreement availability, effective version, customer signature date, surcharge terms, and applicable agreement notes for pricing validation.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span><button class="template-copy" onclick="copyText('internalNote', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="template-title">Dup Load Reminder</div><div class="template-sub">Do not use</div></div></div></div><div class="template-body"><div id="dupLoadNote" class="template-box">Do not use Dup Load / Dupe Load Successful agreement versions to verify customer pricing exceptions. These versions are loaded for internal correction purposes and may not contain the complete customer agreement.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-ban"></i> Reminder</span><button class="template-copy" onclick="copyText('dupLoadNote', this)">Copy</button></div></div></div></div>
         </aside>
       </div>
     </div>
-
     <div id="site-footer"></div>
   </div>
 
-  <div id="imagePreviewModal" class="image-preview-modal">
-    <span class="image-preview-close">×</span>
-    <img id="imagePreview" src="" alt="Preview">
-  </div>
+  <div id="imagePreviewModal" class="image-preview-modal"><span class="image-preview-close">×</span><img id="imagePreview" src="" alt="Preview"></div>
 
   <script src="../assets/js/header-loader.js"></script>
   <script src="../assets/js/header.js"></script>
   <script src="../assets/js/footer-loader.js"></script>
+  <script src="../assets/js/theme-loader.js"></script>
 
   <script>
-    /* =========================================================
-       FIREBASE + FEEDBACK / HEADER MODAL FUNCTIONS
-       Matched to working Volume Application reference
-    ========================================================= */
-
-    const db = window.db || firebase.firestore();
-    const FEEDBACK_COLLECTION = "feedback";
-
-    let selectedRating = 0;
-    let ratingStars = [];
-    let commentsUnsubscribe = null;
-
-    function escapeHtml(value){
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
-
-    function openModalAnimated(id) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
-
-      modal.style.display = "flex";
-      modal.classList.remove("is-closing");
-
-      requestAnimationFrame(() => {
-        modal.classList.add("is-open");
-      });
-
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeModalAnimated(id, onClosed) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
-
-      modal.classList.remove("is-open");
-      modal.classList.add("is-closing");
-
-      setTimeout(() => {
-        modal.style.display = "none";
-        modal.classList.remove("is-closing");
-        document.body.style.overflow = "";
-
-        if (typeof onClosed === "function") {
-          onClosed();
-        }
-      }, 220);
-    }
-
-    function openComment() {
-      selectedRating = 0;
-      openModalAnimated("commentModal");
-      setTimeout(initRatingStars, 80);
-    }
-
-    function closeComment() {
-      closeModalAnimated("commentModal");
-    }
-
-    function openHelp() {
-      openModalAnimated("helpModal");
-    }
-
-    function closeHelp() {
-      closeModalAnimated("helpModal");
-    }
-
-    function closeAllComments() {
-      closeModalAnimated("allCommentsModal", () => {
-        if (typeof commentsUnsubscribe === "function") {
-          commentsUnsubscribe();
-          commentsUnsubscribe = null;
-        }
-      });
-    }
-
-    function initRatingStars() {
-      ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-      if (!ratingStars.length) return;
-
-      ratingStars.forEach(star => {
-        star.onclick = function (e) {
-          e.stopPropagation();
-
-          selectedRating = Number(this.dataset.value || this.dataset.rating || 0);
-
-          ratingStars.forEach(s => {
-            const value = Number(s.dataset.value || s.dataset.rating || 0);
-            s.classList.toggle("selected", value <= selectedRating);
-          });
-        };
-      });
-    }
-
-    async function sendComment() {
-      const nameEl = document.getElementById("commentName");
-      const textEl = document.getElementById("commentText");
-      const feedbackMessage = document.getElementById("feedbackMessage");
-
-      const name = (nameEl?.value || "").trim();
-      const comment = (textEl?.value || "").trim();
-
-      if (!selectedRating) {
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#ef4444";
-          feedbackMessage.textContent = "Please select a rating first.";
-        }
-        return;
-      }
-
-      if (!comment) {
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#ef4444";
-          feedbackMessage.textContent = "Please enter your feedback.";
-        }
-        return;
-      }
-
-      try {
-        await db.collection(FEEDBACK_COLLECTION).add({
-          name: name || "Anonymous",
-          comment,
-          rating: selectedRating,
-          page: document.body.dataset.page || "checking-eprs",
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#16a34a";
-          feedbackMessage.textContent = "Feedback sent successfully.";
-        }
-
-        if (nameEl) nameEl.value = "";
-        if (textEl) textEl.value = "";
-
-        selectedRating = 0;
-        ratingStars.forEach(star => star.classList.remove("selected"));
-
-        setTimeout(() => {
-          closeComment();
-
-          if (feedbackMessage) {
-            feedbackMessage.style.display = "none";
-            feedbackMessage.textContent = "";
-          }
-        }, 900);
-      } catch (err) {
-        console.error("Unable to send feedback:", err);
-
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "block";
-          feedbackMessage.style.color = "#ef4444";
-          feedbackMessage.textContent = "Unable to send feedback right now.";
-        }
-      }
-    }
-
-    async function showAllComments() {
-      const commentModal = document.getElementById("commentModal");
-
-      const commentsList =
-        document.getElementById("commentsList") ||
-        document.getElementById("allCommentsList");
-
-      if (!commentsList) {
-        openModalAnimated("allCommentsModal");
-        return;
-      }
-
-      commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
-
-      const loadComments = () => {
-        try {
-          if (typeof commentsUnsubscribe === "function") {
-            commentsUnsubscribe();
-            commentsUnsubscribe = null;
-          }
-
-          commentsUnsubscribe = db
-            .collection(FEEDBACK_COLLECTION)
-            .orderBy("createdAt", "desc")
-            .limit(40)
-            .onSnapshot(snapshot => {
-              if (!snapshot.size) {
-                commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
-                return;
-              }
-
-              commentsList.innerHTML = "";
-
-              snapshot.forEach(doc => {
-                const data = doc.data() || {};
-                const rating = Number(data.rating || 0);
-                const safeRating = Math.max(0, Math.min(5, rating));
-                const stars = "★".repeat(safeRating) + "☆".repeat(5 - safeRating);
-
-                const item = document.createElement("div");
-                item.className = "comment-list-item";
-                item.innerHTML = `
-                  <span class="stars">${stars}</span>
-                  <strong style="display:block; color:#0f172a; margin-bottom:4px;">
-                    ${escapeHtml(data.name || "Anonymous")}
-                  </strong>
-                  <div style="color:#475569; line-height:1.7;">
-                    ${escapeHtml(data.comment || "No comment provided.")}
-                  </div>
-                `;
-
-                commentsList.appendChild(item);
-              });
-            }, err => {
-              console.error("Unable to load comments:", err);
-              commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
-            });
-
-          openModalAnimated("allCommentsModal");
-        } catch (err) {
-          console.error("Unable to load comments:", err);
-          commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
-          openModalAnimated("allCommentsModal");
-        }
-      };
-
-      if (commentModal && commentModal.style.display === "flex") {
-        closeModalAnimated("commentModal", loadComments);
-      } else {
-        loadComments();
-      }
-    }
-
-    function viewAllComments() {
-      showAllComments();
-    }
-
-    window.openComment = openComment;
-    window.closeComment = closeComment;
-    window.openHelp = openHelp;
-    window.closeHelp = closeHelp;
-    window.closeAllComments = closeAllComments;
-    window.showAllComments = showAllComments;
-    window.viewAllComments = viewAllComments;
-    window.sendComment = sendComment;
-
-    document.addEventListener("headerLoaded", () => {
-      initRatingStars();
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      initRatingStars();
-    });
-
-    setTimeout(initRatingStars, 300);
-  </script>
-
-  <script>
-    /* =========================================================
-       CHECKING ePRS STEPS
-    ========================================================= */
-
+    // ==================== ePRS STEPS (refreshed from ePRT style) ====================
     const steps = [
-      {
-        title:"Open SolutionPoint",
-        content:`Using iSPI Browser/Citrix Browser, go to the SolutionPoint homepage
-
-https://fdx.highspot.com
-
-or access Direct Link
-
-https://myapps.secure.fedex.com/pricing/eprs`
-      },
-      {
-        title:"Click Pricing",
-        content:`Click on “Pricing” (same as to view a PRS agreement)`
-      },
-      {
-        title:"Choose Agreement Type",
-        content:`Choose between ePRS for ePRS Agreement or PRS Rerate for Tariff`
-      },
-      {
-        title:"Select Level ID",
-        content:`Click the Level ID in the Research Type dropdown menu`
-      },
-      {
-        title:"Search Options",
-        content:`(1st Option) - Using Country ID, Group or Subgroup ID
-
-- If you search by the Agreement Number shown on the freight bill, it is possible to pull the Dup Load version instead of the actual effective version.
-- ePRS agreements are not normally loaded at actual account code level, so searching an account code will not pull the agreement.
-- You must search the Hierarchy Level the pricing is loaded at.
-- If you have a proposal number, you can search the proposal number.
-- The recommended number is the Country Code.
-
-NOTE:
-If no ePRS agreement is found and the one available doesn't provide helpful information using the Country Code, use Group Level Code or Sub-Group Level Code.`
-      },
-      {
-        title:"Start Searching",
-        content:`1. Once you have the correct level pricing loaded on, start searching for the agreement
-2. Change the Research Type: to Level ID
-3. Enter your Level number - Country Level code
-4. Click: Search / Find Next.`
-      },
-      {
-        title:"Agreement Versions",
-        content:`The ePRS screen will show the different versions of the agreement.
-
-This screen will show the Freight pricing but also Ground and Express, all three can be included in “Combo” so you will have to open the Agreement to determine if Freight is included.
-
-Many files in this view may have never been implemented. Proposal Status “Pricing Implementation Complete” shows the agreement actually became effective.
-
-If Pricing Implementation Complete is not available, you may review Proposal Status "Request Archived" or "Verify Rates".
-
-Dup Loads will also show in the Proposal Status. This version was entered ONLY to assist Pricing in loading the agreement.
-
-Do NOT use the Dup Load version as this version may only have part of the agreement included.
-
-(10/14/2022) - DO NOT USE Dupe Load Successful agreement in verifying the Pricing exceptions of customers.
-
-This type of agreement is only loaded for internal use – meaning an error occurred when pricing was loaded in the backend and a dupe agreement was created to correct it.`
-      },
-      {
-        title:"Agreement Version Logic",
-        content:`Version numbers are included in the agreement number, however, version numbers are not necessarily an indication of the order the agreements were effective.
-
-Actual effective dates of the agreement version are based on when the customer signed the agreement, so if the customer signed version 102 after they signed 103, 102 is the current version.
-
-NOTE: Always select the agreement under the Customer Signed Agreement.
-
-If Customer Signed Agreement is not available or doesn't include the surcharge, you may review Legal Modified Agreement (e.g. 08497324)`
-      },
-      {
-        title:"Search Using Agreement Number",
-        content:`(2nd Option) - Using the actual agreement number
-
-A second option to pull an ePRS agreement is by hovering over “Research” to review the drop down menu and clicking Research.
-
-This is normally used when you are unable to find a specific agreement number`
-      },
-      {
-        title:"Agreement Search Procedure",
-        content:`1. Always update the Start Date at the bottom of the screen; if you do not update the date, your search will be very limited.
-2. Adjust the date first (go all the way to 2013/2014)
-3. Click the circle next to the option you are going to search (Select Agreement # to search)
-4. Enter the agreement number
-5. Click Search at the top`
-      },
-      {
-        title:"Important Agreement Notes",
-        content:`The typed effective date in the agreement is not when the agreement becomes effective, the date the customer signs the agreement is the effective date.
-
-- Current pricing can be affected by past versions of the agreement. For example, fuel surcharge and surcharge exceptions might pull from an older version published, but sales chose to keep those rules.
-- Wording in ePRS agreements are very specific. ePRS agreements are entered into the system by the system, so there is no Pricing Analyst to “interpret” what Sales intentions are.
-- ePRS agreements have hard cancel dates, while PRS and Contracts do not. You must pay attention to Term Dates.
-- Surcharge Exceptions and AMC charges are often shown as discount off.`
-      },
-      {
-        title:"ePRS Agreement",
-        content:`The Table of Contents at the top of the page list the different services the agreement is for.
-- The typed EFFECTIVE DATE is not valid.
-- The CUSTOMER SIGNATURE DATE is the correct effective date if it's LATER than the effective date
-
-NOTE: The later date is the actual effective date
-- Note the AMC Discount off`
-      },
-      {
-        title:"ePRS Surcharge Terms",
-        images:["images/snippet1.png"],
-        content:`This agreement was signed by the customer on 8/13/2018.`
-      },
-      {
-        title:"Surcharge Term Rules",
-        images:["images/snippet2.png"],
-        content:`The agreement includes Term 1 and Term 2 for the surcharge exceptions.
-
-Term 1 is for the exceptions listed in the agreement. These surcharge exceptions will apply for the customer starting on 8/13/2018, but will end 12 months after that date.
-
-NOTE: If Term 1 start date is later than the customer signature date, Term 1 effective date is followed.
-
-Term 2 does not have an end date. Per the notes under Term 2, FXF Rules will apply to all surcharges.`
-      },
-      {
-        title:"US Export Pricing Example",
-        images:["images/snippet3.png"],
-        content:`The pricing example below covers:
-
-US Export Outbound prepaid (OP) shipping from Territory(US) to Geography(CA) with the 3P bill-to being a US Country (CY) Level.
-
-Third Party (3P) US Export from Territory(US) to Geography(CA) with the 3P bill-to being a US Country (CY) Level.`
-      },
-      {
-        title:"US Import Pricing Example",
-        images:["images/snippet4.png"],
-        content:`The pricing example below covers:
-
-US Import Inbound Collect (IC) shipping from Geography (CA) to Territory (US) with the 3P bill-to being a US Country (CY) Level.
-
-Third Party (3P) US Import shipping from Geography (CA) to Territory (US) with the 3P bill-to being a US Country (CY) Level.`
-      },
-      {
-        title:"CA Export Pricing Example",
-        images:["images/snippet5.png"],
-        content:`The pricing example below covers:
-
-CA Export Outbound Prepaid (OP) shipping from Territory (CA) to Geography (US) the 3P bill-to being a CA Country (CY) Level.
-
-Third Party (3P) CA Export shipping from Territory (CA) to Geography (US) the 3P bill-to being a CA Country (CY) Level.`
-      },
-      {
-        title:"CA Import Pricing Example",
-        images:["images/snippet6.png"],
-        content:`The pricing example below covers:
-
-CA Import Inbound Collect (IC) shipping from Geography (US) to Territory (CA) with the 3P bill-to being a CA Country (CY) Level.
-
-Third Party (3P) CA Import shipping from Geography (US) to Territory (CA) with the 3P bill-to being a CA Country (CY) Level.`
-      },
-      {
-        title:"Proposal ID Attachment",
-        content:`Some contract documents/attachments are uploaded under Proposal ID.
-
-Example for Ryan Transportation fuel, cannot be located in XDRive but available under the proposal number.
-
-RESOLUTION:
-Click Proposal ID > Click Attachments > Scroll all the way down and look for Attachments section.`
-      }
+      { title:"Open SolutionPoint or Direct ePRS", content:`Using iSPI Browser/Citrix Browser, go to SolutionPoint (https://fdx.highspot.com) or direct ePRS link (https://myapps.secure.fedex.com/pricing/eprs).` },
+      { title:"Click Pricing", content:`Click on “Pricing” (same as to view a PRS agreement).` },
+      { title:"Choose Agreement Type", content:`Choose between ePRS for ePRS Agreement or PRS Rerate for Tariff.` },
+      { title:"Select Level ID", content:`Click the Level ID in the Research Type dropdown menu.` },
+      { title:"Search Options – Hierarchy Level", content:`Search by Country ID, Group or Subgroup ID. Do NOT search by account code — ePRS agreements are loaded at hierarchy level. Use proposal number if available. Recommended: Country Code.` },
+      { title:"Start Searching by Level ID", content:`Change Research Type to Level ID, enter your Level number (Country Level code), click Search / Find Next.` },
+      { title:"Agreement Versions & Proposal Status", content:`ePRS screen shows different versions. Look for Proposal Status “Pricing Implementation Complete” — that indicates the agreement actually became effective. “Dup Load” versions are for internal correction; do NOT use them for pricing validation.` },
+      { title:"Agreement Version Logic", content:`Version numbers do NOT indicate effective order. Actual effective date = Customer Signature Date (if later than typed effective date). Always select Customer Signed Agreement first. If surcharge missing, review Legal Modified Agreement.` },
+      { title:"Alternative Search: Agreement Number", content:`Hover over “Research” → click Research. Update Start Date (go back to 2013/2014). Select “Agreement #”, enter agreement number, click Search.` },
+      { title:"Important Agreement Notes", content:`Typed effective date is not valid; customer signature date controls. Past versions may still affect surcharge rules. ePRS agreements have hard cancel dates — watch Term Dates. Surcharge exceptions often shown as discount off.` },
+      { title:"ePRS Agreement – Table of Contents", content:`Table of Contents lists services. CUSTOMER SIGNATURE DATE is the correct effective date if later than typed effective date. Note AMC Discount off.` },
+      { title:"ePRS Surcharge Terms (Example)", images:["images/snippet1.png"], content:`This agreement signed by customer on 8/13/2018.` },
+      { title:"Surcharge Term Rules", images:["images/snippet2.png"], content:`Term 1 for listed exceptions: applies from signature date but ends after 12 months. Term 2 has no end date; FXF Rules apply to all surcharges.` },
+      { title:"US Export Pricing Example", images:["images/snippet3.png"], content:`US Export Outbound prepaid (OP) from Territory(US) to Geography(CA) with 3P bill-to US Country level. Also Third Party (3P) US Export example.` },
+      { title:"US Import Pricing Example", images:["images/snippet4.png"], content:`US Import Inbound Collect (IC) from Geography(CA) to Territory(US) with 3P bill-to US Country level. Third Party (3P) US Import example.` },
+      { title:"CA Export Pricing Example", images:["images/snippet5.png"], content:`CA Export Outbound Prepaid (OP) from Territory(CA) to Geography(US) with 3P bill-to CA Country level. Third Party (3P) CA Export example.` },
+      { title:"CA Import Pricing Example", images:["images/snippet6.png"], content:`CA Import Inbound Collect (IC) from Geography(US) to Territory(CA) with 3P bill-to CA Country level. Third Party (3P) CA Import example.` },
+      { title:"Proposal ID Attachment", content:`Some contract documents uploaded under Proposal ID. Click Proposal ID > Attachments > scroll down to Attachments section.` }
     ];
 
     let currentStep = 0;
-
     const els = {
-      stepTitle: document.getElementById("stepTitle"),
-      stepContent: document.getElementById("stepContent"),
-      stepImages: document.getElementById("stepImages"),
-      stepCounter: document.getElementById("stepCounter"),
-      miniProgressFill: document.getElementById("miniProgressFill"),
-      progressFill: document.getElementById("progressFill"),
-      progressText: document.getElementById("progressText"),
-      prevBtn: document.getElementById("prevBtn"),
-      nextBtn: document.getElementById("nextBtn"),
-      stepDots: document.getElementById("stepDots"),
-      stepBody: document.getElementById("stepBody"),
-      quickJumpList: document.getElementById("quickJumpList"),
-      metricSteps: document.getElementById("metricSteps"),
-      metricImages: document.getElementById("metricImages")
+      stepTitle:document.getElementById("stepTitle"), stepContent:document.getElementById("stepContent"), stepImages:document.getElementById("stepImages"),
+      stepCounter:document.getElementById("stepCounter"), miniProgressFill:document.getElementById("miniProgressFill"),
+      progressFill:document.getElementById("progressFill"), progressText:document.getElementById("progressText"),
+      prevBtn:document.getElementById("prevBtn"), nextBtn:document.getElementById("nextBtn"),
+      stepDots:document.getElementById("stepDots"), stepBody:document.getElementById("stepBody"),
+      quickJumpList:document.getElementById("quickJumpList"), metricSteps:document.getElementById("metricSteps"), metricImages:document.getElementById("metricImages")
     };
-
-    function countImages(){
-      return steps.reduce((total, step) => total + (Array.isArray(step.images) ? step.images.length : 0), 0);
-    }
-
-    function renderQuickJump(){
-      if(!els.quickJumpList) return;
-
-      els.quickJumpList.innerHTML = "";
-
-      steps.forEach((step, index) => {
-        const btn = document.createElement("button");
-        btn.className = "path-jump";
-        btn.type = "button";
-        btn.dataset.jump = index;
-
-        btn.innerHTML = `
-          <span>${index + 1}</span>
-          <div>
-            <strong>${escapeHtml(step.title)}</strong>
-            <small>Step ${index + 1}</small>
-          </div>
-        `;
-
-        btn.onclick = () => goToStep(index, true);
-        els.quickJumpList.appendChild(btn);
-      });
-    }
-
-    function updateQuickJump(){
-      document.querySelectorAll(".path-jump").forEach(btn => {
-        const index = Number(btn.dataset.jump);
-        btn.classList.toggle("active", index === currentStep);
-      });
-    }
-
-    function renderDots(){
-      if(!els.stepDots) return;
-
-      els.stepDots.innerHTML = "";
-
-      steps.forEach((step, index) => {
-        const dot = document.createElement("div");
-        dot.className = "step-dot";
-
-        if(index === currentStep) {
-          dot.classList.add("active");
-        }
-
-        dot.onclick = () => goToStep(index, true);
-        els.stepDots.appendChild(dot);
-      });
-    }
-
-    function renderStep(){
-      const step = steps[currentStep];
-      const progress = ((currentStep + 1) / steps.length * 100) + "%";
-
-      if (els.stepTitle) els.stepTitle.textContent = step.title;
-      if (els.stepContent) els.stepContent.textContent = step.content;
-
-      if (els.stepImages) {
-        els.stepImages.innerHTML = "";
-
-        if(Array.isArray(step.images)){
-          step.images.forEach(img => {
-            const image = document.createElement("img");
-            image.src = img;
-            image.alt = step.title;
-            image.loading = "lazy";
-            els.stepImages.appendChild(image);
-          });
-        }
-      }
-
-      if (els.stepCounter) {
-        els.stepCounter.textContent = `Step ${currentStep + 1} of ${steps.length}`;
-      }
-
-      if (els.progressText) {
-        els.progressText.textContent = `Step ${currentStep + 1} of ${steps.length}`;
-      }
-
-      if (els.progressFill) {
-        els.progressFill.style.width = progress;
-      }
-
-      if (els.miniProgressFill) {
-        els.miniProgressFill.style.width = progress;
-      }
-
-      if (els.metricSteps) {
-        els.metricSteps.textContent = steps.length;
-      }
-
-      if (els.metricImages) {
-        els.metricImages.textContent = countImages();
-      }
-
-      if (els.prevBtn) {
-        els.prevBtn.disabled = currentStep === 0;
-      }
-
-      if (els.nextBtn) {
-        if(currentStep === steps.length - 1){
-          els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
-          els.nextBtn.classList.add("finish");
-        }else{
-          els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
-          els.nextBtn.classList.remove("finish");
-        }
-      }
-
-      renderDots();
-      updateQuickJump();
-    }
-
-    function animateStep(direction){
-      if (!els.stepBody) return;
-
-      els.stepBody.classList.remove("animate-left", "animate-right");
-      void els.stepBody.offsetWidth;
-      els.stepBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
-    }
-
-    function goToStep(index, shouldScroll = false){
-      if(index < 0 || index >= steps.length) return;
-
-      const direction = index >= currentStep ? "left" : "right";
-      currentStep = index;
-
-      animateStep(direction);
-      renderStep();
-
-      if(shouldScroll){
-        const stepsSection = document.getElementById("stepsSection");
-
-        if(stepsSection){
-          stepsSection.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-          });
-        }
-      }
-    }
-
-    function exploreSteps(){
-      goToStep(0, true);
-    }
-
-    window.goToStep = goToStep;
-    window.exploreSteps = exploreSteps;
-
-    if (els.nextBtn) {
-      els.nextBtn.onclick = () => {
-        if(currentStep < steps.length - 1){
-          currentStep++;
-          animateStep("left");
-          renderStep();
-        }else{
-          alert("Checking ePRS guide completed.");
-          currentStep = 0;
-          animateStep("left");
-          renderStep();
-        }
-      };
-    }
-
-    if (els.prevBtn) {
-      els.prevBtn.onclick = () => {
-        if(currentStep > 0){
-          currentStep--;
-          animateStep("right");
-          renderStep();
-        }
-      };
-    }
-
-    document.addEventListener("keydown", e => {
-      if(e.key === "ArrowRight" && els.nextBtn) els.nextBtn.click();
-      if(e.key === "ArrowLeft" && els.prevBtn) els.prevBtn.click();
-      if(e.key === "Escape") closeImagePreview();
-    });
-
-    document.addEventListener("click", e => {
-      const previewModal = document.getElementById("imagePreviewModal");
-      const previewImage = document.getElementById("imagePreview");
-
-      if(e.target.matches(".step-images img")){
-        if (previewModal && previewImage) {
-          previewModal.style.display = "flex";
-          previewImage.src = e.target.src;
-          document.body.style.overflow = "hidden";
-        }
-      }
-
-      if(e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal"){
-        closeImagePreview();
-      }
-    });
-
-    function closeImagePreview(){
-      const previewModal = document.getElementById("imagePreviewModal");
-      const previewImage = document.getElementById("imagePreview");
-
-      if(previewModal) previewModal.style.display = "none";
-      if(previewImage) previewImage.src = "";
-      document.body.style.overflow = "";
-    }
-
-    function copyText(id, btn){
-      const el = document.getElementById(id);
-      if(!el) return;
-
-      const text = el.innerText.trim();
-      if(!text) return;
-
-      navigator.clipboard.writeText(text).then(() => {
-        const old = btn.textContent;
-        btn.classList.add("copied");
-        btn.textContent = "Copied ✓";
-
-        setTimeout(() => {
-          btn.classList.remove("copied");
-          btn.textContent = old;
-        }, 1400);
-      }).catch(() => {
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        textarea.style.position = "fixed";
-        textarea.style.opacity = "0";
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textarea);
-
-        const old = btn.textContent;
-        btn.classList.add("copied");
-        btn.textContent = "Copied ✓";
-
-        setTimeout(() => {
-          btn.classList.remove("copied");
-          btn.textContent = old;
-        }, 1400);
-      });
-    }
-
-    window.copyText = copyText;
-    window.closeImagePreview = closeImagePreview;
-
-    renderQuickJump();
-    renderStep();
+    function countImages(){return steps.reduce((t,s)=>t+(Array.isArray(s.images)?s.images.length:0),0);}
+    function renderQuickJump(){if(els.quickJumpList){els.quickJumpList.innerHTML="";steps.forEach((s,i)=>{const btn=document.createElement("button");btn.className="path-jump";btn.type="button";btn.dataset.jump=i;btn.innerHTML=`<span>${i+1}</span><div><strong>${escapeHtml(s.title)}</strong><small>Step ${i+1}</small></div>`;btn.onclick=()=>goToStep(i,true);els.quickJumpList.appendChild(btn);});}}
+    function updateQuickJump(){document.querySelectorAll(".path-jump").forEach(btn=>{const idx=Number(btn.dataset.jump);btn.classList.toggle("active",idx===currentStep);});}
+    function renderDots(){if(els.stepDots){els.stepDots.innerHTML="";steps.forEach((_,i)=>{const dot=document.createElement("div");dot.className="step-dot";if(i===currentStep)dot.classList.add("active");dot.onclick=()=>goToStep(i,true);els.stepDots.appendChild(dot);});}}
+    function renderStep(){const step=steps[currentStep];const progress=((currentStep+1)/steps.length*100)+"%";if(els.stepTitle)els.stepTitle.textContent=step.title;if(els.stepContent)els.stepContent.textContent=step.content;if(els.stepImages){els.stepImages.innerHTML="";if(Array.isArray(step.images)){step.images.forEach(img=>{const image=document.createElement("img");image.src=img;image.alt=step.title;image.loading="lazy";els.stepImages.appendChild(image);});}}if(els.stepCounter)els.stepCounter.textContent=`Step ${currentStep+1} of ${steps.length}`;if(els.progressText)els.progressText.textContent=`Step ${currentStep+1} of ${steps.length}`;if(els.progressFill)els.progressFill.style.width=progress;if(els.miniProgressFill)els.miniProgressFill.style.width=progress;if(els.metricSteps)els.metricSteps.textContent=steps.length;if(els.metricImages)els.metricImages.textContent=countImages();if(els.prevBtn)els.prevBtn.disabled=currentStep===0;if(els.nextBtn){if(currentStep===steps.length-1){els.nextBtn.innerHTML=`Finish <i class="fa-solid fa-circle-check"></i>`;els.nextBtn.classList.add("finish");}else{els.nextBtn.innerHTML=`Next <i class="fa-solid fa-arrow-right"></i>`;els.nextBtn.classList.remove("finish");}}renderDots();updateQuickJump();}
+    function animateStep(direction){if(els.stepBody){els.stepBody.classList.remove("animate-left","animate-right");void els.stepBody.offsetWidth;els.stepBody.classList.add(direction==="left"?"animate-left":"animate-right");}}
+    function goToStep(index,shouldScroll=false){if(index<0||index>=steps.length)return;const direction=index>=currentStep?"left":"right";currentStep=index;animateStep(direction);renderStep();if(shouldScroll){const sec=document.getElementById("stepsSection");if(sec)sec.scrollIntoView({behavior:"smooth",block:"start"});}}
+    function exploreSteps(){goToStep(0,true);}
+    window.goToStep=goToStep; window.exploreSteps=exploreSteps;
+    if(els.nextBtn)els.nextBtn.onclick=()=>{if(currentStep<steps.length-1){currentStep++;animateStep("left");renderStep();}else{alert("ePRS checking guide completed.");currentStep=0;animateStep("left");renderStep();}};
+    if(els.prevBtn)els.prevBtn.onclick=()=>{if(currentStep>0){currentStep--;animateStep("right");renderStep();}};
+    document.addEventListener("keydown",e=>{if(e.key==="ArrowRight"&&els.nextBtn)els.nextBtn.click();if(e.key==="ArrowLeft"&&els.prevBtn)els.prevBtn.click();if(e.key==="Escape")closeImagePreview();});
+    document.addEventListener("click",e=>{if(e.target.matches(".step-images img")){const modal=document.getElementById("imagePreviewModal");const img=document.getElementById("imagePreview");if(modal&&img){modal.style.display="flex";img.src=e.target.src;document.body.style.overflow="hidden";}}if(e.target.matches(".image-preview-close")||e.target.id==="imagePreviewModal")closeImagePreview();});
+    function closeImagePreview(){const modal=document.getElementById("imagePreviewModal");const img=document.getElementById("imagePreview");if(modal)modal.style.display="none";if(img)img.src="";document.body.style.overflow="";}
+    function copyText(id,btn){const el=document.getElementById(id);if(!el)return;const text=el.innerText.trim();if(!text)return;navigator.clipboard.writeText(text).then(()=>{const old=btn.textContent;btn.classList.add("copied");btn.textContent="Copied ✓";setTimeout(()=>{btn.classList.remove("copied");btn.textContent=old;},1400);}).catch(()=>{const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);const old=btn.textContent;btn.classList.add("copied");btn.textContent="Copied ✓";setTimeout(()=>{btn.classList.remove("copied");btn.textContent=old;},1400);});}
+    window.copyText=copyText; window.closeImagePreview=closeImagePreview;
+    function escapeHtml(str){return String(str??"").replace(/[&<>]/g,function(m){if(m==="&")return"&amp;";if(m==="<")return"&lt;";if(m===">")return"&gt;";return m;});}
+    renderQuickJump(); renderStep();
   </script>
 </body>
 </html>
