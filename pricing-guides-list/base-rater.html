@@ -181,7 +181,7 @@
     }
 
     /* =========================================================
-       BASE RATER THEME BRIDGE (COMPLETE)
+       BASE RATER THEME BRIDGE (COMPLETE WITH MAIN INDEX BUTTON STYLES)
        Every element now follows the selected theme accent.
     ========================================================= */
     body.theme-fedex,
@@ -202,17 +202,64 @@
       --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
       --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
       --eprt-shadow:var(--theme-shadow-md, 0 10px 28px rgba(15,23,42,.10));
+
+      /* New primary button colors matching the main index */
+      --primary-btn: var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
+      --primary-btn-color: #ffffff;
     }
 
-    /* Primary pill & standard buttons (use primary for main actions) */
+    /* Define per‑theme primary button colors (exact from main index) */
+    body.theme-fedex{ --primary-btn: linear-gradient(135deg,#ff6600,#ff8a33); --primary-btn-color: #ffffff; }
+    body.theme-atlas{ --primary-btn: linear-gradient(135deg,#c9c936,#e1df6a); --primary-btn-color: #22270d; }
+    body.theme-basic{ --primary-btn: #111827; --primary-btn-color: #ffffff; }
+    body.theme-simple{ --primary-btn: #2563eb; --primary-btn-color: #ffffff; }
+
+    /* ===== BUTTONS (MATCH MAIN INDEX STYLES) ===== */
+
+    /* Primary button – identical to “Explore guides” */
+    body.theme-fedex .btn,
+    body.theme-atlas .btn,
+    body.theme-basic .btn,
+    body.theme-simple .btn {
+      background: var(--primary-btn) !important;
+      color: var(--primary-btn-color) !important;
+      box-shadow: 0 16px 30px color-mix(in srgb, var(--teal) 18%, transparent) !important;
+    }
+
+    /* Secondary (ghost) button – identical to “Search guides” */
+    body.theme-fedex .btn.orange,
+    body.theme-atlas .btn.orange,
+    body.theme-basic .btn.orange,
+    body.theme-simple .btn.orange {
+      background: rgba(255,255,255,.10) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,.15) !important;
+      box-shadow: none !important;
+      background-image: none !important;   /* remove old gradient */
+    }
+
+    /* Simple theme ghost button – white background because the page is light */
+    body.theme-simple .btn.orange {
+      background: #ffffff !important;
+      color: var(--ink) !important;
+      border: 1px solid #e5e7eb !important;
+      box-shadow: 0 12px 24px rgba(15,23,42,.08) !important;
+    }
+
+    /* Dark button stays neutral */
+    body.theme-fedex .btn.dark,
+    body.theme-atlas .btn.dark,
+    body.theme-basic .btn.dark,
+    body.theme-simple .btn.dark {
+      background: #111827 !important;
+      box-shadow: 0 14px 24px rgba(17,24,39,.16) !important;
+    }
+
+    /* Pill, section icons, step numbers – also use primary colour */
     body.theme-fedex .pill.primary,
     body.theme-atlas .pill.primary,
     body.theme-basic .pill.primary,
     body.theme-simple .pill.primary,
-    body.theme-fedex .btn,
-    body.theme-atlas .btn,
-    body.theme-basic .btn,
-    body.theme-simple .btn,
     body.theme-fedex .section-title i,
     body.theme-atlas .section-title i,
     body.theme-basic .section-title i,
@@ -220,29 +267,10 @@
     body.theme-fedex .num,
     body.theme-atlas .num,
     body.theme-basic .num,
-    body.theme-simple .num{
-      background:var(--eprt-button) !important;
-      color:#ffffff !important;
-      box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-primary) 18%, transparent) !important;
-    }
-
-    /* Accent buttons (.btn.orange) use the theme accent */
-    body.theme-fedex .btn.orange,
-    body.theme-atlas .btn.orange,
-    body.theme-basic .btn.orange,
-    body.theme-simple .btn.orange{
-      background:var(--eprt-accent) !important;
-      background-image:linear-gradient(135deg, var(--eprt-accent), color-mix(in srgb, var(--eprt-accent) 85%, #f59e0b)) !important;
-      box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-accent) 18%, transparent) !important;
-    }
-
-    /* Dark button stays neutral */
-    body.theme-fedex .btn.dark,
-    body.theme-atlas .btn.dark,
-    body.theme-basic .btn.dark,
-    body.theme-simple .btn.dark{
-      background:#111827 !important;
-      box-shadow:0 14px 24px rgba(17,24,39,.16) !important;
+    body.theme-simple .num {
+      background: var(--primary-btn) !important;
+      color: #ffffff !important;
+      box-shadow: 0 16px 30px color-mix(in srgb, var(--teal) 18%, transparent) !important;
     }
 
     /* Progress bar */
@@ -441,10 +469,10 @@
     body.theme-atlas .template-copy,
     body.theme-basic .template-copy,
     body.theme-simple .template-copy{
-      background:var(--eprt-button) !important;
+      background: var(--primary-btn) !important;
     }
 
-    /* 2. Example boxes (class logic & tariff examples) – now accent-based, not purple */
+    /* 2. Example boxes (class logic & tariff examples) – accent-based, not purple */
     body.theme-fedex .example,
     body.theme-atlas .example,
     body.theme-basic .example,
@@ -495,11 +523,8 @@
       background:linear-gradient(180deg, color-mix(in srgb, var(--eprt-accent-soft) 40%, white), var(--eprt-card)) !important;
     }
 
-    /* Theme-specific button overrides for Atlas / Basic / Simple */
-    body.theme-atlas .btn{ background:#0e5361 !important; }
-    body.theme-atlas .btn.orange{ background:#5b7f08 !important; }
-    body.theme-basic .btn.dark{ background:#374151 !important; }
-    body.theme-simple .btn.dark{ background:#2563eb !important; }
+    /* Remove old theme‑specific overrides */
+    /* All button colors are now handled above */
   </style>
 </head>
 
