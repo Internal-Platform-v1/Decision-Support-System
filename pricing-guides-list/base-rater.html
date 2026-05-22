@@ -145,7 +145,7 @@
     .template-copy{ appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:12px; background:#111827; color:#fff; font-size:12px; font-weight:800; transition:all .18s ease; }
     .template-copy.copied{ background:#dcfce7 !important; color:#166534 !important; border-color:#bbf7d0 !important; }
 
-    /* Modal styles (unchanged, kept for header compatibility) */
+    /* Modal styles (unchanged) */
     #commentModal, #allCommentsModal, #helpModal{ display:none; position:fixed; inset:0; background:rgba(2,6,23,.52); justify-content:center; align-items:center; padding:0 24px; z-index:2147483647; backdrop-filter:blur(8px); overflow-y:auto; }
     #commentModal .modal-content, #allCommentsModal .modal-content, #helpModal .modal-content{ width:100%; background:#fff; border-radius:28px; padding:26px; box-shadow:0 24px 80px rgba(2,6,23,.18); max-height:min(84vh, 900px); overflow:auto; border:1px solid rgba(148,163,184,.16); margin:110px auto 32px; }
     #commentModal .feedback-modal{ max-width:640px; border-radius:28px; padding:20px 20px 22px; }
@@ -181,8 +181,8 @@
     }
 
     /* =========================================================
-       BASE RATER THEME BRIDGE
-       Forces every element to follow the selected theme.
+       BASE RATER THEME BRIDGE (COMPLETE)
+       Every element now follows the selected theme accent.
     ========================================================= */
     body.theme-fedex,
     body.theme-atlas,
@@ -204,7 +204,7 @@
       --eprt-shadow:var(--theme-shadow-md, 0 10px 28px rgba(15,23,42,.10));
     }
 
-    /* Primary pill & standard buttons */
+    /* Primary pill & standard buttons (use primary for main actions) */
     body.theme-fedex .pill.primary,
     body.theme-atlas .pill.primary,
     body.theme-basic .pill.primary,
@@ -226,7 +226,7 @@
       box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-primary) 18%, transparent) !important;
     }
 
-    /* Accent (orange) buttons */
+    /* Accent buttons (.btn.orange) use the theme accent */
     body.theme-fedex .btn.orange,
     body.theme-atlas .btn.orange,
     body.theme-basic .btn.orange,
@@ -267,7 +267,7 @@
       border-color:var(--eprt-line) !important;
     }
 
-    /* 4. Hero card decorative circle (light ball) */
+    /* 4. Hero card decorative circle (light ball) – now uses theme primary */
     body.theme-fedex .hero-card-main::after,
     body.theme-atlas .hero-card-main::after,
     body.theme-basic .hero-card-main::after,
@@ -319,13 +319,19 @@
       color:var(--eprt-muted) !important;
     }
 
-    /* Badges */
+    /* 1. Badge "Pricing Support" → now uses accent (icon + text), soft background */
     body.theme-fedex .badge,
     body.theme-atlas .badge,
     body.theme-basic .badge,
     body.theme-simple .badge{
-      background:var(--eprt-soft) !important;
-      color:var(--eprt-primary) !important;
+      background:var(--eprt-accent-soft) !important;
+      color:var(--eprt-accent) !important;
+    }
+    body.theme-fedex .badge i,
+    body.theme-atlas .badge i,
+    body.theme-basic .badge i,
+    body.theme-simple .badge i {
+      color: var(--eprt-accent) !important;
     }
     body.theme-fedex .badge.alt,
     body.theme-atlas .badge.alt,
@@ -333,14 +339,6 @@
     body.theme-simple .badge.alt{
       background:var(--eprt-card-soft) !important;
       color:var(--eprt-muted) !important;
-    }
-
-    /* 1. Badge icon (Pricing Support) → accent colour */
-    body.theme-fedex .badge i,
-    body.theme-atlas .badge i,
-    body.theme-basic .badge i,
-    body.theme-simple .badge i {
-      color: var(--eprt-accent) !important;
     }
 
     /* Quick Jump list (same as ePRS) */
@@ -446,13 +444,13 @@
       background:var(--eprt-button) !important;
     }
 
-    /* 2. Example boxes (class logic & tariff examples) */
+    /* 2. Example boxes (class logic & tariff examples) – now accent-based, not purple */
     body.theme-fedex .example,
     body.theme-atlas .example,
     body.theme-basic .example,
     body.theme-simple .example{
-      background:var(--eprt-soft) !important;
-      border-color:color-mix(in srgb, var(--eprt-primary) 40%, transparent) !important;
+      background:var(--eprt-accent-soft) !important;
+      border-color:color-mix(in srgb, var(--eprt-accent) 40%, transparent) !important;
       color:var(--eprt-text) !important;
     }
 
@@ -471,7 +469,7 @@
     body.theme-simple .note{
       background:var(--eprt-accent-soft) !important;
       border-color:color-mix(in srgb, var(--eprt-accent) 50%, transparent) !important;
-      color:color-mix(in srgb, var(--eprt-accent) 60%, #000) !important;
+      color:var(--eprt-text) !important;
     }
     body.theme-fedex .note .note-head,
     body.theme-atlas .note .note-head,
@@ -480,13 +478,21 @@
       color:var(--eprt-accent) !important;
     }
 
-    /* Final card remains green (completion) */
+    /* Completion badge – now uses accent, not green */
+    body.theme-fedex .final-badge,
+    body.theme-atlas .final-badge,
+    body.theme-basic .final-badge,
+    body.theme-simple .final-badge{
+      background:var(--eprt-accent-soft) !important;
+      color:var(--eprt-accent) !important;
+      border:1px solid color-mix(in srgb, var(--eprt-accent) 40%, transparent) !important;
+    }
     body.theme-fedex .final-card,
     body.theme-atlas .final-card,
     body.theme-basic .final-card,
     body.theme-simple .final-card{
-      background:linear-gradient(180deg,#f0fdf4,var(--eprt-card)) !important;
-      border-color:#dcfce7 !important;
+      border-color:var(--eprt-accent-soft) !important;
+      background:linear-gradient(180deg, color-mix(in srgb, var(--eprt-accent-soft) 40%, white), var(--eprt-card)) !important;
     }
 
     /* Theme-specific button overrides for Atlas / Basic / Simple */
