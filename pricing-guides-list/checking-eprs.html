@@ -37,27 +37,19 @@
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
-    /* =========================================================
-       PAGE AUTH GUARD
-    ========================================================= */
     window.auth.onAuthStateChanged(async function(user) {
       try {
         if (!user) {
           window.location.replace("../index.html");
           return;
         }
-
         await user.reload();
-
         const refreshedUser = window.auth.currentUser;
-
         if (!refreshedUser || !refreshedUser.emailVerified) {
           window.location.replace("../index.html");
           return;
         }
-
         document.documentElement.classList.remove("page-protected");
-
       } catch (error) {
         console.error("Auth guard error:", error);
         window.location.replace("../index.html");
@@ -66,7 +58,7 @@
   </script>
 
   <style>
-    /* ----- BASE STYLES (same as ePRT guide) ----- */
+    /* ----- BASE STYLES (identical to ePRT guide) ----- */
     html.page-protected,
     html.page-protected body { visibility: hidden; }
 
@@ -159,7 +151,7 @@
     .side-panel, .template-panel{ padding:18px 18px 18px 0; display:flex; flex-direction:column; gap:14px; min-width:0; }
     .side-panel{ padding-right:14px; }
     .summary-card{ background:#fff; border:1px solid #dbe4f0; border-radius:22px; padding:18px; box-shadow:var(--shadow-md); }
-    .summary-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:14px; font-weight:900; }
+    .summary-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:14px; font-weight:900; color:#0f172a; }
     .summary-head i{ color:#7c3aed; }
     .summary-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .metric{ padding:14px; border-radius:18px; background:#f8fafc; border:1px solid #e7edf4; }
@@ -196,7 +188,7 @@
     .image-preview-close:hover{ background:rgba(255,255,255,.2); }
 
     /* =========================================================
-       FULL THEME BRIDGE (copied exactly from ePRT Submission Guide)
+       FULL THEME BRIDGE (copied exactly from ePRT guide + icon fixes)
     ========================================================= */
     body.theme-fedex,
     body.theme-atlas,
@@ -218,6 +210,7 @@
       --eprt-shadow:var(--theme-shadow-md, 0 10px 28px rgba(15,23,42,.10));
     }
 
+    /* Primary buttons and accents */
     body.theme-fedex .pill.primary,
     body.theme-atlas .pill.primary,
     body.theme-basic .pill.primary,
@@ -239,6 +232,7 @@
       box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-primary) 18%, transparent) !important;
     }
 
+    /* Progress fills */
     body.theme-fedex .progress-fill,
     body.theme-atlas .progress-fill,
     body.theme-basic .progress-fill,
@@ -250,6 +244,7 @@
       background:var(--eprt-progress) !important;
     }
 
+    /* Cards and bodies */
     body.theme-fedex .question-card,
     body.theme-atlas .question-card,
     body.theme-basic .question-card,
@@ -258,9 +253,8 @@
     body.theme-atlas .step-body,
     body.theme-basic .step-body,
     body.theme-simple .step-body{
-      background:
-        radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
-        linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
+      background: radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
+                  linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
       border-color:var(--eprt-line) !important;
     }
 
@@ -271,6 +265,7 @@
       background:var(--eprt-progress) !important;
     }
 
+    /* Text colors */
     body.theme-fedex .step-title,
     body.theme-atlas .step-title,
     body.theme-basic .step-title,
@@ -293,6 +288,7 @@
       color:var(--eprt-muted) !important;
     }
 
+    /* Viewer background */
     body.theme-fedex .step-viewer,
     body.theme-atlas .step-viewer,
     body.theme-basic .step-viewer,
@@ -305,6 +301,7 @@
       border-color:var(--eprt-line) !important;
     }
 
+    /* Navigation buttons */
     body.theme-fedex .step-nav-btn.prev,
     body.theme-atlas .step-nav-btn.prev,
     body.theme-basic .step-nav-btn.prev,
@@ -314,6 +311,7 @@
       border-color:var(--eprt-line) !important;
     }
 
+    /* Step dots */
     body.theme-fedex .step-dot,
     body.theme-atlas .step-dot,
     body.theme-basic .step-dot,
@@ -335,6 +333,7 @@
       background:var(--eprt-accent) !important;
     }
 
+    /* Quick Jump active state */
     body.theme-fedex .path-jump.active,
     body.theme-atlas .path-jump.active,
     body.theme-basic .path-jump.active,
@@ -346,65 +345,38 @@
     body.theme-fedex .path-jump span,
     body.theme-atlas .path-jump span,
     body.theme-basic .path-jump span,
-    body.theme-simple .path-jump span,
-    body.theme-fedex .template-icon,
-    body.theme-atlas .template-icon,
-    body.theme-basic .template-icon,
-    body.theme-simple .template-icon{
+    body.theme-simple .path-jump span{
       background:var(--eprt-soft) !important;
       color:var(--eprt-primary) !important;
     }
 
+    /* ========== ICON FIXES ========== */
+    /* Summary head icons (lightbulb, chart, route, link, magic) */
     body.theme-fedex .summary-head i,
     body.theme-atlas .summary-head i,
     body.theme-basic .summary-head i,
-    body.theme-simple .summary-head i,
+    body.theme-simple .summary-head i{
+      color:var(--eprt-accent) !important;
+    }
+
+    /* Reminder icons */
     body.theme-fedex .reminder i,
     body.theme-atlas .reminder i,
     body.theme-basic .reminder i,
     body.theme-simple .reminder i{
-      color:var(--eprt-primary) !important;
+      color:var(--eprt-accent) !important;
     }
 
-    body.theme-fedex .template-tag,
-    body.theme-atlas .template-tag,
-    body.theme-basic .template-tag,
-    body.theme-simple .template-tag{
-      background:var(--eprt-card-soft) !important;
-      border-color:var(--eprt-line) !important;
-      color:var(--eprt-muted) !important;
+    /* Template icon backgrounds and colors */
+    body.theme-fedex .template-icon,
+    body.theme-atlas .template-icon,
+    body.theme-basic .template-icon,
+    body.theme-simple .template-icon{
+      background:var(--eprt-accent-soft) !important;
+      color:var(--eprt-accent) !important;
     }
 
-    body.theme-fedex .template-tag:hover,
-    body.theme-atlas .template-tag:hover,
-    body.theme-basic .template-tag:hover,
-    body.theme-simple .template-tag:hover{
-      background:var(--eprt-soft) !important;
-      color:var(--eprt-primary) !important;
-    }
-
-    body.theme-atlas .volume-btn,
-    body.theme-atlas .step-nav-btn.next{
-      background:#0e5361 !important;
-      color:#ffffff !important;
-    }
-
-    body.theme-atlas .step-nav-btn.finish{
-      background:#5b7f08 !important;
-      color:#ffffff !important;
-    }
-
-    body.theme-basic .step-nav-btn.finish{
-      background:#374151 !important;
-      color:#ffffff !important;
-    }
-
-    body.theme-simple .step-nav-btn.finish{
-      background:#2563eb !important;
-      color:#ffffff !important;
-    }
-
-    /* Right panel theme overrides */
+    /* Sidebar summary cards */
     body.theme-fedex .side-panel .summary-card,
     body.theme-fedex .template-panel .summary-card,
     body.theme-atlas .side-panel .summary-card,
@@ -413,9 +385,8 @@
     body.theme-basic .template-panel .summary-card,
     body.theme-simple .side-panel .summary-card,
     body.theme-simple .template-panel .summary-card{
-      background:var(--eprt-card-glass, var(--theme-card-glass)) !important;
-      border-color:var(--theme-frame-border) !important;
-      box-shadow:var(--theme-shadow-md) !important;
+      background:var(--eprt-card) !important;
+      border-color:var(--eprt-line) !important;
     }
 
     body.theme-fedex .summary-head,
@@ -423,13 +394,6 @@
     body.theme-basic .summary-head,
     body.theme-simple .summary-head{
       color:var(--eprt-text) !important;
-    }
-
-    body.theme-fedex .summary-head i,
-    body.theme-atlas .summary-head i,
-    body.theme-basic .summary-head i,
-    body.theme-simple .summary-head i{
-      color:var(--eprt-accent) !important;
     }
 
     body.theme-fedex .reminder,
@@ -471,6 +435,15 @@
       background:var(--eprt-button) !important;
     }
 
+    /* Theme-specific overrides for Atlas/Basic/Simple */
+    body.theme-atlas .volume-btn,
+    body.theme-atlas .step-nav-btn.next{
+      background:#0e5361 !important;
+      color:#ffffff !important;
+    }
+    body.theme-atlas .step-nav-btn.finish{ background:#5b7f08 !important; }
+    body.theme-basic .step-nav-btn.finish{ background:#374151 !important; }
+    body.theme-simple .step-nav-btn.finish{ background:#2563eb !important; }
     body.theme-atlas .template-copy{ background:#0e5361 !important; }
     body.theme-basic .template-copy{ background:#111827 !important; }
     body.theme-simple .template-copy{ background:#2563eb !important; }
