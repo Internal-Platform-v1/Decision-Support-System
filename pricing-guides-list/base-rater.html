@@ -14,1056 +14,477 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/guide-themes.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <style>
+    /* ----- BASE STYLES (identical to ePRS/ePRT guide) ----- */
     html.page-protected,
-    html.page-protected body{
-      visibility:hidden;
-    }
-    :root{
-      --bg:#07111f;
-      --bg-soft:#0c1728;
-      --panel:#0f1c31;
-      --panel-2:#12233d;
-      --card:#ffffff;
-      --card-soft:#f8fafc;
-      --text:#0f172a;
-      --text-soft:#475569;
-      --muted:#94a3b8;
-      --line:rgba(148,163,184,.18);
-      --white-line:rgba(255,255,255,.08);
-      --accent:#6d28d9;
-      --accent-2:#4d148c;
-      --accent-3:#ff6600;
-      --success:#16a34a;
-      --warning:#f59e0b;
-      --danger:#ef4444;
-      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
-      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
-      --shadow-md:0 10px 28px rgba(15,23,42,.10);
-      --shadow-card:0 16px 40px rgba(15,23,42,.06);
-      --radius-xl:28px;
-      --radius-lg:20px;
-      --radius-md:16px;
-      --radius-sm:12px;
+    html.page-protected body { visibility: hidden; }
+
+    :root {
+      --bg:#07111f; --bg-soft:#0c1728; --panel:#0f1c31; --panel-2:#12233d;
+      --card:#ffffff; --card-soft:#f8fafc; --text:#0f172a; --text-soft:#475569;
+      --muted:#94a3b8; --line:rgba(148,163,184,.18); --white-line:rgba(255,255,255,.08);
+      --accent:#6d28d9; --accent-2:#4d148c; --accent-3:#ff6600;
+      --success:#16a34a; --warning:#f59e0b; --danger:#ef4444;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18); --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10); --shadow-card:0 16px 40px rgba(15,23,42,.06);
+      --radius-xl:28px; --radius-lg:20px; --radius-md:16px; --radius-sm:12px;
       --max:1720px;
       font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
     body{
-      margin:0;
-      min-height:100vh;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
-        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
-        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+      margin:0; min-height:100vh; color:var(--text);
+      background: radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+                  radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+                  linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
       overflow-x:hidden;
     }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:36px 36px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
-      z-index:0;
+    body::before {
+      content:""; position:fixed; inset:0; pointer-events:none;
+      background: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:36px 36px; mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%); z-index:0;
     }
-
-    a{color:inherit;text-decoration:none}
-    button,input,textarea{font:inherit}
-
-    .page{
-      position:relative;
-      z-index:1;
-    }
-
-    .app-shell{
-      width:min(calc(100% - 32px), var(--max));
-      margin:22px auto 24px;
-    }
-
+    a{color:inherit; text-decoration:none} button,input,textarea{font:inherit}
+    .page{position:relative;z-index:1}
+    .app-shell{ width:min(calc(100% - 32px), var(--max)); margin:22px auto 24px; }
     .app-frame{
-      min-height:calc(100vh - 180px);
-      background:rgba(255,255,255,.58);
-      backdrop-filter:blur(16px);
-      border:1px solid rgba(255,255,255,.68);
-      border-radius:34px;
-      box-shadow:var(--shadow-xl);
-      overflow:hidden;
-      display:grid;
-      grid-template-columns:minmax(0,1.45fr) 380px 420px;
+      min-height:calc(100vh - 180px); background:rgba(255,255,255,.58); backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.68); border-radius:34px; box-shadow:var(--shadow-xl);
+      overflow:hidden; display:grid; grid-template-columns:minmax(0,1.45fr) 380px 420px;
     }
-
-    .main{
-      padding:18px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      min-width:0;
-    }
-
-    .main-topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      padding:16px 18px;
-      border-radius:24px;
-      background:rgba(255,255,255,.85);
-      border:1px solid rgba(219,228,240,.9);
-      box-shadow:var(--shadow-md);
-    }
-
-    .page-title-block{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-
-    .page-title-block h1{
-      margin:0;
-      font-size:24px;
-      font-weight:900;
-      letter-spacing:-.03em;
-      color:#0f172a;
-    }
-
-    .page-subtitle{
-      margin:0;
-      font-size:13px;
-      color:#64748b;
-      line-height:1.6;
-      max-width:760px;
-    }
-
-    .main-status{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:11px 14px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid #dbe4f0;
-      font-size:12px;
-      font-weight:800;
-      color:#0f172a;
-      white-space:nowrap;
-    }
-
-    .pill.primary{
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
-      color:#fff;
-      border:none;
-    }
-
-    .workspace{
-      display:grid;
-      grid-template-rows:auto 1fr;
-      gap:16px;
-      min-height:0;
-    }
-
-    .progress-card{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:22px;
-      padding:16px 18px;
-      box-shadow:var(--shadow-md);
-    }
-
-    .progress-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-    }
-
-    .progress-title{
-      font-size:14px;
-      font-weight:800;
-      color:#0f172a;
-    }
-
-    .progress-status{
-      font-size:12px;
-      font-weight:800;
-      color:#64748b;
-    }
-
-    .progress-bar{
-      height:12px;
-      background:#eaf0f7;
-      border-radius:999px;
-      overflow:hidden;
-    }
-
-    .progress-fill{
-      height:100%;
-      width:100%;
-      border-radius:inherit;
-      background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
-    }
-
-    .stage-area{
-      min-height:0;
-      display:grid;
-      grid-template-columns:1fr;
-    }
-
-    .stage-card{
-      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
-      border:1px solid #dbe4f0;
-      border-radius:30px;
-      box-shadow:var(--shadow-card);
-      min-height:640px;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-
-    .stage-top{
-      padding:22px 22px 0;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 13px;
-      border-radius:999px;
-      background:#eef4ff;
-      color:#1d4ed8;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .badge.alt{
-      background:#f8fafc;
-      color:#334155;
-    }
-
-    .content-wrap{
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      flex:1;
-    }
-
-    .hero-card-main{
-      position:relative;
-      padding:30px;
-      border-radius:28px;
-      background:
-        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
-        linear-gradient(180deg,#ffffff,#f8fbff);
-      border:1px solid #e6edf7;
-      box-shadow:0 12px 30px rgba(15,23,42,.04);
-      overflow:hidden;
-    }
-
-    .hero-card-main::after{
-      content:"";
-      position:absolute;
-      right:-60px;
-      top:-60px;
-      width:180px;
-      height:180px;
-      border-radius:50%;
-      background:rgba(77,20,140,.07);
-      pointer-events:none;
-    }
-
-    .question-label{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#334155;
-      position:relative;
-      z-index:1;
-    }
-
-    .question-text{
-      margin:18px 0 0;
-      font-size:36px;
-      line-height:1.08;
-      letter-spacing:-.045em;
-      font-weight:900;
-      position:relative;
-      z-index:1;
-    }
-
-    .question-help{
-      margin:14px 0 0;
-      color:#64748b;
-      font-size:14px;
-      line-height:1.75;
-      max-width:800px;
-      position:relative;
-      z-index:1;
-    }
-
-    .hero-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:22px;
-      position:relative;
-      z-index:1;
-    }
-
+    .main{ padding:18px; display:flex; flex-direction:column; gap:16px; min-width:0; }
+    .main-topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:24px; background:rgba(255,255,255,.85); border:1px solid rgba(219,228,240,.9); box-shadow:var(--shadow-md); }
+    .page-title-block{ display:flex; flex-direction:column; gap:6px; }
+    .page-title-block h1{ margin:0; font-size:24px; font-weight:900; letter-spacing:-.03em; color:#0f172a; }
+    .page-subtitle{ margin:0; font-size:13px; color:#64748b; line-height:1.6; max-width:760px; }
+    .main-status{ display:flex; gap:10px; flex-wrap:wrap; }
+    .pill{ display:inline-flex; align-items:center; gap:8px; padding:11px 14px; border-radius:999px; background:#fff; border:1px solid #dbe4f0; font-size:12px; font-weight:800; color:#0f172a; white-space:nowrap; }
+    .pill.primary{ background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border:none; }
+    .workspace{ display:grid; grid-template-rows:auto 1fr; gap:16px; min-height:0; }
+    .progress-card{ background:#fff; border:1px solid #dbe4f0; border-radius:22px; padding:16px 18px; box-shadow:var(--shadow-md); }
+    .progress-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
+    .progress-title{ font-size:14px; font-weight:800; color:#0f172a; }
+    .progress-status{ font-size:12px; font-weight:800; color:#64748b; }
+    .progress-bar{ height:12px; background:#eaf0f7; border-radius:999px; overflow:hidden; }
+    .progress-fill{ height:100%; width:100%; border-radius:inherit; background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%); }
+    .stage-area{ min-height:0; display:grid; grid-template-columns:1fr; }
+    .stage-card{ background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); border:1px solid #dbe4f0; border-radius:30px; box-shadow:var(--shadow-card); min-height:640px; display:flex; flex-direction:column; overflow:hidden; }
+    .stage-top{ padding:22px 22px 0; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .badge{ display:inline-flex; align-items:center; gap:8px; padding:10px 13px; border-radius:999px; background:#eef4ff; color:#1d4ed8; font-size:12px; font-weight:800; }
+    .badge.alt{ background:#f8fafc; color:#334155; }
+    .content-wrap{ padding:22px; display:flex; flex-direction:column; gap:18px; flex:1; }
+    .hero-card-main{ position:relative; padding:30px; border-radius:28px; background: radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%), linear-gradient(180deg,#ffffff,#f8fbff); border:1px solid #e6edf7; box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
+    .hero-card-main::after{ content:""; position:absolute; right:-60px; top:-60px; width:180px; height:180px; border-radius:50%; background:rgba(77,20,140,.07); pointer-events:none; }
+    .question-label{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; color:#334155; position:relative; z-index:1; }
+    .question-text{ margin:18px 0 0; font-size:36px; line-height:1.08; letter-spacing:-.045em; font-weight:900; position:relative; z-index:1; }
+    .question-help{ margin:14px 0 0; color:#64748b; font-size:14px; line-height:1.75; max-width:800px; position:relative; z-index:1; }
+    .hero-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; position:relative; z-index:1; }
     .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      min-height:50px;
-      padding:0 18px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      font-size:13px;
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-      transition:.22s ease;
-      cursor:pointer;
-    }
-
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 18px 30px rgba(77,20,140,.24);
-    }
-
-    .btn.orange{
-      background:linear-gradient(135deg,#ff6600,#f59e0b);
-      box-shadow:0 14px 24px rgba(255,102,0,.18);
-    }
-
-    .btn.dark{
-      background:#111827;
-      box-shadow:0 14px 24px rgba(17,24,39,.16);
-    }
-
-    .section-card{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:24px;
-      box-shadow:0 12px 30px rgba(15,23,42,.04);
-      overflow:hidden;
-    }
-
-    .section-head{
-      padding:18px 20px;
-      border-bottom:1px solid #eef2f7;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      background:linear-gradient(180deg,#fff,#fbfdff);
-    }
-
-    .section-title{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      font-size:16px;
-      font-weight:900;
-      letter-spacing:-.03em;
-      color:#0f172a;
-    }
-
-    .section-title i{
-      width:38px;
-      height:38px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      color:#fff;
-      background:linear-gradient(135deg,#4d148c,#6d28d9);
-    }
-
-    .section-body{
-      padding:18px;
-      display:grid;
-      gap:14px;
-    }
-
-    .step{
-      position:relative;
-      display:grid;
-      grid-template-columns:52px 1fr;
-      gap:16px;
-      padding:18px;
-      border-radius:22px;
-      background:
-        radial-gradient(circle at top right, rgba(109,40,217,.06), transparent 30%),
-        linear-gradient(180deg,#fff,#fbfdff);
-      border:1px solid #e5edf7;
-      transition:.18s ease;
-    }
-
-    .step:hover{
-      transform:translateY(-2px);
-      box-shadow:0 16px 36px rgba(15,23,42,.07);
-      border-color:#d3def0;
-    }
-
-    .num{
-      width:48px;
-      height:48px;
-      border-radius:17px;
-      display:grid;
-      place-items:center;
-      color:white;
-      font-weight:900;
-      background:linear-gradient(135deg,#4d148c,#6d28d9);
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-    }
-
-    .step h3{
-      margin:0;
-      font-size:19px;
-      font-weight:900;
-      letter-spacing:-.04em;
-      color:#0f172a;
-    }
-
-    .step p{
-      margin:8px 0 0;
-      color:#64748b;
-      font-size:14px;
-      line-height:1.7;
-    }
-
-    .step ul{
-      margin:10px 0 0;
-      padding-left:20px;
-      color:#475569;
-      font-size:14px;
-      line-height:1.75;
-    }
-
-    .note{
-      margin-top:13px;
-      padding:15px 16px;
-      border-radius:18px;
-      background:#fff7ed;
-      border:1px solid #fed7aa;
-      color:#7c2d12;
-      font-size:13px;
-      line-height:1.7;
-    }
-
-    .note strong{
-      color:#431407;
-    }
-
-    .note-head{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      font-size:11px;
-      margin-bottom:6px;
-      color:#c2410c;
-    }
-
-    .example{
-      margin-top:13px;
-      padding:15px 16px;
-      border-radius:18px;
-      background:#f5f3ff;
-      border:1px solid #ddd6fe;
-      color:#3b0764;
-      font-size:13px;
-      line-height:1.7;
-    }
-
-    .example .note-head{
-      color:#6d28d9;
-    }
-
-    .final-card{
-      padding:24px;
-      border-radius:24px;
-      background:linear-gradient(180deg,#f0fdf4,#ffffff);
-      border:1px solid #dcfce7;
-      box-shadow:0 16px 34px rgba(22,163,74,.08);
-    }
-
-    .final-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      border-radius:999px;
-      background:#dcfce7;
-      color:#166534;
-      font-size:12px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-    }
-
-    .final-text{
-      margin:14px 0 0;
-      font-size:22px;
-      line-height:1.45;
-      letter-spacing:-.03em;
-      font-weight:900;
-      color:#111827;
-    }
-
-    .side-panel{
-      padding:18px 14px 18px 0;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      min-width:0;
-    }
-
-    .template-panel{
-      padding:18px 18px 18px 0;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      min-width:0;
-    }
-
-    .summary-card{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:22px;
-      padding:18px;
-      box-shadow:var(--shadow-md);
-    }
-
-    .summary-head{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:12px;
-      font-size:14px;
-      font-weight:900;
-    }
-
-    .summary-head i{color:#7c3aed}
-
-    .section-note{
-      font-size:12px;
-      color:#64748b;
-      line-height:1.6;
-      margin-top:-2px;
-    }
-
-    .summary-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .metric{
-      padding:14px;
-      border-radius:18px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-    }
-
-    .metric-k{
-      display:block;
-      font-size:10px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#64748b;
-      font-weight:800;
-      margin-bottom:6px;
-    }
-
-    .metric-v{
-      font-size:18px;
-      font-weight:900;
-      letter-spacing:-.03em;
-      word-break:break-word;
-    }
-
-    .path-list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      max-height:620px;
-      overflow:auto;
-      padding-right:4px;
-    }
-
-    .path-jump{
-      width:100%;
-      text-align:left;
-      padding:12px;
-      border-radius:16px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-      cursor:pointer;
-      transition:.18s ease;
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      color:#0f172a;
-    }
-
-    .path-jump:hover{
-      transform:translateY(-1px);
-      background:#eef4ff;
-      border-color:#cfe0ff;
-      box-shadow:0 10px 22px rgba(37,99,235,.08);
-    }
-
-    .path-jump span{
-      width:26px;
-      height:26px;
-      border-radius:10px;
-      display:grid;
-      place-items:center;
-      background:#eef4ff;
-      color:#1d4ed8;
-      font-size:11px;
-      font-weight:900;
-      flex:0 0 auto;
-    }
-
-    .path-jump strong{
-      display:block;
-      font-size:13px;
-      line-height:1.35;
-    }
-
-    .path-jump small{
-      display:block;
-      margin-top:4px;
-      color:#64748b;
-      line-height:1.45;
-      font-weight:700;
-    }
-
-    .reminder-list{
-      display:grid;
-      gap:10px;
-    }
-
-    .reminder{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      padding:13px;
-      border-radius:17px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-      color:#475569;
-      font-size:13px;
-      line-height:1.6;
-    }
-
-    .reminder i{
-      color:#ff6600;
-      margin-top:3px;
-    }
-
-    .template-stack{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-top:14px;
-    }
-
-    .template-card{
-      border:1px solid #e5ebf4;
-      border-radius:18px;
-      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
-      overflow:hidden;
-    }
-
-    .template-card-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:14px 14px 10px;
-    }
-
-    .template-title-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-    }
-
-    .template-icon{
-      width:36px;
-      height:36px;
-      border-radius:12px;
-      display:grid;
-      place-items:center;
-      background:#f3e8ff;
-      color:#7c3aed;
-      flex:0 0 auto;
-    }
-
-    .template-title{
-      font-size:14px;
-      font-weight:900;
-      color:#0f172a;
-    }
-
-    .template-sub{
-      font-size:12px;
-      color:#64748b;
-      margin-top:2px;
-    }
-
-    .template-body{
-      padding:0 14px 14px;
-    }
-
-    .template-box{
-      min-height:100px;
-      padding:14px;
-      border-radius:14px;
-      background:#f8fbff;
-      border:1px solid #e4ebf5;
-      font-size:13px;
-      line-height:1.7;
-      color:#334155;
-      white-space:pre-wrap;
-    }
-
-    .template-foot{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:0 14px 14px;
-    }
-
-    .template-tag{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:7px 10px;
-      border-radius:999px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      font-size:11px;
-      font-weight:800;
-      color:#64748b;
-    }
-
-    .template-copy{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      padding:10px 14px;
-      border-radius:12px;
-      background:#111827;
-      color:#fff;
-      font-size:12px;
-      font-weight:800;
-      transition:all .18s ease;
-    }
-
-    .template-copy.copied{
-      background:#dcfce7 !important;
-      color:#166534 !important;
-      border-color:#bbf7d0 !important;
-    }
-
-    /* Shared header modal compatibility */
-    #commentModal,
-    #allCommentsModal,
-    #helpModal{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(2,6,23,.52);
-      justify-content:center;
-      align-items:center;
-      padding:0 24px;
-      z-index:2147483647;
-      backdrop-filter:blur(8px);
-      overflow-y:auto;
-    }
-
-    #commentModal .modal-content,
-    #allCommentsModal .modal-content,
-    #helpModal .modal-content{
-      width:100%;
-      background:#fff;
-      border-radius:28px;
-      padding:26px;
-      box-shadow:0 24px 80px rgba(2,6,23,.18);
-      max-height:min(84vh, 900px);
-      overflow:auto;
-      border:1px solid rgba(148,163,184,.16);
-      margin:110px auto 32px;
-    }
-
-    #commentModal .feedback-modal{
-      max-width:640px;
-      border-radius:28px;
-      padding:20px 20px 22px;
-    }
-
-    #allCommentsModal .modal-content{
-      max-width:760px;
-    }
-
-    #helpModal .help-modal{
-      max-width:760px;
-      border-radius:30px;
-      padding:18px;
-    }
-
-    #commentModal .modal-header,
-    #allCommentsModal .modal-header,
-    #helpModal .modal-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      font-size:22px;
-      font-weight:800;
-      letter-spacing:-.03em;
-      margin-bottom:14px;
-      color:#0f172a;
-    }
-
-    #commentModal .modal-close,
-    #allCommentsModal .modal-close,
-    #helpModal .modal-close{
-      cursor:pointer;
-      width:40px;
-      height:40px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      color:#64748b;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-      transition:.2s ease;
-      flex-shrink:0;
-      font-size:22px;
-      line-height:1;
-    }
-
-    #commentModal .modal-close:hover,
-    #allCommentsModal .modal-close:hover,
-    #helpModal .modal-close:hover{
-      color:#0f172a;
-      background:#eef2ff;
-    }
-
-    #commentModal .rating-container{
-      display:flex;
-      justify-content:center;
-      gap:14px;
-      margin:16px 0 18px;
-    }
-
-    #commentModal .rating-star{
-      cursor:pointer;
-      font-size:26px;
-      color:#d1d5db;
-      transition:transform .18s ease, color .18s ease;
-    }
-
-    #commentModal .rating-star:hover{
-      transform:translateY(-1px) scale(1.06);
-    }
-
-    #commentModal .rating-star.selected{
-      color:#ff6600;
-    }
-
-    #commentModal input,
-    #commentModal textarea{
-      width:100%;
-      border:none;
-      outline:none;
-      border-radius:16px;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-      padding:14px 16px;
-      color:#0f172a;
-      font-size:14px;
-      transition:.18s ease;
-      font-family:inherit;
-    }
-
-    #commentModal input{
-      margin-top:4px;
-      margin-bottom:10px;
-    }
-
-    #commentModal textarea{
-      min-height:120px;
-      resize:vertical;
-      margin-top:0;
-    }
-
-    #commentModal input:focus,
-    #commentModal textarea:focus{
-      background:#fff;
-      box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
-    }
-
-    #commentModal .feedback-submit-btn{
-      margin:16px 0 8px;
-      min-height:54px;
-      border-radius:18px;
-    }
-
-    #commentModal .link-text{
-      color:#4d148c;
-      cursor:pointer;
-      text-decoration:none;
-      font-size:14px;
-      font-weight:700;
-    }
-
-    #commentModal .link-text:hover{
-      text-decoration:underline;
-    }
-
-    #allCommentsModal .comment-list-item{
-      padding:14px 0;
-      border-bottom:1px solid rgba(148,163,184,.18);
-    }
-
-    #allCommentsModal .comment-list-item:last-child{
-      border-bottom:none;
-    }
-
-    #allCommentsModal .stars{
-      color:#ff6600;
-      font-size:18px;
-      margin-bottom:6px;
-      display:block;
-    }
-
-    @media (max-width:1450px){
-      .app-frame{
-        grid-template-columns:minmax(0,1fr) 340px 360px;
-      }
-    }
-
-    @media (max-width:1220px){
-      .app-frame{
-        grid-template-columns:1fr;
-      }
-      .side-panel,
-      .template-panel{
-        padding:0 18px 18px;
-      }
-    }
-
+      display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; padding:0 18px;
+      border:none; border-radius:16px; background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%); color:#fff;
+      text-decoration:none; font-weight:800; font-size:13px; box-shadow:0 14px 24px rgba(77,20,140,.18); transition:.22s ease; cursor:pointer;
+    }
+    .btn:hover{ transform:translateY(-2px); box-shadow:0 18px 30px rgba(77,20,140,.24); }
+    .btn.orange{ background:linear-gradient(135deg,#ff6600,#f59e0b); box-shadow:0 14px 24px rgba(255,102,0,.18); }
+    .btn.dark{ background:#111827; box-shadow:0 14px 24px rgba(17,24,39,.16); }
+    .section-card{ background:#fff; border:1px solid #dbe4f0; border-radius:24px; box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
+    .section-head{ padding:18px 20px; border-bottom:1px solid #eef2f7; display:flex; align-items:center; justify-content:space-between; gap:12px; background:linear-gradient(180deg,#fff,#fbfdff); }
+    .section-title{ display:flex; align-items:center; gap:12px; font-size:16px; font-weight:900; letter-spacing:-.03em; color:#0f172a; }
+    .section-title i{ width:38px; height:38px; border-radius:14px; display:grid; place-items:center; color:#fff; background:linear-gradient(135deg,#4d148c,#6d28d9); }
+    .section-body{ padding:18px; display:grid; gap:14px; }
+    .step{ position:relative; display:grid; grid-template-columns:52px 1fr; gap:16px; padding:18px; border-radius:22px; background: radial-gradient(circle at top right, rgba(109,40,217,.06), transparent 30%), linear-gradient(180deg,#fff,#fbfdff); border:1px solid #e5edf7; transition:.18s ease; }
+    .step:hover{ transform:translateY(-2px); box-shadow:0 16px 36px rgba(15,23,42,.07); border-color:#d3def0; }
+    .num{ width:48px; height:48px; border-radius:17px; display:grid; place-items:center; color:white; font-weight:900; background:linear-gradient(135deg,#4d148c,#6d28d9); box-shadow:0 14px 24px rgba(77,20,140,.18); }
+    .step h3{ margin:0; font-size:19px; font-weight:900; letter-spacing:-.04em; color:#0f172a; }
+    .step p{ margin:8px 0 0; color:#64748b; font-size:14px; line-height:1.7; }
+    .step ul{ margin:10px 0 0; padding-left:20px; color:#475569; font-size:14px; line-height:1.75; }
+    .note{ margin-top:13px; padding:15px 16px; border-radius:18px; background:#fff7ed; border:1px solid #fed7aa; color:#7c2d12; font-size:13px; line-height:1.7; }
+    .note strong{ color:#431407; }
+    .note-head{ display:flex; align-items:center; gap:8px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; font-size:11px; margin-bottom:6px; color:#c2410c; }
+    .example{ margin-top:13px; padding:15px 16px; border-radius:18px; background:#f5f3ff; border:1px solid #ddd6fe; color:#3b0764; font-size:13px; line-height:1.7; }
+    .example .note-head{ color:#6d28d9; }
+    .final-card{ padding:24px; border-radius:24px; background:linear-gradient(180deg,#f0fdf4,#ffffff); border:1px solid #dcfce7; box-shadow:0 16px 34px rgba(22,163,74,.08); }
+    .final-badge{ display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border-radius:999px; background:#dcfce7; color:#166534; font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; }
+    .final-text{ margin:14px 0 0; font-size:22px; line-height:1.45; letter-spacing:-.03em; font-weight:900; color:#111827; }
+    .side-panel, .template-panel{ padding:18px 18px 18px 0; display:flex; flex-direction:column; gap:14px; min-width:0; }
+    .side-panel{ padding-right:14px; }
+    .summary-card{ background:#fff; border:1px solid #dbe4f0; border-radius:22px; padding:18px; box-shadow:var(--shadow-md); }
+    .summary-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:14px; font-weight:900; color:#0f172a; }
+    .summary-head i{ color:#7c3aed; }
+    .summary-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .metric{ padding:14px; border-radius:18px; background:#f8fafc; border:1px solid #e7edf4; }
+    .metric-k{ display:block; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:#64748b; font-weight:800; margin-bottom:6px; }
+    .metric-v{ font-size:18px; font-weight:900; letter-spacing:-.03em; word-break:break-word; }
+    .path-list{ display:flex; flex-direction:column; gap:10px; max-height:620px; overflow:auto; padding-right:4px; }
+    .path-jump{ width:100%; text-align:left; padding:12px; border-radius:16px; background:#f8fafc; border:1px solid #e7edf4; cursor:pointer; transition:.18s ease; display:flex; gap:10px; align-items:flex-start; color:#0f172a; }
+    .path-jump:hover{ transform:translateY(-1px); background:#eef4ff; border-color:#cfe0ff; box-shadow:0 10px 22px rgba(37,99,235,.08); }
+    .path-jump span{ width:26px; height:26px; border-radius:10px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:11px; font-weight:900; flex:0 0 auto; }
+    .path-jump strong{ display:block; font-size:13px; line-height:1.35; }
+    .path-jump small{ display:block; margin-top:4px; color:#64748b; line-height:1.45; font-weight:700; }
+    .reminder-list{ display:grid; gap:10px; }
+    .reminder{ display:flex; align-items:flex-start; gap:10px; padding:13px; border-radius:17px; background:#f8fafc; border:1px solid #e7edf4; color:#475569; font-size:13px; line-height:1.6; }
+    .reminder i{ color:#ff6600; margin-top:3px; }
+    .template-stack{ display:flex; flex-direction:column; gap:12px; margin-top:14px; }
+    .template-card{ border:1px solid #e5ebf4; border-radius:18px; background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); overflow:hidden; }
+    .template-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 14px 10px; }
+    .template-title-wrap{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .template-icon{ width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:#f3e8ff; color:#7c3aed; flex:0 0 auto; }
+    .template-title{ font-size:14px; font-weight:900; color:#0f172a; }
+    .template-sub{ font-size:12px; color:#64748b; margin-top:2px; }
+    .template-body{ padding:0 14px 14px; }
+    .template-box{ min-height:100px; padding:14px; border-radius:14px; background:#f8fbff; border:1px solid #e4ebf5; font-size:13px; line-height:1.7; color:#334155; white-space:pre-wrap; }
+    .template-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 14px 14px; }
+    .template-tag{ display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:800; color:#64748b; }
+    .template-copy{ appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:12px; background:#111827; color:#fff; font-size:12px; font-weight:800; transition:all .18s ease; }
+    .template-copy.copied{ background:#dcfce7 !important; color:#166534 !important; border-color:#bbf7d0 !important; }
+
+    /* Modal styles (unchanged) */
+    #commentModal, #allCommentsModal, #helpModal{ display:none; position:fixed; inset:0; background:rgba(2,6,23,.52); justify-content:center; align-items:center; padding:0 24px; z-index:2147483647; backdrop-filter:blur(8px); overflow-y:auto; }
+    #commentModal .modal-content, #allCommentsModal .modal-content, #helpModal .modal-content{ width:100%; background:#fff; border-radius:28px; padding:26px; box-shadow:0 24px 80px rgba(2,6,23,.18); max-height:min(84vh, 900px); overflow:auto; border:1px solid rgba(148,163,184,.16); margin:110px auto 32px; }
+    #commentModal .feedback-modal{ max-width:640px; border-radius:28px; padding:20px 20px 22px; }
+    #allCommentsModal .modal-content{ max-width:760px; }
+    #helpModal .help-modal{ max-width:760px; border-radius:30px; padding:18px; }
+    #commentModal .modal-header, #allCommentsModal .modal-header, #helpModal .modal-header{ display:flex; align-items:center; justify-content:space-between; gap:14px; font-size:22px; font-weight:800; letter-spacing:-.03em; margin-bottom:14px; color:#0f172a; }
+    #commentModal .modal-close, #allCommentsModal .modal-close, #helpModal .modal-close{ cursor:pointer; width:40px; height:40px; border-radius:14px; display:grid; place-items:center; color:#64748b; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.16); transition:.2s ease; flex-shrink:0; font-size:22px; line-height:1; }
+    #commentModal .modal-close:hover, #allCommentsModal .modal-close:hover, #helpModal .modal-close:hover{ color:#0f172a; background:#eef2ff; }
+    #commentModal .rating-container{ display:flex; justify-content:center; gap:14px; margin:16px 0 18px; }
+    #commentModal .rating-star{ cursor:pointer; font-size:26px; color:#d1d5db; transition:transform .18s ease, color .18s ease; }
+    #commentModal .rating-star:hover{ transform:translateY(-1px) scale(1.06); }
+    #commentModal .rating-star.selected{ color:#ff6600; }
+    #commentModal input, #commentModal textarea{ width:100%; border:none; outline:none; border-radius:16px; background:#f8fafc; box-shadow:inset 0 0 0 1px rgba(148,163,184,.18); padding:14px 16px; color:#0f172a; font-size:14px; transition:.18s ease; font-family:inherit; }
+    #commentModal input{ margin-top:4px; margin-bottom:10px; }
+    #commentModal textarea{ min-height:120px; resize:vertical; margin-top:0; }
+    #commentModal input:focus, #commentModal textarea:focus{ background:#fff; box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06); }
+    #commentModal .feedback-submit-btn{ margin:16px 0 8px; min-height:54px; border-radius:18px; }
+    #commentModal .link-text{ color:#4d148c; cursor:pointer; text-decoration:none; font-size:14px; font-weight:700; }
+    #commentModal .link-text:hover{ text-decoration:underline; }
+    #allCommentsModal .comment-list-item{ padding:14px 0; border-bottom:1px solid rgba(148,163,184,.18); }
+    #allCommentsModal .comment-list-item:last-child{ border-bottom:none; }
+    #allCommentsModal .stars{ color:#ff6600; font-size:18px; margin-bottom:6px; display:block; }
+
+    @media (max-width:1450px){ .app-frame{ grid-template-columns:minmax(0,1fr) 340px 360px; } }
+    @media (max-width:1220px){ .app-frame{ grid-template-columns:1fr; } .side-panel, .template-panel{ padding:0 18px 18px; } }
     @media (max-width:760px){
-      .app-shell{
-        width:min(calc(100% - 20px), var(--max));
-        margin:16px auto;
-      }
-
-      .app-frame{
-        min-height:100vh;
-        border-radius:24px;
-      }
-
-      .main{
-        padding:18px;
-      }
-
-      .main-topbar{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-
-      .question-text{
-        font-size:28px;
-      }
-
-      .summary-grid{
-        grid-template-columns:1fr;
-      }
-
-      .step{
-        grid-template-columns:1fr;
-      }
-
-      .section-head{
-        flex-direction:column;
-        align-items:flex-start;
-      }
-
-      #commentModal,
-      #allCommentsModal,
-      #helpModal{
-        padding:0 14px;
-      }
-
-      #commentModal .modal-content,
-      #allCommentsModal .modal-content,
-      #helpModal .modal-content{
-        padding:20px;
-        border-radius:22px;
-        margin:96px auto 20px;
-      }
-
-      #commentModal .feedback-modal{
-        padding:18px;
-        border-radius:24px;
-      }
-
-      #helpModal .help-modal{
-        padding:16px;
-        border-radius:24px;
-      }
+      .app-shell{ width:min(calc(100% - 20px), var(--max)); margin:16px auto; }
+      .app-frame{ min-height:100vh; border-radius:24px; }
+      .main{ padding:18px; }
+      .question-text{ font-size:28px; }
+      .step{ grid-template-columns:1fr; }
+      .section-head{ flex-direction:column; align-items:flex-start; }
     }
+
+    /* =========================================================
+       BASE RATER THEME BRIDGE
+       Makes every element follow FedEx / Atlas / Basic / Simple
+    ========================================================= */
+    body.theme-fedex,
+    body.theme-atlas,
+    body.theme-basic,
+    body.theme-simple{
+      --eprt-text:var(--theme-text, #0f172a);
+      --eprt-muted:var(--theme-muted, #64748b);
+      --eprt-primary:var(--theme-primary, #4d148c);
+      --eprt-primary-2:var(--theme-primary-2, #6d28d9);
+      --eprt-accent:var(--theme-accent, #ff6600);
+      --eprt-soft:var(--theme-primary-soft, #f3e8ff);
+      --eprt-accent-soft:var(--theme-accent-soft, #fff7ed);
+      --eprt-card:var(--theme-card, #ffffff);
+      --eprt-card-soft:var(--theme-card-soft, #f8fafc);
+      --eprt-card-tint:var(--theme-card-blue-soft, #f8fbff);
+      --eprt-line:var(--theme-line-soft, #e2e8f0);
+      --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
+      --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
+      --eprt-shadow:var(--theme-shadow-md, 0 10px 28px rgba(15,23,42,.10));
+    }
+
+    /* Primary pill & buttons */
+    body.theme-fedex .pill.primary,
+    body.theme-atlas .pill.primary,
+    body.theme-basic .pill.primary,
+    body.theme-simple .pill.primary,
+    body.theme-fedex .btn,
+    body.theme-atlas .btn,
+    body.theme-basic .btn,
+    body.theme-simple .btn,
+    body.theme-fedex .section-title i,
+    body.theme-atlas .section-title i,
+    body.theme-basic .section-title i,
+    body.theme-simple .section-title i,
+    body.theme-fedex .num,
+    body.theme-atlas .num,
+    body.theme-basic .num,
+    body.theme-simple .num{
+      background:var(--eprt-button) !important;
+      color:#ffffff !important;
+      box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-primary) 18%, transparent) !important;
+    }
+
+    /* Accent (orange) buttons */
+    body.theme-fedex .btn.orange,
+    body.theme-atlas .btn.orange,
+    body.theme-basic .btn.orange,
+    body.theme-simple .btn.orange{
+      background:var(--eprt-accent) !important;
+      background-image:linear-gradient(135deg, var(--eprt-accent), color-mix(in srgb, var(--eprt-accent) 85%, #f59e0b)) !important;
+      box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-accent) 18%, transparent) !important;
+    }
+
+    /* Dark button stays neutral */
+    body.theme-fedex .btn.dark,
+    body.theme-atlas .btn.dark,
+    body.theme-basic .btn.dark,
+    body.theme-simple .btn.dark{
+      background:#111827 !important;
+      box-shadow:0 14px 24px rgba(17,24,39,.16) !important;
+    }
+
+    /* Progress bar */
+    body.theme-fedex .progress-fill,
+    body.theme-atlas .progress-fill,
+    body.theme-basic .progress-fill,
+    body.theme-simple .progress-fill{
+      background:var(--eprt-progress) !important;
+    }
+
+    /* Hero card and step cards */
+    body.theme-fedex .hero-card-main,
+    body.theme-atlas .hero-card-main,
+    body.theme-basic .hero-card-main,
+    body.theme-simple .hero-card-main,
+    body.theme-fedex .step,
+    body.theme-atlas .step,
+    body.theme-basic .step,
+    body.theme-simple .step{
+      background: radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
+                  linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    body.theme-fedex .hero-card-main::after,
+    body.theme-atlas .hero-card-main::after,
+    body.theme-basic .hero-card-main::after,
+    body.theme-simple .hero-card-main::after{
+      background:color-mix(in srgb, var(--eprt-primary) 7%, transparent) !important;
+    }
+
+    /* Section cards */
+    body.theme-fedex .section-card,
+    body.theme-atlas .section-card,
+    body.theme-basic .section-card,
+    body.theme-simple .section-card,
+    body.theme-fedex .section-head,
+    body.theme-atlas .section-head,
+    body.theme-basic .section-head,
+    body.theme-simple .section-head{
+      background:linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    /* Text colors */
+    body.theme-fedex .step-title,
+    body.theme-atlas .step-title,
+    body.theme-basic .step-title,
+    body.theme-simple .step-title,
+    body.theme-fedex .section-title,
+    body.theme-atlas .section-title,
+    body.theme-basic .section-title,
+    body.theme-simple .section-title,
+    body.theme-fedex .step h3,
+    body.theme-atlas .step h3,
+    body.theme-basic .step h3,
+    body.theme-simple .step h3{
+      color:var(--eprt-text) !important;
+    }
+
+    body.theme-fedex .step-content,
+    body.theme-atlas .step-content,
+    body.theme-basic .step-content,
+    body.theme-simple .step-content,
+    body.theme-fedex .step p,
+    body.theme-atlas .step p,
+    body.theme-basic .step p,
+    body.theme-simple .step p,
+    body.theme-fedex .step ul,
+    body.theme-atlas .step ul,
+    body.theme-basic .step ul,
+    body.theme-simple .step ul{
+      color:var(--eprt-muted) !important;
+    }
+
+    /* Badges */
+    body.theme-fedex .badge,
+    body.theme-atlas .badge,
+    body.theme-basic .badge,
+    body.theme-simple .badge{
+      background:var(--eprt-soft) !important;
+      color:var(--eprt-primary) !important;
+    }
+    body.theme-fedex .badge.alt,
+    body.theme-atlas .badge.alt,
+    body.theme-basic .badge.alt,
+    body.theme-simple .badge.alt{
+      background:var(--eprt-card-soft) !important;
+      color:var(--eprt-muted) !important;
+    }
+
+    /* Quick Jump list (same as ePRS) */
+    body.theme-fedex .path-jump,
+    body.theme-atlas .path-jump,
+    body.theme-basic .path-jump,
+    body.theme-simple .path-jump{
+      background:var(--eprt-card-soft) !important;
+      border-color:var(--eprt-line) !important;
+      box-shadow:none !important;
+    }
+    body.theme-fedex .path-jump span,
+    body.theme-atlas .path-jump span,
+    body.theme-basic .path-jump span,
+    body.theme-simple .path-jump span{
+      background:var(--eprt-accent-soft) !important;
+      color:var(--eprt-accent) !important;
+    }
+    body.theme-fedex .path-jump:hover,
+    body.theme-atlas .path-jump:hover,
+    body.theme-basic .path-jump:hover,
+    body.theme-simple .path-jump:hover{
+      background:var(--eprt-accent-soft) !important;
+    }
+    body.theme-fedex .path-jump.active,
+    body.theme-atlas .path-jump.active,
+    body.theme-basic .path-jump.active,
+    body.theme-simple .path-jump.active{
+      border-color:var(--eprt-accent) !important;
+      box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
+    }
+    body.theme-fedex .path-jump.active span,
+    body.theme-atlas .path-jump.active span,
+    body.theme-basic .path-jump.active span,
+    body.theme-simple .path-jump.active span{
+      background:var(--eprt-accent) !important;
+      color:#ffffff !important;
+    }
+
+    /* Summary cards & icons */
+    body.theme-fedex .summary-head i,
+    body.theme-atlas .summary-head i,
+    body.theme-basic .summary-head i,
+    body.theme-simple .summary-head i,
+    body.theme-fedex .reminder i,
+    body.theme-atlas .reminder i,
+    body.theme-basic .reminder i,
+    body.theme-simple .reminder i,
+    body.theme-fedex .template-icon,
+    body.theme-atlas .template-icon,
+    body.theme-basic .template-icon,
+    body.theme-simple .template-icon{
+      color:var(--eprt-accent) !important;
+    }
+    body.theme-fedex .template-icon,
+    body.theme-atlas .template-icon,
+    body.theme-basic .template-icon,
+    body.theme-simple .template-icon{
+      background:var(--eprt-accent-soft) !important;
+    }
+
+    /* Side panels */
+    body.theme-fedex .side-panel .summary-card,
+    body.theme-fedex .template-panel .summary-card,
+    body.theme-atlas .side-panel .summary-card,
+    body.theme-atlas .template-panel .summary-card,
+    body.theme-basic .side-panel .summary-card,
+    body.theme-basic .template-panel .summary-card,
+    body.theme-simple .side-panel .summary-card,
+    body.theme-simple .template-panel .summary-card{
+      background:var(--eprt-card) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    body.theme-fedex .summary-head,
+    body.theme-atlas .summary-head,
+    body.theme-basic .summary-head,
+    body.theme-simple .summary-head{
+      color:var(--eprt-text) !important;
+    }
+
+    body.theme-fedex .reminder,
+    body.theme-atlas .reminder,
+    body.theme-basic .reminder,
+    body.theme-simple .reminder{
+      background:var(--eprt-card-soft) !important;
+      border-color:var(--eprt-line) !important;
+      color:var(--eprt-muted) !important;
+    }
+
+    body.theme-fedex .metric,
+    body.theme-atlas .metric,
+    body.theme-basic .metric,
+    body.theme-simple .metric{
+      background:var(--eprt-card-soft) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    body.theme-fedex .template-copy,
+    body.theme-atlas .template-copy,
+    body.theme-basic .template-copy,
+    body.theme-simple .template-copy{
+      background:var(--eprt-button) !important;
+    }
+
+    /* Notes & examples */
+    body.theme-fedex .note,
+    body.theme-atlas .note,
+    body.theme-basic .note,
+    body.theme-simple .note{
+      background:var(--eprt-accent-soft) !important;
+      border-color:color-mix(in srgb, var(--eprt-accent) 50%, transparent) !important;
+      color:color-mix(in srgb, var(--eprt-accent) 60%, #000) !important;
+    }
+    body.theme-fedex .note-head,
+    body.theme-atlas .note-head,
+    body.theme-basic .note-head,
+    body.theme-simple .note-head{
+      color:var(--eprt-accent) !important;
+    }
+    body.theme-fedex .example,
+    body.theme-atlas .example,
+    body.theme-basic .example,
+    body.theme-simple .example{
+      background:var(--eprt-soft) !important;
+      border-color:color-mix(in srgb, var(--eprt-primary) 40%, transparent) !important;
+      color:var(--eprt-primary) !important;
+    }
+    body.theme-fedex .example .note-head,
+    body.theme-atlas .example .note-head,
+    body.theme-basic .example .note-head,
+    body.theme-simple .example .note-head{
+      color:var(--eprt-primary) !important;
+    }
+
+    /* Final card remains green (completion) */
+    body.theme-fedex .final-card,
+    body.theme-atlas .final-card,
+    body.theme-basic .final-card,
+    body.theme-simple .final-card{
+      background:linear-gradient(180deg,#f0fdf4,var(--eprt-card)) !important;
+      border-color:#dcfce7 !important;
+    }
+
+    /* Theme-specific button overrides for Atlas / Basic / Simple */
+    body.theme-atlas .btn{ background:#0e5361 !important; }
+    body.theme-atlas .btn.orange{ background:#5b7f08 !important; }
+    body.theme-basic .btn.dark{ background:#374151 !important; }
+    body.theme-simple .btn.dark{ background:#2563eb !important; }
   </style>
 </head>
 
-<body data-page="">
+<body class="theme-fedex" data-page="base-rater">
   <div class="page">
     <div id="site-header"></div>
 
@@ -1073,16 +494,11 @@
           <div class="main-topbar">
             <div class="page-title-block">
               <h1>Base Rater Guide</h1>
-              <p class="page-subtitle">
-                Use this guide to access the CZAR Rater, identify the required shipment information, apply FAK class logic, itemize weight correctly, and select the correct tariff to verify base rates.
-              </p>
+              <p class="page-subtitle">Use this guide to access the CZAR Rater, identify the required shipment information, apply FAK class logic, itemize weight correctly, and select the correct tariff to verify base rates.</p>
             </div>
 
             <div class="main-status">
-              <div class="pill primary">
-                <i class="fa-solid fa-calculator"></i>
-                Ready
-              </div>
+              <div class="pill primary"><i class="fa-solid fa-calculator"></i> Base Rater</div>
             </div>
           </div>
 
@@ -1092,213 +508,53 @@
                 <div class="progress-title">Guide Progress</div>
                 <div class="progress-status">Static reference guide</div>
               </div>
-              <div class="progress-bar">
-                <div class="progress-fill"></div>
-              </div>
+              <div class="progress-bar"><div class="progress-fill"></div></div>
             </section>
 
             <section class="stage-area">
               <div class="stage-card">
                 <div class="stage-top">
-                  <span class="badge">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                    Pricing Support
-                  </span>
-                  <span class="badge alt">
-                    <i class="fa-solid fa-layer-group"></i>
-                    LTL / FAK / CWT
-                  </span>
+                  <span class="badge"><i class="fa-solid fa-file-invoice-dollar"></i> Pricing Support</span>
+                  <span class="badge alt"><i class="fa-solid fa-layer-group"></i> LTL / FAK / CWT</span>
                 </div>
 
                 <div class="content-wrap">
                   <section class="hero-card-main">
-                    <div class="question-label">
-                      <i class="fa-solid fa-route"></i>
-                      Base Rater Workflow
-                    </div>
-
+                    <div class="question-label"><i class="fa-solid fa-route"></i> Base Rater Workflow</div>
                     <h2 class="question-text">Verify the shipment base rate using the correct CZAR Rater inputs.</h2>
-
-                    <p class="question-help">
-                      Follow the steps below to confirm account setup, identify shipment information, enter ZIP codes, apply class logic, itemize weight, select LTL rate family, and choose the correct tariff year.
-                    </p>
-
+                    <p class="question-help">Follow the steps below to confirm account setup, identify shipment information, enter ZIP codes, apply class logic, itemize weight, select LTL rate family, and choose the correct tariff year.</p>
                     <div class="hero-actions">
-                      <a class="btn" href="https://czarlite.smc3.com/Rater/" target="_blank">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        Open CZAR Rater
-                      </a>
-
-                      <a class="btn orange" href="#available-tariffs">
-                        <i class="fa-solid fa-file-invoice-dollar"></i>
-                        View Tariff Steps
-                      </a>
+                      <a class="btn" href="https://czarlite.smc3.com/Rater/" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open CZAR Rater</a>
+                      <a class="btn orange" href="#available-tariffs"><i class="fa-solid fa-file-invoice-dollar"></i> View Tariff Steps</a>
                     </div>
                   </section>
 
                   <section class="section-card" id="account-setup">
                     <div class="section-head">
-                      <div class="section-title">
-                        <i class="fa-solid fa-user-lock"></i>
-                        Account Setup
-                      </div>
-
-                      <span class="badge alt">
-                        <i class="fa-solid fa-circle-check"></i>
-                        First-time access
-                      </span>
+                      <div class="section-title"><i class="fa-solid fa-user-lock"></i> Account Setup</div>
+                      <span class="badge alt"><i class="fa-solid fa-circle-check"></i> First-time access</span>
                     </div>
-
                     <div class="section-body">
-                      <article class="step">
-                        <div class="num">1</div>
-                        <div>
-                          <h3>Check your setup email</h3>
-                          <p>Check your email for a message from <strong>AdminManager@smc3.com</strong>.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">2</div>
-                        <div>
-                          <h3>Create your CZAR Rater password</h3>
-                          <p>Open the CZAR Rater website and follow the instructions to create or change your password.</p>
-
-                          <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="margin-top:14px;">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            Open CZAR Rater
-                          </a>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">3</div>
-                        <div>
-                          <h3>Log in using the new password</h3>
-                          <p>Once the password is changed, log in using the new password.</p>
-                        </div>
-                      </article>
-
-                      <article class="step">
-                        <div class="num">4</div>
-                        <div>
-                          <h3>Confirm the web interface</h3>
-                          <p>After login, the website will bring you to the <strong>Czarlite Web Interface</strong>.</p>
-                        </div>
-                      </article>
+                      <article class="step"><div class="num">1</div><div><h3>Check your setup email</h3><p>Check your email for a message from <strong>AdminManager@smc3.com</strong>.</p></div></article>
+                      <article class="step"><div class="num">2</div><div><h3>Create your CZAR Rater password</h3><p>Open the CZAR Rater website and follow the instructions to create or change your password.</p><a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="margin-top:14px;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open CZAR Rater</a></div></article>
+                      <article class="step"><div class="num">3</div><div><h3>Log in using the new password</h3><p>Once the password is changed, log in using the new password.</p></div></article>
+                      <article class="step"><div class="num">4</div><div><h3>Confirm the web interface</h3><p>After login, the website will bring you to the <strong>Czarlite Web Interface</strong>.</p></div></article>
                     </div>
                   </section>
 
                   <section class="section-card" id="using-czar">
                     <div class="section-head">
-                      <div class="section-title">
-                        <i class="fa-solid fa-list-check"></i>
-                        How to Use the CZAR Rater Website
-                      </div>
-
-                      <span class="badge alt">
-                        <i class="fa-solid fa-keyboard"></i>
-                        Rating Inputs
-                      </span>
+                      <div class="section-title"><i class="fa-solid fa-list-check"></i> How to Use the CZAR Rater Website</div>
+                      <span class="badge alt"><i class="fa-solid fa-keyboard"></i> Rating Inputs</span>
                     </div>
-
                     <div class="section-body">
-                      <article class="step" id="shipment-info">
-                        <div class="num">1</div>
-                        <div>
-                          <h3>Open the PRO in FBI</h3>
-                          <p>Open the PRO in <strong>FBI</strong> and identify the shipment information needed for the rater.</p>
-                        </div>
-                      </article>
-
-                      <article class="step" id="city-lookup">
-                        <div class="num">2</div>
-                        <div>
-                          <h3>Complete City Lookup</h3>
-                          <p>Enter the required ZIP codes:</p>
-                          <ul>
-                            <li><strong>Origin</strong> — Shipper's ZIP Code</li>
-                            <li><strong>Destination</strong> — Consignee's ZIP Code</li>
-                          </ul>
-                        </div>
-                      </article>
-
-                      <article class="step" id="class">
-                        <div class="num">3</div>
-                        <div>
-                          <h3>Enter the correct class</h3>
-                          <p>If Pricing involves <strong>FAK Rates</strong>, enter the class that applies to the customer's class group.</p>
-
-                          <div class="example">
-                            <div class="note-head">
-                              <i class="fa-solid fa-lightbulb"></i>
-                              Example
-                            </div>
-                            If the agreement states that <strong>Class 100</strong> applies to shipments with Class 055, 060, 077, and 090, enter <strong>Class 100</strong> instead of the actual class listed on the BOL.
-                          </div>
-                        </div>
-                      </article>
-
-                      <article class="step" id="weight">
-                        <div class="num">4</div>
-                        <div>
-                          <h3>Enter the weight</h3>
-                          <p>Enter the <strong>weight per line item</strong>.</p>
-
-                          <div class="note">
-                            <div class="note-head">
-                              <i class="fa-solid fa-circle-info"></i>
-                              Note
-                            </div>
-                            If the shipment contains multiple line items, click <strong>"Add New Row"</strong> and itemize the weight and class per line item.
-                          </div>
-                        </div>
-                      </article>
-
-                      <article class="step" id="rate-family">
-                        <div class="num">5</div>
-                        <div>
-                          <h3>Select the rate family</h3>
-                          <p>Select <strong>LTL</strong> as the Rate Family.</p>
-                        </div>
-                      </article>
-
-                      <article class="step" id="available-tariffs">
-                        <div class="num">6</div>
-                        <div>
-                          <h3>Select the available tariff</h3>
-                          <p>Select the rater used in the customer's agreement, including the applicable year.</p>
-
-                          <div class="example">
-                            <div class="note-head">
-                              <i class="fa-solid fa-lightbulb"></i>
-                              Examples
-                            </div>
-                            FXF 1000 Eff 11/01/2010<br>
-                            or<br>
-                            CZARLITE Eff 02/01/2010
-                          </div>
-
-                          <div class="note">
-                            <div class="note-head">
-                              <i class="fa-solid fa-triangle-exclamation"></i>
-                              Important
-                            </div>
-                            If the correct base rater is <strong>not available</strong>, send an email to the <strong>Training Team / SMEs</strong> and include all shipment details so they can verify the correct CWT rate.
-                          </div>
-                        </div>
-                      </article>
-
-                      <div class="final-card">
-                        <div class="final-badge">
-                          <i class="fa-solid fa-circle-check"></i>
-                          Completed
-                        </div>
-
-                        <div class="final-text">
-                          Use the correct shipment ZIPs, class, itemized weight, rate family, and tariff year to verify the base rate accurately.
-                        </div>
-                      </div>
+                      <article class="step" id="shipment-info"><div class="num">1</div><div><h3>Open the PRO in FBI</h3><p>Open the PRO in <strong>FBI</strong> and identify the shipment information needed for the rater.</p></div></article>
+                      <article class="step" id="city-lookup"><div class="num">2</div><div><h3>Complete City Lookup</h3><p>Enter the required ZIP codes:</p><ul><li><strong>Origin</strong> — Shipper's ZIP Code</li><li><strong>Destination</strong> — Consignee's ZIP Code</li></ul></div></article>
+                      <article class="step" id="class"><div class="num">3</div><div><h3>Enter the correct class</h3><p>If Pricing involves <strong>FAK Rates</strong>, enter the class that applies to the customer's class group.</p><div class="example"><div class="note-head"><i class="fa-solid fa-lightbulb"></i> Example</div>If the agreement states that <strong>Class 100</strong> applies to shipments with Class 055, 060, 077, and 090, enter <strong>Class 100</strong> instead of the actual class listed on the BOL.</div></div></article>
+                      <article class="step" id="weight"><div class="num">4</div><div><h3>Enter the weight</h3><p>Enter the <strong>weight per line item</strong>.</p><div class="note"><div class="note-head"><i class="fa-solid fa-circle-info"></i> Note</div>If the shipment contains multiple line items, click <strong>"Add New Row"</strong> and itemize the weight and class per line item.</div></div></article>
+                      <article class="step" id="rate-family"><div class="num">5</div><div><h3>Select the rate family</h3><p>Select <strong>LTL</strong> as the Rate Family.</p></div></article>
+                      <article class="step" id="available-tariffs"><div class="num">6</div><div><h3>Select the available tariff</h3><p>Select the rater used in the customer's agreement, including the applicable year.</p><div class="example"><div class="note-head"><i class="fa-solid fa-lightbulb"></i> Examples</div>FXF 1000 Eff 11/01/2010<br>or<br>CZARLITE Eff 02/01/2010</div><div class="note"><div class="note-head"><i class="fa-solid fa-triangle-exclamation"></i> Important</div>If the correct base rater is <strong>not available</strong>, send an email to the <strong>Training Team / SMEs</strong> and include all shipment details so they can verify the correct CWT rate.</div></div></article>
+                      <div class="final-card"><div class="final-badge"><i class="fa-solid fa-circle-check"></i> Completed</div><div class="final-text">Use the correct shipment ZIPs, class, itemized weight, rate family, and tariff year to verify the base rate accurately.</div></div>
                     </div>
                   </section>
                 </div>
@@ -1309,205 +565,62 @@
 
         <aside class="side-panel">
           <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-route"></i>
-              Quick Navigation
-            </div>
-
+            <div class="summary-head"><i class="fa-solid fa-route"></i> Quick Navigation</div>
             <div class="path-list">
-              <a class="path-jump" href="#account-setup">
-                <span>1</span>
-                <div>
-                  <strong>Account Setup</strong>
-                  <small>Create or confirm CZAR Rater access.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#city-lookup">
-                <span>2</span>
-                <div>
-                  <strong>City Lookup</strong>
-                  <small>Use shipper ZIP and consignee ZIP.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#class">
-                <span>3</span>
-                <div>
-                  <strong>Class / FAK</strong>
-                  <small>Apply the customer’s class group logic.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#weight">
-                <span>4</span>
-                <div>
-                  <strong>Weight</strong>
-                  <small>Itemize by line item when needed.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#rate-family">
-                <span>5</span>
-                <div>
-                  <strong>Rate Family</strong>
-                  <small>Select LTL as the rate family.</small>
-                </div>
-              </a>
-
-              <a class="path-jump" href="#available-tariffs">
-                <span>6</span>
-                <div>
-                  <strong>Tariffs</strong>
-                  <small>Select the correct tariff and year.</small>
-                </div>
-              </a>
+              <a class="path-jump" href="#account-setup"><span>1</span><div><strong>Account Setup</strong><small>Create or confirm CZAR Rater access.</small></div></a>
+              <a class="path-jump" href="#city-lookup"><span>2</span><div><strong>City Lookup</strong><small>Use shipper ZIP and consignee ZIP.</small></div></a>
+              <a class="path-jump" href="#class"><span>3</span><div><strong>Class / FAK</strong><small>Apply the customer’s class group logic.</small></div></a>
+              <a class="path-jump" href="#weight"><span>4</span><div><strong>Weight</strong><small>Itemize by line item when needed.</small></div></a>
+              <a class="path-jump" href="#rate-family"><span>5</span><div><strong>Rate Family</strong><small>Select LTL as the rate family.</small></div></a>
+              <a class="path-jump" href="#available-tariffs"><span>6</span><div><strong>Tariffs</strong><small>Select the correct tariff and year.</small></div></a>
             </div>
           </div>
 
           <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-chart-simple"></i>
-              Quick Snapshot
-            </div>
-
+            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
             <div class="summary-grid">
-              <div class="metric">
-                <span class="metric-k">Sections</span>
-                <span class="metric-v">2</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Rate Family</span>
-                <span class="metric-v">LTL</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Class Logic</span>
-                <span class="metric-v">FAK</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Rate Review</span>
-                <span class="metric-v">CWT</span>
-              </div>
+              <div class="metric"><span class="metric-k">Sections</span><span class="metric-v">2</span></div>
+              <div class="metric"><span class="metric-k">Rate Family</span><span class="metric-v">LTL</span></div>
+              <div class="metric"><span class="metric-k">Class Logic</span><span class="metric-v">FAK</span></div>
+              <div class="metric"><span class="metric-k">Rate Review</span><span class="metric-v">CWT</span></div>
             </div>
           </div>
 
           <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              CZAR Rater
-            </div>
-
-            <p class="section-note" style="margin-bottom:14px;">
-              Open the CZAR Rater website when you are ready to enter shipment rating details.
-            </p>
-
-            <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="width:100%;">
-              <i class="fa-solid fa-calculator"></i>
-              Open CZAR Rater
-            </a>
+            <div class="summary-head"><i class="fa-solid fa-arrow-up-right-from-square"></i> CZAR Rater</div>
+            <p class="section-note" style="margin-bottom:14px;">Open the CZAR Rater website when you are ready to enter shipment rating details.</p>
+            <a class="btn orange" href="https://czarlite.smc3.com/Rater/" target="_blank" style="width:100%;"><i class="fa-solid fa-calculator"></i> Open CZAR Rater</a>
           </div>
         </aside>
 
         <aside class="template-panel">
           <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-lightbulb"></i>
-              Quick Reminders
-            </div>
-
+            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Quick Reminders</div>
             <div class="reminder-list">
-              <div class="reminder">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>Use the <strong>Shipper ZIP</strong> as Origin and <strong>Consignee ZIP</strong> as Destination.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-layer-group"></i>
-                <span>For FAK pricing, enter the class assigned to the customer’s class group.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-weight-scale"></i>
-                <span>For multiple line items, itemize each weight and class separately.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-envelope"></i>
-                <span>If the rater is missing, email Training Team / SMEs with complete shipment details.</span>
-              </div>
+              <div class="reminder"><i class="fa-solid fa-location-dot"></i><span>Use the <strong>Shipper ZIP</strong> as Origin and <strong>Consignee ZIP</strong> as Destination.</span></div>
+              <div class="reminder"><i class="fa-solid fa-layer-group"></i><span>For FAK pricing, enter the class assigned to the customer’s class group.</span></div>
+              <div class="reminder"><i class="fa-solid fa-weight-scale"></i><span>For multiple line items, itemize each weight and class separately.</span></div>
+              <div class="reminder"><i class="fa-solid fa-envelope"></i><span>If the rater is missing, email Training Team / SMEs with complete shipment details.</span></div>
             </div>
           </div>
 
           <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
-              Suggested Note
-            </div>
-
-            <div class="section-note">
-              Use this internal note when documenting the base rate validation.
-            </div>
-
+            <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Note</div>
+            <div class="section-note">Use this internal note when documenting the base rate validation.</div>
             <div class="template-stack">
               <div class="template-card">
                 <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon">
-                      <i class="fa-solid fa-file-lines"></i>
-                    </div>
-                    <div>
-                      <div class="template-title">Case Comment</div>
-                      <div class="template-sub">Internal documentation</div>
-                    </div>
-                  </div>
+                  <div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-file-lines"></i></div><div><div class="template-title">Case Comment</div><div class="template-sub">Internal documentation</div></div></div>
                 </div>
-
-                <div class="template-body">
-                  <div id="baseRaterComment" class="template-box">Base rate reviewed using CZAR Rater. Verified origin ZIP, destination ZIP, class/FAK applicability, itemized weight, LTL rate family, and applicable tariff/year based on the customer agreement.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag">
-                    <i class="fa-solid fa-file-lines"></i>
-                    Case comment
-                  </span>
-
-                  <button class="template-copy" type="button" onclick="copyTemplateText('baseRaterComment', this)">
-                    Copy
-                  </button>
-                </div>
+                <div class="template-body"><div id="baseRaterComment" class="template-box">Base rate reviewed using CZAR Rater. Verified origin ZIP, destination ZIP, class/FAK applicability, itemized weight, LTL rate family, and applicable tariff/year based on the customer agreement.</div></div>
+                <div class="template-foot"><span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span><button class="template-copy" onclick="copyTemplateText('baseRaterComment', this)">Copy</button></div>
               </div>
-
               <div class="template-card">
                 <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon">
-                      <i class="fa-solid fa-envelope"></i>
-                    </div>
-                    <div>
-                      <div class="template-title">Training Team Note</div>
-                      <div class="template-sub">Use when rater is missing</div>
-                    </div>
-                  </div>
+                  <div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-envelope"></i></div><div><div class="template-title">Training Team Note</div><div class="template-sub">Use when rater is missing</div></div></div>
                 </div>
-
-                <div class="template-body">
-                  <div id="trainingTeamNote" class="template-box">Correct base rater is not available in CZAR Rater. Please verify the correct CWT rate using the shipment details, customer agreement, applicable tariff, class, weight, origin ZIP, and destination ZIP.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag">
-                    <i class="fa-solid fa-paper-plane"></i>
-                    Email note
-                  </span>
-
-                  <button class="template-copy" type="button" onclick="copyTemplateText('trainingTeamNote', this)">
-                    Copy
-                  </button>
-                </div>
+                <div class="template-body"><div id="trainingTeamNote" class="template-box">Correct base rater is not available in CZAR Rater. Please verify the correct CWT rate using the shipment details, customer agreement, applicable tariff, class, weight, origin ZIP, and destination ZIP.</div></div>
+                <div class="template-foot"><span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email note</span><button class="template-copy" onclick="copyTemplateText('trainingTeamNote', this)">Copy</button></div>
               </div>
             </div>
           </div>
@@ -1517,6 +630,11 @@
 
     <div id="site-footer"></div>
   </div>
+
+  <script src="../assets/js/header-loader.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer-loader.js"></script>
+  <script src="../assets/js/theme-loader.js"></script>
 
   <script>
     if (!firebase.apps.length) {
@@ -1533,51 +651,33 @@
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
-    /* =========================================================
-       PAGE AUTH GUARD
-       Prevents direct URL access without login
-    ========================================================= */
     window.auth.onAuthStateChanged(async function(user) {
       try {
         if (!user) {
           window.location.replace("../index.html");
           return;
         }
-
         await user.reload();
-
         const refreshedUser = window.auth.currentUser;
-
         if (!refreshedUser || !refreshedUser.emailVerified) {
           window.location.replace("../index.html");
           return;
         }
-
         document.documentElement.classList.remove("page-protected");
-
       } catch (error) {
         console.error("Auth guard error:", error);
         window.location.replace("../index.html");
       }
     });
-  </script>
 
-  <script src="../assets/js/header-loader.js"></script>
-  <script src="../assets/js/header.js"></script>
-  <script src="../assets/js/footer-loader.js"></script>
-
-  <script>
     function copyTemplateText(id, btn){
       const el = document.getElementById(id);
       if(!el) return;
-
       const text = el.innerText || el.textContent || "";
-
       navigator.clipboard.writeText(text).then(() => {
         const original = btn.textContent;
         btn.textContent = "Copied ✓";
         btn.classList.add("copied");
-
         setTimeout(() => {
           btn.textContent = original;
           btn.classList.remove("copied");
@@ -1591,11 +691,9 @@
         textarea.select();
         document.execCommand("copy");
         document.body.removeChild(textarea);
-
         const original = btn.textContent;
         btn.textContent = "Copied ✓";
         btn.classList.add("copied");
-
         setTimeout(() => {
           btn.textContent = original;
           btn.classList.remove("copied");
