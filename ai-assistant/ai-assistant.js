@@ -141,6 +141,18 @@
     return selected;
   }
 
+  // Debug: log loaded nodes (remove after testing)
+async function debugNodes() {
+  const loaded = await loadAllGuideNodes();
+  console.log("DEBUG: Loaded guides with nodes:", loaded.map(g => ({
+    title: g.guide.title,
+    nodeCount: g.nodes.length,
+    firstNode: g.nodes[0]?.text,
+    sampleChoices: g.nodes[0]?.choicesDetailed?.slice(0,2)
+  })));
+}
+debugNodes();
+
   /* ==========================================================
      IMPROVED: Local correction code detection – comprehensive list
   ========================================================== */
