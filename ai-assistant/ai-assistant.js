@@ -1,5 +1,6 @@
 // ============================================================
 // AI Assistant – Complete version with node + step support
+// FIXED: removed duplicate activeSession declaration
 // ============================================================
 
 (function () {
@@ -9,7 +10,7 @@
   const state = { isOpen: false, lastMatchedGuideId: "" };
   let guideNodesData = null;
   let guideStepsData = null;
-  let activeSession = null;
+  let activeSession = null;          // ✅ declared once at the top
   let preloadStarted = false;
 
   // ----- DOM helpers -----
@@ -152,16 +153,18 @@
     });
   }
 
-  // ----- Load JSON data -----
+  // ----- Load JSON data with better error logging -----
   async function loadNodesJSON() {
     if (guideNodesData) return guideNodesData;
     try {
-      const res = await fetch(`${getBasePath()}ai-assistant/nodes.json`);
-      if (!res.ok) throw new Error();
+      const url = `${getBasePath()}ai-assistant/nodes.json`;
+      console.log("Fetching nodes.json from:", url);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       guideNodesData = await res.json();
       console.log("Loaded nodes.json with", guideNodesData.guides.length, "decision guides");
     } catch (e) {
-      console.warn("nodes.json not loaded", e);
+      console.error("nodes.json not loaded:", e);
       guideNodesData = { guides: [] };
     }
     return guideNodesData;
@@ -170,12 +173,14 @@
   async function loadStepsJSON() {
     if (guideStepsData) return guideStepsData;
     try {
-      const res = await fetch(`${getBasePath()}ai-assistant/steps.json`);
-      if (!res.ok) throw new Error();
+      const url = `${getBasePath()}ai-assistant/steps.json`;
+      console.log("Fetching steps.json from:", url);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       guideStepsData = await res.json();
       console.log("Loaded steps.json with", guideStepsData.guides.length, "step guides");
     } catch (e) {
-      console.warn("steps.json not loaded", e);
+      console.error("steps.json not loaded:", e);
       guideStepsData = { guides: [] };
     }
     return guideStepsData;
@@ -216,21 +221,21 @@
     const flat = [];
     for (const guide of data.guides) {
       for (const [nodeId, node] of Object.entries(guide.nodes)) {
-        const searchText = [
+        const searchParts = [
           guide.id, guide.title, guide.category, guide.description,
           ...(guide.keywords || []),
           nodeId, node.text, node.help, node.note
-        ].filter(Boolean).join(" ").toLowerCase();
+        ].filter(Boolean);
         if (node.choices) {
           node.choices.forEach(c => {
-            searchText.push(c.label, c.action, c.desc);
+            searchParts.push(c.label, c.action, c.desc);
           });
         }
         flat.push({
           guide: { id: guide.id, title: guide.title, url: guide.url, category: guide.category, description: guide.description },
           nodeId,
           node,
-          searchText: searchText.join(" ")
+          searchText: searchParts.join(" ").toLowerCase()
         });
       }
     }
@@ -257,7 +262,6 @@
     return scored[0];
   }
 
-  // Simple path traversal (first choice)
   async function traverseToAction(startNodeId, guide) {
     let current = startNodeId;
     const visited = new Set();
@@ -309,7 +313,7 @@
 
   // ----- Main decision logic -----
   async function getDecision(concern) {
-    // 1. Local correction code (fast)
+    // 1. Local correction code
     const localAnswer = findLocalCorrAnswer(concern);
     if (localAnswer) return localAnswer;
 
@@ -390,7 +394,7 @@
     };
   }
 
-  // ----- Rendering (result) -----
+  // ----- Rendering -----
   function renderMatchedGuide(guideTitle, guideUrl, nodeId = null) {
     if (!guideTitle || !guideUrl) return "";
     const directUrl = nodeId ? `${guideUrl}?node=${encodeURIComponent(nodeId)}` : guideUrl;
@@ -455,9 +459,7 @@
     `;
   }
 
-  // ----- Conversation flow -----
-  let activeSession = null;
-
+  // ----- Conversation flow (activeSession used, not redeclared) -----
   async function runDecisionTurn() {
     if (!activeSession) return;
     clearSuggestions();
@@ -499,7 +501,6 @@
     }
     addMessage("user", trimmed);
     activeSession.conversation.push({ role: "user", content: trimmed });
-    // In a simple implementation, we treat it as a new concern for now
     activeSession.originalConcern = trimmed;
     await runDecisionTurn();
   }
@@ -564,7 +565,7 @@ Type the customer’s concern. I’ll search the decision trees or step‑by‑s
     ]);
   }
 
-  // ----- UI controls (panel open/close) -----
+  // ----- UI controls -----
   function openPanel() {
     const els = getEls();
     if (!els.panel) return;
