@@ -1,0 +1,315 @@
+{
+  "guides": [
+    {
+      "id": "correction_code_guide",
+      "title": "Correction Code Guide",
+      "url": "Correction Code Guide.html",
+      "category": "correction",
+      "description": "Decision tree to determine the correct CORR CODE.",
+      "keywords": ["correction", "corr code", "correction code", "code guide", "accr", "cusi", "ecd", "etms", "sysm", "epdc", "eref", "eacc", "nacc", "eadl", "opso", "opsd", "cae", "rqe", "loa", "cblc"],
+      "nodes": {
+        "start": {
+          "text": "Correction Code Guide",
+          "help": "Identify the correction needed and follow the correct path to determine the proper correction code.",
+          "choices": [{ "label": "Continue", "next": "correction_type" }]
+        },
+        "correction_type": {
+          "text": "What is the Correction that you are trying to do?",
+          "help": "Select the type of correction based on the request.",
+          "choices": [
+            { "label": "Change Terms", "next": "change_terms_root" },
+            { "label": "Change Account Code", "next": "change_account_root" },
+            { "label": "Change Class / NMFC / Description / Handling Unit", "next": "change_class_root" },
+            { "label": "Change Weight", "next": "change_weight_root" },
+            { "label": "Change Service Type", "action": "EPDC" },
+            { "label": "Reference no Edit", "next": "reference_edit_root" },
+            { "label": "Accessorial Update", "next": "accessorial_update_root" },
+            { "label": "Pricing Related Update", "next": "pricing_related_update" },
+            { "label": "Refreshed terms to pull ABT", "next": "refresh_terms_pull_abt_intro" }
+          ]
+        },
+        "refresh_terms_pull_abt_intro": {
+          "text": "Refreshed terms to pull ABT",
+          "help": "Use this when FBC terms are prepaid/collect and the customer is requesting to pull the shipper's or consignee's ABT, but the system did not pull it so the terms need to be refreshed.",
+          "choices": [
+            { "label": "ABT was added after correction", "next": "refresh_terms_pull_abt_after_correction_bol" },
+            { "label": "ABT was added before correction", "action": "SYSM - because system failed to pull the ABT" },
+            { "label": "No comment when was ABT added", "action": "SYSM - Due to system issue" }
+          ]
+        },
+        "refresh_terms_pull_abt_after_correction_bol": {
+          "text": "Is ABT account or information noted on the BOL?",
+          "choices": [
+            { "label": "Yes", "action": "ACCR - Since this is not a biller's error and ABT is noted on the BOL" },
+            { "label": "No", "action": "CUSI - Since this is not a biller's error and ABT is not noted on the BOL" }
+          ]
+        },
+        "change_terms_root": {
+          "text": "Change Terms",
+          "help": "Select the basis of the requested terms correction.",
+          "choices": [
+            { "label": "Per BOL", "next": "change_terms_per_bol_who" },
+            { "label": "In attempt of payment", "next": "change_terms_attempt_payment" },
+            { "label": "Per LOA", "next": "change_terms_per_loa" },
+            { "label": "To pull ABT", "next": "change_terms_pull_abt" }
+          ]
+        },
+        "change_terms_per_bol_who": {
+          "text": "Who entered the incorrect Terms?",
+          "choices": [
+            { "label": "Revenue Services Agent / Revenue Quality Agent", "next": "change_terms_rs_confusing" },
+            { "label": "Biller", "next": "change_terms_biller_confusing" },
+            { "label": "Customer via ISPI", "action": "CUSI" },
+            { "label": "System", "next": "change_terms_system_note" },
+            { "label": "Service Center", "next": "change_terms_service_center" }
+          ]
+        },
+        "change_terms_rs_confusing": {
+          "text": "Is the BOL confusing or provide conflicting information that can cause confusion to the Agent?",
+          "choices": [
+            { "label": "Yes", "next": "change_terms_rs_followed_process" },
+            { "label": "No", "action": "CAE - RSA entered incorrect Terms even if BOL is accurate\n\nRQE - RQA entered incorrect Terms even if BOL is accurate" }
+          ]
+        },
+        "change_terms_rs_followed_process": {
+          "text": "Did the Agent followed the right process per Rebill per BOL decision Tree?",
+          "choices": [
+            { "label": "Yes", "action": "CUSI - RSA Incorrect Terms since BOL is confusing or inaccurate" },
+            { "label": "No", "action": "CAE - RSA entered incorrect Terms even if BOL is accurate\n\nRQE - RQA entered incorrect Terms even if BOL is accurate" }
+          ]
+        },
+        "change_terms_biller_confusing": {
+          "text": "Is the BOL confusing or provide conflicting information that can cause confusion to the Biller?",
+          "choices": [
+            { "label": "Yes", "action": "CUSI - Biller entered Incorrect Terms since BOL is confusing or inaccurate" },
+            { "label": "No", "action": "ETMS - biller entered incorrect Terms even if BOL is accurate" }
+          ]
+        },
+        "change_terms_system_note": {
+          "text": "System",
+          "choices": [{ "label": "Continue", "action": "SYSM - Change terms due to incorrect TERMS entered by the SYSTEM" }]
+        },
+        "change_terms_service_center": {
+          "text": "Service Center",
+          "choices": [
+            { "label": "Origin SC", "action": "OPSO - If Origin SC Agent entered incorrect Terms" },
+            { "label": "Destination SC", "action": "OPSD - If Destination SC Agent entered incorrect Terms" }
+          ]
+        },
+        "change_terms_attempt_payment": {
+          "text": "In attempt of payment",
+          "choices": [{ "label": "Continue", "action": "CORR ACCR - any update made on Terms or Account in attempt of payment when pro is billing correctly per BOL" }]
+        },
+        "change_terms_per_loa": {
+          "text": "Per LOA",
+          "choices": [{ "label": "Continue", "action": "Please follow LOA guidelines" }]
+        },
+        "change_terms_pull_abt": {
+          "text": "Is ABT noted on the BOL?",
+          "choices": [
+            { "label": "Yes", "next": "change_terms_pull_abt_yes_path" },
+            { "label": "No", "next": "change_terms_pull_abt_no_path" }
+          ]
+        },
+        "change_terms_pull_abt_yes_path": {
+          "text": "ABT noted on BOL",
+          "choices": [
+            { "label": "ABT is noted within shipper/consignee ABT and biller failed to bill it", "action": "ECD - since ABT is noted on the BOL and biller failed to bill it." },
+            { "label": "Per BOL terms is Collect and BOL has bill to info within ABT of the shipper; biller billed collect as terms but wrong debtor", "action": "CUSI - This is not a biller's error and biller billed the correct debtor per BOL" }
+          ]
+        },
+        "change_terms_pull_abt_no_path": {
+          "text": "ABT not noted on BOL",
+          "choices": [{ "label": "Continue", "action": "CORR LOA with Corr fee (CBLC)" }]
+        },
+        "change_account_root": {
+          "text": "Change Account Code",
+          "choices": [
+            { "label": "Per BOL", "next": "change_account_per_bol_reason" },
+            { "label": "Per LOA", "next": "change_account_per_loa" },
+            { "label": "To pull ABT", "next": "change_account_pull_abt_intro" }
+          ]
+        },
+        "change_account_per_bol_reason": {
+          "text": "Why are you changing an Account code?",
+          "choices": [
+            { "label": "BOL shows an account no. or Bill to Information but was not entered by the Biller", "next": "change_account_bol_not_entered_confusing" },
+            { "label": "Billing correctly per BOL but customer is requesting to use a different account no. for better/proper billing", "next": "change_account_better_billing_related" },
+            { "label": "Rebill in attempt of payment", "next": "change_account_attempt_payment" }
+          ]
+        },
+        "change_account_bol_not_entered_confusing": {
+          "text": "Is the BOL confusing or provide conflicting/incomplete information that can cause confusion to the Biller?",
+          "choices": [
+            { "label": "Yes", "action": "CUSI - used when changing Account Code but should not be taken against the biller since BOL has conflicting information" },
+            { "label": "No", "action": "ECD - used when changing Account Code since Biller entered an incorrect Code not on the BOL or different from what the BOL states" }
+          ]
+        },
+        "change_account_better_billing_related": {
+          "text": "Is the account name the same or related to the debtor?",
+          "choices": [
+            { "label": "Yes", "next": "change_account_better_billing_address" },
+            { "label": "No", "action": "Please follow LOA guidelines" }
+          ]
+        },
+        "change_account_better_billing_address": {
+          "text": "Is the mailing address different from the current debtor?",
+          "choices": [
+            { "label": "Yes", "next": "change_account_better_billing_prau" },
+            { "label": "No", "action": "If one of the criteria is not met, use per debtor for better billing. Use ACCR. Send to imaging team for reference" }
+          ]
+        },
+        "change_account_better_billing_prau": {
+          "text": "Was the PRAU TOTALLY changed?",
+          "choices": [
+            { "label": "Yes", "action": "CORR LOA with correction fee" },
+            { "label": "No", "action": "If one of the criteria is not met, use per debtor for better billing. Use ACCR. Send to imaging team for reference" }
+          ]
+        },
+        "change_account_attempt_payment": {
+          "text": "Rebill in attempt of payment",
+          "choices": [{ "label": "Continue", "action": "CORR ACCR - any update made on Terms or Account in attempt of payment when pro is billing correctly per BOL" }]
+        },
+        "change_account_per_loa": {
+          "text": "Per LOA",
+          "choices": [{ "label": "Continue", "action": "Please follow LOA guidelines" }]
+        },
+        "change_account_pull_abt_intro": {
+          "text": "To pull ABT",
+          "choices": [
+            { "label": "Yes", "next": "change_account_pull_abt_bol_confusing" },
+            { "label": "No", "next": "change_account_pull_abt_fbc_abt" }
+          ]
+        },
+        "change_account_pull_abt_bol_confusing": {
+          "text": "Is the BOL confusing or provide conflicting/incomplete information that can cause confusion to the Biller?",
+          "choices": [
+            { "label": "Yes", "action": "CUSI - used when changing Account Code but should not be taken against the biller since BOL has conflicting information" },
+            { "label": "No", "action": "ECD - used when changing Account Code since Biller entered an incorrect Code not on the BOL or different from what the BOL states" }
+          ]
+        },
+        "change_account_pull_abt_fbc_abt": {
+          "text": "Does the current shipper/consignee code in FBC has ABT that shows the requested account to be billed?",
+          "choices": [
+            { "label": "Yes", "next": "change_account_pull_abt_related_terms" },
+            { "label": "No", "next": "change_account_pull_abt_search_another" }
+          ]
+        },
+        "change_account_pull_abt_related_terms": {
+          "text": "Is the requested account related to the terms per BOL?",
+          "choices": [
+            { "label": "Yes", "action": "Update the shipper/consignee account to pull ABT for proper billing per BOL\n\nUse ACCR" },
+            { "label": "No", "action": "If one of the criteria is not met, use per debtor for better billing. Use ACCR. Send to imaging team for reference" }
+          ]
+        },
+        "change_account_pull_abt_search_another": {
+          "text": "Look for another shipping account with ABT and update the shipper/consignee code using the account with ABT for proper billing per BOL.",
+          "choices": [
+            { "label": "There is an account number with ABT found in A&M", "next": "change_account_pull_abt_found_address" },
+            { "label": "No account number with ABT found in A&M", "action": "If one of the criteria is not met, use per debtor for better billing. Use ACCR. Send to imaging team for reference" }
+          ]
+        },
+        "change_account_pull_abt_found_address": {
+          "text": "Is the mailing address of the requested billing account different from the current debtor?",
+          "choices": [
+            { "label": "Yes", "next": "change_account_pull_abt_found_prau" },
+            { "label": "No", "action": "If one of the criteria is not met, use per debtor for better billing. Use ACCR. Send to imaging team for reference" }
+          ]
+        },
+        "change_account_pull_abt_found_prau": {
+          "text": "Was the PRAU TOTALLY changed?",
+          "choices": [
+            { "label": "Yes", "action": "CORR LOA with correction fee" },
+            { "label": "No", "action": "If one of the criteria is not met, use per debtor for better billing. Use ACCR. Send to imaging team for reference" }
+          ]
+        },
+        "change_class_root": {
+          "text": "Change of Class/NMFC/Description/Handling Unit per BOL",
+          "choices": [{ "label": "Continue", "next": "change_class_who" }]
+        },
+        "change_weight_root": {
+          "text": "Change of Weight per BOL",
+          "choices": [{ "label": "Continue", "next": "change_class_who" }]
+        },
+        "change_class_who": {
+          "text": "Who entered the incorrect Class?",
+          "choices": [
+            { "label": "Biller - Initial entry of information", "next": "change_class_biller_confusing" },
+            { "label": "Revenue Services Agent / Revenue Quality Agent", "next": "change_class_rs_confusing" },
+            { "label": "Origin/Destination Service Center", "next": "change_class_service_center" }
+          ]
+        },
+        "change_class_biller_confusing": {
+          "text": "Is the BOL confusing or provide conflicting/incomplete information that can cause confusion to the Biller?",
+          "choices": [
+            { "label": "Yes", "action": "CUSI" },
+            { "label": "No", "action": "EWPD" }
+          ]
+        },
+        "change_class_rs_confusing": {
+          "text": "Is the BOL confusing or provide conflicting/incomplete information that can cause confusion to the Agent?",
+          "choices": [
+            { "label": "Yes", "action": "CUSI" },
+            { "label": "No", "action": "CAE - Revenue Services Agent\n\nRQE - Revenue Quality Agent" }
+          ]
+        },
+        "change_class_service_center": {
+          "text": "Which Service Center entered the incorrect Class?",
+          "choices": [
+            { "label": "Origin Service Center / Others Service Center", "action": "OPSO" },
+            { "label": "Destination Service Center", "action": "OPSD" }
+          ]
+        },
+        "reference_edit_root": {
+          "text": "Reference no Edit",
+          "choices": [{ "label": "Continue", "next": "reference_edit_noted" }]
+        },
+        "reference_edit_noted": {
+          "text": "Is the Reference No. that you updating noted on BOL?",
+          "choices": [
+            { "label": "Yes", "action": "EREF" },
+            { "label": "No", "action": "CUSI" }
+          ]
+        },
+        "accessorial_update_root": {
+          "text": "What update are your trying to make",
+          "choices": [
+            { "label": "Adding Accessorial that is not requested on the BOL", "action": "ACC" },
+            { "label": "Changing Accessorial from One type to another", "action": "EADL" },
+            { "label": "Removing of Accessorial since it was not performed", "action": "NACC" },
+            { "label": "Adding or Removing Accessorial per Request/Instruction on BOL/Billing Mask or Changing the Debtor of Accessorial per Instruction on BOL/Billing Mask", "action": "EACC" },
+            { "label": "Removing of Accessorial due to Service Center Error", "next": "accessorial_sc_error" },
+            { "label": "Removing of Accessorial due to Revenue Services/Revenue Quality Agent", "next": "accessorial_rs_error" },
+            { "label": "Debtor Change per LOA", "action": "LOA - change debtor of accessorial per LOA\nNO CORRECTION FEE" }
+          ]
+        },
+        "accessorial_sc_error": {
+          "text": "Removing of Accessorial due to Service Center Error",
+          "choices": [
+            { "label": "Origin Center", "action": "OPSO - If error was made by Origin Center" },
+            { "label": "Destination Center", "action": "OPSD - If error was made by Destination Center" }
+          ]
+        },
+        "accessorial_rs_error": {
+          "text": "Removing of Accessorial due to Revenue Services/Revenue Quality Agent",
+          "choices": [
+            { "label": "Revenue Services Agent", "action": "CAE - if error was done by Revenue Services Agent" },
+            { "label": "Revenue Quality Agent", "action": "RQE - if error was done by Revenue Quality Agent" }
+          ]
+        },
+        "pricing_related_update": {
+          "text": "Pricing Related Update",
+          "choices": [
+            { "label": "Autorating or Manual Agreement Exception", "action": "CORR SYSM – Autorating the PRO or applying agreement exception." },
+            { "label": "Expired Freight Pricing or Surcharge Exception", "action": "CORR EXPR – Expired freight pricing or surcharge exception." },
+            { "label": "Rating correction error by Revenue Services", "action": "CORR PRCE – Rating correction error by Revenue Services employee." },
+            { "label": "General protection of invoice", "action": "CORR PROT – General protection of invoice." },
+            { "label": "PRO protected per CHT Hierarchy Update", "action": "CORR PRHA – PRO protected per CHT hierarchy update." },
+            { "label": "Brand new pricing within 10 days from Ship Date", "action": "CORR SSDY – Brand new pricing and PRO rerated within 10 days from Ship Date." },
+            { "label": "Brand new pricing after 10 days from Ship Date", "action": "CORR YEAR – Brand new pricing and PRO rerated after 10 days from Ship Date." }
+          ]
+        }
+      }
+    }
+  ]
+}
