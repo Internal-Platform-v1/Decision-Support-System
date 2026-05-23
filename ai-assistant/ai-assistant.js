@@ -1,6 +1,5 @@
 // ============================================================
-// AI Assistant – Complete version with node + step support
-// FIXED: removed duplicate activeSession declaration
+// AI Assistant – Full working version with priority for correction guides
 // ============================================================
 
 (function () {
@@ -10,10 +9,9 @@
   const state = { isOpen: false, lastMatchedGuideId: "" };
   let guideNodesData = null;
   let guideStepsData = null;
-  let activeSession = null;          // ✅ declared once at the top
+  let activeSession = null;
   let preloadStarted = false;
 
-  // ----- DOM helpers -----
   function $(id) { return document.getElementById(id); }
 
   function getEls() {
@@ -37,17 +35,13 @@
       const saved = JSON.parse(raw);
       state.isOpen = !!saved.isOpen;
       state.lastMatchedGuideId = saved.lastMatchedGuideId || "";
-    } catch (err) {
-      console.error("AI state load failed:", err);
-    }
+    } catch (err) {}
   }
 
   function saveState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (err) {
-      console.error("AI state save failed:", err);
-    }
+    } catch (err) {}
   }
 
   function getBasePath() {
@@ -73,20 +67,13 @@
   function normalizeText(value) {
     return String(value || "")
       .toLowerCase()
-      .replace(/[_/|()[\]{}.,:;'"`~!@#$%^&*+=?<>\\-]+/g, " ")
-      .replace(/\s+/g, " ")
+      .replace(/[^a-z0-9]/g, ' ')
+      .replace(/\s+/g, ' ')
       .trim();
   }
 
-  function compactText(value, max = 190) {
-    const clean = String(value || "").replace(/\s+/g, " ").trim();
-    if (clean.length <= max) return clean;
-    return clean.slice(0, max - 1).trim() + "…";
-  }
-
-  function asksForCorrCode(text) {
-    return /\b(corr|correction)\s*code\b/i.test(text) || /\bcorr\b/i.test(text);
-  }
+  function compactText(value, max) { return value; }
+  function asksForCorrCode(text) { return /\b(corr|correction)\s*code\b/i.test(text) || /\bcorr\b/i.test(text); }
 
   // ----- Message UI -----
   function addMessage(role, content, allowHTML = false) {
@@ -102,44 +89,24 @@
     const bubble = document.createElement("div");
     bubble.className = "fx-ai-bubble";
     if (allowHTML) {
-      bubble.classList.add("fx-ai-html-bubble");
       bubble.style.whiteSpace = "normal";
       bubble.style.padding = "10px";
-      bubble.innerHTML = String(content || "")
-        .replace(/>\s+</g, "><")
-        .replace(/\n\s+/g, " ")
-        .trim();
+      bubble.innerHTML = String(content || "").replace(/>\s+</g, "><").trim();
     } else {
       bubble.textContent = content;
     }
     row.appendChild(bubble);
     els.messages.appendChild(row);
-    requestAnimationFrame(() => {
-      els.messages.scrollTop = els.messages.scrollHeight;
-    });
+    requestAnimationFrame(() => { els.messages.scrollTop = els.messages.scrollHeight; });
     return row;
   }
 
   function addThinkingMessage() {
-    return addMessage("assistant", `
-      <div class="fx-ai-thinking">
-        <div>
-          <div class="fx-ai-thinking-text">Searching guides...</div>
-          <div class="fx-ai-thinking-dots"><span></span><span></span><span></span></div>
-        </div>
-      </div>
-    `, true);
+    return addMessage("assistant", `<div class="fx-ai-thinking"><div><div class="fx-ai-thinking-text">Searching guides...</div><div class="fx-ai-thinking-dots"><span></span><span></span><span></span></div></div></div>`, true);
   }
 
-  function removeThinkingMessage(row) {
-    if (row && row.parentNode) row.parentNode.removeChild(row);
-  }
-
-  function clearSuggestions() {
-    const els = getEls();
-    if (els.suggestions) els.suggestions.innerHTML = "";
-  }
-
+  function removeThinkingMessage(row) { if (row && row.parentNode) row.parentNode.removeChild(row); }
+  function clearSuggestions() { const els = getEls(); if (els.suggestions) els.suggestions.innerHTML = ""; }
   function setSuggestions(items) {
     const els = getEls();
     if (!els.suggestions) return;
@@ -153,18 +120,16 @@
     });
   }
 
-  // ----- Load JSON data with better error logging -----
+  // ----- Load JSON -----
   async function loadNodesJSON() {
     if (guideNodesData) return guideNodesData;
     try {
-      const url = `${getBasePath()}ai-assistant/nodes.json`;
-      console.log("Fetching nodes.json from:", url);
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await fetch(`${getBasePath()}ai-assistant/nodes.json`);
+      if (!res.ok) throw new Error();
       guideNodesData = await res.json();
-      console.log("Loaded nodes.json with", guideNodesData.guides.length, "decision guides");
+      console.log("Loaded nodes.json");
     } catch (e) {
-      console.error("nodes.json not loaded:", e);
+      console.warn("nodes.json not loaded");
       guideNodesData = { guides: [] };
     }
     return guideNodesData;
@@ -173,136 +138,98 @@
   async function loadStepsJSON() {
     if (guideStepsData) return guideStepsData;
     try {
-      const url = `${getBasePath()}ai-assistant/steps.json`;
-      console.log("Fetching steps.json from:", url);
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await fetch(`${getBasePath()}ai-assistant/steps.json`);
+      if (!res.ok) throw new Error();
       guideStepsData = await res.json();
-      console.log("Loaded steps.json with", guideStepsData.guides.length, "step guides");
+      console.log("Loaded steps.json");
     } catch (e) {
-      console.error("steps.json not loaded:", e);
+      console.warn("steps.json not loaded");
       guideStepsData = { guides: [] };
     }
     return guideStepsData;
   }
 
-  // ----- Step‑based scoring -----
-  function buildStepSearchText(guide) {
-    let text = `${guide.id} ${guide.title} ${guide.category} ${(guide.keywords || []).join(" ")}`;
-    guide.steps.forEach(step => {
-      text += ` ${step.title} ${step.content}`;
-    });
-    return text.toLowerCase();
-  }
-
-  function scoreStepGuide(input, guide) {
-    const normInput = normalizeText(input);
-    const searchText = buildStepSearchText(guide);
-    let score = searchText.includes(normInput) ? 15 : 0;
-    const words = normInput.split(/\s+/).filter(w => w.length > 2);
-    words.forEach(word => {
-      if (searchText.includes(word)) score += 2;
-    });
-    return score;
-  }
-
-  async function findBestStepGuide(input) {
-    const data = await loadStepsJSON();
-    if (!data.guides.length) return null;
-    const scored = data.guides.map(g => ({ guide: g, score: scoreStepGuide(input, g) }));
-    scored.sort((a, b) => b.score - a.score);
-    return scored[0]?.score > 5 ? scored[0] : null;
-  }
-
-  // ----- Node‑based helpers (decision trees) -----
+  // ----- Flatten nodes and steps -----
   async function getAllFlattenedNodes() {
     const data = await loadNodesJSON();
-    if (!data.guides.length) return [];
     const flat = [];
     for (const guide of data.guides) {
       for (const [nodeId, node] of Object.entries(guide.nodes)) {
-        const searchParts = [
-          guide.id, guide.title, guide.category, guide.description,
-          ...(guide.keywords || []),
-          nodeId, node.text, node.help, node.note
-        ].filter(Boolean);
-        if (node.choices) {
-          node.choices.forEach(c => {
-            searchParts.push(c.label, c.action, c.desc);
-          });
-        }
-        flat.push({
-          guide: { id: guide.id, title: guide.title, url: guide.url, category: guide.category, description: guide.description },
-          nodeId,
-          node,
-          searchText: searchParts.join(" ").toLowerCase()
-        });
+        const searchText = `${guide.title} ${node.text} ${node.help||''} ${node.note||''} ${node.choices?.map(c=>c.label).join(' ')}`.toLowerCase();
+        flat.push({ guide, nodeId, node, searchText });
       }
     }
     return flat;
   }
 
-  function scoreNode(input, nodeObj) {
-    const normInput = normalizeText(input);
-    const searchText = nodeObj.searchText;
-    if (!searchText) return 0;
-    let score = searchText.includes(normInput) ? 10 : 0;
-    const words = normInput.split(/\s+/).filter(w => w.length > 2);
-    words.forEach(word => {
-      if (searchText.includes(word)) score += 2;
-    });
-    return score;
-  }
-
-  async function findBestNode(input) {
-    const allNodes = await getAllFlattenedNodes();
-    if (!allNodes.length) return null;
-    const scored = allNodes.map(n => ({ ...n, score: scoreNode(input, n) }));
-    scored.sort((a, b) => b.score - a.score);
-    return scored[0];
-  }
-
-  async function traverseToAction(startNodeId, guide) {
-    let current = startNodeId;
-    const visited = new Set();
-    while (current && !visited.has(current)) {
-      visited.add(current);
-      const node = guide.nodes[current];
-      if (!node) break;
-      if (node.action) return { action: node.action, nodeId: current, text: node.text };
-      if (node.choices && node.choices.length) {
-        const choice = node.choices[0];
-        if (choice.action) return { action: choice.action, nodeId: current, text: node.text };
-        if (choice.next) {
-          current = choice.next;
-          continue;
-        }
-      }
-      break;
+  async function getAllFlattenedSteps() {
+    const data = await loadStepsJSON();
+    const flat = [];
+    for (const guide of data.guides) {
+      let searchText = `${guide.title} ${guide.category} ${(guide.keywords||[]).join(' ')}`;
+      guide.steps.forEach(s => searchText += ` ${s.title} ${s.content}`);
+      flat.push({ guide, searchText: searchText.toLowerCase() });
     }
+    return flat;
+  }
+
+  // ----- Scoring with priority for correction queries -----
+  async function findBestMatch(input) {
+    const normInput = normalizeText(input);
+    const isCorrectionQuery = asksForCorrCode(input) || /change terms|per bol|account code|weight|class|reference|accessorial/i.test(normInput);
+    
+    const nodes = await getAllFlattenedNodes();
+    let bestNode = null, bestNodeScore = 0;
+    for (const n of nodes) {
+      let score = 0;
+      if (n.searchText.includes(normInput)) score += 20;
+      const words = normInput.split(/\s+/);
+      for (const w of words) if (w.length > 2 && n.searchText.includes(w)) score += 3;
+      if (isCorrectionQuery) score += 15;
+      if (score > bestNodeScore) { bestNodeScore = score; bestNode = n; }
+    }
+    
+    const steps = await getAllFlattenedSteps();
+    let bestStep = null, bestStepScore = 0;
+    for (const s of steps) {
+      let score = 0;
+      if (s.searchText.includes(normInput)) score += 15;
+      const words = normInput.split(/\s+/);
+      for (const w of words) if (w.length > 2 && s.searchText.includes(w)) score += 2;
+      if (isCorrectionQuery) score -= 20;
+      if (score > bestStepScore) { bestStepScore = score; bestStep = s; }
+    }
+    
+    console.log(`Best node: ${bestNode?.guide.title} score ${bestNodeScore}`);
+    console.log(`Best step: ${bestStep?.guide.title} score ${bestStepScore}`);
+    
+    if (bestNodeScore > 10 && bestNodeScore >= bestStepScore) {
+      return { type: "node", data: bestNode };
+    }
+    if (bestStepScore > 15 && bestStepScore > bestNodeScore) {
+      return { type: "step", data: bestStep };
+    }
+    if (bestNode) return { type: "node", data: bestNode };
     return null;
   }
 
-  // ----- Local correction code map (fallback) -----
+  // ----- Local correction map -----
   const CORRECTION_CODE_MAP = {
-    "weight": "ACCR", "reweigh": "ACCR", "pallet count": "CUSI",
-    "service level": "ECDL", "service type": "ECDL", "priority plus": "ECDL",
-    "reference number": "EREF", "po number": "EREF", "debtor": "ACCR",
-    "bill to": "ACCR", "3pl": "ACCR", "collector": "ACCR", "fpay": "FPAY",
-    "loa": "LOA", "rebill": "LOA", "rvsl": "LOA", "void": "VOID", "write off": "WO"
+    "weight": "ACCR", "reweigh": "ACCR", "service level": "ECDL",
+    "reference number": "EREF", "debtor": "ACCR", "loa": "LOA",
+    "change terms": "CUSI or ETMS", "account code": "CUSI or ECD"
   };
-
   function findLocalCorrAnswer(input) {
     if (!asksForCorrCode(input)) return null;
-    const inputNorm = normalizeText(input);
-    for (const [keyword, code] of Object.entries(CORRECTION_CODE_MAP)) {
-      if (inputNorm.includes(keyword)) {
+    const inp = normalizeText(input);
+    for (const [kw, code] of Object.entries(CORRECTION_CODE_MAP)) {
+      if (inp.includes(kw)) {
         return {
           type: "recommendation",
           title: "Recommended Correction Code",
           action: code,
-          reason: `Based on keyword "${keyword}" in your request.`,
-          nextStep: `Use correction code ${code}. Open the matched guide to confirm.`,
+          reason: `Based on keyword "${kw}".`,
+          nextStep: `Use ${code}. Confirm with guide.`,
           guideTitle: "",
           nodeId: ""
         };
@@ -311,155 +238,88 @@
     return null;
   }
 
-  // ----- Main decision logic -----
+  // ----- Main decision -----
   async function getDecision(concern) {
-    // 1. Local correction code
-    const localAnswer = findLocalCorrAnswer(concern);
-    if (localAnswer) return localAnswer;
-
-    // 2. Step‑based guide
-    const stepMatch = await findBestStepGuide(concern);
-    if (stepMatch) {
-      const stepsHtml = stepMatch.guide.steps.map((step, idx) => `
-        <div class="fx-ai-step-item" style="margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 14px;">
-          <strong style="display: block; color: var(--fx-ai-orange); margin-bottom: 4px;">${idx+1}. ${escapeHtml(step.title)}</strong>
-          <span style="font-size: 0.75rem; color: var(--fx-ai-text); white-space: pre-line;">${escapeHtml(step.content)}</span>
+    const local = findLocalCorrAnswer(concern);
+    if (local) return local;
+    const match = await findBestMatch(concern);
+    if (!match) {
+      return {
+        type: "backup",
+        title: "No match",
+        message: "Please rephrase or browse guides.",
+        nextStep: "Use Browse Guides button."
+      };
+    }
+    if (match.type === "step") {
+      const guide = match.data.guide;
+      const stepsHtml = guide.steps.map((step, i) => `
+        <div style="margin-bottom:12px; padding:10px; background:rgba(255,255,255,0.05); border-radius:14px;">
+          <strong style="color:var(--fx-ai-orange);">${i+1}. ${escapeHtml(step.title)}</strong>
+          <div style="font-size:0.75rem; margin-top:4px;">${escapeHtml(step.content).replace(/\n/g,'<br>')}</div>
         </div>
       `).join("");
       return {
         type: "steps",
-        title: stepMatch.guide.title,
-        message: `Here are the steps to ${stepMatch.guide.title.toLowerCase()}:`,
+        title: guide.title,
+        message: `Steps for ${guide.title}:`,
         stepsHtml,
-        guideTitle: stepMatch.guide.title,
-        guideId: stepMatch.guide.id,
-        guideUrl: resolveGuideUrl(stepMatch.guide.url || `${stepMatch.guide.id}.html`)
+        guideTitle: guide.title,
+        guideUrl: resolveGuideUrl(guide.url || `${guide.id}.html`)
       };
     }
-
-    // 3. Node‑based decision tree
-    const bestNode = await findBestNode(concern);
-    if (!bestNode) {
-      return {
-        type: "backup",
-        title: "No Match Found",
-        message: "I couldn't find a relevant guide. Please rephrase your question or browse the guides.",
-        nextStep: "Use the Browse Guides button to find the correct workflow."
-      };
+    if (match.type === "node") {
+      const node = match.data.node;
+      if (node.action) {
+        return {
+          type: "recommendation",
+          title: "Recommended Action",
+          action: node.action,
+          reason: node.text,
+          nextStep: "Open guide to confirm.",
+          guideTitle: match.data.guide.title,
+          guideUrl: resolveGuideUrl(match.data.guide.url || `${match.data.guide.id}.html`)
+        };
+      }
+      if (node.choices && node.choices.length) {
+        return {
+          type: "question",
+          title: "Need more info",
+          message: node.text,
+          choices: node.choices.map(c => c.label)
+        };
+      }
     }
-
-    if (bestNode.node.action) {
-      return {
-        type: "recommendation",
-        title: "Recommended Action",
-        action: bestNode.node.action,
-        reason: `Based on node "${bestNode.node.text}" in guide "${bestNode.guide.title}".`,
-        nextStep: "Open the guide to confirm before proceeding.",
-        guideTitle: bestNode.guide.title,
-        nodeId: bestNode.nodeId,
-        guideUrl: resolveGuideUrl(bestNode.guide.url || `${bestNode.guide.id}.html`)
-      };
-    }
-
-    const traversal = await traverseToAction(bestNode.nodeId, bestNode.guide);
-    if (traversal && traversal.action) {
-      return {
-        type: "recommendation",
-        title: "Recommended Action",
-        action: traversal.action,
-        reason: `Following the path in "${bestNode.guide.title}".`,
-        nextStep: "Open the guide to see the full decision tree.",
-        guideTitle: bestNode.guide.title,
-        nodeId: traversal.nodeId,
-        guideUrl: resolveGuideUrl(bestNode.guide.url || `${bestNode.guide.id}.html`)
-      };
-    }
-
-    if (bestNode.node.choices && bestNode.node.choices.length) {
-      return {
-        type: "question",
-        title: "Need more info",
-        message: bestNode.node.text,
-        choices: bestNode.node.choices.map(c => c.label)
-      };
-    }
-
     return {
       type: "backup",
-      title: "Backup Plan",
-      message: "I found a matching node but no final action. Please open the guide for details.",
-      nextStep: "Open the guide and follow the decision tree.",
-      guideTitle: bestNode.guide.title,
-      guideUrl: resolveGuideUrl(bestNode.guide.url || `${bestNode.guide.id}.html`)
+      title: "No action",
+      message: "Please open the guide manually.",
+      guideTitle: match.data.guide.title,
+      guideUrl: resolveGuideUrl(match.data.guide.url || `${match.data.guide.id}.html`)
     };
   }
 
   // ----- Rendering -----
-  function renderMatchedGuide(guideTitle, guideUrl, nodeId = null) {
-    if (!guideTitle || !guideUrl) return "";
-    const directUrl = nodeId ? `${guideUrl}?node=${encodeURIComponent(nodeId)}` : guideUrl;
-    return `
-      <details class="fx-ai-source-details" style="margin-top: 12px;">
-        <summary>View matched guide</summary>
-        <div class="fx-ai-source-card">
-          <div class="fx-ai-source-head">
-            <span>Matched Guide</span>
-            <strong>${escapeHtml(guideTitle)}</strong>
-          </div>
-          <div class="fx-ai-guide-actions">
-            <a class="fx-ai-link primary" href="${guideUrl}">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              <span>Open Guide</span>
-            </a>
-            ${nodeId ? `<a class="fx-ai-link secondary" href="${directUrl}"><i class="fa-solid fa-location-dot"></i><span>Open Step</span></a>` : ""}
-          </div>
-        </div>
-      </details>
-    `;
+  function renderMatchedGuide(title, url, nodeId) {
+    if (!title || !url) return "";
+    return `<details class="fx-ai-source-details" style="margin-top:12px;"><summary>Matched guide</summary><div class="fx-ai-source-card"><strong>${escapeHtml(title)}</strong><div class="fx-ai-guide-actions"><a class="fx-ai-link primary" href="${url}">Open Guide</a></div></div></details>`;
   }
 
-  function renderResult(result) {
-    if (!result) return "<div>No result.</div>";
-    if (result.type === "steps") {
-      return `
-        <div class="fx-ai-decision-card">
-          <div class="fx-ai-decision-kicker">${escapeHtml(result.title)}</div>
-          <h4>${escapeHtml(result.message)}</h4>
-          <div style="margin-top: 12px;">${result.stepsHtml}</div>
-          ${renderMatchedGuide(result.guideTitle, result.guideUrl)}
-        </div>
-      `;
+  function renderResult(res) {
+    if (!res) return "<div>No result.</div>";
+    if (res.type === "steps") {
+      return `<div class="fx-ai-decision-card"><div class="fx-ai-decision-kicker">${escapeHtml(res.title)}</div><h4>${escapeHtml(res.message)}</h4>${res.stepsHtml}${renderMatchedGuide(res.guideTitle, res.guideUrl)}</div>`;
     }
-    if (result.type === "recommendation") {
-      return `
-        <div class="fx-ai-decision-card">
-          <div class="fx-ai-decision-kicker">${escapeHtml(result.title)}</div>
-          <h4>${escapeHtml(result.action)}</h4>
-          ${result.reason ? `<div class="fx-ai-answer-row"><span>Why</span><p>${escapeHtml(result.reason)}</p></div>` : ""}
-          ${result.nextStep ? `<div class="fx-ai-answer-row"><span>Next Step</span><p>${escapeHtml(result.nextStep)}</p></div>` : ""}
-          ${renderMatchedGuide(result.guideTitle, result.guideUrl, result.nodeId)}
-        </div>
-      `;
+    if (res.type === "recommendation") {
+      return `<div class="fx-ai-decision-card"><div class="fx-ai-decision-kicker">${escapeHtml(res.title)}</div><h4>${escapeHtml(res.action)}</h4>${res.reason ? `<div class="fx-ai-answer-row"><span>Why</span><p>${escapeHtml(res.reason)}</p></div>` : ""}${res.nextStep ? `<div class="fx-ai-answer-row"><span>Next</span><p>${escapeHtml(res.nextStep)}</p></div>` : ""}${renderMatchedGuide(res.guideTitle, res.guideUrl)}</div>`;
     }
-    if (result.type === "question") {
-      return `
-        <div class="fx-ai-decision-card">
-          <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Question")}</div>
-          <h4>${escapeHtml(result.message)}</h4>
-        </div>
-      `;
+    if (res.type === "question") {
+      return `<div class="fx-ai-decision-card"><div class="fx-ai-decision-kicker">${escapeHtml(res.title)}</div><h4>${escapeHtml(res.message)}</h4></div>`;
     }
-    return `
-      <div class="fx-ai-decision-card fx-ai-backup-card">
-        <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Backup")}</div>
-        <h4>${escapeHtml(result.message)}</h4>
-        ${result.nextStep ? `<p>${escapeHtml(result.nextStep)}</p>` : ""}
-        ${result.guideTitle ? renderMatchedGuide(result.guideTitle, result.guideUrl) : ""}
-      </div>
-    `;
+    return `<div class="fx-ai-decision-card fx-ai-backup-card"><div class="fx-ai-decision-kicker">${escapeHtml(res.title||"Backup")}</div><h4>${escapeHtml(res.message)}</h4>${res.nextStep ? `<p>${escapeHtml(res.nextStep)}</p>` : ""}${renderMatchedGuide(res.guideTitle, res.guideUrl)}</div>`;
   }
 
-  // ----- Conversation flow (activeSession used, not redeclared) -----
+  // ----- Conversation flow -----
   async function runDecisionTurn() {
     if (!activeSession) return;
     clearSuggestions();
@@ -469,12 +329,11 @@
     removeThinkingMessage(thinking);
     addMessage("assistant", renderResult(result), true);
     bindDynamicActions();
-
     if (result.type === "question") {
       setFollowupSuggestions(result);
     } else if (result.type === "backup") {
       setSuggestions([
-        { label: "Add details", className: "fx-ai-suggestion-btn", onClick: askForDetails },
+        { label: "Add details", onClick: askForDetails },
         { label: "Browse guides", onClick: browseGuides },
         { label: "Start over", onClick: clearChat }
       ]);
@@ -516,19 +375,20 @@
   }
 
   function askForDetails() {
-    addMessage("assistant", "Type the missing detail in your own words. Include what the customer is asking, what the BOL/LOA/system shows, or what was already checked.");
+    addMessage("assistant", "Type the missing detail in your own words.");
     clearSuggestions();
     setTimeout(() => getEls().input?.focus(), 60);
   }
 
   function setFollowupSuggestions(result) {
-    const choices = result.choices || [];
-    const items = choices.map(label => ({
+    const items = (result.choices || []).map(label => ({
       label,
       onClick: () => continueConversation(label)
     }));
-    items.push({ label: "None of these fit", onClick: () => continueConversation("None of these fit") });
-    items.push({ label: "Add details", onClick: askForDetails });
+    items.push(
+      { label: "None of these", onClick: () => continueConversation("None of these") },
+      { label: "Add details", onClick: askForDetails }
+    );
     setSuggestions(items);
   }
 
@@ -541,7 +401,7 @@
 
   function browseGuides() {
     activeSession = null;
-    addMessage("assistant", "Browse the guides in the library above, or use the toolbar to search.", false);
+    addMessage("assistant", "Browse guides using the toolbar or library above.", false);
     clearSuggestions();
   }
 
@@ -554,14 +414,11 @@
   }
 
   function showWelcome() {
-    addMessage("assistant", `Hi, I’m your AI Decision Assistant.
-
-Type the customer’s concern. I’ll search the decision trees or step‑by‑step guides and give you the recommended action or steps.`);
-
+    addMessage("assistant", "Hi, I'm your AI Decision Assistant. Type your question – I'll search guides or step‑by‑step instructions.");
     setSuggestions([
       { label: "Correction code for weight update", onClick: () => startNewConcern("What is the correction code for weight update?") },
-      { label: "How to submit ePRT", onClick: () => startNewConcern("How do I submit an ePRT ticket?") },
-      { label: "Reference number edit", onClick: () => startNewConcern("What correction code for reference number edit?") }
+      { label: "Change terms per BOL", onClick: () => startNewConcern("What is the correction code for changing terms per BOL?") },
+      { label: "How to submit ePRT", onClick: () => startNewConcern("How to submit ePRT ticket?") }
     ]);
   }
 
@@ -570,7 +427,6 @@ Type the customer’s concern. I’ll search the decision trees or step‑by‑s
     const els = getEls();
     if (!els.panel) return;
     els.panel.classList.remove("hidden");
-    els.panel.setAttribute("aria-hidden", "false");
     state.isOpen = true;
     saveState();
     if (!preloadStarted) {
@@ -585,7 +441,6 @@ Type the customer’s concern. I’ll search the decision trees or step‑by‑s
     const els = getEls();
     if (!els.panel) return;
     els.panel.classList.add("hidden");
-    els.panel.setAttribute("aria-hidden", "true");
     state.isOpen = false;
     saveState();
   }
@@ -598,36 +453,37 @@ Type the customer’s concern. I’ll search the decision trees or step‑by‑s
   }
 
   function bindDynamicActions() {
-    document.querySelectorAll("[data-guide-open]").forEach(item => {
-      if (item.dataset.bound === "true") return;
-      item.dataset.bound = "true";
-      item.addEventListener("click", () => {
-        const url = item.getAttribute("data-guide-open");
-        if (url) window.location.href = url;
-      });
+    document.querySelectorAll("[data-guide-open]").forEach(el => {
+      if (!el.dataset.bound) {
+        el.dataset.bound = "true";
+        el.addEventListener("click", () => {
+          const url = el.getAttribute("data-guide-open");
+          if (url) window.location.href = url;
+        });
+      }
     });
   }
 
   function bindEvents() {
     const els = getEls();
-    if (!els.launcher || !els.panel) return;
+    if (!els.launcher) return;
     els.launcher.addEventListener("click", openPanel);
     els.close?.addEventListener("click", closePanel);
     els.minimize?.addEventListener("click", closePanel);
     els.send?.addEventListener("click", sendInput);
     els.input?.addEventListener("input", autoresizeInput);
-    els.input?.addEventListener("keydown", async event => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
+    els.input?.addEventListener("keydown", async e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
         await sendInput();
       }
     });
-    els.toolbarButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        const action = button.getAttribute("data-ai-action");
+    els.toolbarButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const action = btn.getAttribute("data-ai-action");
         if (action === "find-guide") {
           activeSession = null;
-          addMessage("assistant", "Type the concern and I’ll search the guides.");
+          addMessage("assistant", "Type your concern.");
           clearSuggestions();
         }
         if (action === "show-guides") browseGuides();
@@ -650,10 +506,9 @@ Type the customer’s concern. I’ll search the decision trees or step‑by‑s
         clearInterval(timer);
         boot();
       }
-      tries += 1;
-      if (tries > 80) {
+      if (++tries > 80) {
         clearInterval(timer);
-        console.error("AI assistant markup was not found.");
+        console.error("Assistant markup not found");
       }
     }, 80);
   }
