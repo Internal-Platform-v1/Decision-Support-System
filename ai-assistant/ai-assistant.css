@@ -194,7 +194,6 @@ body.theme-simple {
   display: none;
 }
 
-/* Animated border glow (optional) */
 .fx-ai-panel-border {
   position: absolute;
   inset: 0;
@@ -554,7 +553,7 @@ body.theme-simple {
   border-color: var(--fx-ai-orange);
 }
 
-/* ================= INPUT AREA ================= */
+/* ================= INPUT AREA (FIXED READABILITY) ================= */
 .fx-ai-footer {
   padding: 12px 16px;
   border-top: 1px solid var(--fx-ai-line);
@@ -569,20 +568,49 @@ body.theme-simple {
 
 .fx-ai-input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--fx-ai-line);
-  border-radius: 24px;
-  padding: 10px 14px;
-  color: var(--fx-ai-text);
-  font-size: 0.8rem;
-  resize: none;
-  font-family: inherit;
-  outline: none;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid var(--fx-ai-line) !important;
+  border-radius: 24px !important;
+  padding: 10px 14px !important;
+  color: var(--fx-ai-text) !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  resize: none !important;
+  font-family: inherit !important;
+  outline: none !important;
+}
+
+.fx-ai-input::placeholder {
+  color: var(--fx-ai-text-soft) !important;
+  opacity: 0.7 !important;
 }
 
 .fx-ai-input:focus {
-  border-color: var(--fx-ai-orange);
-  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--fx-ai-orange) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  outline: none !important;
+}
+
+/* Autofill fix for dark inputs */
+.fx-ai-input:-webkit-autofill,
+.fx-ai-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--fx-ai-text) !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.15) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Simple theme (light) input overrides */
+body.theme-simple .fx-ai-input {
+  background: white !important;
+  color: #1e293b !important;
+  border-color: #cbd5e1 !important;
+}
+body.theme-simple .fx-ai-input::placeholder {
+  color: #94a3b8 !important;
+}
+body.theme-simple .fx-ai-input:focus {
+  border-color: var(--fx-ai-orange) !important;
+  background: white !important;
 }
 
 .fx-ai-send-btn {
