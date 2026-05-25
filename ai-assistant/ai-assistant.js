@@ -1,15 +1,9 @@
-// ============================================================
-// AI Assistant – Correction Code Assistant using nodes.json
-// ============================================================
-
-console.log("[Assistant] ai-assistant.js executed");
+console.log("[Assistant] Full assistant starting");
 (function () {
-  console.log("[Assistant] IIFE started");
   const STORAGE_KEY = "fx_ai_assistant_state_v10";
   const state = { isOpen: false, lastMatchedGuideId: "" };
-  let nodesData = null;
   let activeSession = null;
-  let preloadStarted = false;
+  let nodesData = null;
 
   function $(id) { return document.getElementById(id); }
 
@@ -30,19 +24,18 @@ console.log("[Assistant] ai-assistant.js executed");
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const saved = JSON.parse(raw);
-      state.isOpen = !!saved.isOpen;
-      state.lastMatchedGuideId = saved.lastMatchedGuideId || "";
-    } catch (err) { console.error("loadState error", err); }
+      if (raw) {
+        const saved = JSON.parse(raw);
+        state.isOpen = !!saved.isOpen;
+        state.lastMatchedGuideId = saved.lastMatchedGuideId || "";
+      }
+    } catch (err) {}
   }
-
   function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (err) {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(err) {}
   }
 
   function getBasePath() { return window.SITE_BASE || ""; }
-
   function resolveGuideUrl(url) {
     if (!url) return "";
     if (/^https?:\/\//i.test(url)) return url;
@@ -50,10 +43,24 @@ console.log("[Assistant] ai-assistant.js executed");
     return `${getBasePath()}${url}`;
   }
 
-  function escapeHtml(v) { return String(v||"").replace(/[&<>]/g, function(m){if(m==="&") return "&amp;"; if(m==="<") return "&lt;"; if(m===">") return "&gt;"; return m;}); }
-  function normalizeText(v) { return String(v||"").toLowerCase().replace(/[_/|()[\]{}.,:;'"`~!@#$%^&*+=?<>\\-]+/g, " ").replace(/\s+/g, " ").trim(); }
+  function escapeHtml(s) {
+    return String(s||"").replace(/[&<>]/g, function(m) {
+      if (m === "&") return "&amp;";
+      if (m === "<") return "&lt;";
+      if (m === ">") return "&gt;";
+      return m;
+    });
+  }
 
-  // ----- UI Functions (based on original working code) -----
+  function normalizeText(v) {
+    return String(v||"").toLowerCase().replace(/[_/|()[\]{}.,:;'"`~!@#$%^&*+=?<>\\-]+/g, " ").replace(/\s+/g, " ").trim();
+  }
+
+  function asksForCorrCode(text) {
+    return /\b(corr|correction)\s*code\b/i.test(text) || /\bcorr\b/i.test(text);
+  }
+
+  // UI functions (from original working assistant)
   function addMessage(role, content, allowHTML = false) {
     const els = getEls();
     if (!els.messages) return null;
@@ -91,8 +98,15 @@ console.log("[Assistant] ai-assistant.js executed");
     `, true);
   }
 
-  function removeThinkingMessage(row) { if (row && row.parentNode) row.parentNode.removeChild(row); }
-  function clearSuggestions() { const els = getEls(); if (els.suggestions) els.suggestions.innerHTML = ""; }
+  function removeThinkingMessage(row) {
+    if (row && row.parentNode) row.parentNode.removeChild(row);
+  }
+
+  function clearSuggestions() {
+    const els = getEls();
+    if (els.suggestions) els.suggestions.innerHTML = "";
+  }
+
   function setSuggestions(items) {
     const els = getEls();
     if (!els.suggestions) return;
@@ -106,16 +120,16 @@ console.log("[Assistant] ai-assistant.js executed");
     });
   }
 
-  // ----- Load nodes.json -----
-  async function loadNodesJSON() {
+  // Load nodes.json
+  async function loadNodes() {
     if (nodesData) return nodesData;
     try {
       const url = `${getBasePath()}ai-assistant/nodes.json`;
-      console.log("Loading nodes.json from", url);
+      console.log("Fetching nodes.json from", url);
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       nodesData = await res.json();
-      console.log("Loaded nodes.json with", nodesData.guides?.length || 0, "guides");
+      console.log("nodes.json loaded", nodesData.guides?.length || 0);
       return nodesData;
     } catch (err) {
       console.error("Failed to load nodes.json", err);
@@ -124,25 +138,23 @@ console.log("[Assistant] ai-assistant.js executed");
     }
   }
 
-  // Flatten all nodes for searching
+  // Flatten nodes for searching
   async function getAllNodes() {
-    const data = await loadNodesJSON();
+    const data = await loadNodes();
     const flat = [];
     for (const guide of (data.guides || [])) {
       for (const [nodeId, node] of Object.entries(guide.nodes || {})) {
-        const searchParts = [
-          guide.title, node.text, node.help || '', node.note || '', node.action || ''
-        ];
+        let searchText = `${guide.title} ${node.text} ${node.help||''} ${node.note||''} ${node.action||''}`;
         if (node.choices) {
           node.choices.forEach(c => {
-            searchParts.push(c.label, c.action || '', c.desc || '');
+            searchText += ` ${c.label} ${c.action||''} ${c.desc||''}`;
           });
         }
         flat.push({
-          guide: { id: guide.id, title: guide.title, url: guide.url || `${guide.id}.html` },
+          guide: { id: guide.id, title: guide.title, url: guide.url },
           nodeId,
           node,
-          searchText: searchParts.filter(p => p).join(' ').toLowerCase()
+          searchText: searchText.toLowerCase()
         });
       }
     }
@@ -160,11 +172,10 @@ console.log("[Assistant] ai-assistant.js executed");
       words.forEach(w => { if (n.searchText.includes(w)) score += 3; });
       if (score > bestScore) { bestScore = score; best = n; }
     }
-    console.log("Best match score:", bestScore, best?.node?.action);
     return bestScore > 5 ? best : null;
   }
 
-  // Local fallback map
+  // Local fallback codes
   const localCodes = {
     "weight": "ACCR", "reweigh": "ACCR", "service level": "ECDL",
     "reference number": "EREF", "debtor": "ACCR", "loa": "LOA",
@@ -185,7 +196,7 @@ console.log("[Assistant] ai-assistant.js executed");
         type: "recommendation",
         title: "Correction Code",
         action: local,
-        reason: "Based on keyword match.",
+        reason: "Matched keyword in your question.",
         nextStep: "Confirm with the Correction Code Guide.",
         guideTitle: "Correction Code Guide",
         guideUrl: resolveGuideUrl("Correction Code Guide.html")
@@ -198,9 +209,9 @@ console.log("[Assistant] ai-assistant.js executed");
         title: "Correction Code",
         action: match.node.action,
         reason: match.node.text,
-        nextStep: "Open the guide to see the full path.",
+        nextStep: "Open the Correction Code Guide to verify.",
         guideTitle: match.guide.title,
-        guideUrl: resolveGuideUrl(match.guide.url),
+        guideUrl: resolveGuideUrl(match.guide.url || `${match.guide.id}.html`),
         nodeId: match.nodeId
       };
     }
@@ -252,8 +263,8 @@ console.log("[Assistant] ai-assistant.js executed");
     `;
   }
 
-  // ----- Conversation Flow -----
-  async function runDecisionTurn() {
+  // Conversation flow
+  async function runTurn() {
     if (!activeSession) return;
     clearSuggestions();
     const thinking = addThinkingMessage();
@@ -271,7 +282,7 @@ console.log("[Assistant] ai-assistant.js executed");
     if (!trimmed) return;
     activeSession = { question: trimmed };
     addMessage("user", trimmed);
-    await runDecisionTurn();
+    await runTurn();
   }
 
   async function sendInput() {
@@ -313,17 +324,15 @@ console.log("[Assistant] ai-assistant.js executed");
     ]);
   }
 
-  // ----- UI Controls -----
+  // UI controls
   function openPanel() {
     const els = getEls();
     if (!els.panel) return;
     els.panel.classList.remove("hidden");
     state.isOpen = true;
     saveState();
-    if (!preloadStarted) {
-      preloadStarted = true;
-      loadNodesJSON();
-    }
+    // Preload nodes
+    loadNodes();
     setTimeout(() => els.input?.focus(), 60);
   }
 
