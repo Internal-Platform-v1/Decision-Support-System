@@ -21,15 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     link.href = `${folder}ai-assistant.css`;
     document.head.appendChild(link);
     console.log("[Loader] CSS loading started");
-    // Load guide-registry.js (if needed – but we might not need it)
-    await new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = `${folder}guide-registry.js`;
-      script.onload = () => { console.log("[Loader] guide-registry.js loaded"); resolve(); };
-      script.onerror = (e) => { console.error("[Loader] guide-registry.js failed", e); reject(e); };
-      document.body.appendChild(script);
-    });
-    // Load main ai-assistant.js
+    // Load main ai-assistant.js (no guide-registry needed)
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
       script.src = `${folder}ai-assistant.js`;
