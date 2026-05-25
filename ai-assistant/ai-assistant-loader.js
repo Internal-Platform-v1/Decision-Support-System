@@ -1,58 +1,44 @@
+console.log("[Loader] Script started");
 document.addEventListener("DOMContentLoaded", async () => {
+  console.log("[Loader] DOMContentLoaded");
   const target = document.getElementById("ai-assistant-container");
-  if (!target) return;
-
+  if (!target) {
+    console.error("[Loader] Container #ai-assistant-container not found");
+    return;
+  }
+  console.log("[Loader] Container found");
   const base = window.SITE_BASE || "";
   const folder = `${base}ai-assistant/`;
-
-  function loadCssOnce(href, marker) {
-    if (document.querySelector(`link[data-fx-ai-style="${marker}"]`)) return;
-
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = href;
-    link.setAttribute("data-fx-ai-style", marker);
-    document.head.appendChild(link);
-  }
-
-  function loadScriptOnce(src, marker) {
-    return new Promise((resolve, reject) => {
-      const existing = document.querySelector(`script[data-fx-ai-script="${marker}"]`);
-
-      if (existing) {
-        resolve();
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = src;
-      script.defer = true;
-      script.setAttribute("data-fx-ai-script", marker);
-
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Failed to load ${src}`));
-
-      document.body.appendChild(script);
-    });
-  }
-
+  console.log("[Loader] Folder:", folder);
   try {
     const response = await fetch(`${folder}ai-assistant.html`);
-    if (!response.ok) throw new Error("Failed to load AI assistant HTML.");
-
+    if (!response.ok) throw new Error(`HTTP ${response.status} - ${response.statusText}`);
     target.innerHTML = await response.text();
-
-    loadCssOnce(`${folder}ai-assistant.css`, "main");
-
-    /*
-      Important:
-      guide-registry.js must load BEFORE ai-assistant.js
-      because the assistant uses window.GUIDE_REGISTRY.
-    */
-    await loadScriptOnce(`${folder}guide-registry.js`, "registry");
-    await loadScriptOnce(`${folder}ai-assistant.js`, "main");
-
+    console.log("[Loader] HTML loaded");
+    // Load CSS
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = `${folder}ai-assistant.css`;
+    document.head.appendChild(link);
+    console.log("[Loader] CSS loading started");
+    // Load guide-registry.js (if needed – but we might not need it)
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = `${folder}guide-registry.js`;
+      script.onload = () => { console.log("[Loader] guide-registry.js loaded"); resolve(); };
+      script.onerror = (e) => { console.error("[Loader] guide-registry.js failed", e); reject(e); };
+      document.body.appendChild(script);
+    });
+    // Load main ai-assistant.js
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = `${folder}ai-assistant.js`;
+      script.onload = () => { console.log("[Loader] ai-assistant.js loaded"); resolve(); };
+      script.onerror = (e) => { console.error("[Loader] ai-assistant.js failed", e); reject(e); };
+      document.body.appendChild(script);
+    });
+    console.log("[Loader] All scripts loaded");
   } catch (error) {
-    console.error("AI assistant failed to load:", error);
+    console.error("[Loader] Failed:", error);
   }
 });
