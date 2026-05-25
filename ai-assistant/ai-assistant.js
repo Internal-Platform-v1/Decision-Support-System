@@ -1,12 +1,14 @@
 // ============================================================
-// AI Assistant – Calls backend Groq API, displays AI answer
+// AI Assistant – Pure backend AI (no local decision tree)
+// Sends all messages to Render Groq endpoint
 // ============================================================
 
 (function () {
   const STORAGE_KEY = "fx_ai_assistant_state_v10";
   const FX_AI_BACKEND_URL = "https://fx-ai-groq-server.onrender.com";
-  const state = { isOpen: false };
+  const state = { isOpen: false, lastMatchedGuideId: "" };
   let nodesData = null;
+  let preloadStarted = false;
 
   function $(id) { return document.getElementById(id); }
 
@@ -20,18 +22,33 @@
       suggestions: $("fx-ai-suggestions"),
       input: $("fx-ai-input"),
       send: $("fx-ai-send"),
+      toolbarButtons: document.querySelectorAll("[data-ai-action]")
     };
   }
 
-  function loadState() { try { const s = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); state.isOpen = !!s.isOpen; } catch(e){} }
-  function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) { const s = JSON.parse(raw); state.isOpen = !!s.isOpen; }
+    } catch(e) {}
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
   function getBasePath() { return window.SITE_BASE || ""; }
-  function escapeHtml(s) { return String(s||"").replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+  function escapeHtml(str) {
+    return String(str || "").replace(/[&<>]/g, function(m){
+      if(m==="&") return "&amp;";
+      if(m==="<") return "&lt;";
+      if(m===">") return "&gt;";
+      return m;
+    });
+  }
 
-  // UI helpers
+  // UI functions
   function addMessage(role, content, allowHTML = false) {
     const els = getEls();
-    if (!els.messages) return;
+    if (!els.messages) return null;
     const row = document.createElement("div");
     row.className = `fx-ai-message ${role}`;
     if (role === "assistant") {
@@ -42,28 +59,24 @@
     const bubble = document.createElement("div");
     bubble.className = "fx-ai-bubble";
     if (allowHTML) {
+      bubble.classList.add("fx-ai-html-bubble");
       bubble.style.whiteSpace = "normal";
       bubble.style.padding = "10px";
-      bubble.innerHTML = content;
+      bubble.innerHTML = String(content || "").replace(/>\s+</g, "><").trim();
     } else {
       bubble.textContent = content;
     }
     row.appendChild(bubble);
     els.messages.appendChild(row);
     requestAnimationFrame(() => { els.messages.scrollTop = els.messages.scrollHeight; });
+    return row;
   }
 
-  function addThinking() {
-    const id = "thinking-" + Date.now();
-    addMessage("assistant", `<div id="${id}" class="fx-ai-thinking"><div><div class="fx-ai-thinking-text">AI is thinking...</div><div class="fx-ai-thinking-dots"><span></span><span></span><span></span></div></div></div>`, true);
-    return id;
+  function addThinkingMessage() {
+    return addMessage("assistant", `<div class="fx-ai-thinking"><div><div class="fx-ai-thinking-text">AI is thinking...</div><div class="fx-ai-thinking-dots"><span></span><span></span><span></span></div></div></div>`, true);
   }
 
-  function removeThinking(id) {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-  }
-
+  function removeThinkingMessage(row) { if (row && row.parentNode) row.parentNode.removeChild(row); }
   function clearSuggestions() { const els = getEls(); if (els.suggestions) els.suggestions.innerHTML = ""; }
   function setSuggestions(items) {
     const els = getEls();
@@ -71,107 +84,122 @@
     els.suggestions.innerHTML = "";
     items.forEach(item => {
       const btn = document.createElement("button");
-      btn.className = "fx-ai-suggestion-btn";
+      btn.className = item.className || "fx-ai-suggestion-btn";
       btn.textContent = item.label;
-      btn.onclick = () => {
-        addMessage("user", item.label);
-        sendToBackend(item.label);
-      };
+      btn.addEventListener("click", item.onClick);
       els.suggestions.appendChild(btn);
     });
   }
 
-  // Load nodes.json (to send to backend)
+  // Load nodes.json to send to backend
   async function loadNodes() {
     if (nodesData) return nodesData;
     try {
-      const res = await fetch(`${getBasePath()}ai-assistant/nodes.json`);
-      if (!res.ok) throw new Error();
+      const url = `${getBasePath()}ai-assistant/nodes.json`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       nodesData = await res.json();
       return nodesData;
-    } catch(e) {
-      console.warn("Could not load nodes.json");
-      return { guides: [] };
+    } catch (err) {
+      console.error("Failed to load nodes.json", err);
+      nodesData = { guides: [] };
+      return nodesData;
     }
   }
 
-  // Call backend
-  async function sendToBackend(question) {
-    const thinkingId = addThinking();
+  // Store conversation history (simple array)
+  let conversationHistory = [];
+
+  async function sendToAI(userMessage) {
+    const data = await loadNodes();
+    const guide = data.guides.find(g => g.id === "correction_code_guide");
+    if (!guide) return { type: "error", message: "Guide not loaded." };
+
+    conversationHistory.push({ role: "user", content: userMessage });
+
     try {
-      const nodes = await loadNodes();
       const response = await fetch(`${FX_AI_BACKEND_URL}/api/ai-decision`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          concern: question,
-          guides: [{
-            guide: { id: "correction_code_guide", title: "Correction Code Guide", url: "Correction Code Guide.html" },
-            nodes: nodes.guides[0]?.nodes || {}
-          }],
-          conversation: []
+          concern: userMessage,
+          guides: [{ guide: { id: guide.id, title: guide.title, url: guide.url }, nodes: guide.nodes }],
+          conversation: conversationHistory
         })
       });
-      if (!response.ok) throw new Error("Backend error");
-      const data = await response.json();
-      if (!data.ok || !data.result) throw new Error("Invalid response");
-      removeThinking(thinkingId);
-      displayResult(data.result);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const result = await response.json();
+      if (!result.ok) throw new Error(result.error || "Invalid response");
+      // Add assistant response to history
+      conversationHistory.push({ role: "assistant", content: result.result.message || result.result.action });
+      return result.result;
     } catch (err) {
-      removeThinking(thinkingId);
-      addMessage("assistant", "Sorry, I couldn't reach the AI service. Please try again later.", false);
-      setSuggestions([{ label: "Try again", onClick: () => { clearChat(); } }]);
+      console.error("Backend error:", err);
+      return { type: "error", message: "Could not reach AI service. Please try again later." };
     }
   }
 
-  function displayResult(result) {
+  function renderAIResult(result) {
     if (result.type === "recommendation") {
-      const html = `
+      return `
         <div class="fx-ai-decision-card">
           <div class="fx-ai-decision-kicker">${escapeHtml(result.title || "Correction Code")}</div>
           <h4>${escapeHtml(result.action)}</h4>
           ${result.reason ? `<div class="fx-ai-answer-row"><span>Why</span><p>${escapeHtml(result.reason)}</p></div>` : ""}
           ${result.nextStep ? `<div class="fx-ai-answer-row"><span>Next Step</span><p>${escapeHtml(result.nextStep)}</p></div>` : ""}
-          <details class="fx-ai-source-details"><summary>Guide</summary><div class="fx-ai-source-card"><strong>Correction Code Guide</strong><div class="fx-ai-guide-actions"><a class="fx-ai-link primary" href="Correction Code Guide.html">Open Guide</a></div></div></details>
+          ${result.guideTitle ? `<details class="fx-ai-source-details"><summary>View guide</summary><div class="fx-ai-source-card"><strong>${escapeHtml(result.guideTitle)}</strong><div class="fx-ai-guide-actions"><a class="fx-ai-link primary" href="${result.guideUrl || "#"}">Open Guide</a></div></div></details>` : ""}
         </div>
       `;
-      addMessage("assistant", html, true);
-      setSuggestions([{ label: "Ask another question", onClick: () => { clearChat(); showWelcome(); } }]);
-    } else if (result.type === "question") {
-      addMessage("assistant", result.message, false);
-      const choices = (result.choices || []).map(c => ({ label: c, onClick: () => sendToBackend(c) }));
-      setSuggestions(choices);
+    }
+    if (result.type === "question") {
+      let choicesHtml = "";
+      if (result.choices && result.choices.length) {
+        choicesHtml = `<div class="fx-ai-suggestions" style="margin-top: 8px;">${result.choices.map(c => `<button class="fx-ai-suggestion-btn" data-choice="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}</div>`;
+      }
+      return `
+        <div class="fx-ai-decision-card">
+          <div class="fx-ai-decision-kicker">Question</div>
+          <h4>${escapeHtml(result.message)}</h4>
+          ${choicesHtml}
+        </div>
+      `;
+    }
+    return `
+      <div class="fx-ai-decision-card fx-ai-backup-card">
+        <div class="fx-ai-decision-kicker">Info</div>
+        <h4>${escapeHtml(result.message)}</h4>
+      </div>
+    `;
+  }
+
+  async function handleUserInput(text) {
+    const thinking = addThinkingMessage();
+    const aiResult = await sendToAI(text);
+    removeThinkingMessage(thinking);
+    const messageHtml = renderAIResult(aiResult);
+    addMessage("assistant", messageHtml, true);
+
+    // Attach event listeners to any choice buttons
+    if (aiResult.type === "question" && aiResult.choices) {
+      setTimeout(() => {
+        document.querySelectorAll("[data-choice]").forEach(btn => {
+          btn.removeEventListener("click", choiceHandler);
+          btn.addEventListener("click", choiceHandler);
+        });
+      }, 50);
     } else {
-      addMessage("assistant", result.message || "I couldn't determine the answer. Please open the guide manually.", false);
-      setSuggestions([{ label: "Open Guide", onClick: () => window.open("Correction Code Guide.html", "_blank") }]);
+      // After answer, offer to ask another question
+      setSuggestions([
+        { label: "Ask another question", onClick: () => clearChatAndShowWelcome() }
+      ]);
     }
   }
 
-  function clearChat() {
-    const els = getEls();
-    if (els.messages) els.messages.innerHTML = "";
-    clearSuggestions();
+  function choiceHandler(e) {
+    const choice = e.currentTarget.getAttribute("data-choice");
+    if (choice) handleUserInput(choice);
   }
 
-  function showWelcome() {
-    addMessage("assistant", "Hi, I'm your AI Decision Assistant. Ask me for a correction code in plain English.\n\nExample: 'What correction code should I use if the biller entered the wrong terms but the BOL was clear?'", false);
-    setSuggestions([
-      { label: "Weight update correction code", onClick: () => sendToBackend("What is the correction code for a weight update?") },
-      { label: "Biller error, BOL clear", onClick: () => sendToBackend("The biller entered wrong terms but the BOL was clear. What correction code?") },
-    ]);
-  }
-
-  // Panel controls
-  function openPanel() {
-    const els = getEls();
-    if (!els.panel) return;
-    els.panel.classList.remove("hidden");
-    state.isOpen = true;
-    saveState();
-    setTimeout(() => els.input?.focus(), 60);
-  }
-  function closePanel() { const els = getEls(); if (els.panel) { els.panel.classList.add("hidden"); state.isOpen = false; saveState(); } }
-  function autoresizeInput() { const els = getEls(); if (!els.input) return; els.input.style.height = "auto"; els.input.style.height = Math.min(els.input.scrollHeight, 96) + "px"; }
   async function sendInput() {
     const els = getEls();
     const text = els.input?.value.trim();
@@ -179,27 +207,75 @@
     els.input.value = "";
     autoresizeInput();
     addMessage("user", text);
-    await sendToBackend(text);
+    await handleUserInput(text);
   }
 
+  function clearChatAndShowWelcome() {
+    const els = getEls();
+    if (els.messages) els.messages.innerHTML = "";
+    conversationHistory = [];
+    clearSuggestions();
+    addMessage("assistant", "Hi, I'm your AI Decision Assistant. I can answer any correction code question in plain English.\n\nExample: 'What correction code should I use if the biller entered wrong terms but the BOL was clear?'", false);
+    setSuggestions([
+      { label: "Weight update code", onClick: () => handleUserInput("What is the correction code for a weight update?") },
+      { label: "Biller error, BOL clear", onClick: () => handleUserInput("The biller entered the wrong terms but the BOL was clear. What code?") }
+    ]);
+  }
+
+  // UI controls
+  function openPanel() {
+    const els = getEls();
+    if (!els.panel) return;
+    els.panel.classList.remove("hidden");
+    state.isOpen = true;
+    saveState();
+    if (!preloadStarted) {
+      preloadStarted = true;
+      loadNodes();
+    }
+    setTimeout(() => els.input?.focus(), 60);
+  }
+  function closePanel() {
+    const els = getEls();
+    if (!els.panel) return;
+    els.panel.classList.add("hidden");
+    state.isOpen = false;
+    saveState();
+  }
+  function autoresizeInput() {
+    const els = getEls();
+    if (!els.input) return;
+    els.input.style.height = "auto";
+    els.input.style.height = Math.min(els.input.scrollHeight, 96) + "px";
+  }
   function bindEvents() {
     const els = getEls();
     if (!els.launcher) return;
-    els.launcher.onclick = openPanel;
+    els.launcher.addEventListener("click", openPanel);
     els.close?.addEventListener("click", closePanel);
     els.minimize?.addEventListener("click", closePanel);
     els.send?.addEventListener("click", sendInput);
     els.input?.addEventListener("input", autoresizeInput);
-    els.input?.addEventListener("keydown", async e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); await sendInput(); } });
+    els.input?.addEventListener("keydown", async e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        await sendInput();
+      }
+    });
+    els.toolbarButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const action = btn.getAttribute("data-ai-action");
+        if (action === "find-guide") clearChatAndShowWelcome();
+        if (action === "clear-chat") clearChatAndShowWelcome();
+      });
+    });
   }
-
   function boot() {
     loadState();
     bindEvents();
-    showWelcome();
+    clearChatAndShowWelcome();
     if (state.isOpen) openPanel();
   }
-
   function waitForMarkup() {
     let tries = 0;
     const timer = setInterval(() => {
@@ -207,7 +283,8 @@
         clearInterval(timer);
         boot();
       }
-      if (++tries > 80) clearInterval(timer);
+      tries++;
+      if (tries > 80) { clearInterval(timer); console.error("Assistant markup not found."); }
     }, 80);
   }
   waitForMarkup();
