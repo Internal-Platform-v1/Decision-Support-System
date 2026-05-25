@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   console.log("[Loader] Folder:", folder);
   try {
     const response = await fetch(`${folder}ai-assistant.html`);
-    if (!response.ok) throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     target.innerHTML = await response.text();
     console.log("[Loader] HTML loaded");
     // Load CSS
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     link.href = `${folder}ai-assistant.css`;
     document.head.appendChild(link);
     console.log("[Loader] CSS loading started");
-    // Load main ai-assistant.js (no guide-registry needed)
+    // Load main ai-assistant.js (no guide-registry)
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
       script.src = `${folder}ai-assistant.js`;
