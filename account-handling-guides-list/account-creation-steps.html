@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Account Creation Guide | Step-by-Step Walkthrough</title>
+  <title>Account Creation | Step‑by‑Step Guide</title>
 
   <script>
     window.SITE_BASE = "../";
@@ -30,38 +30,25 @@
       appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
     };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
     window.auth.onAuthStateChanged(async function(user) {
       try {
-        if (!user) {
-          window.location.replace("../index.html");
-          return;
-        }
+        if (!user) { window.location.replace("../index.html"); return; }
         await user.reload();
-        const refreshedUser = window.auth.currentUser;
-        if (!refreshedUser || !refreshedUser.emailVerified) {
-          window.location.replace("../index.html");
-          return;
-        }
-        document.documentElement.classList.remove("page-protected");
-      } catch (error) {
-        console.error("Auth guard error:", error);
-        window.location.replace("../index.html");
-      }
+        if (!window.auth.currentUser?.emailVerified) window.location.replace("../index.html");
+        else document.documentElement.classList.remove("page-protected");
+      } catch { window.location.replace("../index.html"); }
     });
   </script>
 
+  <!-- ========== STYLES (IDENTICAL TO ePRS GUIDE) ========== -->
   <style>
-    /* ----- BASE STYLES (ePRS design system with account guide extensions) ----- */
-    html.page-protected,
-    html.page-protected body { visibility: hidden; }
-
+    /* --- full ePRS style block (exactly as reference) --- */
+    html.page-protected, html.page-protected body { visibility: hidden; }
     :root {
       --bg:#07111f; --bg-soft:#0c1728; --panel:#0f1c31; --panel-2:#12233d;
       --card:#ffffff; --card-soft:#f8fafc; --text:#0f172a; --text-soft:#475569;
@@ -137,14 +124,7 @@
     .step-body::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:linear-gradient(180deg,#4d148c,#ff6600); }
     .step-title{ margin:0; font-size:clamp(28px,3vw,44px); line-height:1.05; letter-spacing:-.06em; font-weight:900; color:#0f172a; }
     .step-content{ margin-top:18px; font-size:15px; line-height:1.85; color:#475569; white-space:pre-line; max-width:960px; }
-    .step-images{ display:flex; flex-direction:column; gap:18px; margin-top:24px; }
-    .step-images img{ width:100%; max-height:460px; object-fit:contain; border-radius:20px; border:1px solid #e5e7eb; background:#fff; box-shadow:0 18px 45px rgba(15,23,42,.14); cursor:zoom-in; transition:.25s ease; }
-    .step-images img:hover{ transform:scale(1.015); box-shadow:0 24px 60px rgba(15,23,42,.22); }
-    .decision-buttons{ display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; justify-content:center; }
-    .decision-btn{ border:none; cursor:pointer; min-height:50px; padding:0 18px; border-radius:16px; color:#fff; background:linear-gradient(135deg,#4d148c,#6d28d9); font-size:13px; font-weight:900; box-shadow:0 14px 24px rgba(77,20,140,.18); transition:.2s ease; }
-    .decision-btn:hover{ transform:translateY(-2px); box-shadow:0 18px 30px rgba(77,20,140,.24); }
-    .decision-btn.orange{ background:linear-gradient(135deg,#ff6600,#f59e0b); box-shadow:0 14px 24px rgba(255,102,0,.18); }
-    .step-navigation{ display:flex; justify-content:space-between; gap:12px; margin-top:24px; }
+    .step-navigation{ display:flex; justify-content:space-between; gap:12px; margin-top:18px; }
     .step-nav-btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; padding:0 20px; border:none; border-radius:16px; font-size:14px; font-weight:900; cursor:pointer; transition:.2s ease; }
     .step-nav-btn:hover{ transform:translateY(-2px); }
     .step-nav-btn.prev{ background:#f8fafc; color:#334155; border:1px solid #dbe4f0; }
@@ -164,11 +144,11 @@
     .metric{ padding:14px; border-radius:18px; background:#f8fafc; border:1px solid #e7edf4; }
     .metric-k{ display:block; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:#64748b; font-weight:800; margin-bottom:6px; }
     .metric-v{ font-size:18px; font-weight:900; letter-spacing:-.03em; word-break:break-word; }
-    .path-list{ display:flex; flex-direction:column; gap:6px; overflow:visible; max-height:620px; padding-right:4px; }
+    .path-list{ display:flex; flex-direction:column; gap:6px; overflow:visible; max-height:none; padding-right:0; }
     .path-jump{ width:100%; text-align:left; padding:8px 9px; border-radius:13px; background:#f8fafc; border:1px solid #e7edf4; cursor:pointer; transition:.18s ease; display:flex; gap:8px; align-items:flex-start; color:#0f172a; }
     .path-jump:hover{ transform:translateY(-1px); background:#eef4ff; border-color:#cfe0ff; box-shadow:0 8px 18px rgba(37,99,235,.08); }
     .path-jump.active{ border:2px solid #2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.10); }
-    .path-jump span{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:10px; font-weight:900; flex:0 0 auto; }
+    .path-jump span{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:10px; font-weight:900; flex:0 0 auto; transition:all .18s ease; }
     .path-jump.active span{ background:#2563eb; color:#fff; }
     .path-jump strong{ display:block; font-size:11px; line-height:1.25; }
     .path-jump small{ display:block; margin-top:2px; color:#64748b; line-height:1.25; font-size:10px; font-weight:700; }
@@ -193,16 +173,9 @@
     .image-preview-modal img{ max-width:94vw; max-height:90vh; border-radius:18px; background:#fff; box-shadow:0 30px 80px rgba(0,0,0,.45); }
     .image-preview-close{ position:absolute; top:18px; right:18px; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.12); color:#fff; font-size:30px; cursor:pointer; transition:.2s ease; }
     .image-preview-close:hover{ background:rgba(255,255,255,.2); }
-    .step-body.animate-left{ animation:slideLeft .38s ease; }
-    .step-body.animate-right{ animation:slideRight .38s ease; }
-    @keyframes slideLeft{ from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
-    @keyframes slideRight{ from{opacity:0;transform:translateX(-40px)} to{opacity:1;transform:translateX(0)} }
 
-    /* Theme bridge (same as ePRS guide) */
-    body.theme-fedex,
-    body.theme-atlas,
-    body.theme-basic,
-    body.theme-simple{
+    /* Theme bridge (exactly as ePRS) */
+    body.theme-fedex, body.theme-atlas, body.theme-basic, body.theme-simple{
       --eprt-text:var(--theme-text, #0f172a);
       --eprt-muted:var(--theme-muted, #64748b);
       --eprt-primary:var(--theme-primary, #4d148c);
@@ -220,31 +193,28 @@
     body.theme-fedex .pill.primary, body.theme-atlas .pill.primary, body.theme-basic .pill.primary, body.theme-simple .pill.primary,
     body.theme-fedex .volume-btn, body.theme-atlas .volume-btn, body.theme-basic .volume-btn, body.theme-simple .volume-btn,
     body.theme-fedex .step-nav-btn.next, body.theme-atlas .step-nav-btn.next, body.theme-basic .step-nav-btn.next, body.theme-simple .step-nav-btn.next,
-    body.theme-fedex .step-viewer-title i, body.theme-atlas .step-viewer-title i, body.theme-basic .step-viewer-title i, body.theme-simple .step-viewer-title i,
-    body.theme-fedex .decision-btn:not(.orange), body.theme-atlas .decision-btn:not(.orange), body.theme-basic .decision-btn:not(.orange), body.theme-simple .decision-btn:not(.orange){
-      background:var(--eprt-button) !important;
-      color:#ffffff !important;
+    body.theme-fedex .step-viewer-title i, body.theme-atlas .step-viewer-title i, body.theme-basic .step-viewer-title i, body.theme-simple .step-viewer-title i {
+      background:var(--eprt-button) !important; color:#fff !important;
     }
     body.theme-fedex .progress-fill, body.theme-atlas .progress-fill, body.theme-basic .progress-fill, body.theme-simple .progress-fill,
-    body.theme-fedex .mini-progress-fill, body.theme-atlas .mini-progress-fill, body.theme-basic .mini-progress-fill, body.theme-simple .mini-progress-fill{
+    body.theme-fedex .mini-progress-fill, body.theme-atlas .mini-progress-fill, body.theme-basic .mini-progress-fill, body.theme-simple .mini-progress-fill {
       background:var(--eprt-progress) !important;
     }
     body.theme-fedex .question-card, body.theme-atlas .question-card, body.theme-basic .question-card, body.theme-simple .question-card,
-    body.theme-fedex .step-body, body.theme-atlas .step-body, body.theme-basic .step-body, body.theme-simple .step-body{
+    body.theme-fedex .step-body, body.theme-atlas .step-body, body.theme-basic .step-body, body.theme-simple .step-body {
       background: radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
                   linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
       border-color:var(--eprt-line) !important;
     }
-    body.theme-fedex .step-body::before, body.theme-atlas .step-body::before, body.theme-basic .step-body::before, body.theme-simple .step-body::before{
+    body.theme-fedex .step-body::before, body.theme-atlas .step-body::before, body.theme-basic .step-body::before, body.theme-simple .step-body::before {
       background:var(--eprt-progress) !important;
     }
-    body.theme-fedex .path-jump.active, body.theme-atlas .path-jump.active, body.theme-basic .path-jump.active, body.theme-simple .path-jump.active{
+    body.theme-fedex .path-jump.active, body.theme-atlas .path-jump.active, body.theme-basic .path-jump.active, body.theme-simple .path-jump.active {
       border-color:var(--eprt-accent) !important;
       box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
     }
     body.theme-fedex .path-jump.active span, body.theme-atlas .path-jump.active span, body.theme-basic .path-jump.active span, body.theme-simple .path-jump.active span {
-      background: var(--eprt-accent) !important;
-      color: #ffffff !important;
+      background: var(--eprt-accent) !important; color:#fff !important;
     }
     @media (max-width:1450px){ .app-frame{ grid-template-columns:minmax(0,1fr) 340px 360px; } }
     @media (max-width:1220px){ .app-frame{ grid-template-columns:1fr; } .side-panel, .template-panel{ padding:0 18px 18px; } }
@@ -258,91 +228,290 @@
       <div class="app-frame">
         <main class="main">
           <div class="main-topbar">
-            <div class="page-title-block"><h1>Steps on How to Create an Account</h1><p class="page-subtitle">Create temporary Shipper/Consignee/Bill-To account, update details, validate profile, update print group, and submit correction request.</p></div>
+            <div class="page-title-block">
+              <h1>Steps on How to Create an Account</h1>
+              <p class="page-subtitle">Create temporary Shipper, Consignee, or Bill‑To account, update customer details, validate profile, update print group, and submit correction request.</p>
+            </div>
             <div class="main-status"><div class="pill primary"><i class="fa-solid fa-user-plus"></i> Account Creation</div></div>
           </div>
           <div class="workspace">
-            <section class="progress-card"><div class="progress-head"><div class="progress-title">Guide Progress</div><div class="progress-status" id="progressText">Step 1 of 18</div></div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></section>
-            <section class="stage-area"><div class="stage-card"><div class="stage-top"><span class="badge"><i class="fa-solid fa-user-plus"></i> Customer Account Workflow</span><span class="badge alt"><i class="fa-solid fa-keyboard"></i> Arrow Keys Supported</span></div>
-              <div class="question-wrap">
-                <section class="question-card"><div class="question-label"><i class="fa-solid fa-route"></i> Account Creation Workflow</div><h2 class="question-text">Create the customer account carefully without changing the address incorrectly.</h2><p class="question-help">Follow each step to remove the existing account code, enter the customer name and complete address, create the temporary account, wait for profile population, update the print group, and complete the correction request.</p><div class="step-actions"><button class="volume-btn" onclick="goToStep('step1')">Start Walkthrough <i class="fa-solid fa-arrow-right"></i></button></div></section>
-                <section class="step-viewer"><div class="step-viewer-head"><div class="step-viewer-title"><i class="fa-solid fa-display"></i> Guided Account Creation</div><span class="badge alt"><i class="fa-solid fa-circle-check"></i> Interactive guide</span></div>
-                  <div class="step-shell"><div class="step-top"><div class="step-counter" id="stepCounter"></div><div class="mini-progress-bar"><div class="mini-progress-fill" id="miniProgressFill"></div></div></div>
-                    <div class="step-body" id="stepBody"><h2 class="step-title" id="stepTitle"></h2><div class="step-content" id="stepContent"></div><div class="step-images" id="stepImages"></div><div id="decisionButtons" class="decision-buttons"></div></div>
-                    <div class="step-navigation"><button class="step-nav-btn prev" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button><button class="step-nav-btn next" id="nextBtn">Next <i class="fa-solid fa-arrow-right"></i></button></div>
-                    <div id="stepDots" class="step-dots"></div>
-                  </div>
-                </section>
+            <section class="progress-card">
+              <div class="progress-head"><div class="progress-title">Guide Progress</div><div class="progress-status" id="progressText">Step 1 of 18</div></div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            </section>
+            <section class="stage-area">
+              <div class="stage-card">
+                <div class="stage-top">
+                  <span class="badge"><i class="fa-solid fa-user-plus"></i> Customer Account Workflow</span>
+                  <span class="badge alt"><i class="fa-solid fa-keyboard"></i> Arrow Keys Supported</span>
+                </div>
+                <div class="question-wrap">
+                  <section class="question-card">
+                    <div class="question-label"><i class="fa-solid fa-route"></i> Account Creation Workflow</div>
+                    <h2 class="question-text">Create the customer account carefully without changing the address incorrectly.</h2>
+                    <p class="question-help">Follow each step to remove existing account code, enter customer name and complete address, create temporary account, wait for profile population, update print group, and complete correction request.</p>
+                    <div class="step-actions"><button class="volume-btn" onclick="exploreSteps()">Start Walkthrough <i class="fa-solid fa-arrow-right"></i></button></div>
+                  </section>
+                  <section class="step-viewer" id="stepsSection">
+                    <div class="step-viewer-head"><div class="step-viewer-title"><i class="fa-solid fa-display"></i> Guided Account Creation</div><span class="badge alt"><i class="fa-solid fa-circle-check"></i> Interactive guide</span></div>
+                    <div class="step-shell">
+                      <div class="step-top"><div class="step-counter" id="stepCounter"></div><div class="mini-progress-bar"><div class="mini-progress-fill" id="miniProgressFill"></div></div></div>
+                      <div class="step-body" id="stepBody">
+                        <h2 class="step-title" id="stepTitle"></h2>
+                        <div class="step-content" id="stepContent"></div>
+                        <div class="step-images" id="stepImages" style="margin-top:24px; display:flex; flex-direction:column; gap:18px;"></div>
+                        <div id="decisionButtons" style="display:none; gap:12px; flex-wrap:wrap; margin-top:24px; justify-content:center;"></div>
+                      </div>
+                      <div class="step-navigation"><button class="step-nav-btn prev" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button><button class="step-nav-btn next" id="nextBtn">Next <i class="fa-solid fa-arrow-right"></i></button></div>
+                      <div id="stepDots" class="step-dots"></div>
+                    </div>
+                  </section>
+                </div>
               </div>
-            </div></section>
+            </section>
           </div>
         </main>
         <aside class="side-panel">
-          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-route"></i> Quick Jump</div><div id="quickJumpList" class="path-list"></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Key Reminders</div><div class="reminder-list"><div class="reminder"><i class="fa-solid fa-circle-exclamation"></i><span>Never update the address when removing the old account number.</span></div><div class="reminder"><i class="fa-solid fa-circle-exclamation"></i><span>Do not use a PO Box when entering the customer address.</span></div><div class="reminder"><i class="fa-solid fa-circle-exclamation"></i><span>If new account does not populate, wait 5–10 minutes – do NOT create another.</span></div></div></div>
           <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div><div class="summary-grid"><div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">0</span></div><div class="metric"><span class="metric-k">Images</span><span class="metric-v" id="metricImages">0</span></div><div class="metric"><span class="metric-k">Decision Points</span><span class="metric-v">2</span></div><div class="metric"><span class="metric-k">Flow</span><span class="metric-v">Account</span></div></div></div>
-          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-triangle-exclamation"></i> Important Reminders</div><div class="reminder-list"><div class="reminder"><i class="fa-solid fa-circle-exclamation"></i><span>Never update the address when removing the old account number at the start.</span></div><div class="reminder"><i class="fa-solid fa-circle-exclamation"></i><span>Do not use a PO Box when entering the customer address.</span></div><div class="reminder"><i class="fa-solid fa-circle-exclamation"></i><span>If the new account does not populate right away, wait 5–10 minutes.</span></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-route"></i> Quick Jump</div><div id="quickJumpList" class="path-list"></div></div>
         </aside>
-        <aside class="template-panel"><div class="summary-card"><div class="summary-head"><i class="fa-solid fa-clipboard-list"></i> Copy Templates</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-print"></i></div><div><div class="template-title">Print Group Comment</div><div class="template-sub">Use after updating PG</div></div></div></div><div class="template-body"><div id="pgComment" class="template-box">VS-BLER-CASE#-UPDATED PG TO REGI/BADA TO REMOVE FROM TEMP AUDIT</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-comment"></i> Comment</span><button class="template-copy" onclick="copyText('pgComment', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-file-pen"></i></div><div><div class="template-title">Correction Request</div><div class="template-sub">Final correction entry</div></div></div></div><div class="template-body"><div id="correctionComment" class="template-box">VS-BLER-CASE#-CREATED SHIPPER/CONSIGNEE/BT ACCOUNT AS THIS WAS A 6 DIGIT CENTER CODE\n\nCORR ACCR</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-clipboard-check"></i> Final</span><button class="template-copy" onclick="copyText('correctionComment', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-envelope-open-text"></i></div><div><div class="template-title">Manual Invoice Reminder</div><div class="template-sub">Personal / Residential path</div></div></div></div><div class="template-body"><div id="manualInvoiceNote" class="template-box">Manually send an invoice using:\n\nREGI – Shipping Code\nBADA – Billing Code\n\nInclude this in your comment.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-circle-info"></i> Reminder</span><button class="template-copy" onclick="copyText('manualInvoiceNote', this)">Copy</button></div></div></div></div></aside>
+        <aside class="template-panel">
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-clipboard-list"></i> Copy Templates</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-print"></i></div><div><div class="template-title">Print Group Comment</div><div class="template-sub">Use after updating PG</div></div></div></div><div class="template-body"><div id="pgComment" class="template-box">VS-BLER-CASE#-UPDATED PG TO REGI/BADA TO REMOVE FROM TEMP AUDIT</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-comment"></i> Comment</span><button class="template-copy" onclick="copyText('pgComment', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-file-pen"></i></div><div><div class="template-title">Correction Request</div><div class="template-sub">Final correction entry</div></div></div></div><div class="template-body"><div id="correctionComment" class="template-box">VS-BLER-CASE#-CREATED SHIPPER/CONSIGNEE/BT ACCOUNT AS THIS WAS A 6 DIGIT CENTER CODE\n\nCORR ACCR</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-clipboard-check"></i> Final</span><button class="template-copy" onclick="copyText('correctionComment', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-envelope-open-text"></i></div><div><div class="template-title">Manual Invoice Reminder</div><div class="template-sub">Personal / Residential path</div></div></div></div><div class="template-body"><div id="manualInvoiceNote" class="template-box">Manually send an invoice using:\n\nREGI – Shipping Code\nBADA – Billing Code\n\nInclude this in your comment.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-circle-info"></i> Reminder</span><button class="template-copy" onclick="copyText('manualInvoiceNote', this)">Copy</button></div></div></div></div>
+        </aside>
       </div>
     </div>
     <div id="site-footer"></div>
   </div>
   <div id="imagePreviewModal" class="image-preview-modal"><span class="image-preview-close">×</span><img id="imagePreview" src="" alt="Preview"></div>
-  <script src="../assets/js/header-loader.js"></script><script src="../assets/js/header.js"></script><script src="../assets/js/footer-loader.js"></script><script src="../assets/js/theme-loader.js"></script>
+
+  <script src="../assets/js/header-loader.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer-loader.js"></script>
+  <script src="../assets/js/theme-loader.js"></script>
+
   <script>
-    // ==================== ACCOUNT CREATION STEPS (preserved from original guide) ====================
+    // ========== ACCOUNT CREATION STEPS (preserving original content, images, branching) ==========
     const steps = {
-      step1:{ title:"Update the Account", images:["steps-images/step1.png"], content:`Remove the account number and update the name to the Shipper / Consignee / BT account.\n\n⚠ NEVER UPDATE THE ADDRESS.`, next:"step2" },
-      step2:{ title:"Place Cursor in Account Field", images:["steps-images/step2.png"], content:`Place the cursor in the Shipper / Consignee / BT number field.`, next:"step3" },
-      step3:{ title:"Remove the Account Code", images:["steps-images/step3.png"], content:`Use the SPACE BAR to remove the account code.`, next:"step4" },
-      step4:{ title:"Enter the Customer Name", images:["steps-images/step4.png"], content:`Enter the name for the Shipper / Consignee / BT.`, next:"step5" },
-      step5:{ title:"Enter Complete Address", images:["steps-images/step5.png"], content:`Ensure address includes street, city, state, ZIP and country (US).\n\n⚠ Do NOT use a PO BOX.`, next:"step6" },
-      step6:{ title:"Remove Extra Numbers", images:["steps-images/step6.png"], content:`Remove any numbers after the Country field.`, next:"step7" },
-      step7:{ title:"Accept Changes", images:["steps-images/step7.png"], content:`Click Accept All or press F6.`, next:"step8" },
-      step8:{ title:"Confirm Temporary Account", images:["steps-images/step8.png"], content:`Click YES to create the temporary account.`, next:"step9" },
-      step9:{ title:"Temporary Account Created", images:["steps-images/step9.png"], content:`A new Shipper / Consignee / BT account will appear.\n\nAllow 2–3 minutes for processing.`, next:"step9_copy" },
-      step9_copy:{ title:"Copy the Account Number", images:["steps-images/step9_copy.png"], content:`Copy the newly created account number and paste it in your tracker.`, next:"step9_check" },
-      step9_check:{ title:"Check Customer Profile", content:`Does FBC populate the newly created account details when you click the Customer Profile?`, buttons:[{label:"YES", goto:"step10"},{label:"NO", goto:"step9_wait"}] },
-      step9_wait:{ title:"Account Still Processing", content:`Skip the PRO or place it on pending.\n\nGo back after 5–10 minutes.\n\n⚠ DO NOT ATTEMPT TO CREATE ANOTHER ACCOUNT.`, next:"step9_check" },
-      step10:{ title:"Update Print Group", content:`Update the PRINT GROUP of the newly created account.\n\nIs the account:`, buttons:[{label:"Personal / Residential", goto:"personal_invoice"},{label:"Company / Corporate", goto:"corp_invoice_profile"}] },
-      personal_invoice:{ title:"Send Invoice Manually", content:`Manually send an invoice using:\n\nREGI – Shipping Code\nBADA – Billing Code\n\nInclude this in your comment.`, next:"refresh_pro" },
-      corp_invoice_profile:{ title:"Open Invoice Profile", images:["steps-images/stepA.png"], content:`Click Invoice Profile.`, next:"corp_print_group" },
-      corp_print_group:{ title:"Enter Invoice / Print Group", images:["steps-images/stepB.png"], content:`Enter the new Invoice / Print Group:\n\nREGI (Shipping Code)\nBADA (Billing Code)`, next:"corp_save" },
-      corp_save:{ title:"Save the Update", images:["steps-images/stepC.png"], content:`Click ✓ to save.`, next:"corp_comment" },
-      corp_comment:{ title:"Add Comment", images:["steps-images/stepD.jpg"], content:`Click Comments → Add Comment\n\nComment Type: General Information\n\nEnter:\n\nVS-BLER-CASE#-UPDATED PG TO REGI/BADA TO REMOVE FROM TEMP AUDIT`, next:"refresh_pro" },
-      refresh_pro:{ title:"Refresh the PRO", content:`Go back to the PRO and refresh the account by updating the terms.\n\nAdd BT back if there is one so the new print group will reflect.`, next:"correction_request" },
-      correction_request:{ title:"Enter Correction Request", content:`Enter the correction request:\n\nVS-BLER-CASE#-CREATED SHIPPER/CONSIGNEE/BT ACCOUNT AS THIS WAS A 6 DIGIT CENTER CODE\n\nCORR ACCR` }
+      step1: { title: "Update the Account", images: ["steps-images/step1.png"], content: `Remove the account number and update the name to the Shipper / Consignee / BT account.\n\n⚠ NEVER UPDATE THE ADDRESS.`, next: "step2" },
+      step2: { title: "Place Cursor in Account Field", images: ["steps-images/step2.png"], content: `Place the cursor in the Shipper / Consignee / BT number field.`, next: "step3" },
+      step3: { title: "Remove the Account Code", images: ["steps-images/step3.png"], content: `Use the SPACE BAR to remove the account code.`, next: "step4" },
+      step4: { title: "Enter the Customer Name", images: ["steps-images/step4.png"], content: `Enter the name for the Shipper / Consignee / BT.`, next: "step5" },
+      step5: { title: "Enter Complete Address", images: ["steps-images/step5.png"], content: `Ensure address includes street, city, state, ZIP and country (US).\n\n⚠ Do NOT use a PO BOX.`, next: "step6" },
+      step6: { title: "Remove Extra Numbers", images: ["steps-images/step6.png"], content: `Remove any numbers after the Country field.`, next: "step7" },
+      step7: { title: "Accept Changes", images: ["steps-images/step7.png"], content: `Click Accept All or press F6.`, next: "step8" },
+      step8: { title: "Confirm Temporary Account", images: ["steps-images/step8.png"], content: `Click YES to create the temporary account.`, next: "step9" },
+      step9: { title: "Temporary Account Created", images: ["steps-images/step9.png"], content: `A new Shipper / Consignee / BT account will appear.\n\nAllow 2–3 minutes for processing.`, next: "step9_copy" },
+      step9_copy: { title: "Copy the Account Number", images: ["steps-images/step9_copy.png"], content: `Copy the newly created account number and paste it in your tracker.`, next: "step9_check" },
+      step9_check: { title: "Check Customer Profile", content: `Does FBC populate the newly created account details when you click the Customer Profile?`, buttons: [{ label: "YES", goto: "step10" }, { label: "NO", goto: "step9_wait" }] },
+      step9_wait: { title: "Account Still Processing", content: `Skip the PRO or place it on pending.\n\nGo back after 5–10 minutes.\n\n⚠ DO NOT ATTEMPT TO CREATE ANOTHER ACCOUNT.`, next: "step9_check" },
+      step10: { title: "Update Print Group", content: `Update the PRINT GROUP of the newly created account.\n\nIs the account:`, buttons: [{ label: "Personal / Residential", goto: "personal_invoice" }, { label: "Company / Corporate", goto: "corp_invoice_profile" }] },
+      personal_invoice: { title: "Send Invoice Manually", content: `Manually send an invoice using:\n\nREGI – Shipping Code\nBADA – Billing Code\n\nInclude this in your comment.`, next: "refresh_pro" },
+      corp_invoice_profile: { title: "Open Invoice Profile", images: ["steps-images/stepA.png"], content: `Click Invoice Profile.`, next: "corp_print_group" },
+      corp_print_group: { title: "Enter Invoice / Print Group", images: ["steps-images/stepB.png"], content: `Enter the new Invoice / Print Group:\n\nREGI (Shipping Code)\nBADA (Billing Code)`, next: "corp_save" },
+      corp_save: { title: "Save the Update", images: ["steps-images/stepC.png"], content: `Click ✓ to save.`, next: "corp_comment" },
+      corp_comment: { title: "Add Comment", images: ["steps-images/stepD.jpg"], content: `Click Comments → Add Comment\n\nComment Type: General Information\n\nEnter:\n\nVS-BLER-CASE#-UPDATED PG TO REGI/BADA TO REMOVE FROM TEMP AUDIT`, next: "refresh_pro" },
+      refresh_pro: { title: "Refresh the PRO", content: `Go back to the PRO and refresh the account by updating the terms.\n\nAdd BT back if there is one so the new print group will reflect.`, next: "correction_request" },
+      correction_request: { title: "Enter Correction Request", content: `Enter the correction request:\n\nVS-BLER-CASE#-CREATED SHIPPER/CONSIGNEE/BT ACCOUNT AS THIS WAS A 6 DIGIT CENTER CODE\n\nCORR ACCR` }
     };
+
     const stepOrder = Object.keys(steps);
-    let currentStep = "step1", stepHistory = [];
-    // DOM elements
-    const stepTitle = document.getElementById("stepTitle"), stepContent = document.getElementById("stepContent"), stepImages = document.getElementById("stepImages");
-    const stepCounter = document.getElementById("stepCounter"), miniProgressFill = document.getElementById("miniProgressFill"), progressFill = document.getElementById("progressFill"), progressText = document.getElementById("progressText");
-    const prevBtn = document.getElementById("prevBtn"), nextBtn = document.getElementById("nextBtn"), stepDots = document.getElementById("stepDots"), stepBody = document.getElementById("stepBody"), decisionButtonsDiv = document.getElementById("decisionButtons");
-    const metricSteps = document.getElementById("metricSteps"), metricImages = document.getElementById("metricImages"), quickJumpList = document.getElementById("quickJumpList");
-    function getStepIndex(key){ return stepOrder.indexOf(key); }
-    function animateSlide(direction){ stepBody.classList.remove("animate-left","animate-right"); void stepBody.offsetWidth; stepBody.classList.add(direction === "back" ? "animate-right" : "animate-left"); }
-    function renderQuickJump(){ if(quickJumpList){ quickJumpList.innerHTML=""; stepOrder.forEach((key,i)=>{ const step=steps[key]; const btn=document.createElement("button"); btn.className="path-jump"; btn.type="button"; btn.dataset.jump=key; btn.innerHTML=`<span>${i+1}</span><div><strong>${escapeHtml(step.title.substring(0,42))}</strong><small>Step ${i+1}</small></div>`; btn.onclick=()=>goToStep(key); quickJumpList.appendChild(btn); }); } }
-    function updateQuickJumpActive(){ document.querySelectorAll(".path-jump").forEach(btn=>{ btn.classList.toggle("active", btn.dataset.jump===currentStep); }); }
-    function renderDots(){ stepDots.innerHTML=""; stepOrder.forEach((key,i)=>{ const dot=document.createElement("div"); dot.className="step-dot"; if(key===currentStep) dot.classList.add("active"); dot.onclick=()=>{ if(key!==currentStep){ stepHistory.push(currentStep); currentStep=key; animateSlide("next"); renderStep(); } }; stepDots.appendChild(dot); }); }
-    function computeTotalImages(){ let total=0; stepOrder.forEach(k=>{ if(steps[k].images) total+=steps[k].images.length; }); return total; }
-    function renderStep(){
-      const step = steps[currentStep], idx = getStepIndex(currentStep), total = stepOrder.length, progress = ((idx+1)/total)*100;
-      stepTitle.textContent = step.title; stepContent.innerHTML = step.content || "";
-      stepImages.innerHTML = ""; if(step.images) step.images.forEach(img=>{ const image=document.createElement("img"); image.src=img; image.alt=step.title; stepImages.appendChild(image); });
-      decisionButtonsDiv.innerHTML = ""; if(step.buttons){ decisionButtonsDiv.style.display="flex"; step.buttons.forEach((btn,i)=>{ const b=document.createElement("button"); b.className="decision-btn"+(i===1?" orange":""); b.textContent=btn.label; b.onclick=()=>{ stepHistory.push(currentStep); currentStep=btn.goto; animateSlide("next"); renderStep(); }; decisionButtonsDiv.appendChild(b); }); nextBtn.style.display="none"; } else{ decisionButtonsDiv.style.display="none"; nextBtn.style.display="inline-flex"; }
-      stepCounter.textContent = `Step ${idx+1} of ${total}`; progressText.textContent = `Step ${idx+1} of ${total}`; miniProgressFill.style.width=`${progress}%`; progressFill.style.width=`${progress}%`;
-      prevBtn.disabled = stepHistory.length===0; const isLast = !step.next && !step.buttons; nextBtn.classList.toggle("finish", isLast); nextBtn.innerHTML = isLast ? `Finish <i class="fa-solid fa-circle-check"></i>` : `Next <i class="fa-solid fa-arrow-right"></i>`;
-      metricSteps.textContent = total; metricImages.textContent = computeTotalImages(); renderDots(); updateQuickJumpActive();
+    let currentStep = "step1";
+    let stepHistory = [];
+
+    // DOM elements (match ePRS naming)
+    const stepTitle = document.getElementById("stepTitle");
+    const stepContent = document.getElementById("stepContent");
+    const stepImages = document.getElementById("stepImages");
+    const stepCounter = document.getElementById("stepCounter");
+    const miniProgressFill = document.getElementById("miniProgressFill");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const stepDots = document.getElementById("stepDots");
+    const stepBody = document.getElementById("stepBody");
+    const decisionButtonsDiv = document.getElementById("decisionButtons");
+    const metricStepsSpan = document.getElementById("metricSteps");
+    const metricImagesSpan = document.getElementById("metricImages");
+    const quickJumpList = document.getElementById("quickJumpList");
+
+    function getStepIndex(key) { return stepOrder.indexOf(key); }
+    function animateStep(direction) {
+      stepBody.classList.remove("animate-left", "animate-right");
+      void stepBody.offsetWidth;
+      stepBody.classList.add(direction === "back" ? "animate-right" : "animate-left");
     }
-    function goToStep(key){ if(!steps[key] || key===currentStep) return; stepHistory.push(currentStep); currentStep = key; animateSlide("next"); renderStep(); setTimeout(()=>{ document.querySelector(".step-viewer")?.scrollIntoView({behavior:"smooth",block:"start"}); },50); }
-    nextBtn.onclick = () => { const step = steps[currentStep]; animateSlide("next"); if(step.next){ stepHistory.push(currentStep); currentStep = step.next; renderStep(); } else if(!step.buttons){ alert("Account Creation Guide Completed."); currentStep = "step1"; stepHistory = []; renderStep(); } };
-    prevBtn.onclick = () => { if(stepHistory.length===0) return; animateSlide("back"); currentStep = stepHistory.pop(); renderStep(); };
-    document.addEventListener("keydown",e=>{ if(e.key==="ArrowRight" && nextBtn.style.display!=="none") nextBtn.click(); if(e.key==="ArrowLeft") prevBtn.click(); });
-    document.addEventListener("click",function(e){ if(e.target.matches(".step-images img")){ const modal=document.getElementById("imagePreviewModal"); document.getElementById("imagePreview").src=e.target.src; modal.style.display="flex"; } if(e.target.matches(".image-preview-close")||e.target.id==="imagePreviewModal"){ document.getElementById("imagePreviewModal").style.display="none"; } });
-    window.copyText = function(id,btn){ const el=document.getElementById(id); if(!el) return; const text=el.innerText.trim(); navigator.clipboard.writeText(text).then(()=>{ const old=btn.textContent; btn.classList.add("copied"); btn.textContent="Copied ✓"; setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent=old; },1400); }).catch(()=>{ const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); const old=btn.textContent; btn.classList.add("copied"); btn.textContent="Copied ✓"; setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent=old; },1400); }); };
-    function escapeHtml(str){ return String(str??"").replace(/[&<>]/g,function(m){ if(m==="&") return "&amp;"; if(m==="<") return "&lt;"; if(m===">") return "&gt;"; return m; }); }
-    renderQuickJump(); renderStep();
+    function computeTotalImages() { return stepOrder.reduce((sum, k) => sum + (steps[k].images ? steps[k].images.length : 0), 0); }
+
+    function renderQuickJump() {
+      if (!quickJumpList) return;
+      quickJumpList.innerHTML = "";
+      stepOrder.forEach((key, idx) => {
+        const step = steps[key];
+        const btn = document.createElement("button");
+        btn.className = "path-jump";
+        btn.type = "button";
+        btn.dataset.jump = key;
+        btn.innerHTML = `<span>${idx + 1}</span><div><strong>${escapeHtml(step.title.substring(0, 45))}</strong><small>Step ${idx + 1}</small></div>`;
+        btn.onclick = () => goToStep(key);
+        quickJumpList.appendChild(btn);
+      });
+    }
+    function updateQuickJumpActive() {
+      document.querySelectorAll(".path-jump").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.jump === currentStep);
+      });
+    }
+    function renderDots() {
+      stepDots.innerHTML = "";
+      stepOrder.forEach((key, idx) => {
+        const dot = document.createElement("div");
+        dot.className = "step-dot";
+        if (key === currentStep) dot.classList.add("active");
+        dot.onclick = () => { if (key !== currentStep) { stepHistory.push(currentStep); currentStep = key; animateStep("next"); renderStep(); } };
+        stepDots.appendChild(dot);
+      });
+    }
+    function renderStep() {
+      const step = steps[currentStep];
+      const idx = getStepIndex(currentStep);
+      const total = stepOrder.length;
+      const progress = ((idx + 1) / total) * 100;
+
+      stepTitle.textContent = step.title;
+      stepContent.innerHTML = step.content || "";
+
+      // images
+      stepImages.innerHTML = "";
+      if (step.images) {
+        step.images.forEach(imgSrc => {
+          const img = document.createElement("img");
+          img.src = imgSrc;
+          img.alt = step.title;
+          img.style.width = "100%";
+          img.style.maxHeight = "460px";
+          img.style.objectFit = "contain";
+          img.style.borderRadius = "20px";
+          img.style.cursor = "zoom-in";
+          stepImages.appendChild(img);
+        });
+      }
+
+      // decision buttons
+      decisionButtonsDiv.innerHTML = "";
+      if (step.buttons) {
+        decisionButtonsDiv.style.display = "flex";
+        step.buttons.forEach((btn, i) => {
+          const buttonEl = document.createElement("button");
+          buttonEl.className = "decision-btn" + (i === 1 ? " orange" : "");
+          buttonEl.textContent = btn.label;
+          buttonEl.onclick = () => {
+            stepHistory.push(currentStep);
+            currentStep = btn.goto;
+            animateStep("next");
+            renderStep();
+          };
+          decisionButtonsDiv.appendChild(buttonEl);
+        });
+        nextBtn.style.display = "none";
+      } else {
+        decisionButtonsDiv.style.display = "none";
+        nextBtn.style.display = "inline-flex";
+      }
+
+      stepCounter.textContent = `Step ${idx + 1} of ${total}`;
+      progressText.textContent = `Step ${idx + 1} of ${total}`;
+      miniProgressFill.style.width = `${progress}%`;
+      progressFill.style.width = `${progress}%`;
+      prevBtn.disabled = stepHistory.length === 0;
+
+      const isLast = !step.next && !step.buttons;
+      nextBtn.classList.toggle("finish", isLast);
+      nextBtn.innerHTML = isLast ? `Finish <i class="fa-solid fa-circle-check"></i>` : `Next <i class="fa-solid fa-arrow-right"></i>`;
+
+      metricStepsSpan.textContent = total;
+      metricImagesSpan.textContent = computeTotalImages();
+      renderDots();
+      updateQuickJumpActive();
+    }
+
+    function goToStep(key) {
+      if (!steps[key] || key === currentStep) return;
+      stepHistory.push(currentStep);
+      currentStep = key;
+      animateStep("next");
+      renderStep();
+      document.getElementById("stepsSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function exploreSteps() { goToStep("step1"); }
+
+    nextBtn.onclick = () => {
+      const step = steps[currentStep];
+      animateStep("next");
+      if (step.next) {
+        stepHistory.push(currentStep);
+        currentStep = step.next;
+        renderStep();
+      } else if (!step.buttons) {
+        alert("Account Creation Guide completed.");
+        currentStep = "step1";
+        stepHistory = [];
+        renderStep();
+      }
+    };
+    prevBtn.onclick = () => {
+      if (stepHistory.length === 0) return;
+      animateStep("back");
+      currentStep = stepHistory.pop();
+      renderStep();
+    };
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowRight" && nextBtn.style.display !== "none") nextBtn.click();
+      if (e.key === "ArrowLeft") prevBtn.click();
+    });
+
+    // image preview modal
+    const modal = document.getElementById("imagePreviewModal");
+    const modalImg = document.getElementById("imagePreview");
+    document.addEventListener("click", e => {
+      if (e.target.matches(".step-images img")) {
+        modal.style.display = "flex";
+        modalImg.src = e.target.src;
+      }
+      if (e.target.matches(".image-preview-close") || e.target.id === "imagePreviewModal") modal.style.display = "none";
+    });
+
+    window.copyText = function(id, btn) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = el.innerText.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        const old = btn.textContent;
+        btn.classList.add("copied");
+        btn.textContent = "Copied ✓";
+        setTimeout(() => { btn.classList.remove("copied"); btn.textContent = old; }, 1400);
+      }).catch(() => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.classList.add("copied");
+        btn.textContent = "Copied ✓";
+        setTimeout(() => { btn.classList.remove("copied"); btn.textContent = old; }, 1400);
+      });
+    };
+    function escapeHtml(str) { return String(str ?? "").replace(/[&<>]/g, m => m === "&" ? "&amp;" : m === "<" ? "&lt;" : "&gt;"); }
+
+    renderQuickJump();
+    renderStep();
+    window.goToStep = goToStep;
+    window.exploreSteps = exploreSteps;
   </script>
 </body>
 </html>
