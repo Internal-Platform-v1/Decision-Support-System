@@ -215,7 +215,7 @@
     if (els.messages) els.messages.innerHTML = "";
     conversationHistory = [];
     clearSuggestions();
-    addMessage("assistant", "Hi, I'm your AI Decision Assistant. I can answer any correction code question in plain English.\n\nExample: 'What correction code should I use if the biller entered wrong terms but the BOL was clear?'", false);
+    addMessage("assistant", "Hi, I'm your AI Decision Assistant. I can help you navigate billing dispute guides, find correction codes, resolve pricing issues, and more.", false);
     setSuggestions([
       { label: "Weight update code", onClick: () => handleUserInput("What is the correction code for a weight update?") },
       { label: "Biller error, BOL clear", onClick: () => handleUserInput("The biller entered the wrong terms but the BOL was clear. What code?") }
