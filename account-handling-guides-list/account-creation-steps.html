@@ -29,9 +29,7 @@
       messagingSenderId: "43574975434",
       appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
     };
-
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
@@ -132,7 +130,7 @@
     .step-nav-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
     .step-dots{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; }
     .step-dot{ width:11px; height:11px; border-radius:999px; background:#d1d5db; cursor:pointer; transition:.2s ease; }
-    .step-dot:hover{ transform:scale(1.3); background:#6d28d9; }
+    /* Removed hardcoded hover color – will be set by theme bridge */
     .step-dot.active{ width:30px; background:#ff6600; }
     .side-panel, .template-panel{ padding:18px 18px 18px 0; display:flex; flex-direction:column; gap:14px; min-width:0; }
     .side-panel{ padding-right:14px; }
@@ -177,7 +175,7 @@
     .decision-btn:hover{ transform:translateY(-2px); box-shadow:0 18px 30px rgba(77,20,140,.24); }
     .decision-btn.orange{ background:linear-gradient(135deg,#ff6600,#f59e0b); box-shadow:0 14px 24px rgba(255,102,0,.18); }
 
-    /* ========== FULL THEME BRIDGE (including decision buttons & step dots) ========== */
+    /* ========== FULL THEME BRIDGE (with step dots hover fixed) ========== */
     body.theme-fedex, body.theme-atlas, body.theme-basic, body.theme-simple{
       --eprt-text:var(--theme-text, #0f172a);
       --eprt-muted:var(--theme-muted, #64748b);
@@ -222,7 +220,7 @@
     body.theme-fedex .step-body::before, body.theme-atlas .step-body::before, body.theme-basic .step-body::before, body.theme-simple .step-body::before {
       background:var(--eprt-progress) !important;
     }
-    /* step dots */
+    /* step dots - hover uses theme primary, active uses theme accent */
     body.theme-fedex .step-dot, body.theme-atlas .step-dot, body.theme-basic .step-dot, body.theme-simple .step-dot {
       background: var(--eprt-line) !important;
     }
@@ -279,7 +277,7 @@
                     <div class="question-label"><i class="fa-solid fa-route"></i> Account Creation Workflow</div>
                     <h2 class="question-text">Create the customer account carefully without changing the address incorrectly.</h2>
                     <p class="question-help">Follow each step to remove existing account code, enter customer name and complete address, create temporary account, wait for profile population, update print group, and complete correction request.</p>
-                    <div class="step-actions"><button class="volume-btn" id="exploreStepsBtn">Explore Steps <i class="fa-solid fa-arrow-right"></i></button></div>
+                    <div class="step-actions"><button class="volume-btn" onclick="exploreSteps()">Explore Steps <i class="fa-solid fa-arrow-right"></i></button></div>
                   </section>
                   <section class="step-viewer" id="stepsSection">
                     <div class="step-viewer-head"><div class="step-viewer-title"><i class="fa-solid fa-display"></i> Guided Account Creation</div><span class="badge alt"><i class="fa-solid fa-circle-check"></i> Interactive guide</span></div>
@@ -473,11 +471,9 @@
 
     function exploreSteps() { goToStep("step1"); }
 
-    // Attach event listeners after DOM is fully loaded
-    document.addEventListener("DOMContentLoaded", function() {
-      const exploreBtn = document.getElementById("exploreStepsBtn");
-      if (exploreBtn) exploreBtn.addEventListener("click", exploreSteps);
-    });
+    // Make functions global for inline onclick
+    window.goToStep = goToStep;
+    window.exploreSteps = exploreSteps;
 
     nextBtn.onclick = () => {
       const step = steps[currentStep];
@@ -541,9 +537,6 @@
 
     renderQuickJump();
     renderStep();
-    // Make functions globally available
-    window.goToStep = goToStep;
-    window.exploreSteps = exploreSteps;
   </script>
 </body>
 </html>
