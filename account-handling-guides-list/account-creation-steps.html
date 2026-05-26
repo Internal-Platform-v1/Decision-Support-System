@@ -45,9 +45,8 @@
     });
   </script>
 
-  <!-- ========== STYLES (IDENTICAL TO ePRS GUIDE) ========== -->
+  <!-- ========== STYLES (IDENTICAL TO ePRS GUIDE, WITH THEME VARIABLES FIXED) ========== -->
   <style>
-    /* --- full ePRS style block (exactly as reference) --- */
     html.page-protected, html.page-protected body { visibility: hidden; }
     :root {
       --bg:#07111f; --bg-soft:#0c1728; --panel:#0f1c31; --panel-2:#12233d;
@@ -174,8 +173,11 @@
     .image-preview-close{ position:absolute; top:18px; right:18px; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.12); color:#fff; font-size:30px; cursor:pointer; transition:.2s ease; }
     .image-preview-close:hover{ background:rgba(255,255,255,.2); }
 
-    /* Theme bridge (exactly as ePRS) */
-    body.theme-fedex, body.theme-atlas, body.theme-basic, body.theme-simple{
+    /* ========== FULL THEME BRIDGE (fixes for reminders icons & step dots) ========== */
+    body.theme-fedex,
+    body.theme-atlas,
+    body.theme-basic,
+    body.theme-simple{
       --eprt-text:var(--theme-text, #0f172a);
       --eprt-muted:var(--theme-muted, #64748b);
       --eprt-primary:var(--theme-primary, #4d148c);
@@ -190,32 +192,220 @@
       --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
       --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
     }
-    body.theme-fedex .pill.primary, body.theme-atlas .pill.primary, body.theme-basic .pill.primary, body.theme-simple .pill.primary,
-    body.theme-fedex .volume-btn, body.theme-atlas .volume-btn, body.theme-basic .volume-btn, body.theme-simple .volume-btn,
-    body.theme-fedex .step-nav-btn.next, body.theme-atlas .step-nav-btn.next, body.theme-basic .step-nav-btn.next, body.theme-simple .step-nav-btn.next,
-    body.theme-fedex .step-viewer-title i, body.theme-atlas .step-viewer-title i, body.theme-basic .step-viewer-title i, body.theme-simple .step-viewer-title i {
-      background:var(--eprt-button) !important; color:#fff !important;
+
+    /* Primary buttons & accents */
+    body.theme-fedex .pill.primary,
+    body.theme-atlas .pill.primary,
+    body.theme-basic .pill.primary,
+    body.theme-simple .pill.primary,
+    body.theme-fedex .volume-btn,
+    body.theme-atlas .volume-btn,
+    body.theme-basic .volume-btn,
+    body.theme-simple .volume-btn,
+    body.theme-fedex .step-nav-btn.next,
+    body.theme-atlas .step-nav-btn.next,
+    body.theme-basic .step-nav-btn.next,
+    body.theme-simple .step-nav-btn.next,
+    body.theme-fedex .step-viewer-title i,
+    body.theme-atlas .step-viewer-title i,
+    body.theme-basic .step-viewer-title i,
+    body.theme-simple .step-viewer-title i {
+      background:var(--eprt-button) !important;
+      color:#ffffff !important;
     }
-    body.theme-fedex .progress-fill, body.theme-atlas .progress-fill, body.theme-basic .progress-fill, body.theme-simple .progress-fill,
-    body.theme-fedex .mini-progress-fill, body.theme-atlas .mini-progress-fill, body.theme-basic .mini-progress-fill, body.theme-simple .mini-progress-fill {
+
+    /* Progress fills */
+    body.theme-fedex .progress-fill,
+    body.theme-atlas .progress-fill,
+    body.theme-basic .progress-fill,
+    body.theme-simple .progress-fill,
+    body.theme-fedex .mini-progress-fill,
+    body.theme-atlas .mini-progress-fill,
+    body.theme-basic .mini-progress-fill,
+    body.theme-simple .mini-progress-fill {
       background:var(--eprt-progress) !important;
     }
-    body.theme-fedex .question-card, body.theme-atlas .question-card, body.theme-basic .question-card, body.theme-simple .question-card,
-    body.theme-fedex .step-body, body.theme-atlas .step-body, body.theme-basic .step-body, body.theme-simple .step-body {
+
+    /* Cards & bodies */
+    body.theme-fedex .question-card,
+    body.theme-atlas .question-card,
+    body.theme-basic .question-card,
+    body.theme-simple .question-card,
+    body.theme-fedex .step-body,
+    body.theme-atlas .step-body,
+    body.theme-basic .step-body,
+    body.theme-simple .step-body {
       background: radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
                   linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
       border-color:var(--eprt-line) !important;
     }
-    body.theme-fedex .step-body::before, body.theme-atlas .step-body::before, body.theme-basic .step-body::before, body.theme-simple .step-body::before {
+    body.theme-fedex .step-body::before,
+    body.theme-atlas .step-body::before,
+    body.theme-basic .step-body::before,
+    body.theme-simple .step-body::before {
       background:var(--eprt-progress) !important;
     }
-    body.theme-fedex .path-jump.active, body.theme-atlas .path-jump.active, body.theme-basic .path-jump.active, body.theme-simple .path-jump.active {
-      border-color:var(--eprt-accent) !important;
-      box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
+
+    /* Text colors */
+    body.theme-fedex .step-title,
+    body.theme-atlas .step-title,
+    body.theme-basic .step-title,
+    body.theme-simple .step-title,
+    body.theme-fedex .step-viewer-title,
+    body.theme-atlas .step-viewer-title,
+    body.theme-basic .step-viewer-title,
+    body.theme-simple .step-viewer-title {
+      color:var(--eprt-text) !important;
     }
-    body.theme-fedex .path-jump.active span, body.theme-atlas .path-jump.active span, body.theme-basic .path-jump.active span, body.theme-simple .path-jump.active span {
-      background: var(--eprt-accent) !important; color:#fff !important;
+    body.theme-fedex .step-content,
+    body.theme-atlas .step-content,
+    body.theme-basic .step-content,
+    body.theme-simple .step-content,
+    body.theme-fedex .step-counter,
+    body.theme-atlas .step-counter,
+    body.theme-basic .step-counter,
+    body.theme-simple .step-counter {
+      color:var(--eprt-muted) !important;
     }
+
+    /* Viewer background */
+    body.theme-fedex .step-viewer,
+    body.theme-atlas .step-viewer,
+    body.theme-basic .step-viewer,
+    body.theme-simple .step-viewer,
+    body.theme-fedex .step-viewer-head,
+    body.theme-atlas .step-viewer-head,
+    body.theme-basic .step-viewer-head,
+    body.theme-simple .step-viewer-head {
+      background:linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    /* Navigation buttons */
+    body.theme-fedex .step-nav-btn.prev,
+    body.theme-atlas .step-nav-btn.prev,
+    body.theme-basic .step-nav-btn.prev,
+    body.theme-simple .step-nav-btn.prev {
+      background:var(--eprt-card-soft) !important;
+      color:var(--eprt-text) !important;
+      border-color:var(--eprt-line) !important;
+    }
+
+    /* Step dots - FIXED to use theme variables */
+    body.theme-fedex .step-dot,
+    body.theme-atlas .step-dot,
+    body.theme-basic .step-dot,
+    body.theme-simple .step-dot {
+      background: var(--eprt-line) !important;
+    }
+    body.theme-fedex .step-dot:hover,
+    body.theme-atlas .step-dot:hover,
+    body.theme-basic .step-dot:hover,
+    body.theme-simple .step-dot:hover {
+      background: var(--eprt-primary) !important;
+    }
+    body.theme-fedex .step-dot.active,
+    body.theme-atlas .step-dot.active,
+    body.theme-basic .step-dot.active,
+    body.theme-simple .step-dot.active {
+      background: var(--eprt-accent) !important;
+      width: 30px;
+    }
+
+    /* Quick jump active state */
+    body.theme-fedex .path-jump.active,
+    body.theme-atlas .path-jump.active,
+    body.theme-basic .path-jump.active,
+    body.theme-simple .path-jump.active {
+      border-color: var(--eprt-accent) !important;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
+    }
+    body.theme-fedex .path-jump.active span,
+    body.theme-atlas .path-jump.active span,
+    body.theme-basic .path-jump.active span,
+    body.theme-simple .path-jump.active span {
+      background: var(--eprt-accent) !important;
+      color: #ffffff !important;
+    }
+    body.theme-fedex .path-jump span,
+    body.theme-atlas .path-jump span,
+    body.theme-basic .path-jump span,
+    body.theme-simple .path-jump span {
+      background: var(--eprt-accent-soft) !important;
+      color: var(--eprt-accent) !important;
+    }
+
+    /* Reminder icons - FIXED to use theme accent */
+    body.theme-fedex .reminder i,
+    body.theme-atlas .reminder i,
+    body.theme-basic .reminder i,
+    body.theme-simple .reminder i {
+      color: var(--eprt-accent) !important;
+    }
+
+    /* Summary icons, template icons etc. */
+    body.theme-fedex .summary-head i,
+    body.theme-atlas .summary-head i,
+    body.theme-basic .summary-head i,
+    body.theme-simple .summary-head i,
+    body.theme-fedex .template-icon,
+    body.theme-atlas .template-icon,
+    body.theme-basic .template-icon,
+    body.theme-simple .template-icon {
+      color: var(--eprt-accent) !important;
+    }
+    body.theme-fedex .template-icon,
+    body.theme-atlas .template-icon,
+    body.theme-basic .template-icon,
+    body.theme-simple .template-icon {
+      background: var(--eprt-accent-soft) !important;
+    }
+    body.theme-fedex .side-panel .summary-card,
+    body.theme-fedex .template-panel .summary-card,
+    body.theme-atlas .side-panel .summary-card,
+    body.theme-atlas .template-panel .summary-card,
+    body.theme-basic .side-panel .summary-card,
+    body.theme-basic .template-panel .summary-card,
+    body.theme-simple .side-panel .summary-card,
+    body.theme-simple .template-panel .summary-card {
+      background: var(--eprt-card) !important;
+      border-color: var(--eprt-line) !important;
+    }
+    body.theme-fedex .reminder,
+    body.theme-atlas .reminder,
+    body.theme-basic .reminder,
+    body.theme-simple .reminder {
+      background: var(--eprt-card-soft) !important;
+      border-color: var(--eprt-line) !important;
+      color: var(--eprt-muted) !important;
+    }
+    body.theme-fedex .metric,
+    body.theme-atlas .metric,
+    body.theme-basic .metric,
+    body.theme-simple .metric {
+      background: var(--eprt-card-soft) !important;
+      border-color: var(--eprt-line) !important;
+    }
+    body.theme-fedex .path-jump,
+    body.theme-atlas .path-jump,
+    body.theme-basic .path-jump,
+    body.theme-simple .path-jump {
+      background: var(--eprt-card-soft) !important;
+      border-color: var(--eprt-line) !important;
+    }
+    body.theme-fedex .path-jump:hover,
+    body.theme-atlas .path-jump:hover,
+    body.theme-basic .path-jump:hover,
+    body.theme-simple .path-jump:hover {
+      background: var(--eprt-accent-soft) !important;
+    }
+    body.theme-fedex .template-copy,
+    body.theme-atlas .template-copy,
+    body.theme-basic .template-copy,
+    body.theme-simple .template-copy {
+      background: var(--eprt-button) !important;
+    }
+
     @media (max-width:1450px){ .app-frame{ grid-template-columns:minmax(0,1fr) 340px 360px; } }
     @media (max-width:1220px){ .app-frame{ grid-template-columns:1fr; } .side-panel, .template-panel{ padding:0 18px 18px; } }
     @media (max-width:760px){ .app-shell{ width:min(calc(100% - 20px), var(--max)); margin:16px auto; } .app-frame{ border-radius:24px; } .question-text{ font-size:28px; } .step-body{ padding:22px; min-height:460px; } }
@@ -291,7 +481,7 @@
   <script src="../assets/js/theme-loader.js"></script>
 
   <script>
-    // ========== ACCOUNT CREATION STEPS (preserving original content, images, branching) ==========
+    // ========== ACCOUNT CREATION STEPS (identical content to original) ==========
     const steps = {
       step1: { title: "Update the Account", images: ["steps-images/step1.png"], content: `Remove the account number and update the name to the Shipper / Consignee / BT account.\n\n⚠ NEVER UPDATE THE ADDRESS.`, next: "step2" },
       step2: { title: "Place Cursor in Account Field", images: ["steps-images/step2.png"], content: `Place the cursor in the Shipper / Consignee / BT number field.`, next: "step3" },
@@ -319,7 +509,6 @@
     let currentStep = "step1";
     let stepHistory = [];
 
-    // DOM elements (match ePRS naming)
     const stepTitle = document.getElementById("stepTitle");
     const stepContent = document.getElementById("stepContent");
     const stepImages = document.getElementById("stepImages");
@@ -381,8 +570,6 @@
 
       stepTitle.textContent = step.title;
       stepContent.innerHTML = step.content || "";
-
-      // images
       stepImages.innerHTML = "";
       if (step.images) {
         step.images.forEach(imgSrc => {
@@ -398,7 +585,6 @@
         });
       }
 
-      // decision buttons
       decisionButtonsDiv.innerHTML = "";
       if (step.buttons) {
         decisionButtonsDiv.style.display = "flex";
@@ -473,7 +659,6 @@
       if (e.key === "ArrowLeft") prevBtn.click();
     });
 
-    // image preview modal
     const modal = document.getElementById("imagePreviewModal");
     const modalImg = document.getElementById("imagePreview");
     document.addEventListener("click", e => {
