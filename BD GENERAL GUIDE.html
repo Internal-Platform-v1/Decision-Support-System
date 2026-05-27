@@ -1003,7 +1003,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateMeta(isFinal) { const pct = getPercent(isFinal); const lastAnswer = path.length ? path[path.length - 1].answer : "—"; const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started"; els.progressFill.style.width = pct + "%"; els.progressText.textContent = progressLabel; els.metricSteps.textContent = String(path.length); els.metricAnswer.textContent = lastAnswer; els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`; }
   function updatePath() { if(!path.length){ els.pathBox.className = "path-empty"; els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app."; return; } let activeIndex = -1; if (currentKey === "__final__") activeIndex = path.length - 1; else { for (let i = 0; i < path.length; i++) if (path[i].nextKey === currentKey) { activeIndex = i; break; } if (activeIndex === -1) for (let i = 0; i < path.length; i++) if (path[i].fromKey === currentKey) { activeIndex = i; break; } } const html = path.map((item, index) => `<div class="path-item"><button type="button" class="path-jump ${index === activeIndex ? "active" : ""}" data-step-index="${index}"><div class="path-step">Step ${index+1}</div><div class="path-question">${escapeHtml(item.question)}</div><div class="path-answer">→ ${escapeHtml(item.answer)}</div></button></div>`).join(""); els.pathBox.className = "path-list"; els.pathBox.innerHTML = html; els.pathBox.querySelectorAll(".path-jump").forEach(btn => btn.addEventListener("click", () => { const index = Number(btn.dataset.stepIndex); jumpToPathStep(index); })); applyActivePathTheme(); }
 
-  function applyActivePathTheme() {
+function applyActivePathTheme() {
   const activeStep = document.querySelector('.path-jump.active');
   if (!activeStep) return;
 
@@ -1065,7 +1065,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if(question) question.style.color = '#111827';
     if(answer) answer.style.color = '#475569';
   }
-applyActivePathTheme();
 }
   
   function jumpToPathStep(index) { if(index < 0 || index >= path.length) return; const target = path[index]; if(!target) return; path = path.slice(0, index + 1); currentFinalRecommendation = ""; setTemplateValue(els.suggestedComment, ""); setTemplateValue(els.suggestedCorrCode, ""); setTemplateValue(els.suggestedEmail, ""); updateRecommendation("", false); if(target.nextKey === "__final__" && target.finalNode){ renderFinal(target.finalNode); return; } renderNode(target.fromKey); }
