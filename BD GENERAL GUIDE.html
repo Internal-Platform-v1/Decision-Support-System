@@ -164,6 +164,62 @@
     .path-jump.active .path-answer {
       color: var(--text-soft, #475569);
     }
+
+    /* ===== THEME-BASED SELECTED PATH COLORS ===== */
+    body.theme-fedex .path-jump.active{
+      background:linear-gradient(135deg,#4D148C 0%, #6d28d9 100%) !important;
+      border:2px solid #7c3aed !important;
+      box-shadow:0 12px 28px rgba(77,20,140,.22) !important;
+    }
+    body.theme-fedex .path-jump.active .path-step,
+    body.theme-fedex .path-jump.active .path-question,
+    body.theme-fedex .path-jump.active .path-answer{
+      color:#ffffff !important;
+    }
+
+    body.theme-dark .path-jump.active{
+      background:linear-gradient(135deg,#111827 0%, #1f2937 100%) !important;
+      border:2px solid #374151 !important;
+      box-shadow:0 12px 28px rgba(15,23,42,.28) !important;
+    }
+    body.theme-dark .path-jump.active .path-step{
+      color:#cbd5e1 !important;
+    }
+    body.theme-dark .path-jump.active .path-question,
+    body.theme-dark .path-jump.active .path-answer{
+      color:#f8fafc !important;
+    }
+
+    body.theme-white .path-jump.active{
+      background:linear-gradient(135deg,#eff6ff 0%, #dbeafe 100%) !important;
+      border:2px solid #2563eb !important;
+      box-shadow:0 10px 24px rgba(37,99,235,.12) !important;
+    }
+    body.theme-white .path-jump.active .path-step{
+      color:#1d4ed8 !important;
+    }
+    body.theme-white .path-jump.active .path-question{
+      color:#0f172a !important;
+    }
+    body.theme-white .path-jump.active .path-answer{
+      color:#334155 !important;
+    }
+
+    body.theme-simple-white .path-jump.active{
+      background:#ffffff !important;
+      border:2px solid #0f172a !important;
+      box-shadow:0 8px 20px rgba(15,23,42,.08) !important;
+    }
+    body.theme-simple-white .path-jump.active .path-step{
+      color:#475569 !important;
+    }
+    body.theme-simple-white .path-jump.active .path-question{
+      color:#111827 !important;
+    }
+    body.theme-simple-white .path-jump.active .path-answer{
+      color:#475569 !important;
+    }
+
     .section-note{ font-size:12px; color:#64748b; line-height:1.6; margin-top:-2px; }
     .template-stack{ display:flex; flex-direction:column; gap:12px; margin-top:14px; }
     .template-card{ border:1px solid #e5ebf4; border-radius:18px; background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); overflow:hidden; }
@@ -482,6 +538,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let ratingStars = [];
   let currentKey = "start";
   const templateCache = {};
+
+  // Refresh selected path colors when theme changes
+  const themeObserver = new MutationObserver(() => {
+    document.querySelectorAll('.path-jump.active').forEach(el => {
+      el.classList.remove('active');
+      void el.offsetWidth;
+      el.classList.add('active');
+    });
+  });
+
+  themeObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+
 
   // ================= FULL NODES TREE (exactly as in original working code) =================
   const NODES = {
