@@ -1001,48 +1001,73 @@ document.addEventListener("DOMContentLoaded", () => {
   async function saveEdit() { const val = els.editTextarea.value.trim(); if(!val){ alert("Cannot save empty text."); return; } const docId = getDocId(currentFinalRecommendation, currentEditType); try{ await db.collection(TEMPLATE_COLLECTION).doc(docId).set({ text: val, type: currentEditType, recommendation: currentFinalRecommendation, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); templateCache[docId] = val; if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val); if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val); if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val); closeEditModal(); alert("Saved!"); } catch(err){ alert("Unable to save right now."); } }
   function getPercent(isFinal) { if (isFinal) return 100; const currentIndex = path.findIndex(item => item.nextKey === currentKey); if (currentIndex === -1) return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95); const progress = ((currentIndex + 1) / MAX_STEPS) * 100; return Math.min(Math.round(progress), 95); }
   function updateMeta(isFinal) { const pct = getPercent(isFinal); const lastAnswer = path.length ? path[path.length - 1].answer : "—"; const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started"; els.progressFill.style.width = pct + "%"; els.progressText.textContent = progressLabel; els.metricSteps.textContent = String(path.length); els.metricAnswer.textContent = lastAnswer; els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`; }
-  
-  // ========== THEME-AWARE ACTIVE PATH STYLING (FIX) ==========
-  function applyActivePathTheme() {
-    const activeStep = document.querySelector('.path-jump.active');
-    if (!activeStep) return;
-    
-    // Try to get theme accent color from .badge (which changes with theme)
-    let themeColor = '#2563eb'; // fallback
-    const badge = document.querySelector('.badge');
-    if (badge) {
-      const color = window.getComputedStyle(badge).color;
-      if (color && color !== 'rgba(0, 0, 0, 0)') themeColor = color;
-    }
-    // Alternatively, use .pill.primary background if .badge not found
-    if (!badge) {
-      const primaryPill = document.querySelector('.pill.primary');
-      if (primaryPill) {
-        const bgColor = window.getComputedStyle(primaryPill).backgroundColor;
-        if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)') themeColor = bgColor;
-      }
-    }
-    
-    // Apply inline styles (highest specificity)
-    activeStep.style.borderColor = themeColor;
-    activeStep.style.boxShadow = `0 0 0 4px ${themeColor}20`;
-    const stepSpan = activeStep.querySelector('.path-step');
-    if (stepSpan) stepSpan.style.color = themeColor;
-  }
-  
-  // Override updatePath to apply theme after rebuilding
-  const originalUpdatePath = updatePath;
-  updatePath = function() {
-    originalUpdatePath();
-    setTimeout(applyActivePathTheme, 10); // slight delay to ensure DOM is ready
-  };
-  
-  // Watch for theme class changes on body
-  const themeObserver = new MutationObserver(() => applyActivePathTheme());
-  themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-  // ========== END THEME FIX ==========
-  
   function updatePath() { if(!path.length){ els.pathBox.className = "path-empty"; els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app."; return; } let activeIndex = -1; if (currentKey === "__final__") activeIndex = path.length - 1; else { for (let i = 0; i < path.length; i++) if (path[i].nextKey === currentKey) { activeIndex = i; break; } if (activeIndex === -1) for (let i = 0; i < path.length; i++) if (path[i].fromKey === currentKey) { activeIndex = i; break; } } const html = path.map((item, index) => `<div class="path-item"><button type="button" class="path-jump ${index === activeIndex ? "active" : ""}" data-step-index="${index}"><div class="path-step">Step ${index+1}</div><div class="path-question">${escapeHtml(item.question)}</div><div class="path-answer">→ ${escapeHtml(item.answer)}</div></button></div>`).join(""); els.pathBox.className = "path-list"; els.pathBox.innerHTML = html; els.pathBox.querySelectorAll(".path-jump").forEach(btn => btn.addEventListener("click", () => { const index = Number(btn.dataset.stepIndex); jumpToPathStep(index); })); applyActivePathTheme(); }
+
+  function applyActivePathTheme() {
+  const activeStep = document.querySelector('.path-jump.active');
+  if (!activeStep) return;
+
+  const body = document.body;
+
+  // RESET
+  activeStep.style.background = "";
+  activeStep.style.border = "";
+  activeStep.style.boxShadow = "";
+
+  activeStep.querySelectorAll('.path-step, .path-question, .path-answer')
+    .forEach(el => el.style.color = "");
+
+  // FEDEX
+  if (body.classList.contains('theme-fedex')) {
+    activeStep.style.background =
+      'linear-gradient(135deg,#4D148C,#6d28d9)';
+    activeStep.style.border = '2px solid #7c3aed';
+
+    activeStep.querySelectorAll('.path-step, .path-question, .path-answer')
+      .forEach(el => el.style.color = '#fff');
+  }
+
+  // DARK
+  else if (body.classList.contains('theme-dark')) {
+    activeStep.style.background =
+      'linear-gradient(135deg,#111827,#1f2937)';
+    activeStep.style.border = '2px solid #374151';
+
+    activeStep.querySelectorAll('.path-step, .path-question, .path-answer')
+      .forEach(el => el.style.color = '#f8fafc');
+  }
+
+  // WHITE
+  else if (body.classList.contains('theme-white')) {
+    activeStep.style.background =
+      'linear-gradient(135deg,#eff6ff,#dbeafe)';
+    activeStep.style.border = '2px solid #2563eb';
+
+    const step = activeStep.querySelector('.path-step');
+    const question = activeStep.querySelector('.path-question');
+    const answer = activeStep.querySelector('.path-answer');
+
+    if(step) step.style.color = '#1d4ed8';
+    if(question) question.style.color = '#0f172a';
+    if(answer) answer.style.color = '#334155';
+  }
+
+  // SIMPLE WHITE
+  else if (body.classList.contains('theme-simple-white')) {
+    activeStep.style.background = '#fff';
+    activeStep.style.border = '2px solid #0f172a';
+
+    const step = activeStep.querySelector('.path-step');
+    const question = activeStep.querySelector('.path-question');
+    const answer = activeStep.querySelector('.path-answer');
+
+    if(step) step.style.color = '#475569';
+    if(question) question.style.color = '#111827';
+    if(answer) answer.style.color = '#475569';
+  }
+applyActivePathTheme();
+}
+  
   function jumpToPathStep(index) { if(index < 0 || index >= path.length) return; const target = path[index]; if(!target) return; path = path.slice(0, index + 1); currentFinalRecommendation = ""; setTemplateValue(els.suggestedComment, ""); setTemplateValue(els.suggestedCorrCode, ""); setTemplateValue(els.suggestedEmail, ""); updateRecommendation("", false); if(target.nextKey === "__final__" && target.finalNode){ renderFinal(target.finalNode); return; } renderNode(target.fromKey); }
   function updateRecommendation(text, isFinal){ if(!isFinal){ els.recommendationBox.className = "recommendation empty"; els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction."; return; } els.recommendationBox.className = "recommendation"; els.recommendationBox.textContent = text; }
   function openImageModal(src){ const modal = document.getElementById("imageModal"); const img = document.getElementById("imageModalImg"); if (modal && img) { img.src = src; modal.classList.add("open"); document.body.style.overflow = "hidden"; } }
