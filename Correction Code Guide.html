@@ -33,24 +33,18 @@
     window.auth = firebase.auth();
     window.db = firebase.firestore();
 
-    /* =========================================================
-       PAGE AUTH GUARD (redirects to index.html if not logged in)
-    ========================================================= */
     window.auth.onAuthStateChanged(async function(user) {
       try {
         if (!user) {
           window.location.replace("index.html");
           return;
         }
-
         await user.reload();
         const refreshedUser = window.auth.currentUser;
-
         if (!refreshedUser || !refreshedUser.emailVerified) {
           window.location.replace("index.html");
           return;
         }
-
         document.documentElement.classList.remove("page-protected");
       } catch (error) {
         console.error("Auth guard error:", error);
@@ -187,6 +181,7 @@
       margin: 0;
       font-size: 24px;
       letter-spacing: -0.03em;
+      font-weight: 800 !important;  /* Bold title */
     }
 
     .page-subtitle {
