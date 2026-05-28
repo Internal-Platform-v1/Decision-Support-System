@@ -1182,25 +1182,16 @@ function updatePath() {
     return;
   }
 
-  let activeIndex = -1;
+  let activeIndex = path.length - 1;
 
-  if (currentKey === "__final__") {
-    activeIndex = path.length - 1;
-  } else {
-    for (let i = 0; i < path.length; i++) {
-      if (path[i].nextKey === currentKey) {
-        activeIndex = i;
-        break;
-      }
-    }
+  // If currently viewing a previous node
+  if (currentKey !== "__final__") {
+    const foundIndex = path.findIndex(
+      item => item.nextKey === currentKey
+    );
 
-    if (activeIndex === -1) {
-      for (let i = 0; i < path.length; i++) {
-        if (path[i].fromKey === currentKey) {
-          activeIndex = i;
-          break;
-        }
-      }
+    if (foundIndex !== -1) {
+      activeIndex = foundIndex;
     }
   }
 
@@ -1211,10 +1202,14 @@ function updatePath() {
         class="path-jump ${index === activeIndex ? "active" : ""}"
         data-step-index="${index}"
       >
-        <div class="path-step">Step ${index + 1}</div>
+        <div class="path-step">
+          Step ${index + 1}
+        </div>
+
         <div class="path-question">
           ${escapeHtml(item.question)}
         </div>
+
         <div class="path-answer">
           → ${escapeHtml(item.answer)}
         </div>
