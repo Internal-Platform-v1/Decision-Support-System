@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
   <style>
+    /* (your existing styles – unchanged) */
     :root{
       --fedex-purple:#4D148C;
       --fedex-purple-2:#6D28D9;
@@ -466,7 +467,7 @@
           <input
             id="email"
             type="email"
-            placeholder=".vndr@fedexfreight.com"
+            placeholder="name@fedexfreight.com"
             autocomplete="email"
           >
         </div>
@@ -546,6 +547,8 @@
     const togglePasswordBtn = document.getElementById("togglePassword");
     const togglePasswordIcon = document.getElementById("togglePasswordIcon");
 
+    let isProcessingLogin = false;
+
     function showMessage(text, type = "error") {
       messageEl.className = "message " + type;
       messageEl.textContent = text;
@@ -590,33 +593,37 @@
     async function checkApprovedUser(email) {
       const emailKey = normalizeEmail(email);
       const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(emailKey);
-      const docSnap = await docRef.get();
 
-      if (!docSnap.exists) {
+      try {
+        const docSnap = await docRef.get();
+
+        if (!docSnap.exists) {
+          return {
+            allowed: false,
+            reason: "This email is not yet approved for access. Please contact your administrator."
+          };
+        }
+
+        const data = docSnap.data() || {};
+
+        if (data.active === false) {
+          return {
+            allowed: false,
+            reason: "Your account has been disabled. Please contact your administrator."
+          };
+        }
+
         return {
-          allowed: false,
-          reason: "This email is not yet approved for access. Please contact your administrator.",
-          docRef,
-          data: null
-        };
-      }
-
-      const data = docSnap.data() || {};
-
-      if (data.active === false) {
-        return {
-          allowed: false,
-          reason: "Your account has been disabled. Please contact your administrator.",
-          docRef,
+          allowed: true,
           data
         };
+      } catch (error) {
+        console.error("Firestore read error:", error);
+        return {
+          allowed: false,
+          reason: "Unable to verify access. Please check your network and try again."
+        };
       }
-
-      return {
-        allowed: true,
-        docRef,
-        data
-      };
     }
 
     async function continueAfterSecurityChecks(user) {
@@ -675,6 +682,8 @@
     });
 
     loginBtn.addEventListener("click", async () => {
+      if (isProcessingLogin) return;
+      isProcessingLogin = true;
       clearMessage();
 
       const email = normalizeEmail(emailEl.value);
@@ -682,19 +691,19 @@
 
       if (!email || !password) {
         showMessage("Please enter your email and password.");
+        isProcessingLogin = false;
         return;
       }
 
       if (!isAllowedFedExEmail(email)) {
         showMessage("Please use your FedEx Freight email address.");
+        isProcessingLogin = false;
         return;
       }
 
       try {
         setLoadingState(true, "checking");
-
         await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-
         const result = await auth.signInWithEmailAndPassword(email, password);
         await continueAfterSecurityChecks(result.user);
       } catch (error) {
@@ -713,70 +722,93 @@
         }
 
         showMessage(friendlyMessage);
-      } finally {
         setLoadingState(false);
+        isProcessingLogin = false;
+      } finally {
+        // setLoadingState already called in catch, but we ensure flag reset if needed
+        if (!window.location.href.includes("index-main.html")) {
+          setLoadingState(false);
+          isProcessingLogin = false;
+        }
       }
     });
 
-resetBtn.addEventListener("click", async () => {
-  clearMessage();
+    resetBtn.addEventListener("click", async () => {
+      if (resetBtn.disabled) return;
+      resetBtn.disabled = true;
+      clearMessage();
 
-  const email = normalizeEmail(emailEl.value);
+      const email = normalizeEmail(emailEl.value);
 
-  if (!email) {
-    showMessage("Please enter your email address.", "error");
-    return;
-  }
+      if (!email) {
+        showMessage("Please enter your email address.", "error");
+        resetBtn.disabled = false;
+        return;
+      }
 
-  if (!isAllowedFedExEmail(email)) {
-    showMessage("Only @fedexfreight.com email addresses are allowed.", "error");
-    return;
-  }
+      if (!isAllowedFedExEmail(email)) {
+        showMessage("Only @fedexfreight.com email addresses are allowed.", "error");
+        resetBtn.disabled = false;
+        return;
+      }
 
-  const genericMessage = "If that email is registered, you will receive a password reset link.";
+      const genericMessage = "If that email is registered, you will receive a password reset link.";
 
-  try {
-    await auth.sendPasswordResetEmail(email);
-    showMessage(genericMessage, "success");
-  } catch (error) {
-    // Log silently for debugging (optional)
-    console.warn("Password reset request completed.");
-    showMessage(genericMessage, "success");
-  }
-});
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showMessage(genericMessage, "success");
+      } catch (error) {
+        console.warn("Password reset request completed.");
+        showMessage(genericMessage, "success");
+      } finally {
+        setTimeout(() => {
+          resetBtn.disabled = false;
+        }, 3000);
+      }
+    });
 
-auth.onAuthStateChanged(async (user) => {
-  if (!user) return;
+    auth.onAuthStateChanged(async (user) => {
+      if (isProcessingLogin) return;
+      if (!user) return;
 
-  const email = normalizeEmail(user.email);
+      const email = normalizeEmail(user.email);
 
-  // 1. Domain check – sign out if not allowed
-  if (!isAllowedFedExEmail(email)) {
-    await auth.signOut();
-    showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
-    return;
-  }
+      // 1. Domain check – sign out if not allowed
+      if (!isAllowedFedExEmail(email)) {
+        await auth.signOut();
+        showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
+        return;
+      }
 
-  // 2. Email verification check – sign out if not verified
-  if (!user.emailVerified) {
-    await auth.signOut();
-    showMessage("Please verify your email before using the system.");
-    return;
-  }
+      // 2. Email verification check – sign out if not verified
+      if (!user.emailVerified) {
+        await auth.signOut();
+        showMessage("Please verify your email before using the system.");
+        return;
+      }
 
-  // 3. Approved user check – sign out if not approved or disabled
-  try {
-    const approvalCheck = await checkApprovedUser(email);
-    if (!approvalCheck.allowed) {
-      await auth.signOut();
-      showMessage(approvalCheck.reason || "You are not authorized to access this system.");
-    }
-  } catch (error) {
-    console.error("Approval check failed:", error);
-    // Optionally sign out on error to be safe
-    await auth.signOut();
-  }
-});
+      // 3. Approved user check – sign out if not approved or disabled
+      try {
+        const approvalCheck = await checkApprovedUser(email);
+        if (!approvalCheck.allowed) {
+          await auth.signOut();
+          showMessage(approvalCheck.reason || "You are not authorized to access this system.");
+          return;
+        }
+
+        // 4. Force password change check
+        if (approvalCheck.data.forcePasswordChange === true) {
+          window.location.replace(CHANGE_PASSWORD_PAGE);
+          return;
+        }
+
+        // ✅ Already authenticated and fully verified – redirect to main page
+        window.location.replace(REDIRECT_AFTER_LOGIN);
+      } catch (error) {
+        console.error("Approval check failed:", error);
+        await auth.signOut();
+      }
+    });
   </script>
 </body>
 </html>
