@@ -571,7 +571,11 @@ body.theme-simple .step-dot.active {
                     </div>
                     <div class="step-shell">
                       <div class="step-top"><div class="step-counter" id="stepCounter"></div><div class="mini-progress-bar"><div class="mini-progress-fill" id="miniProgressFill"></div></div></div>
-                      <div class="step-body" id="stepBody"><h2 class="step-title" id="stepTitle"></h2><div class="step-content" id="stepContent"></div></div>
+                      <div class="step-body" id="stepBody">
+                      <h2 class="step-title" id="stepTitle"></h2>
+                        <div class="step-content" id="stepContent"></div>
+                          <div class="step-images" id="stepImages"></div>
+                    </div>
                       <div class="step-navigation"><button class="step-nav-btn prev" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button><button class="step-nav-btn next" id="nextBtn">Next <i class="fa-solid fa-arrow-right"></i></button></div>
                       <div id="stepDots" class="step-dots"></div>
                     </div>
@@ -629,7 +633,7 @@ body.theme-simple .step-dot.active {
     
     let currentStep = 0;
     const els = {
-      stepTitle:document.getElementById("stepTitle"), stepContent:document.getElementById("stepContent"),
+      stepTitle:document.getElementById("stepTitle"), stepContent:document.getElementById("stepContent"),  stepImages:document.getElementById("stepImages"), 
       stepCounter:document.getElementById("stepCounter"), miniProgressFill:document.getElementById("miniProgressFill"),
       progressFill:document.getElementById("progressFill"), progressText:document.getElementById("progressText"),
       prevBtn:document.getElementById("prevBtn"), nextBtn:document.getElementById("nextBtn"),
@@ -640,7 +644,70 @@ body.theme-simple .step-dot.active {
     function renderQuickJump(){ if(els.quickJumpList){ els.quickJumpList.innerHTML=""; steps.forEach((s,i)=>{ const btn=document.createElement("button"); btn.className="path-jump"; btn.type="button"; btn.dataset.jump=i; btn.innerHTML=`<span>${i+1}</span><div><strong>${escapeHtml(s.title)}</strong><small>Step ${i+1}</small></div>`; btn.onclick=()=>goToStep(i,true); els.quickJumpList.appendChild(btn); }); } }
     function updateQuickJump(){ document.querySelectorAll(".path-jump").forEach(btn=>{ const idx=Number(btn.dataset.jump); btn.classList.toggle("active",idx===currentStep); }); }
     function renderDots(){ if(els.stepDots){ els.stepDots.innerHTML=""; steps.forEach((_,i)=>{ const dot=document.createElement("div"); dot.className="step-dot"; if(i===currentStep) dot.classList.add("active"); dot.onclick=()=>goToStep(i,true); els.stepDots.appendChild(dot); }); } }
-    function renderStep(){ const step=steps[currentStep]; const progress=((currentStep+1)/steps.length*100)+"%"; if(els.stepTitle) els.stepTitle.textContent=step.title; if(els.stepContent) els.stepContent.textContent=step.content; if(els.stepCounter) els.stepCounter.textContent=`Step ${currentStep+1} of ${steps.length}`; if(els.progressText) els.progressText.textContent=`Step ${currentStep+1} of ${steps.length}`; if(els.progressFill) els.progressFill.style.width=progress; if(els.miniProgressFill) els.miniProgressFill.style.width=progress; if(els.metricSteps) els.metricSteps.textContent=steps.length; if(els.prevBtn) els.prevBtn.disabled=currentStep===0; if(els.nextBtn){ if(currentStep===steps.length-1){ els.nextBtn.innerHTML=`Finish <i class="fa-solid fa-circle-check"></i>`; els.nextBtn.classList.add("finish"); }else{ els.nextBtn.innerHTML=`Next <i class="fa-solid fa-arrow-right"></i>`; els.nextBtn.classList.remove("finish"); } } renderDots(); updateQuickJump(); }
+   function renderStep(){
+  const step = steps[currentStep];
+  const progress = ((currentStep + 1) / steps.length * 100) + "%";
+
+  if(els.stepTitle) els.stepTitle.textContent = step.title;
+  if(els.stepContent) els.stepContent.textContent = step.content;
+
+  // ---------- IMAGE RENDERING (ADD THIS) ----------
+  if(els.stepImages){
+    els.stepImages.innerHTML = "";  // clear previous images
+    if(Array.isArray(step.images) && step.images.length){
+      step.images.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = step.title;
+        img.loading = "lazy";
+        // Optional: handle missing images gracefully
+        img.onerror = () => {
+          img.style.opacity = "0.6";
+          img.style.border = "1px dashed red";
+          img.alt = `Missing: ${src}`;
+        };
+        els.stepImages.appendChild(img);
+      });
+    }
+  }
+  // ------------------------------------------------
+
+  if(els.stepCounter) els.stepCounter.textContent = `Step ${currentStep+1} of ${steps.length}`;
+  if(els.progressText) els.progressText.textContent = `Step ${currentStep+1} of ${steps.length}`;
+  if(els.progressFill) els.progressFill.style.width = progress;
+  if(els.miniProgressFill) els.miniProgressFill.style.width = progress;
+  if(els.metricSteps) els.metricSteps.textContent = steps.length;
+
+  if(els.prevBtn) els.prevBtn.disabled = (currentStep === 0);
+  if(els.nextBtn){
+    if(currentStep === steps.length-1){
+      els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
+      els.nextBtn.classList.add("finish");
+    } else {
+      els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
+      els.nextBtn.classList.remove("finish");
+    }
+  }
+  renderDots();
+  updateQuickJump();
+}
+    document.addEventListener("click", (e) => {
+  const modal = document.getElementById("imagePreviewModal");
+  const previewImg = document.getElementById("imagePreview");
+  if (e.target.matches(".step-images img")) {
+    if (modal && previewImg) {
+      modal.style.display = "flex";
+      previewImg.src = e.target.src;
+      document.body.style.overflow = "hidden";
+    }
+  }
+  if (e.target.matches(".image-preview-close, #imagePreviewModal")) {
+    if (modal) modal.style.display = "none";
+    if (previewImg) previewImg.src = "";
+    document.body.style.overflow = "";
+  }
+});
+    
     function animateStep(direction){ if(els.stepBody){ els.stepBody.classList.remove("animate-left","animate-right"); void els.stepBody.offsetWidth; els.stepBody.classList.add(direction==="left"?"animate-left":"animate-right"); } }
     function goToStep(index,shouldScroll=false){ if(index<0||index>=steps.length) return; const direction=index>=currentStep?"left":"right"; currentStep=index; animateStep(direction); renderStep(); if(shouldScroll){ const sec=document.getElementById("stepsSection"); if(sec) sec.scrollIntoView({ behavior:"smooth", block:"start" }); } }
     function exploreSteps(){ goToStep(0,true); }
