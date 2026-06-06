@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="page-protected">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,11 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/header-footer-style.css">
 
   <style>
-    /* ----- BASE STYLES (same as before) ----- */
-    html.page-protected, html.page-protected body { visibility: hidden; }
+    /* ----- BASE STYLES ----- */
     :root {
       --bg:#07111f; --bg-soft:#0c1728; --panel:#0f1c31; --panel-2:#12233d;
       --card:#ffffff; --card-soft:#f8fafc; --text:#0f172a; --text-soft:#475569;
@@ -140,7 +138,7 @@
     .image-preview-close{ position:absolute; top:18px; right:18px; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.12); color:#fff; font-size:30px; cursor:pointer; transition:.2s ease; }
     .image-preview-close:hover{ background:rgba(255,255,255,.2); }
 
-    /* ========== THEME VARIABLES (DIRECTLY INLINED) ========== */
+    /* ========== THEME VARIABLES ========== */
     body.theme-fedex {
       --theme-text: #0f172a;
       --theme-muted: #475569;
@@ -206,7 +204,6 @@
       --theme-shadow-md: 0 10px 28px rgba(37,99,235,0.10);
     }
 
-    /* Theme bridge (maps theme variables to actual elements) */
     body.theme-fedex, body.theme-atlas, body.theme-basic, body.theme-simple {
       --eprt-text: var(--theme-text, #0f172a);
       --eprt-muted: var(--theme-muted, #64748b);
@@ -224,14 +221,13 @@
       --eprt-shadow: var(--theme-shadow-md, 0 10px 28px rgba(15,23,42,.10));
     }
 
-    /* Apply theme overrides */
+    /* Theme overrides */
     body.theme-fedex .pill.primary, body.theme-atlas .pill.primary, body.theme-basic .pill.primary, body.theme-simple .pill.primary,
     body.theme-fedex .volume-btn, body.theme-atlas .volume-btn, body.theme-basic .volume-btn, body.theme-simple .volume-btn,
     body.theme-fedex .step-nav-btn.next, body.theme-atlas .step-nav-btn.next, body.theme-basic .step-nav-btn.next, body.theme-simple .step-nav-btn.next,
     body.theme-fedex .step-viewer-title i, body.theme-atlas .step-viewer-title i, body.theme-basic .step-viewer-title i, body.theme-simple .step-viewer-title i {
       background: var(--eprt-button) !important;
       color: #ffffff !important;
-      box-shadow: 0 14px 24px color-mix(in srgb, var(--eprt-primary) 18%, transparent) !important;
     }
     body.theme-fedex .progress-fill, body.theme-atlas .progress-fill, body.theme-basic .progress-fill, body.theme-simple .progress-fill,
     body.theme-fedex .mini-progress-fill, body.theme-atlas .mini-progress-fill, body.theme-basic .mini-progress-fill, body.theme-simple .mini-progress-fill {
@@ -276,11 +272,10 @@
     }
     body.theme-fedex .path-jump.active, body.theme-atlas .path-jump.active, body.theme-basic .path-jump.active, body.theme-simple .path-jump.active {
       border-color: var(--eprt-accent) !important;
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
     }
     body.theme-fedex .path-jump.active span, body.theme-atlas .path-jump.active span, body.theme-basic .path-jump.active span, body.theme-simple .path-jump.active span {
       background: var(--eprt-accent) !important;
-      color: #ffffff !important;
+      color: #fff !important;
     }
     body.theme-fedex .path-jump span, body.theme-atlas .path-jump span, body.theme-basic .path-jump span, body.theme-simple .path-jump span {
       background: var(--eprt-accent-soft) !important;
@@ -348,9 +343,7 @@
 
 <body class="theme-fedex" data-page="volume-application">
   <div class="page">
-    <div id="site-header"></div>
-
-    <!-- THEME SWITCHER (visible for testing) -->
+    <!-- Theme switcher (floating buttons) -->
     <div style="position:fixed; bottom:20px; right:20px; z-index:9999; background:white; padding:10px 16px; border-radius:40px; box-shadow:0 4px 12px rgba(0,0,0,0.15); display:flex; gap:12px; font-size:13px; font-weight:bold;">
       <button onclick="document.body.className='theme-fedex'" style="background:#4d148c; color:white; border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">FedEx</button>
       <button onclick="document.body.className='theme-atlas'" style="background:#0e5361; color:white; border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">Atlas</button>
@@ -422,15 +415,10 @@
         </aside>
       </div>
     </div>
-    <div id="site-footer"></div>
   </div>
 
   <div id="imagePreviewModal" class="image-preview-modal"><span class="image-preview-close">×</span><img id="imagePreview" src="" alt="Preview"></div>
 
-  <script src="assets/js/header-loader.js"></script>
-  <script src="assets/js/header.js"></script>
-  <script src="assets/js/footer-loader.js"></script>
-  <!-- theme-loader.js is optional now – themes are built-in -->
   <script>
     // ==================== VOLUME APPLICATION STEPS ====================
     const steps = [
