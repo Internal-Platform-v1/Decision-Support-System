@@ -1,932 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-protected">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Volume Application — Step by Step Procedure</title>
 
   <script>
-    window.SITE_BASE = "";
+    window.SITE_BASE = "../";
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="../assets/css/guide-themes.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-  <!-- ==================== INLINE THEME CSS (copied from guide-themes.css + ePRS page) ==================== -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    window.auth = firebase.auth();
+    window.db = firebase.firestore();
+
+    window.auth.onAuthStateChanged(async function(user) {
+      try {
+        if (!user) {
+          window.location.replace("../index.html");
+          return;
+        }
+        await user.reload();
+        const refreshedUser = window.auth.currentUser;
+        if (!refreshedUser || !refreshedUser.emailVerified) {
+          window.location.replace("../index.html");
+          return;
+        }
+        document.documentElement.classList.remove("page-protected");
+      } catch (error) {
+        console.error("Auth guard error:", error);
+        window.location.replace("../index.html");
+      }
+    });
+  </script>
+
   <style>
-    /* ----- BASE STYLES (same as original volume page) ----- */
-    :root{
-      --bg:#07111f;
-      --bg-soft:#0c1728;
-      --panel:#0f1c31;
-      --panel-2:#12233d;
-      --card:#ffffff;
-      --card-soft:#f8fafc;
-      --text:#0f172a;
-      --text-soft:#475569;
-      --muted:#94a3b8;
-      --line:rgba(148,163,184,.18);
-      --white-line:rgba(255,255,255,.08);
-      --accent:#6d28d9;
-      --accent-2:#4d148c;
-      --accent-3:#ff6600;
-      --success:#16a34a;
-      --warning:#f59e0b;
-      --danger:#ef4444;
-      --shadow-xl:0 24px 80px rgba(2,6,23,.18);
-      --shadow-lg:0 18px 48px rgba(2,6,23,.12);
-      --shadow-md:0 10px 28px rgba(15,23,42,.10);
-      --shadow-card:0 16px 40px rgba(15,23,42,.06);
-      --radius-xl:28px;
-      --radius-lg:20px;
-      --radius-md:16px;
-      --radius-sm:12px;
+    /* ----- BASE STYLES (identical to ePRT guide) ----- */
+    html.page-protected,
+    html.page-protected body { visibility: hidden; }
+
+    :root {
+      --bg:#07111f; --bg-soft:#0c1728; --panel:#0f1c31; --panel-2:#12233d;
+      --card:#ffffff; --card-soft:#f8fafc; --text:#0f172a; --text-soft:#475569;
+      --muted:#94a3b8; --line:rgba(148,163,184,.18); --white-line:rgba(255,255,255,.08);
+      --accent:#6d28d9; --accent-2:#4d148c; --accent-3:#ff6600;
+      --success:#16a34a; --warning:#f59e0b; --danger:#ef4444;
+      --shadow-xl:0 24px 80px rgba(2,6,23,.18); --shadow-lg:0 18px 48px rgba(2,6,23,.12);
+      --shadow-md:0 10px 28px rgba(15,23,42,.10); --shadow-card:0 16px 40px rgba(15,23,42,.06);
+      --radius-xl:28px; --radius-lg:20px; --radius-md:16px; --radius-sm:12px;
       --max:1720px;
       font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-
-    /* Additional base styles (layout, cards, etc.) – same as original volume page */
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
     body{
-      margin:0;
-      min-height:100vh;
-      color:var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
-        radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
-        linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
+      margin:0; min-height:100vh; color:var(--text);
+      background: radial-gradient(circle at top left, rgba(109,40,217,.24), transparent 28%),
+                  radial-gradient(circle at top right, rgba(255,102,0,.14), transparent 22%),
+                  linear-gradient(180deg, #091120 0%, #0b1525 32%, #eef4fb 32%, #f5f8fc 100%);
       overflow-x:hidden;
     }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:36px 36px;
-      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%);
-      z-index:0;
+    body::before {
+      content:""; position:fixed; inset:0; pointer-events:none;
+      background: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:36px 36px; mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 42%); z-index:0;
     }
-
-    a{color:inherit}
-    button,input,textarea{font:inherit}
-
+    a{color:inherit} button,input,textarea{font:inherit}
     .page{position:relative;z-index:1}
-
-    .app-shell{
-      width:min(calc(100% - 32px), var(--max));
-      margin:22px auto 24px;
-    }
-
+    .app-shell{ width:min(calc(100% - 32px), var(--max)); margin:22px auto 24px; }
     .app-frame{
-      min-height:calc(100vh - 180px);
-      background:rgba(255,255,255,.58);
-      backdrop-filter:blur(16px);
-      border:1px solid rgba(255,255,255,.68);
-      border-radius:34px;
-      box-shadow:var(--shadow-xl);
-      overflow:hidden;
-      display:grid;
-      grid-template-columns:minmax(0,1.45fr) 380px 420px;
-    }
-
-    .main{
-      padding:18px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-      min-width:0;
-    }
-
-    .main-topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      padding:16px 18px;
-      border-radius:24px;
-      background:rgba(255,255,255,.85);
-      border:1px solid rgba(219,228,240,.9);
-      box-shadow:var(--shadow-md);
-    }
-
-    .page-title-block{display:flex;flex-direction:column;gap:6px}
-
-    .page-title-block h1{
-      margin:0;
-      font-size:24px;
-      font-weight:900;
-      letter-spacing:-.03em;
-      color:#0f172a;
-    }
-
-    .page-subtitle{
-      margin:0;
-      font-size:13px;
-      color:#64748b;
-      line-height:1.6;
-      max-width:720px;
-    }
-
-    .main-status{display:flex;gap:10px;flex-wrap:wrap}
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:11px 14px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid #dbe4f0;
-      font-size:12px;
-      font-weight:800;
-      color:#0f172a;
-      white-space:nowrap;
-    }
-
-    .pill.primary{
-      background:linear-gradient(135deg,#2563eb,#1d4ed8);
-      color:#fff;
-      border:none;
-    }
-
-    .workspace{
-      display:grid;
-      grid-template-rows:auto 1fr;
-      gap:16px;
-      min-height:0;
-    }
-
-    .progress-card{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:22px;
-      padding:16px 18px;
-      box-shadow:var(--shadow-md);
-    }
-
-    .progress-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-    }
-
-    .progress-title{font-size:14px;font-weight:800;color:#0f172a}
-    .progress-status{font-size:12px;font-weight:800;color:#64748b}
-
-    .progress-bar{
-      height:12px;
-      background:#eaf0f7;
-      border-radius:999px;
-      overflow:hidden;
-    }
-
-    .progress-fill{
-      height:100%;
-      width:0%;
-      border-radius:inherit;
-      background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%);
-      transition:width .28s ease;
-    }
-
-    .stage-card{
-      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
-      border:1px solid #dbe4f0;
-      border-radius:30px;
-      box-shadow:var(--shadow-card);
-      min-height:640px;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-    }
-
-    .stage-top{
-      padding:22px 22px 0;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 13px;
-      border-radius:999px;
-      background:#eef4ff;
-      color:#1d4ed8;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .badge.alt{background:#f8fafc;color:#334155}
-
-    .question-wrap{
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      flex:1;
-    }
-
-    .question-card{
-      position:relative;
-      padding:30px;
-      border-radius:28px;
-      background:
-        radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%),
-        linear-gradient(180deg,#ffffff,#f8fbff);
-      border:1px solid #e6edf7;
-      box-shadow:0 12px 30px rgba(15,23,42,.04);
-      overflow:hidden;
-    }
-
-    .question-card::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:inherit;
-      pointer-events:none;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
-    }
-
-    .question-label{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#334155;
-      position:relative;
-      z-index:1;
-    }
-
-    .question-text{
-      margin:18px 0 0;
-      font-size:36px;
-      line-height:1.08;
-      letter-spacing:-.045em;
-      font-weight:900;
-      position:relative;
-      z-index:1;
-    }
-
-    .question-help{
-      margin:14px 0 0;
-      color:#64748b;
-      font-size:14px;
-      line-height:1.75;
-      max-width:800px;
-      position:relative;
-      z-index:1;
-    }
-
-    .step-actions{
-      margin-top:22px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      position:relative;
-      z-index:1;
-    }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      margin:0;
-      min-height:50px;
-      padding:0 18px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(135deg, #4d148c 0%, #6d28d9 100%);
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-      transition:.22s ease;
-      width:100%;
-      cursor:pointer;
-    }
-
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 18px 30px rgba(77,20,140,.24);
-    }
-
-    .volume-btn{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      min-height:50px;
-      padding:0 18px;
-      border-radius:16px;
-      background:linear-gradient(135deg,#4d148c,#6d28d9);
-      color:#fff;
-      font-size:13px;
-      font-weight:900;
-      text-decoration:none;
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-
-    .volume-btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 18px 30px rgba(77,20,140,.24);
-    }
-
-    .step-viewer{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:24px;
-      box-shadow:0 12px 30px rgba(15,23,42,.04);
-      overflow:hidden;
-    }
-
-    .step-viewer-head{
-      padding:18px 20px;
-      border-bottom:1px solid #eef2f7;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      background:linear-gradient(180deg,#fff,#fbfdff);
-    }
-
-    .step-viewer-title{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      font-size:16px;
-      font-weight:900;
-      letter-spacing:-.03em;
-      color:#0f172a;
-    }
-
-    .step-viewer-title i{
-      width:38px;
-      height:38px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      color:#fff;
-      background:linear-gradient(135deg,#4d148c,#6d28d9);
-    }
-
-    .step-shell{padding:18px}
-
-    .step-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom:16px;
-      flex-wrap:wrap;
-    }
-
-    .step-counter{
-      font-size:12px;
-      font-weight:900;
-      color:#475569;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-    }
-
-    .mini-progress-bar{
-      height:12px;
-      background:#eaf0f7;
-      border-radius:999px;
-      overflow:hidden;
-      flex:1;
-      min-width:230px;
-    }
-
-    .mini-progress-fill{
-      height:100%;
-      width:0%;
-      border-radius:inherit;
-      background:linear-gradient(90deg,#4d148c 0%, #6d28d9 48%, #ff6600 100%);
-      transition:width .35s ease;
-    }
-
-    .step-body{
-      position:relative;
-      min-height:520px;
-      padding:26px;
-      border-radius:26px;
-      border:1px solid #e5edf7;
-      background:
-        radial-gradient(circle at top right, rgba(109,40,217,.08), transparent 30%),
-        linear-gradient(180deg,#fff,#fbfdff);
-      box-shadow:0 12px 30px rgba(15,23,42,.04);
-      overflow:hidden;
-    }
-
-    .step-body::before{
-      content:"";
-      position:absolute;
-      left:0;
-      top:0;
-      bottom:0;
-      width:5px;
-      background:linear-gradient(180deg,#4d148c,#ff6600);
-    }
-
-    .step-title{
-      margin:0;
-      font-size:clamp(28px,3vw,44px);
-      line-height:1.05;
-      letter-spacing:-.06em;
-      font-weight:900;
-      color:#0f172a;
-    }
-
-    .step-content{
-      margin-top:18px;
-      font-size:15px;
-      line-height:1.85;
-      color:#475569;
-      white-space:pre-line;
-      max-width:960px;
-    }
-
-    .step-images{
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      margin-top:24px;
-    }
-
-    .step-images img{
-      width:100%;
-      max-height:460px;
-      object-fit:contain;
-      border-radius:20px;
-      border:1px solid #e5e7eb;
-      background:#fff;
-      box-shadow:0 18px 45px rgba(15,23,42,.14);
-      cursor:zoom-in;
-      transition:.25s ease;
-    }
-
-    .step-images img:hover{
-      transform:scale(1.015);
-      box-shadow:0 24px 60px rgba(15,23,42,.22);
-    }
-
-    .step-body.animate-left{animation:slideLeft .38s ease}
-    .step-body.animate-right{animation:slideRight .38s ease}
-
-    @keyframes slideLeft{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-    @keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
-
-    .step-navigation{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      margin-top:18px;
-    }
-
-    .step-nav-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      min-height:50px;
-      padding:0 20px;
-      border:none;
-      border-radius:16px;
-      font-size:14px;
-      font-weight:900;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-
-    .step-nav-btn:hover{transform:translateY(-2px)}
-
-    .step-nav-btn.prev{
-      background:#f8fafc;
-      color:#334155;
-      border:1px solid #dbe4f0;
-    }
-
-    .step-nav-btn.next{
-      background:linear-gradient(135deg,#4d148c,#6d28d9);
-      color:#fff;
-      box-shadow:0 14px 24px rgba(77,20,140,.18);
-    }
-
-    .step-nav-btn.finish{background:linear-gradient(135deg,#16a34a,#22c55e)}
-
-    .step-nav-btn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-      transform:none;
-      box-shadow:none;
-    }
-
-    .step-dots{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:8px;
-      margin-top:16px;
-    }
-
-    .step-dot{
-      width:11px;
-      height:11px;
-      border-radius:999px;
-      background:#d1d5db;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-
-    .step-dot:hover{transform:scale(1.3);background:#6d28d9}
-    .step-dot.active{width:30px;background:#ff6600}
-
-    .side-panel,
-    .template-panel{
-      padding:18px 18px 18px 0;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      min-width:0;
-    }
-
-    .side-panel{padding-right:14px}
-
-    .summary-card{
-      background:#fff;
-      border:1px solid #dbe4f0;
-      border-radius:22px;
-      padding:18px;
-      box-shadow:var(--shadow-md);
-    }
-
-    .summary-head{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:12px;
-      font-size:14px;
-      font-weight:900;
-    }
-
-    .summary-head i{color:#7c3aed}
-
-    .summary-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .metric{
-      padding:14px;
-      border-radius:18px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-    }
-
-    .metric-k{
-      display:block;
-      font-size:10px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#64748b;
-      font-weight:800;
-      margin-bottom:6px;
-    }
-
-    .metric-v{
-      font-size:18px;
-      font-weight:900;
-      letter-spacing:-.03em;
-      word-break:break-word;
-    }
-
-    .path-list{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      overflow:visible;
-      max-height:none;
-      padding-right:0;
-    }
-
-    .path-jump{
-      width:100%;
-      text-align:left;
-      padding:8px 9px;
-      border-radius:13px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-      cursor:pointer;
-      transition:.18s ease;
-      display:flex;
-      gap:8px;
-      align-items:flex-start;
-      color:#0f172a;
-    }
-
-    .path-jump:hover{
-      transform:translateY(-1px);
-      background:#eef4ff;
-      border-color:#cfe0ff;
-      box-shadow:0 8px 18px rgba(37,99,235,.08);
-    }
-
-    .path-jump.active{
-      border:2px solid #2563eb;
-      box-shadow:0 0 0 3px rgba(37,99,235,.10);
-    }
-
-    .path-jump span{
-      width:22px;
-      height:22px;
-      border-radius:8px;
-      display:grid;
-      place-items:center;
-      background:#eef4ff;
-      color:#1d4ed8;
-      font-size:10px;
-      font-weight:900;
-      flex:0 0 auto;
-    }
-
-    .path-jump strong{display:block;font-size:11px;line-height:1.25}
-    .path-jump small{display:block;margin-top:2px;color:#64748b;line-height:1.25;font-size:10px;font-weight:700}
-
-    .section-note{
-      font-size:12px;
-      color:#64748b;
-      line-height:1.6;
-      margin-top:-2px;
-    }
-
-    .reminder-list{display:grid;gap:10px}
-
-    .reminder{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      padding:13px;
-      border-radius:17px;
-      background:#f8fafc;
-      border:1px solid #e7edf4;
-      color:#475569;
-      font-size:13px;
-      line-height:1.6;
-    }
-
-    .reminder i{color:#ff6600;margin-top:3px}
-
-    .template-stack{display:flex;flex-direction:column;gap:12px;margin-top:14px}
-
-    .template-card{
-      border:1px solid #e5ebf4;
-      border-radius:18px;
-      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
-      overflow:hidden;
-    }
-
-    .template-card-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:14px 14px 10px;
-    }
-
-    .template-title-wrap{display:flex;align-items:center;gap:10px;min-width:0}
-
-    .template-icon{
-      width:36px;
-      height:36px;
-      border-radius:12px;
-      display:grid;
-      place-items:center;
-      background:#f3e8ff;
-      color:#7c3aed;
-      flex:0 0 auto;
-    }
-
-    .template-title{font-size:14px;font-weight:900;color:#0f172a}
-    .template-sub{font-size:12px;color:#64748b;margin-top:2px}
-    .template-body{padding:0 14px 14px}
-
-    .template-box{
-      min-height:100px;
-      padding:14px;
-      border-radius:14px;
-      background:#f8fbff;
-      border:1px solid #e4ebf5;
-      font-size:13px;
-      line-height:1.7;
-      color:#334155;
-      white-space:pre-wrap;
-    }
-
-    .template-foot{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:0 14px 14px;
-    }
-
-    .template-tag{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:7px 10px;
-      border-radius:999px;
-      background:#f8fafc;
-      border:1px solid #e2e8f0;
-      font-size:11px;
-      font-weight:800;
-      color:#64748b;
-    }
-
-    .template-copy{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      padding:10px 14px;
-      border-radius:12px;
-      background:#111827;
-      color:#fff;
-      font-size:12px;
-      font-weight:800;
-      transition:all .18s ease;
-    }
-
-    .template-copy.copied{background:#dcfce7 !important;color:#166534 !important;border-color:#bbf7d0 !important}
-
-    .image-preview-modal{
-      display:none;
-      position:fixed;
-      inset:0;
-      z-index:99999;
-      background:rgba(2,6,23,.88);
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      backdrop-filter:blur(8px);
-    }
-
-    .image-preview-modal img{
-      max-width:94vw;
-      max-height:90vh;
-      border-radius:18px;
-      background:#fff;
-      box-shadow:0 30px 80px rgba(0,0,0,.45);
-    }
-
-    .image-preview-close{
-      position:absolute;
-      top:18px;
-      right:18px;
-      width:46px;
-      height:46px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      background:rgba(255,255,255,.12);
-      color:#fff;
-      font-size:30px;
-      cursor:pointer;
-      transition:.2s ease;
-    }
-
-    .image-preview-close:hover{background:rgba(255,255,255,.2)}
-
-    #commentModal,
-    #allCommentsModal,
-    #helpModal{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(2,6,23,.52);
-      justify-content:center;
-      align-items:center;
-      padding:0 24px;
-      z-index:2147483647;
-      backdrop-filter:blur(8px);
-      overflow-y:auto;
-    }
-
-    #commentModal .modal-content,
-    #allCommentsModal .modal-content,
-    #helpModal .modal-content{
-      width:100%;
-      background:#fff;
-      border-radius:28px;
-      padding:26px;
-      box-shadow:0 24px 80px rgba(2,6,23,.18);
-      max-height:min(84vh, 900px);
-      overflow:auto;
-      border:1px solid rgba(148,163,184,.16);
-      margin:110px auto 32px;
-    }
-
-    #commentModal .feedback-modal{max-width:640px;border-radius:28px;padding:20px 20px 22px}
-    #allCommentsModal .modal-content{max-width:760px}
-    #helpModal .help-modal{max-width:760px;border-radius:30px;padding:18px}
-
-    #commentModal .modal-header,
-    #allCommentsModal .modal-header,
-    #helpModal .modal-header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      font-size:22px;
-      font-weight:800;
-      letter-spacing:-.03em;
-      margin-bottom:14px;
-      color:#0f172a;
-    }
-
-    #commentModal .modal-close,
-    #allCommentsModal .modal-close,
-    #helpModal .modal-close{
-      cursor:pointer;
-      width:40px;
-      height:40px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      color:#64748b;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-      transition:.2s ease;
-      flex-shrink:0;
-      font-size:22px;
-      line-height:1;
-    }
-
-    #commentModal .modal-close:hover,
-    #allCommentsModal .modal-close:hover,
-    #helpModal .modal-close:hover{color:#0f172a;background:#eef2ff}
-
-    #commentModal .rating-container{display:flex;justify-content:center;gap:14px;margin:16px 0 18px}
-    #commentModal .rating-star{cursor:pointer;font-size:26px;color:#d1d5db;transition:transform .18s ease, color .18s ease}
-    #commentModal .rating-star:hover{transform:translateY(-1px) scale(1.06)}
-    #commentModal .rating-star.selected{color:#ff6600}
-
-    #commentModal input,
-    #commentModal textarea{
-      width:100%;
-      border:none;
-      outline:none;
-      border-radius:16px;
-      background:#f8fafc;
-      box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-      padding:14px 16px;
-      color:#0f172a;
-      font-size:14px;
-      transition:.18s ease;
-    }
-
-    #commentModal input{margin-top:4px;margin-bottom:10px}
-    #commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
-    #commentModal input:focus,#commentModal textarea:focus{background:#fff;box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06)}
-    #commentModal .feedback-submit-btn{margin:16px 0 8px;min-height:54px;border-radius:18px}
-    #commentModal .link-text{color:#4d148c;cursor:pointer;text-decoration:none;font-size:14px;font-weight:700}
-    #commentModal .link-text:hover{text-decoration:underline}
-    #allCommentsModal .comment-list-item{padding:14px 0;border-bottom:1px solid rgba(148,163,184,.18)}
-    #allCommentsModal .comment-list-item:last-child{border-bottom:none}
-    #allCommentsModal .stars{color:#ff6600;font-size:18px;margin-bottom:6px;display:block}
+      min-height:calc(100vh - 180px); background:rgba(255,255,255,.58); backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,.68); border-radius:34px; box-shadow:var(--shadow-xl);
+      overflow:hidden; display:grid; grid-template-columns:minmax(0,1.45fr) 380px 420px;
+    }
+    .main{ padding:18px; display:flex; flex-direction:column; gap:16px; min-width:0; }
+    .main-topbar{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:24px; background:rgba(255,255,255,.85); border:1px solid rgba(219,228,240,.9); box-shadow:var(--shadow-md); }
+    .page-title-block{ display:flex; flex-direction:column; gap:6px; }
+    .page-title-block h1{ margin:0; font-size:24px; font-weight:900; letter-spacing:-.03em; color:#0f172a; }
+    .page-subtitle{ margin:0; font-size:13px; color:#64748b; line-height:1.6; max-width:720px; }
+    .main-status{ display:flex; gap:10px; flex-wrap:wrap; }
+    .pill{ display:inline-flex; align-items:center; gap:8px; padding:11px 14px; border-radius:999px; background:#fff; border:1px solid #dbe4f0; font-size:12px; font-weight:800; color:#0f172a; white-space:nowrap; }
+    .pill.primary{ background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; border:none; }
+    .workspace{ display:grid; grid-template-rows:auto 1fr; gap:16px; min-height:0; }
+    .progress-card{ background:#fff; border:1px solid #dbe4f0; border-radius:22px; padding:16px 18px; box-shadow:var(--shadow-md); }
+    .progress-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
+    .progress-title{ font-size:14px; font-weight:800; color:#0f172a; }
+    .progress-status{ font-size:12px; font-weight:800; color:#64748b; }
+    .progress-bar{ height:12px; background:#eaf0f7; border-radius:999px; overflow:hidden; }
+    .progress-fill{ height:100%; width:0%; border-radius:inherit; background:linear-gradient(90deg,#2563eb 0%, #1d4ed8 55%, #16a34a 100%); transition:width .28s ease; }
+    .stage-card{ background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); border:1px solid #dbe4f0; border-radius:30px; box-shadow:var(--shadow-card); min-height:640px; display:flex; flex-direction:column; overflow:hidden; }
+    .stage-top{ padding:22px 22px 0; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    .badge{ display:inline-flex; align-items:center; gap:8px; padding:10px 13px; border-radius:999px; background:#eef4ff; color:#1d4ed8; font-size:12px; font-weight:800; }
+    .badge.alt{ background:#f8fafc; color:#334155; }
+    .question-wrap{ padding:22px; display:flex; flex-direction:column; gap:18px; flex:1; }
+    .question-card{ position:relative; padding:30px; border-radius:28px; background: radial-gradient(circle at top right, rgba(37,99,235,.10), transparent 30%), linear-gradient(180deg,#ffffff,#f8fbff); border:1px solid #e6edf7; box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
+    .question-card::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.7); }
+    .question-label{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; color:#334155; position:relative; z-index:1; }
+    .question-text{ margin:18px 0 0; font-size:36px; line-height:1.08; letter-spacing:-.045em; font-weight:900; position:relative; z-index:1; }
+    .question-help{ margin:14px 0 0; color:#64748b; font-size:14px; line-height:1.75; max-width:800px; position:relative; z-index:1; }
+    .step-actions{ margin-top:22px; display:flex; flex-wrap:wrap; gap:10px; position:relative; z-index:1; }
+    .volume-btn{ appearance:none; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; padding:0 18px; border-radius:16px; background:linear-gradient(135deg,#4d148c,#6d28d9); color:#fff; font-size:13px; font-weight:900; box-shadow:0 14px 24px rgba(77,20,140,.18); transition:transform .18s ease, box-shadow .18s ease; }
+    .volume-btn:hover{ transform:translateY(-2px); box-shadow:0 18px 30px rgba(77,20,140,.24); }
+    .step-viewer{ background:#fff; border:1px solid #dbe4f0; border-radius:24px; box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
+    .step-viewer-head{ padding:18px 20px; border-bottom:1px solid #eef2f7; display:flex; align-items:center; justify-content:space-between; gap:12px; background:linear-gradient(180deg,#fff,#fbfdff); }
+    .step-viewer-title{ display:flex; align-items:center; gap:12px; font-size:16px; font-weight:900; letter-spacing:-.03em; color:#0f172a; }
+    .step-viewer-title i{ width:38px; height:38px; border-radius:14px; display:grid; place-items:center; color:#fff; background:linear-gradient(135deg,#4d148c,#6d28d9); }
+    .step-shell{ padding:18px; }
+    .step-top{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; flex-wrap:wrap; }
+    .step-counter{ font-size:12px; font-weight:900; color:#475569; letter-spacing:.1em; text-transform:uppercase; }
+    .mini-progress-bar{ height:12px; background:#eaf0f7; border-radius:999px; overflow:hidden; flex:1; min-width:230px; }
+    .mini-progress-fill{ height:100%; width:0%; border-radius:inherit; background:linear-gradient(90deg,#4d148c 0%, #6d28d9 48%, #ff6600 100%); transition:width .35s ease; }
+    .step-body{ position:relative; min-height:520px; padding:26px; border-radius:26px; border:1px solid #e5edf7; background: radial-gradient(circle at top right, rgba(109,40,217,.08), transparent 30%), linear-gradient(180deg,#fff,#fbfdff); box-shadow:0 12px 30px rgba(15,23,42,.04); overflow:hidden; }
+    .step-body::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:linear-gradient(180deg,#4d148c,#ff6600); }
+    .step-title{ margin:0; font-size:clamp(28px,3vw,44px); line-height:1.05; letter-spacing:-.06em; font-weight:900; color:#0f172a; }
+    .step-content{ margin-top:18px; font-size:15px; line-height:1.85; color:#475569; white-space:pre-line; max-width:960px; }
+    .step-navigation{ display:flex; justify-content:space-between; gap:12px; margin-top:18px; }
+    .step-nav-btn{ display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:50px; padding:0 20px; border:none; border-radius:16px; font-size:14px; font-weight:900; cursor:pointer; transition:.2s ease; }
+    .step-nav-btn:hover{ transform:translateY(-2px); }
+    .step-nav-btn.prev{ background:#f8fafc; color:#334155; border:1px solid #dbe4f0; }
+    .step-nav-btn.next{ background:linear-gradient(135deg,#4d148c,#6d28d9); color:#fff; box-shadow:0 14px 24px rgba(77,20,140,.18); }
+    .step-nav-btn.finish{ background:linear-gradient(135deg,#16a34a,#22c55e); }
+    .step-nav-btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+    .step-dots{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; }
+    .step-dot{ width:11px; height:11px; border-radius:999px; background:#d1d5db; cursor:pointer; transition:.2s ease; }
+    .step-dot:hover{ transform:scale(1.3); background:#6d28d9; }
+    .step-dot.active{ width:30px; background:#ff6600; }
+    .side-panel, .template-panel{ padding:18px 18px 18px 0; display:flex; flex-direction:column; gap:14px; min-width:0; }
+    .side-panel{ padding-right:14px; }
+    .summary-card{ background:#fff; border:1px solid #dbe4f0; border-radius:22px; padding:18px; box-shadow:var(--shadow-md); }
+    .summary-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:14px; font-weight:900; color:#0f172a; }
+    .summary-head i{ color:#7c3aed; }
+    .summary-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .metric{ padding:14px; border-radius:18px; background:#f8fafc; border:1px solid #e7edf4; }
+    .metric-k{ display:block; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:#64748b; font-weight:800; margin-bottom:6px; }
+    .metric-v{ font-size:18px; font-weight:900; letter-spacing:-.03em; word-break:break-word; }
+    .path-list{ display:flex; flex-direction:column; gap:6px; overflow:visible; max-height:none; padding-right:0; }
+    .path-jump{ width:100%; text-align:left; padding:8px 9px; border-radius:13px; background:#f8fafc; border:1px solid #e7edf4; cursor:pointer; transition:.18s ease; display:flex; gap:8px; align-items:flex-start; color:#0f172a; }
+    .path-jump:hover{ transform:translateY(-1px); background:#eef4ff; border-color:#cfe0ff; box-shadow:0 8px 18px rgba(37,99,235,.08); }
+    /* Remove hardcoded purple from base */
+    .path-jump.active{ border:2px solid #2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.10); }
+    .path-jump span{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:10px; font-weight:900; flex:0 0 auto; transition:all .18s ease; }
+    .path-jump.active span{ background:#2563eb; color:#fff; }
+    .path-jump strong{ display:block; font-size:11px; line-height:1.25; }
+    .path-jump small{ display:block; margin-top:2px; color:#64748b; line-height:1.25; font-size:10px; font-weight:700; }
+    .section-note{ font-size:12px; color:#64748b; line-height:1.6; margin-top:-2px; }
+    .reminder-list{ display:grid; gap:10px; }
+    .reminder{ display:flex; align-items:flex-start; gap:10px; padding:13px; border-radius:17px; background:#f8fafc; border:1px solid #e7edf4; color:#475569; font-size:13px; line-height:1.6; }
+    .reminder i{ color:#ff6600; margin-top:3px; }
+    .template-stack{ display:flex; flex-direction:column; gap:12px; margin-top:14px; }
+    .template-card{ border:1px solid #e5ebf4; border-radius:18px; background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%); overflow:hidden; }
+    .template-card-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 14px 10px; }
+    .template-title-wrap{ display:flex; align-items:center; gap:10px; min-width:0; }
+    .template-icon{ width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:#f3e8ff; color:#7c3aed; flex:0 0 auto; }
+    .template-title{ font-size:14px; font-weight:900; color:#0f172a; }
+    .template-sub{ font-size:12px; color:#64748b; margin-top:2px; }
+    .template-body{ padding:0 14px 14px; }
+    .template-box{ min-height:100px; padding:14px; border-radius:14px; background:#f8fbff; border:1px solid #e4ebf5; font-size:13px; line-height:1.7; color:#334155; white-space:pre-wrap; }
+    .template-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 14px 14px; }
+    .template-tag{ display:inline-flex; align-items:center; gap:6px; padding:7px 10px; border-radius:999px; background:#f8fafc; border:1px solid #e2e8f0; font-size:11px; font-weight:800; color:#64748b; text-decoration:none; transition:all .2s ease; }
+    .template-tag:hover{ background:#eef4ff; color:#1d4ed8; }
+    .template-copy{ appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:12px; background:#111827; color:#fff; font-size:12px; font-weight:800; transition:all .18s ease; }
+    .template-copy.copied{ background:#dcfce7 !important; color:#166534 !important; border-color:#bbf7d0 !important; }
+    .image-preview-modal{ display:none; position:fixed; inset:0; z-index:99999; background:rgba(2,6,23,.88); align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(8px); }
+    .image-preview-modal img{ max-width:94vw; max-height:90vh; border-radius:18px; background:#fff; box-shadow:0 30px 80px rgba(0,0,0,.45); }
+    .image-preview-close{ position:absolute; top:18px; right:18px; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.12); color:#fff; font-size:30px; cursor:pointer; transition:.2s ease; }
+    .image-preview-close:hover{ background:rgba(255,255,255,.2); }
 
     /* =========================================================
-       THEME CSS (copied verbatim from ePRS reference's guide-themes.css and inline overrides)
+       FULL THEME BRIDGE (with complete Quick Jump fix)
     ========================================================= */
     body.theme-fedex,
     body.theme-atlas,
@@ -1071,7 +335,7 @@
       background:var(--eprt-accent) !important;
     }
 
-    /* Quick Jump active theme */
+    /* ========== QUICK JUMP FIX - COMPLETE THEME OVERRIDE ========== */
     body.theme-fedex .path-jump.active,
     body.theme-atlas .path-jump.active,
     body.theme-basic .path-jump.active,
@@ -1080,13 +344,13 @@
       box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
     }
 
-    body.theme-fedex .path-jump.active span,
-    body.theme-atlas .path-jump.active span,
-    body.theme-basic .path-jump.active span,
-    body.theme-simple .path-jump.active span {
-      background: var(--eprt-accent) !important;
-      color: #ffffff !important;
-    }
+body.theme-fedex .path-jump.active span,
+body.theme-atlas .path-jump.active span,
+body.theme-basic .path-jump.active span,
+body.theme-simple .path-jump.active span {
+  background: var(--eprt-accent) !important;
+  color: #ffffff !important;
+}
 
     body.theme-fedex .path-jump span,
     body.theme-atlas .path-jump span,
@@ -1094,6 +358,28 @@
     body.theme-simple .path-jump span{
       background:var(--eprt-accent-soft) !important;
       color:var(--eprt-accent) !important;
+    }
+
+    /* Icons use accent color */
+    body.theme-fedex .summary-head i,
+    body.theme-atlas .summary-head i,
+    body.theme-basic .summary-head i,
+    body.theme-simple .summary-head i,
+    body.theme-fedex .reminder i,
+    body.theme-atlas .reminder i,
+    body.theme-basic .reminder i,
+    body.theme-simple .reminder i,
+    body.theme-fedex .template-icon,
+    body.theme-atlas .template-icon,
+    body.theme-basic .template-icon,
+    body.theme-simple .template-icon {
+      color: var(--eprt-accent) !important;
+    }
+    body.theme-fedex .template-icon,
+    body.theme-atlas .template-icon,
+    body.theme-basic .template-icon,
+    body.theme-simple .template-icon {
+      background: var(--eprt-accent-soft) !important;
     }
 
     /* Sidebar summary cards */
@@ -1168,84 +454,110 @@
     body.theme-basic .template-copy{ background:#111827 !important; }
     body.theme-simple .template-copy{ background:#2563eb !important; }
 
-    /* Step dots direct assignments (from ePRS) */
-    .step-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: all .2s ease;
-    }
-    body.theme-fedex .step-dot {
-      background: #e2e8f0 !important;
-    }
-    body.theme-fedex .step-dot:hover {
-      background: #4d148c !important;
-      transform: scale(1.3);
-    }
-    body.theme-fedex .step-dot.active {
-      background: #ff6600 !important;
-      width: 30px;
-    }
-    body.theme-atlas .step-dot {
-      background: #e2e8f0 !important;
-    }
-    body.theme-atlas .step-dot:hover {
-      background: #0e5361 !important;
-      transform: scale(1.3);
-    }
-    body.theme-atlas .step-dot.active {
-      background: #5b7f08 !important;
-      width: 30px;
-    }
-    body.theme-basic .step-dot {
-      background: #e2e8f0 !important;
-    }
-    body.theme-basic .step-dot:hover {
-      background: #374151 !important;
-      transform: scale(1.3);
-    }
-    body.theme-basic .step-dot.active {
-      background: #374151 !important;
-      width: 30px;
-    }
-    body.theme-simple .step-dot {
-      background: #e2e8f0 !important;
-    }
-    body.theme-simple .step-dot:hover {
-      background: #2563eb !important;
-      transform: scale(1.3);
-    }
-    body.theme-simple .step-dot.active {
-      background: #2563eb !important;
-      width: 30px;
+    @media (max-width:1450px){ .app-frame{ grid-template-columns:minmax(0,1fr) 340px 360px; } }
+    @media (max-width:1220px){ .app-frame{ grid-template-columns:1fr; } .side-panel, .template-panel{ padding:0 18px 18px; } }
+    @media (max-width:760px){
+      .app-shell{ width:min(calc(100% - 20px), var(--max)); margin:16px auto; }
+      .app-frame{ min-height:100vh; border-radius:24px; }
+      .main{ padding:18px; }
+      .question-text{ font-size:28px; }
+      .step-body{ padding:22px; min-height:460px; }
     }
 
-    @media (max-width:1450px){.app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}}
-    @media (max-width:1220px){
-      .app-frame{grid-template-columns:1fr}
-      .side-panel,.template-panel{padding:0 18px 18px}
-    }
-    @media (max-width:760px){
-      .app-shell{width:min(calc(100% - 20px), var(--max));margin:16px auto}
-      .app-frame{min-height:100vh;border-radius:24px}
-      .main{padding:18px}
-      .main-topbar{flex-direction:column;align-items:flex-start}
-      .question-text{font-size:28px}
-      .summary-grid{grid-template-columns:1fr}
-      .step-viewer-head{flex-direction:column;align-items:flex-start}
-      .step-body{padding:22px;min-height:460px}
-      .path-list{gap:8px}
-      .path-jump{padding:10px 11px}
-      .path-jump strong{font-size:12px}
-      .path-jump small{font-size:10px}
-      #commentModal,#allCommentsModal,#helpModal{padding:0 14px}
-      #commentModal .modal-content,#allCommentsModal .modal-content,#helpModal .modal-content{padding:20px;border-radius:22px;margin:96px auto 20px}
-    }
+/* STEP DOTS - DIRECT COLOR ASSIGNMENTS per theme */
+/* Base dot - no background, will be set by theme */
+.step-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+/* FedEx Theme */
+body.theme-fedex .step-dot {
+  background: #e2e8f0 !important;
+}
+body.theme-fedex .step-dot:hover {
+  background: #4d148c !important;
+  transform: scale(1.3);
+}
+body.theme-fedex .step-dot.active {
+  background: #ff6600 !important;
+  width: 30px;
+}
+
+/* Atlas Theme */
+body.theme-atlas .step-dot {
+  background: #e2e8f0 !important;
+}
+body.theme-atlas .step-dot:hover {
+  background: #0e5361 !important;
+  transform: scale(1.3);
+}
+body.theme-atlas .step-dot.active {
+  background: #5b7f08 !important;
+  width: 30px;
+}
+
+/* Basic Theme (Dark / White) */
+body.theme-basic .step-dot {
+  background: #e2e8f0 !important;
+}
+body.theme-basic .step-dot:hover {
+  background: #374151 !important;
+  transform: scale(1.3);
+}
+body.theme-basic .step-dot.active {
+  background: #374151 !important;  /* Dark gray, not blue */
+  width: 30px;
+}
+
+/* Simple Theme (White) */
+body.theme-simple .step-dot {
+  background: #e2e8f0 !important;
+}
+body.theme-simple .step-dot:hover {
+  background: #2563eb !important;
+  transform: scale(1.3);
+}
+body.theme-simple .step-dot.active {
+  background: #2563eb !important;  /* Blue, as expected */
+  width: 30px;
+}
+    
+/* Contain step images */
+.step-images {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.step-images img {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: 460px;
+  object-fit: contain;
+}
+
+/* Ensure navigation buttons are always accessible */
+.step-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 70vh;
+}
+
+.step-navigation {
+  position: sticky;
+  bottom: 0;
+  background: inherit;
+  padding-top: 12px;
+  z-index: 5;
+}    
   </style>
 </head>
 
-<body data-page="volume-application" class="theme-fedex">
+<body class="theme-fedex" data-page="volume-application">
   <div class="page">
     <div id="site-header"></div>
 
@@ -1260,7 +572,7 @@
               </p>
             </div>
             <div class="main-status">
-              <div class="pill primary" id="statusPill">
+              <div class="pill primary">
                 <i class="fa-solid fa-truck-ramp-box"></i>
                 Ready
               </div>
@@ -1279,7 +591,7 @@
             </section>
 
             <section class="stage-area">
-              <div class="stage-card" id="stageCard">
+              <div class="stage-card">
                 <div class="stage-top">
                   <span class="badge">
                     <i class="fa-solid fa-boxes-stacked"></i>
@@ -1301,7 +613,7 @@
                       Use the steps below to apply the flat quote amount, remove rate keywords, zero out applicable surcharges, add CONT and PRAU details, clean the description field, and complete the correction.
                     </p>
                     <div class="step-actions">
-                      <button class="volume-btn" type="button" onclick="exploreSteps()">
+                      <button class="volume-btn" onclick="exploreSteps()">
                         Explore Steps
                         <i class="fa-solid fa-arrow-right"></i>
                       </button>
@@ -1332,11 +644,11 @@
                         <div class="step-images" id="stepImages"></div>
                       </div>
                       <div class="step-navigation">
-                        <button class="step-nav-btn prev" id="prevBtn" type="button">
+                        <button class="step-nav-btn prev" id="prevBtn">
                           <i class="fa-solid fa-arrow-left"></i>
                           Previous
                         </button>
-                        <button class="step-nav-btn next" id="nextBtn" type="button">
+                        <button class="step-nav-btn next" id="nextBtn">
                           Next
                           <i class="fa-solid fa-arrow-right"></i>
                         </button>
@@ -1352,43 +664,135 @@
 
         <aside class="side-panel">
           <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Key Reminders</div>
+            <div class="summary-head">
+              <i class="fa-solid fa-lightbulb"></i>
+              Key Reminders
+            </div>
             <div class="reminder-list">
-              <div class="reminder"><i class="fa-solid fa-dollar-sign"></i><span>Change the freight charge rate line to <strong>FLAT</strong> and apply the Volume Quote amount.</span></div>
-              <div class="reminder"><i class="fa-solid fa-eraser"></i><span>Remove rate keywords such as FSCL, DEWT, RAZ, LEDI, PRAU, and BRAP.</span></div>
-              <div class="reminder"><i class="fa-solid fa-ban"></i><span>Capacity load keywords do <strong>not</strong> need to be removed.</span></div>
-              <div class="reminder"><i class="fa-solid fa-circle-check"></i><span>Click <strong>ACCEPT ALL</strong> after completing the correction.</span></div>
+              <div class="reminder">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <span>Change the freight charge rate line to <strong>FLAT</strong> and apply the Volume Quote amount.</span>
+              </div>
+              <div class="reminder">
+                <i class="fa-solid fa-eraser"></i>
+                <span>Remove rate keywords such as FSCL, DEWT, RAZ, LEDI, PRAU, and BRAP.</span>
+              </div>
+              <div class="reminder">
+                <i class="fa-solid fa-ban"></i>
+                <span>Capacity load keywords do <strong>not</strong> need to be removed.</span>
+              </div>
+              <div class="reminder">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Click <strong>ACCEPT ALL</strong> after completing the correction.</span>
+              </div>
             </div>
           </div>
+
           <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+            <div class="summary-head">
+              <i class="fa-solid fa-chart-simple"></i>
+              Quick Snapshot
+            </div>
             <div class="summary-grid">
-              <div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">13</span></div>
-              <div class="metric"><span class="metric-k">Images</span><span class="metric-v" id="metricImages">11</span></div>
-              <div class="metric"><span class="metric-k">Mode</span><span class="metric-v">Guide</span></div>
-              <div class="metric"><span class="metric-k">Final</span><span class="metric-v">Accept</span></div>
+              <div class="metric">
+                <span class="metric-k">Steps</span>
+                <span class="metric-v" id="metricSteps">13</span>
+              </div>
+              <div class="metric">
+                <span class="metric-k">Images</span>
+                <span class="metric-v" id="metricImages">11</span>
+              </div>
+              <div class="metric">
+                <span class="metric-k">Mode</span>
+                <span class="metric-v">Guide</span>
+              </div>
+              <div class="metric">
+                <span class="metric-k">Final</span>
+                <span class="metric-v">Accept</span>
+              </div>
             </div>
           </div>
+
           <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-route"></i> Quick Jump</div>
+            <div class="summary-head">
+              <i class="fa-solid fa-route"></i>
+              Quick Jump
+            </div>
             <div class="path-list" id="quickJumpList"></div>
           </div>
         </aside>
 
         <aside class="template-panel">
           <div class="summary-card">
-            <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Correction Codes</div>
-            <div class="section-note">Use the correct correction code based on the reason for applying the Volume Quote.</div>
+            <div class="summary-head">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              Correction Codes
+            </div>
+            <div class="section-note">
+              Use the correct correction code based on the reason for applying the Volume Quote.
+            </div>
             <div class="template-stack">
-              <div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-code"></i></div><div><div class="template-title">EADL</div><div class="template-sub">Biller did not bill</div></div></div></div><div class="template-body"><div id="eadlCode" class="template-box">EADL – Volume quote listed on BOL but biller did not bill.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span><button class="template-copy" type="button" onclick="copyText('eadlCode', this)">Copy</button></div></div>
-              <div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-robot"></i></div><div><div class="template-title">SYSM</div><div class="template-sub">Automation missed quote</div></div></div></div><div class="template-body"><div id="sysmCode" class="template-box">SYSM – Volume quote noted but automation didn’t recognize it.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span><button class="template-copy" type="button" onclick="copyText('sysmCode', this)">Copy</button></div></div>
-              <div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-user-xmark"></i></div><div><div class="template-title">CMID</div><div class="template-sub">Quote not provided on BOL</div></div></div></div><div class="template-body"><div id="cmidCode" class="template-box">CMID – Shipper/consignee/BT did not provide volume quote on BOL.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span><button class="template-copy" type="button" onclick="copyText('cmidCode', this)">Copy</button></div></div>
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                      <div class="template-title">EADL</div>
+                      <div class="template-sub">Biller did not bill</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="template-body">
+                  <div id="eadlCode" class="template-box">EADL – Volume quote listed on BOL but biller did not bill.</div>
+                </div>
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
+                  <button class="template-copy" onclick="copyText('eadlCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-robot"></i></div>
+                    <div>
+                      <div class="template-title">SYSM</div>
+                      <div class="template-sub">Automation missed quote</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="template-body">
+                  <div id="sysmCode" class="template-box">SYSM – Volume quote noted but automation didn’t recognize it.</div>
+                </div>
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
+                  <button class="template-copy" onclick="copyText('sysmCode', this)">Copy</button>
+                </div>
+              </div>
+
+              <div class="template-card">
+                <div class="template-card-head">
+                  <div class="template-title-wrap">
+                    <div class="template-icon"><i class="fa-solid fa-user-xmark"></i></div>
+                    <div>
+                      <div class="template-title">CMID</div>
+                      <div class="template-sub">Quote not provided on BOL</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="template-body">
+                  <div id="cmidCode" class="template-box">CMID – Shipper/consignee/BT did not provide volume quote on BOL.</div>
+                </div>
+                <div class="template-foot">
+                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
+                  <button class="template-copy" onclick="copyText('cmidCode', this)">Copy</button>
+                </div>
+              </div>
             </div>
           </div>
         </aside>
       </div>
     </div>
-
     <div id="site-footer"></div>
   </div>
 
@@ -1397,322 +801,245 @@
     <img id="imagePreview" src="" alt="Preview">
   </div>
 
-  <script src="assets/js/header-loader.js"></script>
-  <script src="assets/js/header.js"></script>
-  <script src="assets/js/footer-loader.js"></script>
+  <script src="../assets/js/header-loader.js"></script>
+  <script src="../assets/js/header.js"></script>
+  <script src="../assets/js/footer-loader.js"></script>
+  <script src="../assets/js/theme-loader.js"></script>
 
-  <!-- ==================== INLINE THEME LOADER (copied from theme-loader.js) ==================== -->
   <script>
-    (function() {
-      // Theme definitions (CSS variables) – these are already in the <style> block,
-      // but we need to ensure the body class is set correctly.
-      const themeMap = {
-        fedex: 'theme-fedex',
-        atlas: 'theme-atlas',
-        basic: 'theme-basic',
-        simple: 'theme-simple'
-      };
-      const allThemeClasses = Object.values(themeMap);
+    // ==================== VOLUME APPLICATION STEPS ====================
+    const steps = [
+      { title:"Adjust Freight Charges", images:["Steps/Step1.jpg","Steps/Step1v2.png"], content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.` },
+      { title:"Remove Rate Keywords", images:["Steps/Step2.png"], content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)` },
+      { title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD", images:["Steps/Step3.png"], content:`• Capacity load keywords do NOT need to be removed.\n• Add RMK line stating: "CAPL NOT APPLICABLE PER TRUCKLOAD."` },
+      { title:"Zero Out Surcharges", images:["Steps/Step4.png","Steps/Step4v2.png"], content:`Zero out any of the following surcharges:\n• VICH\n• VWCH\n• OVRL\n• Extreme Length\n• High Cost\n• California Compliance Fee\n• Demand Surcharge` },
+      { title:"Validate Additional Surcharges", images:["Steps/Step5.jpg"], content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.\n• If surcharges with checkmarks are the only ones included in the quote, remove surcharge on FBC.\n• No checkmark = not included in quote.` },
+      { title:"Add CONT Keyword", images:["Steps/Step6.png"], content:`• Add keyword "CONT".` },
+      { title:"Add full quote number into CONT Number field.", images:["Steps/Step7.jpg"], content:`• Add full quote number into "CONT Number" field.\n• If error appears, click OK.\n• If "CM Option" dropdown appears, select service option noted on BOL (TLX, TLS, EXCL).\n• If none is noted, choose TLX. Click OK.` },
+      { title:"System Auto Adds Keywords", images:["Steps/Step8.png"], content:`System will automatically add:\n• CONT\n• TLX\nBelow this point, add:\n• SLCU\n• NOAR` },
+      { title:"Add PRAU & Agreement Details (keyword)", images:["Steps/Step9.png"], content:`• Below NOAR, add keyword PRAU.` },
+      { title:"Add PRAU & Agreement Details (dropdowns)", images:["Steps/Step10.jpg"], content:`• In Agreement Type dropdown, choose "CONT".\n• In Tariff dropdown, choose service type from BOL (TLX, TLS, EXCL).\n• Enter 7 numbers between F and CM in quote number.\n• In Base Type dropdown, select "CUST".\n• In AP1 dropdown, select who the pro is billed to.\n• Click OK when finished.` },
+      { title:"Clean Description Field", images:["Steps/Step11.jpg"], content:`Delete all blank lines in the description field.` },
+      { title:"Add Correction Code", content:`Add correction code based on reason:\n\nEADL – Volume quote listed on BOL but biller did not bill.\nSYSM – Volume quote noted but automation didn’t recognize it.\nCMID – Shipper/consignee/BT did not provide volume quote on BOL.` },
+      { title:"Final Step", content:`At last, click ACCEPT ALL.` }
+    ];
 
-      function applyStoredTheme() {
-        let storedTheme = localStorage.getItem('siteTheme');
-        if (!storedTheme || !themeMap[storedTheme]) {
-          storedTheme = 'fedex';
-        }
-        const targetClass = themeMap[storedTheme];
-        // Remove any existing theme class and add the correct one
-        allThemeClasses.forEach(cls => document.body.classList.remove(cls));
-        document.body.classList.add(targetClass);
-      }
-
-      // Initial application
-      applyStoredTheme();
-
-      // Listen for storage events (theme changed in another tab)
-      window.addEventListener('storage', function(e) {
-        if (e.key === 'siteTheme') {
-          applyStoredTheme();
-        }
-      });
-
-      // Listen for custom event from header
-      window.addEventListener('themeChanged', function(e) {
-        const newTheme = e.detail?.theme;
-        if (newTheme && themeMap[newTheme]) {
-          allThemeClasses.forEach(cls => document.body.classList.remove(cls));
-          document.body.classList.add(themeMap[newTheme]);
-        }
-      });
-
-      // Polling fallback (every 500ms) – ensures we catch any direct localStorage changes
-      let lastTheme = localStorage.getItem('siteTheme');
-      setInterval(function() {
-        const currentTheme = localStorage.getItem('siteTheme');
-        if (currentTheme !== lastTheme) {
-          lastTheme = currentTheme;
-          applyStoredTheme();
-        }
-      }, 500);
-    })();
-  </script>
-
-  <!-- FIREBASE + FEEDBACK MODALS (unchanged) -->
-  <script>
-  if (window.firebase && !firebase.apps.length) {
-    firebase.initializeApp({
-      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-      authDomain: "bdgg-database.firebaseapp.com",
-      projectId: "bdgg-database",
-      storageBucket: "bdgg-database.appspot.com",
-      messagingSenderId: "43574975434",
-      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    });
-  }
-
-  const db = firebase.firestore();
-  const FEEDBACK_COLLECTION = "feedback";
-
-  let selectedRating = 0;
-  let ratingStars = [];
-  let commentsUnsubscribe = null;
-
-  function escapeHtml(value){
-    return String(value ?? "").replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
-  }
-
-  function openModalAnimated(id) {
-    const modal = document.getElementById(id);
-    if (!modal) return;
-    modal.style.display = "flex";
-    modal.classList.remove("is-closing");
-    requestAnimationFrame(() => modal.classList.add("is-open"));
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeModalAnimated(id, onClosed) {
-    const modal = document.getElementById(id);
-    if (!modal) return;
-    modal.classList.remove("is-open");
-    modal.classList.add("is-closing");
-    setTimeout(() => {
-      modal.style.display = "none";
-      modal.classList.remove("is-closing");
-      document.body.style.overflow = "";
-      if (typeof onClosed === "function") onClosed();
-    }, 220);
-  }
-
-  function openComment() { selectedRating = 0; openModalAnimated("commentModal"); setTimeout(initRatingStars, 80); }
-  function closeComment() { closeModalAnimated("commentModal"); }
-  function openHelp() { openModalAnimated("helpModal"); }
-  function closeHelp() { closeModalAnimated("helpModal"); }
-  function closeAllComments() { closeModalAnimated("allCommentsModal", () => { if (typeof commentsUnsubscribe === "function") { commentsUnsubscribe(); commentsUnsubscribe = null; } }); }
-
-  function initRatingStars() {
-    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-    ratingStars.forEach(star => {
-      star.onclick = function(e) {
-        e.stopPropagation();
-        selectedRating = Number(this.dataset.value || this.dataset.rating || 0);
-        ratingStars.forEach(s => {
-          const value = Number(s.dataset.value || s.dataset.rating || 0);
-          s.classList.toggle("selected", value <= selectedRating);
-        });
-      };
-    });
-  }
-
-  async function sendComment() {
-    const nameEl = document.getElementById("commentName");
-    const textEl = document.getElementById("commentText");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    const name = (nameEl?.value || "").trim();
-    const comment = (textEl?.value || "").trim();
-    if (!selectedRating) { if(feedbackMessage){ feedbackMessage.style.display="block"; feedbackMessage.style.color="#ef4444"; feedbackMessage.textContent="Please select a rating first."; } return; }
-    if (!comment) { if(feedbackMessage){ feedbackMessage.style.display="block"; feedbackMessage.style.color="#ef4444"; feedbackMessage.textContent="Please enter your feedback."; } return; }
-    try {
-      await db.collection(FEEDBACK_COLLECTION).add({
-        name: name || "Anonymous",
-        comment,
-        rating: selectedRating,
-        page: document.body.dataset.page || "volume-application",
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      if(feedbackMessage){ feedbackMessage.style.display="block"; feedbackMessage.style.color="#16a34a"; feedbackMessage.textContent="Feedback sent successfully."; }
-      if(nameEl) nameEl.value = "";
-      if(textEl) textEl.value = "";
-      selectedRating = 0;
-      ratingStars.forEach(star => star.classList.remove("selected"));
-      setTimeout(() => { closeComment(); if(feedbackMessage){ feedbackMessage.style.display="none"; feedbackMessage.textContent=""; } }, 900);
-    } catch(err) { console.error(err); if(feedbackMessage){ feedbackMessage.style.display="block"; feedbackMessage.style.color="#ef4444"; feedbackMessage.textContent="Unable to send feedback right now."; } }
-  }
-
-  async function showAllComments() {
-    const commentModal = document.getElementById("commentModal");
-    const commentsList = document.getElementById("commentsList") || document.getElementById("allCommentsList");
-    if(!commentsList){ openModalAnimated("allCommentsModal"); return; }
-    commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
-    const loadComments = () => {
-      try {
-        if(typeof commentsUnsubscribe === "function") commentsUnsubscribe();
-        commentsUnsubscribe = db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").limit(40).onSnapshot(snapshot => {
-          if(!snapshot.size){ commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`; return; }
-          commentsList.innerHTML = "";
-          snapshot.forEach(doc => {
-            const data = doc.data() || {};
-            const rating = Number(data.rating || 0);
-            const safeRating = Math.max(0, Math.min(5, rating));
-            const stars = "★".repeat(safeRating) + "☆".repeat(5-safeRating);
-            const item = document.createElement("div");
-            item.className = "comment-list-item";
-            item.innerHTML = `<span class="stars">${stars}</span><strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong><div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>`;
-            commentsList.appendChild(item);
-          });
-        }, err => { console.error(err); commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`; });
-        openModalAnimated("allCommentsModal");
-      } catch(err){ console.error(err); commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`; openModalAnimated("allCommentsModal"); }
+    let currentStep = 0;
+    const els = {
+      stepTitle: document.getElementById("stepTitle"),
+      stepContent: document.getElementById("stepContent"),
+      stepImages: document.getElementById("stepImages"),
+      stepCounter: document.getElementById("stepCounter"),
+      miniProgressFill: document.getElementById("miniProgressFill"),
+      progressFill: document.getElementById("progressFill"),
+      progressText: document.getElementById("progressText"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      stepDots: document.getElementById("stepDots"),
+      stepBody: document.getElementById("stepBody"),
+      quickJumpList: document.getElementById("quickJumpList"),
+      metricSteps: document.getElementById("metricSteps"),
+      metricImages: document.getElementById("metricImages")
     };
-    if(commentModal && commentModal.style.display === "flex") closeModalAnimated("commentModal", loadComments);
-    else loadComments();
-  }
-  function viewAllComments() { showAllComments(); }
-  window.openComment = openComment; window.closeComment = closeComment; window.openHelp = openHelp; window.closeHelp = closeHelp;
-  window.closeAllComments = closeAllComments; window.showAllComments = showAllComments; window.viewAllComments = viewAllComments;
-  window.sendComment = sendComment;
-  document.addEventListener("headerLoaded", () => initRatingStars());
-  document.addEventListener("DOMContentLoaded", () => initRatingStars());
-  setTimeout(initRatingStars, 300);
-  </script>
 
-  <!-- VOLUME APPLICATION STEPS (unchanged) -->
-  <script>
-  const steps = [
-    { title:"Adjust Freight Charges", images:["Steps/Step1.jpg","Steps/Step1v2.png"], content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.` },
-    { title:"Remove Rate Keywords", images:["Steps/Step2.png"], content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)` },
-    { title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD", images:["Steps/Step3.png"], content:`• Capacity load keywords do NOT need to be removed.\n• Add RMK line stating: "CAPL NOT APPLICABLE PER TRUCKLOAD."` },
-    { title:"Zero Out Surcharges", images:["Steps/Step4.png","Steps/Step4v2.png"], content:`Zero out any of the following surcharges:\n• VICH\n• VWCH\n• OVRL\n• Extreme Length\n• High Cost\n• California Compliance Fee\n• Demand Surcharge` },
-    { title:"Validate Additional Surcharges", images:["Steps/Step5.jpg"], content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.\n• If surcharges with checkmarks are the only ones included in the quote, remove surcharge on FBC.\n• No checkmark = not included in quote.` },
-    { title:"Add CONT Keyword", images:["Steps/Step6.png"], content:`• Add keyword "CONT".` },
-    { title:"Add full quote number into CONT Number field.", images:["Steps/Step7.jpg"], content:`• Add full quote number into "CONT Number" field.\n• If error appears, click OK.\n• If "CM Option" dropdown appears, select service option noted on BOL (TLX, TLS, EXCL).\n• If none is noted, choose TLX. Click OK.` },
-    { title:"System Auto Adds Keywords", images:["Steps/Step8.png"], content:`System will automatically add:\n• CONT\n• TLX\nBelow this point, add:\n• SLCU\n• NOAR` },
-    { title:"Add PRAU & Agreement Details (keyword)", images:["Steps/Step9.png"], content:`• Below NOAR, add keyword PRAU.` },
-    { title:"Add PRAU & Agreement Details (dropdowns)", images:["Steps/Step10.jpg"], content:`• In Agreement Type dropdown, choose "CONT".\n• In Tariff dropdown, choose service type from BOL (TLX, TLS, EXCL).\n• Enter 7 numbers between F and CM in quote number.\n• In Base Type dropdown, select "CUST".\n• In AP1 dropdown, select who the pro is billed to.\n• Click OK when finished.` },
-    { title:"Clean Description Field", images:["Steps/Step11.jpg"], content:`Delete all blank lines in the description field.` },
-    { title:"Add Correction Code", content:`Add correction code based on reason:\n\nEADL – Volume quote listed on BOL but biller did not bill.\nSYSM – Volume quote noted but automation didn’t recognize it.\nCMID – Shipper/consignee/BT did not provide volume quote on BOL.` },
-    { title:"Final Step", content:`At last, click ACCEPT ALL.` }
-  ];
+    function countImages() {
+      return steps.reduce((total, step) => total + (Array.isArray(step.images) ? step.images.length : 0), 0);
+    }
 
-  let currentStep = 0;
-  const els = {
-    stepTitle: document.getElementById("stepTitle"), stepContent: document.getElementById("stepContent"), stepImages: document.getElementById("stepImages"),
-    stepCounter: document.getElementById("stepCounter"), miniProgressFill: document.getElementById("miniProgressFill"),
-    progressFill: document.getElementById("progressFill"), progressText: document.getElementById("progressText"),
-    prevBtn: document.getElementById("prevBtn"), nextBtn: document.getElementById("nextBtn"),
-    stepDots: document.getElementById("stepDots"), stepBody: document.getElementById("stepBody"),
-    quickJumpList: document.getElementById("quickJumpList"), metricSteps: document.getElementById("metricSteps"), metricImages: document.getElementById("metricImages")
-  };
+    function renderQuickJump() {
+      if (!els.quickJumpList) return;
+      els.quickJumpList.innerHTML = "";
+      steps.forEach((step, i) => {
+        const btn = document.createElement("button");
+        btn.className = "path-jump";
+        btn.type = "button";
+        btn.dataset.jump = i;
+        btn.innerHTML = `<span>${i+1}</span><div><strong>${escapeHtml(step.title)}</strong><small>Step ${i+1}</small></div>`;
+        btn.onclick = () => goToStep(i, true);
+        els.quickJumpList.appendChild(btn);
+      });
+    }
 
-  function countImages(){ return steps.reduce((total, step) => total + (Array.isArray(step.images) ? step.images.length : 0), 0); }
-  function renderQuickJump(){
-    if(!els.quickJumpList) return;
-    els.quickJumpList.innerHTML = "";
-    steps.forEach((step, index) => {
-      const btn = document.createElement("button");
-      btn.className = "path-jump";
-      btn.type = "button";
-      btn.dataset.jump = index;
-      btn.innerHTML = `<span>${index+1}</span><div><strong>${escapeHtml(step.title)}</strong><small>Step ${index+1}</small></div>`;
-      btn.onclick = () => goToStep(index, true);
-      els.quickJumpList.appendChild(btn);
-    });
-  }
-  function updateQuickJump(){ document.querySelectorAll(".path-jump").forEach(btn => { const idx = Number(btn.dataset.jump); btn.classList.toggle("active", idx === currentStep); }); }
-  function renderDots(){
-    if(!els.stepDots) return;
-    els.stepDots.innerHTML = "";
-    steps.forEach((_, i) => {
-      const dot = document.createElement("div");
-      dot.className = "step-dot";
-      if(i === currentStep) dot.classList.add("active");
-      dot.onclick = () => goToStep(i, true);
-      els.stepDots.appendChild(dot);
-    });
-  }
-  function renderStep(){
-    const step = steps[currentStep];
-    const progress = ((currentStep+1)/steps.length*100)+"%";
-    if(els.stepTitle) els.stepTitle.textContent = step.title;
-    if(els.stepContent) els.stepContent.textContent = step.content;
-    if(els.stepImages){
-      els.stepImages.innerHTML = "";
-      if(Array.isArray(step.images)){
-        step.images.forEach(img => {
-          const image = document.createElement("img");
-          image.src = img; image.alt = step.title; image.loading = "lazy";
-          els.stepImages.appendChild(image);
-        });
+    function updateQuickJump() {
+      document.querySelectorAll(".path-jump").forEach(btn => {
+        const idx = Number(btn.dataset.jump);
+        btn.classList.toggle("active", idx === currentStep);
+      });
+    }
+
+    function renderDots() {
+      if (!els.stepDots) return;
+      els.stepDots.innerHTML = "";
+      steps.forEach((_, i) => {
+        const dot = document.createElement("div");
+        dot.className = "step-dot";
+        if (i === currentStep) dot.classList.add("active");
+        dot.onclick = () => goToStep(i, true);
+        els.stepDots.appendChild(dot);
+      });
+    }
+
+    function renderStep() {
+      const step = steps[currentStep];
+      const progress = ((currentStep + 1) / steps.length * 100) + "%";
+
+      if (els.stepTitle) els.stepTitle.textContent = step.title;
+      if (els.stepContent) els.stepContent.textContent = step.content;
+
+      if (els.stepImages) {
+        els.stepImages.innerHTML = "";
+        if (Array.isArray(step.images) && step.images.length) {
+          step.images.forEach(src => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = step.title;
+            img.loading = "lazy";
+            img.onerror = () => {
+              img.style.opacity = "0.6";
+              img.style.border = "1px dashed red";
+              img.alt = `Missing: ${src}`;
+            };
+            els.stepImages.appendChild(img);
+          });
+        }
+      }
+
+      if (els.stepCounter) els.stepCounter.textContent = `Step ${currentStep+1} of ${steps.length}`;
+      if (els.progressText) els.progressText.textContent = `Step ${currentStep+1} of ${steps.length}`;
+      if (els.progressFill) els.progressFill.style.width = progress;
+      if (els.miniProgressFill) els.miniProgressFill.style.width = progress;
+      if (els.metricSteps) els.metricSteps.textContent = steps.length;
+      if (els.metricImages) els.metricImages.textContent = countImages();
+
+      if (els.prevBtn) els.prevBtn.disabled = (currentStep === 0);
+      if (els.nextBtn) {
+        if (currentStep === steps.length - 1) {
+          els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
+          els.nextBtn.classList.add("finish");
+        } else {
+          els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
+          els.nextBtn.classList.remove("finish");
+        }
+      }
+      renderDots();
+      updateQuickJump();
+    }
+
+    function animateStep(direction) {
+      if (!els.stepBody) return;
+      els.stepBody.classList.remove("animate-left", "animate-right");
+      void els.stepBody.offsetWidth;
+      els.stepBody.classList.add(direction === "left" ? "animate-left" : "animate-right");
+    }
+
+    function goToStep(index, shouldScroll = false) {
+      if (index < 0 || index >= steps.length) return;
+      const direction = index >= currentStep ? "left" : "right";
+      currentStep = index;
+      animateStep(direction);
+      renderStep();
+      if (shouldScroll) {
+        const sec = document.getElementById("stepsSection");
+        if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
-    if(els.stepCounter) els.stepCounter.textContent = `Step ${currentStep+1} of ${steps.length}`;
-    if(els.progressText) els.progressText.textContent = `Step ${currentStep+1} of ${steps.length}`;
-    if(els.progressFill) els.progressFill.style.width = progress;
-    if(els.miniProgressFill) els.miniProgressFill.style.width = progress;
-    if(els.metricSteps) els.metricSteps.textContent = steps.length;
-    if(els.metricImages) els.metricImages.textContent = countImages();
-    if(els.prevBtn) els.prevBtn.disabled = currentStep === 0;
-    if(els.nextBtn){
-      if(currentStep === steps.length-1){
-        els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
-        els.nextBtn.classList.add("finish");
-      }else{
-        els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
-        els.nextBtn.classList.remove("finish");
-      }
+
+    function exploreSteps() { goToStep(0, true); }
+    window.goToStep = goToStep;
+    window.exploreSteps = exploreSteps;
+
+    if (els.nextBtn) {
+      els.nextBtn.onclick = () => {
+        if (currentStep < steps.length - 1) {
+          currentStep++;
+          animateStep("left");
+          renderStep();
+        } else {
+          alert("Volume Application Completed.");
+          currentStep = 0;
+          animateStep("left");
+          renderStep();
+        }
+      };
     }
-    renderDots();
-    updateQuickJump();
-  }
-  function animateStep(direction){
-    if(!els.stepBody) return;
-    els.stepBody.classList.remove("animate-left","animate-right");
-    void els.stepBody.offsetWidth;
-    els.stepBody.classList.add(direction==="left"?"animate-left":"animate-right");
-  }
-  function goToStep(index, shouldScroll=false){
-    if(index<0||index>=steps.length) return;
-    const direction = index>=currentStep?"left":"right";
-    currentStep = index;
-    animateStep(direction);
+
+    if (els.prevBtn) {
+      els.prevBtn.onclick = () => {
+        if (currentStep > 0) {
+          currentStep--;
+          animateStep("right");
+          renderStep();
+        }
+      };
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowRight" && els.nextBtn) els.nextBtn.click();
+      if (e.key === "ArrowLeft" && els.prevBtn) els.prevBtn.click();
+    });
+
+    document.addEventListener("click", (e) => {
+      const modal = document.getElementById("imagePreviewModal");
+      const previewImg = document.getElementById("imagePreview");
+      if (e.target.matches(".step-images img")) {
+        if (modal && previewImg) {
+          modal.style.display = "flex";
+          previewImg.src = e.target.src;
+          document.body.style.overflow = "hidden";
+        }
+      }
+      if (e.target.matches(".image-preview-close, #imagePreviewModal")) {
+        if (modal) modal.style.display = "none";
+        if (previewImg) previewImg.src = "";
+        document.body.style.overflow = "";
+      }
+    });
+
+    function copyText(id, btn) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = el.innerText.trim();
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        const old = btn.textContent;
+        btn.classList.add("copied");
+        btn.textContent = "Copied ✓";
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.textContent = old;
+        }, 1400);
+      }).catch(() => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        const old = btn.textContent;
+        btn.classList.add("copied");
+        btn.textContent = "Copied ✓";
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.textContent = old;
+        }, 1400);
+      });
+    }
+
+    window.copyText = copyText;
+
+    function escapeHtml(str) {
+      return String(str ?? "").replace(/[&<>]/g, function(m) {
+        if (m === "&") return "&amp;";
+        if (m === "<") return "&lt;";
+        if (m === ">") return "&gt;";
+        return m;
+      });
+    }
+
+    renderQuickJump();
     renderStep();
-    if(shouldScroll){ const sec = document.getElementById("stepsSection"); if(sec) sec.scrollIntoView({ behavior:"smooth", block:"start" }); }
-  }
-  function exploreSteps(){ goToStep(0, true); }
-  window.goToStep = goToStep; window.exploreSteps = exploreSteps;
-  if(els.nextBtn) els.nextBtn.onclick = () => { if(currentStep<steps.length-1){ currentStep++; animateStep("left"); renderStep(); }else{ alert("Volume Application Completed."); currentStep=0; animateStep("left"); renderStep(); } };
-  if(els.prevBtn) els.prevBtn.onclick = () => { if(currentStep>0){ currentStep--; animateStep("right"); renderStep(); } };
-  document.addEventListener("keydown", e => { if(e.key==="ArrowRight"&&els.nextBtn) els.nextBtn.click(); if(e.key==="ArrowLeft"&&els.prevBtn) els.prevBtn.click(); if(e.key==="Escape") closeImagePreview(); });
-  document.addEventListener("click", e => {
-    const modal = document.getElementById("imagePreviewModal");
-    const preview = document.getElementById("imagePreview");
-    if(e.target.matches(".step-images img")){ if(modal && preview){ modal.style.display="flex"; preview.src=e.target.src; document.body.style.overflow="hidden"; } }
-    if(e.target.matches(".image-preview-close") || e.target.id==="imagePreviewModal") closeImagePreview();
-  });
-  function closeImagePreview(){ const modal = document.getElementById("imagePreviewModal"); const preview = document.getElementById("imagePreview"); if(modal) modal.style.display="none"; if(preview) preview.src=""; document.body.style.overflow=""; }
-  function copyText(id,btn){
-    const el = document.getElementById(id);
-    if(!el) return;
-    const text = el.innerText.trim();
-    if(!text) return;
-    navigator.clipboard.writeText(text).then(()=>{ const old=btn.textContent; btn.classList.add("copied"); btn.textContent="Copied ✓"; setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent=old; },1400); }).catch(()=>alert("Copy failed. Please copy manually."));
-  }
-  window.copyText = copyText; window.closeImagePreview = closeImagePreview;
-  renderQuickJump();
-  renderStep();
   </script>
 </body>
 </html>
