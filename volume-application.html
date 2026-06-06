@@ -20,7 +20,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <style>
-    /* ====== base styles (same as before) ====== */
+    /* ----- BASE STYLES (unchanged from original) ----- */
     :root{
       --bg:#07111f;
       --bg-soft:#0c1728;
@@ -154,6 +154,7 @@
       white-space:nowrap;
     }
 
+    /* Default Pill Primary (will be overridden by themes) */
     .pill.primary{
       background:linear-gradient(135deg,#2563eb,#1d4ed8);
       color:#fff;
@@ -924,255 +925,204 @@
     #allCommentsModal .stars{color:#ff6600;font-size:18px;margin-bottom:6px;display:block}
 
     /* =========================================================
-       THEME BRIDGE - uses CSS variables set by script below
+       DIRECT THEME COLORS (hardcoded, no external variables)
+       These override the default styles when the respective body class is present.
     ========================================================= */
-    body.theme-fedex,
-    body.theme-atlas,
-    body.theme-basic,
-    body.theme-simple{
-      --eprt-text:var(--theme-text, #0f172a);
-      --eprt-muted:var(--theme-muted, #64748b);
-      --eprt-primary:var(--theme-primary, #4d148c);
-      --eprt-primary-2:var(--theme-primary-2, #6d28d9);
-      --eprt-accent:var(--theme-accent, #ff6600);
-      --eprt-soft:var(--theme-primary-soft, #f3e8ff);
-      --eprt-accent-soft:var(--theme-accent-soft, #fff7ed);
-      --eprt-card:var(--theme-card, #ffffff);
-      --eprt-card-soft:var(--theme-card-soft, #f8fafc);
-      --eprt-card-tint:var(--theme-card-blue-soft, #f8fbff);
-      --eprt-line:var(--theme-line-soft, #e2e8f0);
-      --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
-      --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
-      --eprt-shadow:var(--theme-shadow-md, 0 10px 28px rgba(15,23,42,.10));
-    }
 
-    /* Primary buttons and accents */
+    /* ----- FedEx Theme ----- */
     body.theme-fedex .pill.primary,
-    body.theme-atlas .pill.primary,
-    body.theme-basic .pill.primary,
-    body.theme-simple .pill.primary,
     body.theme-fedex .volume-btn,
-    body.theme-atlas .volume-btn,
-    body.theme-basic .volume-btn,
-    body.theme-simple .volume-btn,
     body.theme-fedex .step-nav-btn.next,
-    body.theme-atlas .step-nav-btn.next,
-    body.theme-basic .step-nav-btn.next,
-    body.theme-simple .step-nav-btn.next,
     body.theme-fedex .step-viewer-title i,
-    body.theme-atlas .step-viewer-title i,
-    body.theme-basic .step-viewer-title i,
-    body.theme-simple .step-viewer-title i{
-      background:var(--eprt-button) !important;
-      color:#ffffff !important;
-      box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-primary) 18%, transparent) !important;
+    body.theme-fedex .template-copy {
+      background: linear-gradient(135deg, #4d148c, #6d28d9) !important;
+      box-shadow: 0 14px 24px rgba(77,20,140,.18) !important;
     }
-
-    /* Progress fills */
     body.theme-fedex .progress-fill,
-    body.theme-atlas .progress-fill,
-    body.theme-basic .progress-fill,
-    body.theme-simple .progress-fill,
-    body.theme-fedex .mini-progress-fill,
-    body.theme-atlas .mini-progress-fill,
-    body.theme-basic .mini-progress-fill,
-    body.theme-simple .mini-progress-fill{
-      background:var(--eprt-progress) !important;
+    body.theme-fedex .mini-progress-fill {
+      background: linear-gradient(90deg, #4d148c, #6d28d9, #ff6600) !important;
+    }
+    body.theme-fedex .step-body::before {
+      background: linear-gradient(180deg, #4d148c, #ff6600) !important;
+    }
+    body.theme-fedex .step-dot.active {
+      background: #ff6600 !important;
+    }
+    body.theme-fedex .step-dot:hover {
+      background: #4d148c !important;
+    }
+    body.theme-fedex .path-jump.active {
+      border-color: #ff6600 !important;
+      box-shadow: 0 0 0 3px rgba(255,102,0,.12) !important;
+    }
+    body.theme-fedex .path-jump.active span {
+      background: #ff6600 !important;
+      color: #fff !important;
+    }
+    body.theme-fedex .path-jump span {
+      background: #fff7ed !important;
+      color: #ff6600 !important;
+    }
+    body.theme-fedex .reminder i,
+    body.theme-fedex .summary-head i,
+    body.theme-fedex .template-icon {
+      color: #ff6600 !important;
+    }
+    body.theme-fedex .template-icon {
+      background: #fff7ed !important;
     }
 
-    /* Cards and bodies */
-    body.theme-fedex .question-card,
-    body.theme-atlas .question-card,
-    body.theme-basic .question-card,
-    body.theme-simple .question-card,
-    body.theme-fedex .step-body,
-    body.theme-atlas .step-body,
-    body.theme-basic .step-body,
-    body.theme-simple .step-body{
-      background: radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
-                  linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .step-body::before,
-    body.theme-atlas .step-body::before,
-    body.theme-basic .step-body::before,
-    body.theme-simple .step-body::before{
-      background:var(--eprt-progress) !important;
-    }
-
-    /* Text colors */
-    body.theme-fedex .step-title,
-    body.theme-atlas .step-title,
-    body.theme-basic .step-title,
-    body.theme-simple .step-title,
-    body.theme-fedex .step-viewer-title,
-    body.theme-atlas .step-viewer-title,
-    body.theme-basic .step-viewer-title,
-    body.theme-simple .step-viewer-title{
-      color:var(--eprt-text) !important;
-    }
-
-    body.theme-fedex .step-content,
-    body.theme-atlas .step-content,
-    body.theme-basic .step-content,
-    body.theme-simple .step-content,
-    body.theme-fedex .step-counter,
-    body.theme-atlas .step-counter,
-    body.theme-basic .step-counter,
-    body.theme-simple .step-counter{
-      color:var(--eprt-muted) !important;
-    }
-
-    /* Viewer background */
-    body.theme-fedex .step-viewer,
-    body.theme-atlas .step-viewer,
-    body.theme-basic .step-viewer,
-    body.theme-simple .step-viewer,
-    body.theme-fedex .step-viewer-head,
-    body.theme-atlas .step-viewer-head,
-    body.theme-basic .step-viewer-head,
-    body.theme-simple .step-viewer-head{
-      background:linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    /* Navigation buttons */
-    body.theme-fedex .step-nav-btn.prev,
-    body.theme-atlas .step-nav-btn.prev,
-    body.theme-basic .step-nav-btn.prev,
-    body.theme-simple .step-nav-btn.prev{
-      background:var(--eprt-card-soft) !important;
-      color:var(--eprt-text) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    /* Step dots */
-    body.theme-fedex .step-dot,
-    body.theme-atlas .step-dot,
-    body.theme-basic .step-dot,
-    body.theme-simple .step-dot{
-      background:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .step-dot:hover,
-    body.theme-atlas .step-dot:hover,
-    body.theme-basic .step-dot:hover,
-    body.theme-simple .step-dot:hover{
-      background:var(--eprt-primary) !important;
-    }
-
-    body.theme-fedex .step-dot.active,
-    body.theme-atlas .step-dot.active,
-    body.theme-basic .step-dot.active,
-    body.theme-simple .step-dot.active{
-      background:var(--eprt-accent) !important;
-    }
-
-    /* Quick Jump active theme */
-    body.theme-fedex .path-jump.active,
-    body.theme-atlas .path-jump.active,
-    body.theme-basic .path-jump.active,
-    body.theme-simple .path-jump.active{
-      border-color:var(--eprt-accent) !important;
-      box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
-    }
-
-    body.theme-fedex .path-jump.active span,
-    body.theme-atlas .path-jump.active span,
-    body.theme-basic .path-jump.active span,
-    body.theme-simple .path-jump.active span {
-      background: var(--eprt-accent) !important;
-      color: #ffffff !important;
-    }
-
-    body.theme-fedex .path-jump span,
-    body.theme-atlas .path-jump span,
-    body.theme-basic .path-jump span,
-    body.theme-simple .path-jump span{
-      background:var(--eprt-accent-soft) !important;
-      color:var(--eprt-accent) !important;
-    }
-
-    /* Sidebar summary cards */
-    body.theme-fedex .side-panel .summary-card,
-    body.theme-fedex .template-panel .summary-card,
-    body.theme-atlas .side-panel .summary-card,
-    body.theme-atlas .template-panel .summary-card,
-    body.theme-basic .side-panel .summary-card,
-    body.theme-basic .template-panel .summary-card,
-    body.theme-simple .side-panel .summary-card,
-    body.theme-simple .template-panel .summary-card{
-      background:var(--eprt-card) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .summary-head,
-    body.theme-atlas .summary-head,
-    body.theme-basic .summary-head,
-    body.theme-simple .summary-head{
-      color:var(--eprt-text) !important;
-    }
-
-    body.theme-fedex .reminder,
-    body.theme-atlas .reminder,
-    body.theme-basic .reminder,
-    body.theme-simple .reminder{
-      background:var(--eprt-card-soft) !important;
-      border-color:var(--eprt-line) !important;
-      color:var(--eprt-muted) !important;
-    }
-
-    body.theme-fedex .metric,
-    body.theme-atlas .metric,
-    body.theme-basic .metric,
-    body.theme-simple .metric{
-      background:var(--eprt-card-soft) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .path-jump,
-    body.theme-atlas .path-jump,
-    body.theme-basic .path-jump,
-    body.theme-simple .path-jump{
-      background:var(--eprt-card-soft) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .path-jump:hover,
-    body.theme-atlas .path-jump:hover,
-    body.theme-basic .path-jump:hover,
-    body.theme-simple .path-jump:hover{
-      background:var(--eprt-accent-soft) !important;
-    }
-
-    body.theme-fedex .template-copy,
-    body.theme-atlas .template-copy,
-    body.theme-basic .template-copy,
-    body.theme-simple .template-copy{
-      background:var(--eprt-button) !important;
-    }
-
-    /* Theme-specific overrides for Atlas/Basic/Simple */
+    /* ----- Atlas Theme ----- */
+    body.theme-atlas .pill.primary,
     body.theme-atlas .volume-btn,
-    body.theme-atlas .step-nav-btn.next{
-      background:#0e5361 !important;
-      color:#ffffff !important;
+    body.theme-atlas .step-nav-btn.next,
+    body.theme-atlas .step-viewer-title i,
+    body.theme-atlas .template-copy {
+      background: #0e5361 !important;
+      box-shadow: 0 14px 24px rgba(14,83,97,.18) !important;
     }
-    body.theme-atlas .step-nav-btn.finish{ background:#5b7f08 !important; }
-    body.theme-basic .step-nav-btn.finish{ background:#374151 !important; }
-    body.theme-simple .step-nav-btn.finish{ background:#2563eb !important; }
-    body.theme-atlas .template-copy{ background:#0e5361 !important; }
-    body.theme-basic .template-copy{ background:#111827 !important; }
-    body.theme-simple .template-copy{ background:#2563eb !important; }
+    body.theme-atlas .progress-fill,
+    body.theme-atlas .mini-progress-fill {
+      background: linear-gradient(90deg, #0e5361, #0e6b7a, #5b7f08) !important;
+    }
+    body.theme-atlas .step-body::before {
+      background: linear-gradient(180deg, #0e5361, #5b7f08) !important;
+    }
+    body.theme-atlas .step-dot.active {
+      background: #5b7f08 !important;
+    }
+    body.theme-atlas .step-dot:hover {
+      background: #0e5361 !important;
+    }
+    body.theme-atlas .path-jump.active {
+      border-color: #5b7f08 !important;
+      box-shadow: 0 0 0 3px rgba(91,127,8,.12) !important;
+    }
+    body.theme-atlas .path-jump.active span {
+      background: #5b7f08 !important;
+      color: #fff !important;
+    }
+    body.theme-atlas .path-jump span {
+      background: #f0f5e0 !important;
+      color: #5b7f08 !important;
+    }
+    body.theme-atlas .reminder i,
+    body.theme-atlas .summary-head i,
+    body.theme-atlas .template-icon {
+      color: #5b7f08 !important;
+    }
+    body.theme-atlas .template-icon {
+      background: #f0f5e0 !important;
+    }
+    body.theme-atlas .step-nav-btn.finish {
+      background: #5b7f08 !important;
+    }
+
+    /* ----- Basic Theme (Dark / White) ----- */
+    body.theme-basic .pill.primary,
+    body.theme-basic .volume-btn,
+    body.theme-basic .step-nav-btn.next,
+    body.theme-basic .step-viewer-title i,
+    body.theme-basic .template-copy {
+      background: #374151 !important;
+      box-shadow: 0 14px 24px rgba(55,65,81,.18) !important;
+    }
+    body.theme-basic .progress-fill,
+    body.theme-basic .mini-progress-fill {
+      background: linear-gradient(90deg, #374151, #4b5563, #374151) !important;
+    }
+    body.theme-basic .step-body::before {
+      background: linear-gradient(180deg, #374151, #374151) !important;
+    }
+    body.theme-basic .step-dot.active {
+      background: #374151 !important;
+    }
+    body.theme-basic .step-dot:hover {
+      background: #374151 !important;
+    }
+    body.theme-basic .path-jump.active {
+      border-color: #374151 !important;
+      box-shadow: 0 0 0 3px rgba(55,65,81,.12) !important;
+    }
+    body.theme-basic .path-jump.active span {
+      background: #374151 !important;
+      color: #fff !important;
+    }
+    body.theme-basic .path-jump span {
+      background: #e5e5e5 !important;
+      color: #374151 !important;
+    }
+    body.theme-basic .reminder i,
+    body.theme-basic .summary-head i,
+    body.theme-basic .template-icon {
+      color: #374151 !important;
+    }
+    body.theme-basic .template-icon {
+      background: #e5e5e5 !important;
+    }
+    body.theme-basic .step-nav-btn.finish {
+      background: #374151 !important;
+    }
+
+    /* ----- Simple Theme (Blue) ----- */
+    body.theme-simple .pill.primary,
+    body.theme-simple .volume-btn,
+    body.theme-simple .step-nav-btn.next,
+    body.theme-simple .step-viewer-title i,
+    body.theme-simple .template-copy {
+      background: #2563eb !important;
+      box-shadow: 0 14px 24px rgba(37,99,235,.18) !important;
+    }
+    body.theme-simple .progress-fill,
+    body.theme-simple .mini-progress-fill {
+      background: linear-gradient(90deg, #2563eb, #3b82f6, #2563eb) !important;
+    }
+    body.theme-simple .step-body::before {
+      background: linear-gradient(180deg, #2563eb, #2563eb) !important;
+    }
+    body.theme-simple .step-dot.active {
+      background: #2563eb !important;
+    }
+    body.theme-simple .step-dot:hover {
+      background: #2563eb !important;
+    }
+    body.theme-simple .path-jump.active {
+      border-color: #2563eb !important;
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12) !important;
+    }
+    body.theme-simple .path-jump.active span {
+      background: #2563eb !important;
+      color: #fff !important;
+    }
+    body.theme-simple .path-jump span {
+      background: #eff6ff !important;
+      color: #2563eb !important;
+    }
+    body.theme-simple .reminder i,
+    body.theme-simple .summary-head i,
+    body.theme-simple .template-icon {
+      color: #2563eb !important;
+    }
+    body.theme-simple .template-icon {
+      background: #eff6ff !important;
+    }
+    body.theme-simple .step-nav-btn.finish {
+      background: #2563eb !important;
+    }
+
+    /* Shared styling for step-dots background and active width */
+    .step-dot {
+      background: #e2e8f0 !important;
+    }
+    .step-dot.active {
+      width: 30px !important;
+    }
 
     @media (max-width:1450px){.app-frame{grid-template-columns:minmax(0,1fr) 340px 360px}}
-
     @media (max-width:1220px){
       .app-frame{grid-template-columns:1fr}
       .side-panel,.template-panel{padding:0 18px 18px}
     }
-
     @media (max-width:760px){
       .app-shell{width:min(calc(100% - 20px), var(--max));margin:16px auto}
       .app-frame{min-height:100vh;border-radius:24px}
@@ -1206,7 +1156,6 @@
                 Follow this clean Rate & Volume style guide to apply the Volume Quote, update required keywords, validate surcharge handling, add agreement details, and finish the correction.
               </p>
             </div>
-
             <div class="main-status">
               <div class="pill primary" id="statusPill">
                 <i class="fa-solid fa-truck-ramp-box"></i>
@@ -1238,20 +1187,16 @@
                     Arrow Keys Supported
                   </span>
                 </div>
-
                 <div class="question-wrap">
                   <section class="question-card">
                     <div class="question-label">
                       <i class="fa-solid fa-route"></i>
                       Volume Quote Workflow
                     </div>
-
                     <h2 class="question-text">Apply the Volume Quote using the correct rate, keywords, surcharge handling, and correction code.</h2>
-
                     <p class="question-help">
                       Use the steps below to apply the flat quote amount, remove rate keywords, zero out applicable surcharges, add CONT and PRAU details, clean the description field, and complete the correction.
                     </p>
-
                     <div class="step-actions">
                       <button class="volume-btn" type="button" onclick="exploreSteps()">
                         Explore Steps
@@ -1266,40 +1211,33 @@
                         <i class="fa-solid fa-display"></i>
                         Guided Volume Application Walkthrough
                       </div>
-
                       <span class="badge alt">
                         <i class="fa-solid fa-circle-check"></i>
                         Interactive guide
                       </span>
                     </div>
-
                     <div class="step-shell">
                       <div class="step-top">
                         <div class="step-counter" id="stepCounter"></div>
-
                         <div class="mini-progress-bar">
                           <div class="mini-progress-fill" id="miniProgressFill"></div>
                         </div>
                       </div>
-
                       <div class="step-body" id="stepBody">
                         <h2 class="step-title" id="stepTitle"></h2>
                         <div class="step-content" id="stepContent"></div>
                         <div class="step-images" id="stepImages"></div>
                       </div>
-
                       <div class="step-navigation">
                         <button class="step-nav-btn prev" id="prevBtn" type="button">
                           <i class="fa-solid fa-arrow-left"></i>
                           Previous
                         </button>
-
                         <button class="step-nav-btn next" id="nextBtn" type="button">
                           Next
                           <i class="fa-solid fa-arrow-right"></i>
                         </button>
                       </div>
-
                       <div id="stepDots" class="step-dots"></div>
                     </div>
                   </section>
@@ -1360,136 +1298,34 @@
   <script src="assets/js/header.js"></script>
   <script src="assets/js/footer-loader.js"></script>
 
-  <!-- ====== SELF-CONTAINED THEME SYSTEM (no external files needed) ====== -->
+  <!-- SIMPLE THEME SYNCHRONIZATION: listen for body class changes from header -->
   <script>
     (function() {
-      // Theme definitions: each theme sets the CSS variables used by the theme bridge
-      const themes = {
-        fedex: {
-          '--theme-text': '#0f172a',
-          '--theme-muted': '#475569',
-          '--theme-primary': '#4d148c',
-          '--theme-primary-2': '#6d28d9',
-          '--theme-accent': '#ff6600',
-          '--theme-primary-soft': '#f3e8ff',
-          '--theme-accent-soft': '#fff7ed',
-          '--theme-card': '#ffffff',
-          '--theme-card-soft': '#f8fafc',
-          '--theme-card-blue-soft': '#f8fbff',
-          '--theme-line-soft': '#e2e8f0',
-          '--theme-main-button': 'linear-gradient(135deg, #4d148c, #6d28d9)',
-          '--theme-progress': 'linear-gradient(90deg, #4d148c, #6d28d9, #ff6600)',
-          '--theme-shadow-md': '0 10px 28px rgba(15,23,42,.10)'
-        },
-        atlas: {
-          '--theme-text': '#0f172a',
-          '--theme-muted': '#475569',
-          '--theme-primary': '#0e5361',
-          '--theme-primary-2': '#0e6b7a',
-          '--theme-accent': '#5b7f08',
-          '--theme-primary-soft': '#e0f0f0',
-          '--theme-accent-soft': '#f0f5e0',
-          '--theme-card': '#ffffff',
-          '--theme-card-soft': '#f8fafc',
-          '--theme-card-blue-soft': '#f0f5f8',
-          '--theme-line-soft': '#e2e8f0',
-          '--theme-main-button': 'linear-gradient(135deg, #0e5361, #0e6b7a)',
-          '--theme-progress': 'linear-gradient(90deg, #0e5361, #0e6b7a, #5b7f08)',
-          '--theme-shadow-md': '0 10px 28px rgba(15,23,42,.10)'
-        },
-        basic: {
-          '--theme-text': '#1e1e2f',
-          '--theme-muted': '#4a4a5a',
-          '--theme-primary': '#374151',
-          '--theme-primary-2': '#4b5563',
-          '--theme-accent': '#374151',
-          '--theme-primary-soft': '#f0f0f0',
-          '--theme-accent-soft': '#e5e5e5',
-          '--theme-card': '#ffffff',
-          '--theme-card-soft': '#f8fafc',
-          '--theme-card-blue-soft': '#f8fafc',
-          '--theme-line-soft': '#e2e8f0',
-          '--theme-main-button': 'linear-gradient(135deg, #374151, #4b5563)',
-          '--theme-progress': 'linear-gradient(90deg, #374151, #4b5563, #374151)',
-          '--theme-shadow-md': '0 10px 28px rgba(0,0,0,.10)'
-        },
-        simple: {
-          '--theme-text': '#0f172a',
-          '--theme-muted': '#475569',
-          '--theme-primary': '#2563eb',
-          '--theme-primary-2': '#3b82f6',
-          '--theme-accent': '#2563eb',
-          '--theme-primary-soft': '#eff6ff',
-          '--theme-accent-soft': '#eff6ff',
-          '--theme-card': '#ffffff',
-          '--theme-card-soft': '#f8fafc',
-          '--theme-card-blue-soft': '#f8fbff',
-          '--theme-line-soft': '#e2e8f0',
-          '--theme-main-button': 'linear-gradient(135deg, #2563eb, #3b82f6)',
-          '--theme-progress': 'linear-gradient(90deg, #2563eb, #3b82f6, #2563eb)',
-          '--theme-shadow-md': '0 10px 28px rgba(37,99,235,.10)'
+      // When the header changes the body class, we don't need to do anything
+      // because the CSS already has rules for .theme-fedex, .theme-atlas, etc.
+      // However, we should ensure that the initial body class matches localStorage
+      // in case the header hasn't set it yet.
+      const savedTheme = localStorage.getItem('siteTheme');
+      if (savedTheme) {
+        const themeMap = { fedex: 'theme-fedex', atlas: 'theme-atlas', basic: 'theme-basic', simple: 'theme-simple' };
+        const targetClass = themeMap[savedTheme];
+        if (targetClass && !document.body.classList.contains(targetClass)) {
+          document.body.classList.remove('theme-fedex', 'theme-atlas', 'theme-basic', 'theme-simple');
+          document.body.classList.add(targetClass);
         }
-      };
-
-      // Map theme IDs to body classes
-      const themeClassMap = {
-        fedex: 'theme-fedex',
-        atlas: 'theme-atlas',
-        basic: 'theme-basic',
-        simple: 'theme-simple'
-      };
-
-      // Get saved theme from localStorage (same key used by header)
-      function getSavedTheme() {
-        return localStorage.getItem('siteTheme') || 'fedex';
       }
-
-      // Apply theme: set CSS variables on root, and set body class
-      function applyTheme(themeId) {
-        if (!themes[themeId]) return;
-        const vars = themes[themeId];
-        const root = document.documentElement;
-        for (const [key, value] of Object.entries(vars)) {
-          root.style.setProperty(key, value);
-        }
-        // Remove all theme classes and add the new one
-        const body = document.body;
-        body.classList.remove('theme-fedex', 'theme-atlas', 'theme-basic', 'theme-simple');
-        body.classList.add(themeClassMap[themeId]);
-      }
-
-      // Initial load
-      applyTheme(getSavedTheme());
-
-      // Listen for storage events (theme changed in another tab)
+      // Optional: listen for storage events (if theme changed in another tab)
       window.addEventListener('storage', function(e) {
         if (e.key === 'siteTheme') {
-          applyTheme(e.newValue);
-        }
-      });
-
-      // Listen for custom events that the header might dispatch
-      const possibleEvents = ['themeChanged', 'themechange', 'siteThemeChanged', 'theme-updated'];
-      possibleEvents.forEach(eventName => {
-        window.addEventListener(eventName, function(e) {
-          const newTheme = e.detail?.theme || e.detail?.newTheme || e.detail?.value;
-          if (newTheme && themes[newTheme]) {
-            applyTheme(newTheme);
-          } else if (typeof e.detail === 'string' && themes[e.detail]) {
-            applyTheme(e.detail);
+          const newTheme = e.newValue;
+          const themeMap = { fedex: 'theme-fedex', atlas: 'theme-atlas', basic: 'theme-basic', simple: 'theme-simple' };
+          const newClass = themeMap[newTheme];
+          if (newClass) {
+            document.body.classList.remove('theme-fedex', 'theme-atlas', 'theme-basic', 'theme-simple');
+            document.body.classList.add(newClass);
           }
-        });
-      });
-
-      // Polling fallback: check localStorage every 500ms
-      let lastTheme = getSavedTheme();
-      setInterval(() => {
-        const currentTheme = getSavedTheme();
-        if (currentTheme !== lastTheme) {
-          lastTheme = currentTheme;
-          applyTheme(currentTheme);
         }
-      }, 500);
+      });
     })();
   </script>
 
