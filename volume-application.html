@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-protected">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,53 +19,44 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-    authDomain: "bdgg-database.firebaseapp.com",
-    projectId: "bdgg-database",
-    storageBucket: "bdgg-database.appspot.com",
-    messagingSenderId: "43574975434",
-    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+      authDomain: "bdgg-database.firebaseapp.com",
+      projectId: "bdgg-database",
+      storageBucket: "bdgg-database.appspot.com",
+      messagingSenderId: "43574975434",
+      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+    };
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-
-  window.auth = firebase.auth();
-  window.db = firebase.firestore();
-
-  /* =========================================================
-     PAGE AUTH GUARD
-     Prevents direct URL access without login
-  ========================================================= */
-  window.auth.onAuthStateChanged(async function(user) {
-    try {
-      if (!user) {
-        window.location.replace("../index.html");
-        return;
-      }
-
-      await user.reload();
-
-      const refreshedUser = window.auth.currentUser;
-
-      if (!refreshedUser || !refreshedUser.emailVerified) {
-        window.location.replace("../index.html");
-        return;
-      }
-
-      document.documentElement.classList.remove("page-protected");
-
-    } catch (error) {
-      console.error("Auth guard error:", error);
-      window.location.replace("../index.html");
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
     }
-  });
+
+    window.auth = firebase.auth();
+    window.db = firebase.firestore();
+
+    window.auth.onAuthStateChanged(async function(user) {
+      try {
+        if (!user) {
+          window.location.replace("../index.html");
+          return;
+        }
+        await user.reload();
+        const refreshedUser = window.auth.currentUser;
+        if (!refreshedUser || !refreshedUser.emailVerified) {
+          window.location.replace("../index.html");
+          return;
+        }
+        document.documentElement.classList.remove("page-protected");
+      } catch (error) {
+        console.error("Auth guard error:", error);
+        window.location.replace("../index.html");
+      }
+    });
   </script>
 
   <style>
-    /* ----- BASE STYLES (identical to ePRT guide) ----- */
+    /* ----- BASE STYLES (identical to ePRS guide) ----- */
     html.page-protected,
     html.page-protected body { visibility: hidden; }
 
@@ -167,7 +158,6 @@
     .path-list{ display:flex; flex-direction:column; gap:6px; overflow:visible; max-height:none; padding-right:0; }
     .path-jump{ width:100%; text-align:left; padding:8px 9px; border-radius:13px; background:#f8fafc; border:1px solid #e7edf4; cursor:pointer; transition:.18s ease; display:flex; gap:8px; align-items:flex-start; color:#0f172a; }
     .path-jump:hover{ transform:translateY(-1px); background:#eef4ff; border-color:#cfe0ff; box-shadow:0 8px 18px rgba(37,99,235,.08); }
-    /* Remove hardcoded purple from base */
     .path-jump.active{ border:2px solid #2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.10); }
     .path-jump span{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; background:#eef4ff; color:#1d4ed8; font-size:10px; font-weight:900; flex:0 0 auto; transition:all .18s ease; }
     .path-jump.active span{ background:#2563eb; color:#fff; }
@@ -196,270 +186,23 @@
     .image-preview-close{ position:absolute; top:18px; right:18px; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(255,255,255,.12); color:#fff; font-size:30px; cursor:pointer; transition:.2s ease; }
     .image-preview-close:hover{ background:rgba(255,255,255,.2); }
 
-    /* =========================================================
-       FULL THEME BRIDGE (with complete Quick Jump fix)
-    ========================================================= */
-    body.theme-fedex,
-    body.theme-atlas,
-    body.theme-basic,
-    body.theme-simple{
-      --eprt-text:var(--theme-text, #0f172a);
-      --eprt-muted:var(--theme-muted, #64748b);
-      --eprt-primary:var(--theme-primary, #4d148c);
-      --eprt-primary-2:var(--theme-primary-2, #6d28d9);
-      --eprt-accent:var(--theme-accent, #ff6600);
-      --eprt-soft:var(--theme-primary-soft, #f3e8ff);
-      --eprt-accent-soft:var(--theme-accent-soft, #fff7ed);
-      --eprt-card:var(--theme-card, #ffffff);
-      --eprt-card-soft:var(--theme-card-soft, #f8fafc);
-      --eprt-card-tint:var(--theme-card-blue-soft, #f8fbff);
-      --eprt-line:var(--theme-line-soft, #e2e8f0);
-      --eprt-button:var(--theme-main-button, linear-gradient(135deg,#4d148c,#6d28d9));
-      --eprt-progress:var(--theme-progress, linear-gradient(90deg,#4d148c,#6d28d9,#ff6600));
-      --eprt-shadow:var(--theme-shadow-md, 0 10px 28px rgba(15,23,42,.10));
-    }
-
-    /* Primary buttons and accents */
-    body.theme-fedex .pill.primary,
-    body.theme-atlas .pill.primary,
-    body.theme-basic .pill.primary,
-    body.theme-simple .pill.primary,
-    body.theme-fedex .volume-btn,
-    body.theme-atlas .volume-btn,
-    body.theme-basic .volume-btn,
-    body.theme-simple .volume-btn,
-    body.theme-fedex .step-nav-btn.next,
-    body.theme-atlas .step-nav-btn.next,
-    body.theme-basic .step-nav-btn.next,
-    body.theme-simple .step-nav-btn.next,
-    body.theme-fedex .step-viewer-title i,
-    body.theme-atlas .step-viewer-title i,
-    body.theme-basic .step-viewer-title i,
-    body.theme-simple .step-viewer-title i{
-      background:var(--eprt-button) !important;
-      color:#ffffff !important;
-      box-shadow:0 14px 24px color-mix(in srgb, var(--eprt-primary) 18%, transparent) !important;
-    }
-
-    /* Progress fills */
-    body.theme-fedex .progress-fill,
-    body.theme-atlas .progress-fill,
-    body.theme-basic .progress-fill,
-    body.theme-simple .progress-fill,
-    body.theme-fedex .mini-progress-fill,
-    body.theme-atlas .mini-progress-fill,
-    body.theme-basic .mini-progress-fill,
-    body.theme-simple .mini-progress-fill{
-      background:var(--eprt-progress) !important;
-    }
-
-    /* Cards and bodies */
-    body.theme-fedex .question-card,
-    body.theme-atlas .question-card,
-    body.theme-basic .question-card,
-    body.theme-simple .question-card,
-    body.theme-fedex .step-body,
-    body.theme-atlas .step-body,
-    body.theme-basic .step-body,
-    body.theme-simple .step-body{
-      background: radial-gradient(circle at top right, color-mix(in srgb, var(--eprt-primary) 9%, transparent), transparent 30%),
-                  linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .step-body::before,
-    body.theme-atlas .step-body::before,
-    body.theme-basic .step-body::before,
-    body.theme-simple .step-body::before{
-      background:var(--eprt-progress) !important;
-    }
-
-    /* Text colors */
-    body.theme-fedex .step-title,
-    body.theme-atlas .step-title,
-    body.theme-basic .step-title,
-    body.theme-simple .step-title,
-    body.theme-fedex .step-viewer-title,
-    body.theme-atlas .step-viewer-title,
-    body.theme-basic .step-viewer-title,
-    body.theme-simple .step-viewer-title{
-      color:var(--eprt-text) !important;
-    }
-
-    body.theme-fedex .step-content,
-    body.theme-atlas .step-content,
-    body.theme-basic .step-content,
-    body.theme-simple .step-content,
-    body.theme-fedex .step-counter,
-    body.theme-atlas .step-counter,
-    body.theme-basic .step-counter,
-    body.theme-simple .step-counter{
-      color:var(--eprt-muted) !important;
-    }
-
-    /* Viewer background */
-    body.theme-fedex .step-viewer,
-    body.theme-atlas .step-viewer,
-    body.theme-basic .step-viewer,
-    body.theme-simple .step-viewer,
-    body.theme-fedex .step-viewer-head,
-    body.theme-atlas .step-viewer-head,
-    body.theme-basic .step-viewer-head,
-    body.theme-simple .step-viewer-head{
-      background:linear-gradient(180deg,var(--eprt-card),var(--eprt-card-tint)) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    /* Navigation buttons */
-    body.theme-fedex .step-nav-btn.prev,
-    body.theme-atlas .step-nav-btn.prev,
-    body.theme-basic .step-nav-btn.prev,
-    body.theme-simple .step-nav-btn.prev{
-      background:var(--eprt-card-soft) !important;
-      color:var(--eprt-text) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    /* Step dots */
-    body.theme-fedex .step-dot,
-    body.theme-atlas .step-dot,
-    body.theme-basic .step-dot,
-    body.theme-simple .step-dot{
-      background:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .step-dot:hover,
-    body.theme-atlas .step-dot:hover,
-    body.theme-basic .step-dot:hover,
-    body.theme-simple .step-dot:hover{
-      background:var(--eprt-primary) !important;
-    }
-
+    /* Theme bridge (fully compatible with guide-themes.css) */
     body.theme-fedex .step-dot.active,
     body.theme-atlas .step-dot.active,
     body.theme-basic .step-dot.active,
-    body.theme-simple .step-dot.active{
-      background:var(--eprt-accent) !important;
-    }
+    body.theme-simple .step-dot.active { width:30px; }
 
-    /* ========== QUICK JUMP FIX - COMPLETE THEME OVERRIDE ========== */
-    body.theme-fedex .path-jump.active,
-    body.theme-atlas .path-jump.active,
-    body.theme-basic .path-jump.active,
-    body.theme-simple .path-jump.active{
-      border-color:var(--eprt-accent) !important;
-      box-shadow:0 0 0 3px color-mix(in srgb, var(--eprt-accent) 12%, transparent) !important;
-    }
+    /* Animation keyframes for step transitions */
+    .animate-left { animation: slideInLeft 0.3s ease-out; }
+    .animate-right { animation: slideInRight 0.3s ease-out; }
+    @keyframes slideInLeft { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes slideInRight { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
 
-body.theme-fedex .path-jump.active span,
-body.theme-atlas .path-jump.active span,
-body.theme-basic .path-jump.active span,
-body.theme-simple .path-jump.active span {
-  background: var(--eprt-accent) !important;
-  color: #ffffff !important;
-}
-
-    body.theme-fedex .path-jump span,
-    body.theme-atlas .path-jump span,
-    body.theme-basic .path-jump span,
-    body.theme-simple .path-jump span{
-      background:var(--eprt-accent-soft) !important;
-      color:var(--eprt-accent) !important;
-    }
-
-    /* Icons use accent color */
-    body.theme-fedex .summary-head i,
-    body.theme-atlas .summary-head i,
-    body.theme-basic .summary-head i,
-    body.theme-simple .summary-head i,
-    body.theme-fedex .reminder i,
-    body.theme-atlas .reminder i,
-    body.theme-basic .reminder i,
-    body.theme-simple .reminder i,
-    body.theme-fedex .template-icon,
-    body.theme-atlas .template-icon,
-    body.theme-basic .template-icon,
-    body.theme-simple .template-icon {
-      color: var(--eprt-accent) !important;
-    }
-    body.theme-fedex .template-icon,
-    body.theme-atlas .template-icon,
-    body.theme-basic .template-icon,
-    body.theme-simple .template-icon {
-      background: var(--eprt-accent-soft) !important;
-    }
-
-    /* Sidebar summary cards */
-    body.theme-fedex .side-panel .summary-card,
-    body.theme-fedex .template-panel .summary-card,
-    body.theme-atlas .side-panel .summary-card,
-    body.theme-atlas .template-panel .summary-card,
-    body.theme-basic .side-panel .summary-card,
-    body.theme-basic .template-panel .summary-card,
-    body.theme-simple .side-panel .summary-card,
-    body.theme-simple .template-panel .summary-card{
-      background:var(--eprt-card) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .summary-head,
-    body.theme-atlas .summary-head,
-    body.theme-basic .summary-head,
-    body.theme-simple .summary-head{
-      color:var(--eprt-text) !important;
-    }
-
-    body.theme-fedex .reminder,
-    body.theme-atlas .reminder,
-    body.theme-basic .reminder,
-    body.theme-simple .reminder{
-      background:var(--eprt-card-soft) !important;
-      border-color:var(--eprt-line) !important;
-      color:var(--eprt-muted) !important;
-    }
-
-    body.theme-fedex .metric,
-    body.theme-atlas .metric,
-    body.theme-basic .metric,
-    body.theme-simple .metric{
-      background:var(--eprt-card-soft) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .path-jump,
-    body.theme-atlas .path-jump,
-    body.theme-basic .path-jump,
-    body.theme-simple .path-jump{
-      background:var(--eprt-card-soft) !important;
-      border-color:var(--eprt-line) !important;
-    }
-
-    body.theme-fedex .path-jump:hover,
-    body.theme-atlas .path-jump:hover,
-    body.theme-basic .path-jump:hover,
-    body.theme-simple .path-jump:hover{
-      background:var(--eprt-accent-soft) !important;
-    }
-
-    body.theme-fedex .template-copy,
-    body.theme-atlas .template-copy,
-    body.theme-basic .template-copy,
-    body.theme-simple .template-copy{
-      background:var(--eprt-button) !important;
-    }
-
-    /* Theme-specific overrides for Atlas/Basic/Simple */
-    body.theme-atlas .volume-btn,
-    body.theme-atlas .step-nav-btn.next{
-      background:#0e5361 !important;
-      color:#ffffff !important;
-    }
-    body.theme-atlas .step-nav-btn.finish{ background:#5b7f08 !important; }
-    body.theme-basic .step-nav-btn.finish{ background:#374151 !important; }
-    body.theme-simple .step-nav-btn.finish{ background:#2563eb !important; }
-    body.theme-atlas .template-copy{ background:#0e5361 !important; }
-    body.theme-basic .template-copy{ background:#111827 !important; }
-    body.theme-simple .template-copy{ background:#2563eb !important; }
+    /* Contain step images */
+    .step-images { overflow-x:auto; overflow-y:visible; display:flex; flex-wrap:wrap; gap:12px; margin-top:20px; }
+    .step-images img { max-width:100%; width:auto; height:auto; max-height:460px; object-fit:contain; border-radius:16px; border:1px solid #eef2f7; box-shadow:0 4px 12px rgba(0,0,0,.05); cursor:pointer; }
+    .step-body { overflow-y:auto; overflow-x:hidden; max-height:70vh; }
+    .step-navigation { position:sticky; bottom:0; background:inherit; padding-top:12px; z-index:5; }
 
     @media (max-width:1450px){ .app-frame{ grid-template-columns:minmax(0,1fr) 340px 360px; } }
     @media (max-width:1220px){ .app-frame{ grid-template-columns:1fr; } .side-panel, .template-panel{ padding:0 18px 18px; } }
@@ -470,101 +213,10 @@ body.theme-simple .path-jump.active span {
       .question-text{ font-size:28px; }
       .step-body{ padding:22px; min-height:460px; }
     }
-
-/* STEP DOTS - DIRECT COLOR ASSIGNMENTS per theme */
-/* Base dot - no background, will be set by theme */
-.step-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all .2s ease;
-}
-
-/* FedEx Theme */
-body.theme-fedex .step-dot {
-  background: #e2e8f0 !important;
-}
-body.theme-fedex .step-dot:hover {
-  background: #4d148c !important;
-  transform: scale(1.3);
-}
-body.theme-fedex .step-dot.active {
-  background: #ff6600 !important;
-  width: 30px;
-}
-
-/* Atlas Theme */
-body.theme-atlas .step-dot {
-  background: #e2e8f0 !important;
-}
-body.theme-atlas .step-dot:hover {
-  background: #0e5361 !important;
-  transform: scale(1.3);
-}
-body.theme-atlas .step-dot.active {
-  background: #5b7f08 !important;
-  width: 30px;
-}
-
-/* Basic Theme (Dark / White) */
-body.theme-basic .step-dot {
-  background: #e2e8f0 !important;
-}
-body.theme-basic .step-dot:hover {
-  background: #374151 !important;
-  transform: scale(1.3);
-}
-body.theme-basic .step-dot.active {
-  background: #374151 !important;  /* Dark gray, not blue */
-  width: 30px;
-}
-
-/* Simple Theme (White) */
-body.theme-simple .step-dot {
-  background: #e2e8f0 !important;
-}
-body.theme-simple .step-dot:hover {
-  background: #2563eb !important;
-  transform: scale(1.3);
-}
-body.theme-simple .step-dot.active {
-  background: #2563eb !important;  /* Blue, as expected */
-  width: 30px;
-}
-    
-/* Contain step images */
-.step-images {
-  overflow-x: auto;
-  overflow-y: visible;
-}
-
-.step-images img {
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  max-height: 460px;
-  object-fit: contain;
-}
-
-/* Ensure navigation buttons are always accessible */
-.step-body {
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: 70vh;
-}
-
-.step-navigation {
-  position: sticky;
-  bottom: 0;
-  background: inherit;
-  padding-top: 12px;
-  z-index: 5;
-}    
   </style>
 </head>
 
-<body data-page="volume-application" class="theme-fedex">
+<body class="theme-fedex" data-page="volume-application">
   <div class="page">
     <div id="site-header"></div>
 
@@ -574,104 +226,44 @@ body.theme-simple .step-dot.active {
           <div class="main-topbar">
             <div class="page-title-block">
               <h1>Volume Application — Step by Step Procedure</h1>
-              <p class="page-subtitle">
-                Follow this clean Rate & Volume style guide to apply the Volume Quote, update required keywords, validate surcharge handling, add agreement details, and finish the correction.
-              </p>
+              <p class="page-subtitle">Follow this clean Rate & Volume style guide to apply the Volume Quote, update required keywords, validate surcharge handling, add agreement details, and finish the correction.</p>
             </div>
-
-            <div class="main-status">
-              <div class="pill primary" id="statusPill">
-                <i class="fa-solid fa-truck-ramp-box"></i>
-                Ready
-              </div>
-            </div>
+            <div class="main-status"><div class="pill primary"><i class="fa-solid fa-truck-ramp-box"></i> Volume Quote Guide</div></div>
           </div>
 
           <div class="workspace">
             <section class="progress-card">
-              <div class="progress-head">
-                <div class="progress-title">Guide Progress</div>
-                <div class="progress-status" id="progressText">Step 1 of 13</div>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-              </div>
+              <div class="progress-head"><div class="progress-title">Guide Progress</div><div class="progress-status" id="progressText">Step 1 of 13</div></div>
+              <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
             </section>
 
             <section class="stage-area">
-              <div class="stage-card" id="stageCard">
+              <div class="stage-card">
                 <div class="stage-top">
-                  <span class="badge">
-                    <i class="fa-solid fa-boxes-stacked"></i>
-                    Volume Quote Application
-                  </span>
-                  <span class="badge alt">
-                    <i class="fa-solid fa-keyboard"></i>
-                    Arrow Keys Supported
-                  </span>
+                  <span class="badge"><i class="fa-solid fa-boxes-stacked"></i> Volume Quote Application</span>
+                  <span class="badge alt"><i class="fa-solid fa-keyboard"></i> Arrow Keys Supported</span>
                 </div>
-
                 <div class="question-wrap">
                   <section class="question-card">
-                    <div class="question-label">
-                      <i class="fa-solid fa-route"></i>
-                      Volume Quote Workflow
-                    </div>
-
+                    <div class="question-label"><i class="fa-solid fa-route"></i> Volume Quote Workflow</div>
                     <h2 class="question-text">Apply the Volume Quote using the correct rate, keywords, surcharge handling, and correction code.</h2>
-
-                    <p class="question-help">
-                      Use the steps below to apply the flat quote amount, remove rate keywords, zero out applicable surcharges, add CONT and PRAU details, clean the description field, and complete the correction.
-                    </p>
-
-                    <div class="step-actions">
-                      <button class="volume-btn" type="button" onclick="exploreSteps()">
-                        Explore Steps
-                        <i class="fa-solid fa-arrow-right"></i>
-                      </button>
-                    </div>
+                    <p class="question-help">Use the steps below to apply the flat quote amount, remove rate keywords, zero out applicable surcharges, add CONT and PRAU details, clean the description field, and complete the correction.</p>
+                    <div class="step-actions"><button class="volume-btn" onclick="exploreSteps()">Explore Steps <i class="fa-solid fa-arrow-right"></i></button></div>
                   </section>
 
                   <section class="step-viewer" id="stepsSection">
                     <div class="step-viewer-head">
-                      <div class="step-viewer-title">
-                        <i class="fa-solid fa-display"></i>
-                        Guided Volume Application Walkthrough
-                      </div>
-
-                      <span class="badge alt">
-                        <i class="fa-solid fa-circle-check"></i>
-                        Interactive guide
-                      </span>
+                      <div class="step-viewer-title"><i class="fa-solid fa-display"></i> Guided Volume Application Walkthrough</div>
+                      <span class="badge alt"><i class="fa-solid fa-circle-check"></i> Interactive guide</span>
                     </div>
-
                     <div class="step-shell">
-                      <div class="step-top">
-                        <div class="step-counter" id="stepCounter"></div>
-
-                        <div class="mini-progress-bar">
-                          <div class="mini-progress-fill" id="miniProgressFill"></div>
-                        </div>
-                      </div>
-
+                      <div class="step-top"><div class="step-counter" id="stepCounter"></div><div class="mini-progress-bar"><div class="mini-progress-fill" id="miniProgressFill"></div></div></div>
                       <div class="step-body" id="stepBody">
                         <h2 class="step-title" id="stepTitle"></h2>
                         <div class="step-content" id="stepContent"></div>
                         <div class="step-images" id="stepImages"></div>
                       </div>
-
-                      <div class="step-navigation">
-                        <button class="step-nav-btn prev" id="prevBtn" type="button">
-                          <i class="fa-solid fa-arrow-left"></i>
-                          Previous
-                        </button>
-
-                        <button class="step-nav-btn next" id="nextBtn" type="button">
-                          Next
-                          <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                      </div>
-
+                      <div class="step-navigation"><button class="step-nav-btn prev" id="prevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button><button class="step-nav-btn next" id="nextBtn">Next <i class="fa-solid fa-arrow-right"></i></button></div>
                       <div id="stepDots" class="step-dots"></div>
                     </div>
                   </section>
@@ -682,264 +274,43 @@ body.theme-simple .step-dot.active {
         </main>
 
         <aside class="side-panel">
-        
-                  <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-lightbulb"></i>
-              Key Reminders
-            </div>
-
-            <div class="reminder-list">
-              <div class="reminder">
-                <i class="fa-solid fa-dollar-sign"></i>
-                <span>Change the freight charge rate line to <strong>FLAT</strong> and apply the Volume Quote amount.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-eraser"></i>
-                <span>Remove rate keywords such as FSCL, DEWT, RAZ, LEDI, PRAU, and BRAP.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-ban"></i>
-                <span>Capacity load keywords do <strong>not</strong> need to be removed.</span>
-              </div>
-
-              <div class="reminder">
-                <i class="fa-solid fa-circle-check"></i>
-                <span>Click <strong>ACCEPT ALL</strong> after completing the correction.</span>
-              </div>
-            </div>
-          </div>
-        
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-chart-simple"></i>
-              Quick Snapshot
-            </div>
-
-            <div class="summary-grid">
-              <div class="metric">
-                <span class="metric-k">Steps</span>
-                <span class="metric-v" id="metricSteps">13</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Images</span>
-                <span class="metric-v" id="metricImages">11</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Mode</span>
-                <span class="metric-v">Guide</span>
-              </div>
-
-              <div class="metric">
-                <span class="metric-k">Final</span>
-                <span class="metric-v">Accept</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-route"></i>
-              Quick Jump
-            </div>
-
-            <div class="path-list" id="quickJumpList"></div>
-          </div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-lightbulb"></i> Key Reminders</div><div class="reminder-list"><div class="reminder"><i class="fa-solid fa-dollar-sign"></i><span>Change the freight charge rate line to <strong>FLAT</strong> and apply the Volume Quote amount.</span></div><div class="reminder"><i class="fa-solid fa-eraser"></i><span>Remove rate keywords such as FSCL, DEWT, RAZ, LEDI, PRAU, and BRAP.</span></div><div class="reminder"><i class="fa-solid fa-ban"></i><span>Capacity load keywords do <strong>not</strong> need to be removed.</span></div><div class="reminder"><i class="fa-solid fa-circle-check"></i><span>Click <strong>ACCEPT ALL</strong> after completing the correction.</span></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div><div class="summary-grid"><div class="metric"><span class="metric-k">Steps</span><span class="metric-v" id="metricSteps">13</span></div><div class="metric"><span class="metric-k">Images</span><span class="metric-v">12</span></div><div class="metric"><span class="metric-k">Mode</span><span class="metric-v">Guide</span></div><div class="metric"><span class="metric-k">Final</span><span class="metric-v">Accept</span></div></div></div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-route"></i> Quick Jump</div><div class="path-list" id="quickJumpList"></div></div>
         </aside>
 
         <aside class="template-panel">
-
-
-          <div class="summary-card">
-            <div class="summary-head">
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
-              Correction Codes
-            </div>
-
-            <div class="section-note">
-              Use the correct correction code based on the reason for applying the Volume Quote.
-            </div>
-
-            <div class="template-stack">
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-code"></i></div>
-                    <div>
-                      <div class="template-title">EADL</div>
-                      <div class="template-sub">Biller did not bill</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="eadlCode" class="template-box">EADL – Volume quote listed on BOL but biller did not bill.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
-                  <button class="template-copy" type="button" onclick="copyText('eadlCode', this)">Copy</button>
-                </div>
-              </div>
-
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-robot"></i></div>
-                    <div>
-                      <div class="template-title">SYSM</div>
-                      <div class="template-sub">Automation missed quote</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="sysmCode" class="template-box">SYSM – Volume quote noted but automation didn’t recognize it.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
-                  <button class="template-copy" type="button" onclick="copyText('sysmCode', this)">Copy</button>
-                </div>
-              </div>
-
-              <div class="template-card">
-                <div class="template-card-head">
-                  <div class="template-title-wrap">
-                    <div class="template-icon"><i class="fa-solid fa-user-xmark"></i></div>
-                    <div>
-                      <div class="template-title">CMID</div>
-                      <div class="template-sub">Quote not provided on BOL</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="template-body">
-                  <div id="cmidCode" class="template-box">CMID – Shipper/consignee/BT did not provide volume quote on BOL.</div>
-                </div>
-
-                <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span>
-                  <button class="template-copy" type="button" onclick="copyText('cmidCode', this)">Copy</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="summary-card"><div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Correction Codes</div><div class="section-note">Use the correct correction code based on the reason for applying the Volume Quote.</div><div class="template-stack"><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-code"></i></div><div><div class="template-title">EADL</div><div class="template-sub">Biller did not bill</div></div></div></div><div class="template-body"><div id="eadlCode" class="template-box">EADL – Volume quote listed on BOL but biller did not bill.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span><button class="template-copy" onclick="copyText('eadlCode', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-robot"></i></div><div><div class="template-title">SYSM</div><div class="template-sub">Automation missed quote</div></div></div></div><div class="template-body"><div id="sysmCode" class="template-box">SYSM – Volume quote noted but automation didn’t recognize it.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span><button class="template-copy" onclick="copyText('sysmCode', this)">Copy</button></div></div><div class="template-card"><div class="template-card-head"><div class="template-title-wrap"><div class="template-icon"><i class="fa-solid fa-user-xmark"></i></div><div><div class="template-title">CMID</div><div class="template-sub">Quote not provided on BOL</div></div></div></div><div class="template-body"><div id="cmidCode" class="template-box">CMID – Shipper/consignee/BT did not provide volume quote on BOL.</div></div><div class="template-foot"><span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr Code</span><button class="template-copy" onclick="copyText('cmidCode', this)">Copy</button></div></div></div></div>
         </aside>
       </div>
     </div>
-
     <div id="site-footer"></div>
   </div>
 
-  <div id="imagePreviewModal" class="image-preview-modal">
-    <span class="image-preview-close">×</span>
-    <img id="imagePreview" src="" alt="Preview">
-  </div>
+  <div id="imagePreviewModal" class="image-preview-modal"><span class="image-preview-close">×</span><img id="imagePreview" src="" alt="Preview"></div>
 
   <script src="assets/js/header-loader.js"></script>
   <script src="assets/js/header.js"></script>
   <script src="assets/js/footer-loader.js"></script>
   <script src="assets/js/theme-loader.js"></script>
 
-
   <script>
- const steps = [
-    {
-      title:"Adjust Freight Charges",
-      images:["Steps/Step1.jpg","Steps/Step1v2.jpg"],
-      content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.`
-    },
-    {
-      title:"Remove Rate Keywords",
-      images:["Steps/Step2.png"],
-      content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)`
-    },
-    {
-      title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD",
-      images:["Steps/Step3.png"],
-      content:`• Capacity load keywords do NOT need to be removed.
-• Add RMK line stating: "CAPL NOT APPLICABLE PER TRUCKLOAD."`
-    },
-    {
-      title:"Zero Out Surcharges",
-      images:["Steps/Step4.png","Steps/Step4v2.png"],
-      content:`Zero out any of the following surcharges:
-• VICH
-• VWCH
-• OVRL
-• Extreme Length
-• High Cost
-• California Compliance Fee
-• Demand Surcharge`
-    },
-    {
-      title:"Validate Additional Surcharges",
-      images:["Steps/Step5.jpg"],
-      content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.
-• If surcharges with checkmarks are the only ones included in the quote, remove surcharge on FBC.
-• No checkmark = not included in quote.`
-    },
-    {
-      title:"Add CONT Keyword",
-      images:["Steps/Step6.png"],
-      content:`• Add keyword "CONT".`
-    },
-    {
-      title:"Add full quote number into CONT Number field.",
-      images:["Steps/Step7.jpg"],
-      content:`• Add full quote number into "CONT Number" field.
-• If error appears, click OK.
-• If "CM Option" dropdown appears, select service option noted on BOL (TLX, TLS, EXCL).
-• If none is noted, choose TLX. Click OK.`
-    },
-    {
-      title:"System Auto Adds Keywords",
-      images:["Steps/Step8.png"],
-      content:`System will automatically add:
-• CONT
-• TLX
-Below this point, add:
-• SLCU
-• NOAR`
-    },
-    {
-      title:"Add PRAU & Agreement Details",
-      images:["Steps/Step9.png"],
-      content:`• Below NOAR, add keyword PRAU.`
-    },
-    {
-      title:"Add PRAU & Agreement Details",
-      images:["Steps/Step10.jpg"],
-      content:`• In Agreement Type dropdown, choose "CONT".
-• In Tariff dropdown, choose service type from BOL (TLX, TLS, EXCL).
-• Enter 7 numbers between F and CM in quote number.
-• In Base Type dropdown, select "CUST".
-• In AP1 dropdown, select who the pro is billed to.
-• Click OK when finished.`
-    },
-    {
-      title:"Clean Description Field",
-      images:["Steps/Step11.jpg"],
-      content:`Delete all blank lines in the description field.`
-    },
-    {
-      title:"Add Correction Code",
-      content:`Add correction code based on reason:
-
-EADL – Volume quote listed on BOL but biller did not bill.
-SYSM – Volume quote noted but automation didn’t recognize it.
-CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
-    },
-    {
-      title:"Final Step",
-      content:`At last, click ACCEPT ALL.`
-    }
-  ];
+    // ==================== VOLUME APPLICATION STEPS ====================
+    const steps = [
+      { title:"Adjust Freight Charges", images:["Steps/Step1.jpg","Steps/Step1v2.jpg"], content:`On the freight charges line, change the rate line to FLAT and apply the volume quote amount in the charge line.` },
+      { title:"Remove Rate Keywords", images:["Steps/Step2.png"], content:`• Remove all rate keywords (FSCL, DEWT, RAZ, LEDI, PRAU, BRAP)` },
+      { title:"Add RMK- CAPL NOT APPLICABLE PER TRUCLOAD", images:["Steps/Step3.png"], content:`• Capacity load keywords do NOT need to be removed.\n• Add RMK line stating: "CAPL NOT APPLICABLE PER TRUCKLOAD."` },
+      { title:"Zero Out Surcharges", images:["Steps/Step4.png","Steps/Step4v2.png"], content:`Zero out any of the following surcharges:\n• VICH\n• VWCH\n• OVRL\n• Extreme Length\n• High Cost\n• California Compliance Fee\n• Demand Surcharge` },
+      { title:"Validate Additional Surcharges", images:["Steps/Step5.jpg"], content:`• Check COMMENTS / ADDITIONAL SERVICES dropdown.\n• If surcharges with checkmarks are the only ones included in the quote, remove surcharge on FBC.\n• No checkmark = not included in quote.` },
+      { title:"Add CONT Keyword", images:["Steps/Step6.png"], content:`• Add keyword "CONT".` },
+      { title:"Add full quote number into CONT Number field.", images:["Steps/Step7.jpg"], content:`• Add full quote number into "CONT Number" field.\n• If error appears, click OK.\n• If "CM Option" dropdown appears, select service option noted on BOL (TLX, TLS, EXCL).\n• If none is noted, choose TLX. Click OK.` },
+      { title:"System Auto Adds Keywords", images:["Steps/Step8.png"], content:`System will automatically add:\n• CONT\n• TLX\nBelow this point, add:\n• SLCU\n• NOAR` },
+      { title:"Add PRAU & Agreement Details", images:["Steps/Step9.png"], content:`• Below NOAR, add keyword PRAU.` },
+      { title:"Add PRAU & Agreement Details (Step 2)", images:["Steps/Step10.jpg"], content:`• In Agreement Type dropdown, choose "CONT".\n• In Tariff dropdown, choose service type from BOL (TLX, TLS, EXCL).\n• Enter 7 numbers between F and CM in quote number.\n• In Base Type dropdown, select "CUST".\n• In AP1 dropdown, select who the pro is billed to.\n• Click OK when finished.` },
+      { title:"Clean Description Field", images:["Steps/Step11.jpg"], content:`Delete all blank lines in the description field.` },
+      { title:"Add Correction Code", content:`Add correction code based on reason:\n\nEADL – Volume quote listed on BOL but biller did not bill.\nSYSM – Volume quote noted but automation didn’t recognize it.\nCMID – Shipper/consignee/BT did not provide volume quote on BOL.` },
+      { title:"Final Step", content:`At last, click ACCEPT ALL.` }
+    ];
     
     let currentStep = 0;
     const els = {
@@ -954,80 +325,73 @@ CMID – Shipper/consignee/BT did not provide volume quote on BOL.`
     function renderQuickJump(){ if(els.quickJumpList){ els.quickJumpList.innerHTML=""; steps.forEach((s,i)=>{ const btn=document.createElement("button"); btn.className="path-jump"; btn.type="button"; btn.dataset.jump=i; btn.innerHTML=`<span>${i+1}</span><div><strong>${escapeHtml(s.title)}</strong><small>Step ${i+1}</small></div>`; btn.onclick=()=>goToStep(i,true); els.quickJumpList.appendChild(btn); }); } }
     function updateQuickJump(){ document.querySelectorAll(".path-jump").forEach(btn=>{ const idx=Number(btn.dataset.jump); btn.classList.toggle("active",idx===currentStep); }); }
     function renderDots(){ if(els.stepDots){ els.stepDots.innerHTML=""; steps.forEach((_,i)=>{ const dot=document.createElement("div"); dot.className="step-dot"; if(i===currentStep) dot.classList.add("active"); dot.onclick=()=>goToStep(i,true); els.stepDots.appendChild(dot); }); } }
-   function renderStep(){
-  const step = steps[currentStep];
-  const progress = ((currentStep + 1) / steps.length * 100) + "%";
-
-  if(els.stepTitle) els.stepTitle.textContent = step.title;
-  if(els.stepContent) els.stepContent.textContent = step.content;
-
-  // ---------- IMAGE RENDERING (ADD THIS) ----------
-  if(els.stepImages){
-    els.stepImages.innerHTML = "";  // clear previous images
-    if(Array.isArray(step.images) && step.images.length){
-      step.images.forEach(src => {
-        const img = document.createElement("img");
-        img.src = src;
-        img.alt = step.title;
-        img.loading = "lazy";
-        // Optional: handle missing images gracefully
-        img.onerror = () => {
-          img.style.opacity = "0.6";
-          img.style.border = "1px dashed red";
-          img.alt = `Missing: ${src}`;
-        };
-        els.stepImages.appendChild(img);
-      });
+    
+    function renderStep(){
+      const step = steps[currentStep];
+      const progress = ((currentStep + 1) / steps.length * 100) + "%";
+      if(els.stepTitle) els.stepTitle.textContent = step.title;
+      if(els.stepContent) els.stepContent.textContent = step.content;
+      if(els.stepImages){
+        els.stepImages.innerHTML = "";
+        if(Array.isArray(step.images) && step.images.length){
+          step.images.forEach(src => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = step.title;
+            img.loading = "lazy";
+            img.onerror = () => { img.style.opacity = "0.6"; img.style.border = "1px dashed #cbd5e1"; };
+            els.stepImages.appendChild(img);
+          });
+        }
+      }
+      if(els.stepCounter) els.stepCounter.textContent = `Step ${currentStep+1} of ${steps.length}`;
+      if(els.progressText) els.progressText.textContent = `Step ${currentStep+1} of ${steps.length}`;
+      if(els.progressFill) els.progressFill.style.width = progress;
+      if(els.miniProgressFill) els.miniProgressFill.style.width = progress;
+      if(els.metricSteps) els.metricSteps.textContent = steps.length;
+      if(els.prevBtn) els.prevBtn.disabled = (currentStep === 0);
+      if(els.nextBtn){
+        if(currentStep === steps.length-1){
+          els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
+          els.nextBtn.classList.add("finish");
+        } else {
+          els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
+          els.nextBtn.classList.remove("finish");
+        }
+      }
+      renderDots();
+      updateQuickJump();
     }
-  }
-  // ------------------------------------------------
 
-  if(els.stepCounter) els.stepCounter.textContent = `Step ${currentStep+1} of ${steps.length}`;
-  if(els.progressText) els.progressText.textContent = `Step ${currentStep+1} of ${steps.length}`;
-  if(els.progressFill) els.progressFill.style.width = progress;
-  if(els.miniProgressFill) els.miniProgressFill.style.width = progress;
-  if(els.metricSteps) els.metricSteps.textContent = steps.length;
-
-  if(els.prevBtn) els.prevBtn.disabled = (currentStep === 0);
-  if(els.nextBtn){
-    if(currentStep === steps.length-1){
-      els.nextBtn.innerHTML = `Finish <i class="fa-solid fa-circle-check"></i>`;
-      els.nextBtn.classList.add("finish");
-    } else {
-      els.nextBtn.innerHTML = `Next <i class="fa-solid fa-arrow-right"></i>`;
-      els.nextBtn.classList.remove("finish");
-    }
-  }
-  renderDots();
-  updateQuickJump();
-}
     document.addEventListener("click", (e) => {
-  const modal = document.getElementById("imagePreviewModal");
-  const previewImg = document.getElementById("imagePreview");
-  if (e.target.matches(".step-images img")) {
-    if (modal && previewImg) {
-      modal.style.display = "flex";
-      previewImg.src = e.target.src;
-      document.body.style.overflow = "hidden";
-    }
-  }
-  if (e.target.matches(".image-preview-close, #imagePreviewModal")) {
-    if (modal) modal.style.display = "none";
-    if (previewImg) previewImg.src = "";
-    document.body.style.overflow = "";
-  }
-});
+      const modal = document.getElementById("imagePreviewModal");
+      const previewImg = document.getElementById("imagePreview");
+      if (e.target.matches(".step-images img")) {
+        if (modal && previewImg) {
+          modal.style.display = "flex";
+          previewImg.src = e.target.src;
+          document.body.style.overflow = "hidden";
+        }
+      }
+      if (e.target.matches(".image-preview-close, #imagePreviewModal")) {
+        if (modal) modal.style.display = "none";
+        if (previewImg) previewImg.src = "";
+        document.body.style.overflow = "";
+      }
+    });
     
     function animateStep(direction){ if(els.stepBody){ els.stepBody.classList.remove("animate-left","animate-right"); void els.stepBody.offsetWidth; els.stepBody.classList.add(direction==="left"?"animate-left":"animate-right"); } }
     function goToStep(index,shouldScroll=false){ if(index<0||index>=steps.length) return; const direction=index>=currentStep?"left":"right"; currentStep=index; animateStep(direction); renderStep(); if(shouldScroll){ const sec=document.getElementById("stepsSection"); if(sec) sec.scrollIntoView({ behavior:"smooth", block:"start" }); } }
     function exploreSteps(){ goToStep(0,true); }
     window.goToStep=goToStep; window.exploreSteps=exploreSteps;
-    if(els.nextBtn) els.nextBtn.onclick=()=>{ if(currentStep<steps.length-1){ currentStep++; animateStep("left"); renderStep(); }else{ alert("ePRS checking guide completed."); currentStep=0; animateStep("left"); renderStep(); } };
+    if(els.nextBtn) els.nextBtn.onclick=()=>{ if(currentStep<steps.length-1){ currentStep++; animateStep("left"); renderStep(); }else{ alert("Volume Application guide completed. Accept all changes and finalize correction."); currentStep=0; animateStep("left"); renderStep(); } };
     if(els.prevBtn) els.prevBtn.onclick=()=>{ if(currentStep>0){ currentStep--; animateStep("right"); renderStep(); } };
     document.addEventListener("keydown",e=>{ if(e.key==="ArrowRight"&&els.nextBtn) els.nextBtn.click(); if(e.key==="ArrowLeft"&&els.prevBtn) els.prevBtn.click(); });
+    
     function copyText(id,btn){ const el=document.getElementById(id); if(!el) return; const text=el.innerText.trim(); if(!text) return; navigator.clipboard.writeText(text).then(()=>{ const old=btn.textContent; btn.classList.add("copied"); btn.textContent="Copied ✓"; setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent=old; },1400); }).catch(()=>{ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); const old=btn.textContent; btn.classList.add("copied"); btn.textContent="Copied ✓"; setTimeout(()=>{ btn.classList.remove("copied"); btn.textContent=old; },1400); }); }
     window.copyText=copyText;
     function escapeHtml(str){ return String(str??"").replace(/[&<>]/g,function(m){ if(m==="&") return "&amp;"; if(m==="<") return "&lt;"; if(m===">") return "&gt;"; return m; }); }
+    
     renderQuickJump(); renderStep();
   </script>
 </body>
