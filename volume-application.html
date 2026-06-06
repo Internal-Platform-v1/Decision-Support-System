@@ -519,5 +519,43 @@
     
     renderQuickJump(); renderStep();
   </script>
+  <script>
+  // === THEME PERSISTENCE & FIX ===
+  (function() {
+    // 1. Restore saved theme on page load
+    const savedTheme = localStorage.getItem('volumeAppTheme');
+    if (savedTheme && document.body.classList.contains(savedTheme) === false) {
+      document.body.className = savedTheme;
+    }
+
+    // 2. Override the inline onclick handlers of your theme buttons
+    //    (so they also save the choice)
+    const themeButtons = document.querySelectorAll('[onclick^="document.body.className="]');
+    themeButtons.forEach(btn => {
+      const originalOnclick = btn.getAttribute('onclick');
+      // Extract the theme name from the original onclick
+      const match = originalOnclick.match(/className=['"](theme-[\w-]+)['"]/);
+      if (match) {
+        const themeName = match[1];
+        btn.setAttribute('onclick', '');
+        btn.onclick = (e) => {
+          e.preventDefault();
+          document.body.className = themeName;
+          localStorage.setItem('volumeAppTheme', themeName);
+        };
+      }
+    });
+
+    // 3. If you have any external script that might change the body class (like theme-loader.js),
+    //    this will re‑apply the saved theme after a short delay (override it).
+    //    You can remove this part if you are sure no external script interferes.
+    setTimeout(() => {
+      const currentSaved = localStorage.getItem('volumeAppTheme');
+      if (currentSaved && document.body.className !== currentSaved) {
+        document.body.className = currentSaved;
+      }
+    }, 100);
+  })();
+</script>
 </body>
 </html>
