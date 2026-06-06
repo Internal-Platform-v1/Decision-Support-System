@@ -1298,34 +1298,89 @@
   <script src="assets/js/header.js"></script>
   <script src="assets/js/footer-loader.js"></script>
 
-  <!-- SIMPLE THEME SYNCHRONIZATION: listen for body class changes from header -->
+  <!-- ULTIMATE THEME SYNCHRONIZATION - FORCES body class based on localStorage -->
   <script>
     (function() {
-      // When the header changes the body class, we don't need to do anything
-      // because the CSS already has rules for .theme-fedex, .theme-atlas, etc.
-      // However, we should ensure that the initial body class matches localStorage
-      // in case the header hasn't set it yet.
-      const savedTheme = localStorage.getItem('siteTheme');
-      if (savedTheme) {
-        const themeMap = { fedex: 'theme-fedex', atlas: 'theme-atlas', basic: 'theme-basic', simple: 'theme-simple' };
+      // Map theme IDs to body classes
+      const themeMap = {
+        'fedex': 'theme-fedex',
+        'atlas': 'theme-atlas',
+        'basic': 'theme-basic',
+        'simple': 'theme-simple'
+      };
+      const allClasses = Object.values(themeMap);
+
+      // Function to apply theme class to body
+      function applyThemeFromStorage() {
+        let savedTheme = localStorage.getItem('siteTheme');
+        if (!savedTheme || !themeMap[savedTheme]) {
+          savedTheme = 'fedex';
+        }
         const targetClass = themeMap[savedTheme];
-        if (targetClass && !document.body.classList.contains(targetClass)) {
-          document.body.classList.remove('theme-fedex', 'theme-atlas', 'theme-basic', 'theme-simple');
-          document.body.classList.add(targetClass);
+        // Only change if not already the only theme class
+        const currentClasses = document.body.classList;
+        if (!currentClasses.contains(targetClass)) {
+          // Remove all theme classes
+          allClasses.forEach(cls => currentClasses.remove(cls));
+          currentClasses.add(targetClass);
+          console.log('[Theme] Applied class:', targetClass);
         }
       }
-      // Optional: listen for storage events (if theme changed in another tab)
+
+      // Initial application
+      applyThemeFromStorage();
+
+      // Listen for storage events (from header or other tabs)
       window.addEventListener('storage', function(e) {
         if (e.key === 'siteTheme') {
-          const newTheme = e.newValue;
-          const themeMap = { fedex: 'theme-fedex', atlas: 'theme-atlas', basic: 'theme-basic', simple: 'theme-simple' };
-          const newClass = themeMap[newTheme];
-          if (newClass) {
-            document.body.classList.remove('theme-fedex', 'theme-atlas', 'theme-basic', 'theme-simple');
-            document.body.classList.add(newClass);
-          }
+          console.log('[Theme] Storage event, new theme:', e.newValue);
+          applyThemeFromStorage();
         }
       });
+
+      // Listen for custom event that header might dispatch
+      window.addEventListener('themeChanged', function(e) {
+        const newTheme = e.detail?.theme;
+        if (newTheme && themeMap[newTheme]) {
+          console.log('[Theme] themeChanged event:', newTheme);
+          const targetClass = themeMap[newTheme];
+          allClasses.forEach(cls => document.body.classList.remove(cls));
+          document.body.classList.add(targetClass);
+        }
+      });
+
+      // Backup: poll localStorage every 300ms to catch any changes
+      let lastTheme = localStorage.getItem('siteTheme');
+      setInterval(function() {
+        const currentTheme = localStorage.getItem('siteTheme');
+        if (currentTheme !== lastTheme) {
+          lastTheme = currentTheme;
+          console.log('[Theme] Polling detected change:', currentTheme);
+          applyThemeFromStorage();
+        }
+      }, 300);
+
+      // Also watch for direct class changes (if header directly manipulates class)
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            // Check if the current class matches any theme class
+            const currentClasses = document.body.classList;
+            let currentTheme = null;
+            for (const [themeId, cls] of Object.entries(themeMap)) {
+              if (currentClasses.contains(cls)) {
+                currentTheme = themeId;
+                break;
+              }
+            }
+            if (currentTheme && currentTheme !== localStorage.getItem('siteTheme')) {
+              localStorage.setItem('siteTheme', currentTheme);
+              lastTheme = currentTheme;
+            }
+          }
+        });
+      });
+      observer.observe(document.body, { attributes: true });
     })();
   </script>
 
