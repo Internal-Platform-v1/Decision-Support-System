@@ -334,7 +334,7 @@
       let selectedRating = 0, path = [], historyStack = [], currentFinalRecommendation = "", currentEditType = "", commentsUnsubscribe = null, ratingStars = [], currentKey = "start";
       const templateCache = {};
 
-   const NODES = {
+const NODES = {
   start: {
     text: "LMPB (Lumper Fee) Guide",
     help: "Use this guide to properly add Lumper fees (LMPB for 3rd party, LMPP for prepaid) for customers who use Lumper services for Sort & Segregation at destination centers, and to handle declines when Sort & Segregate charges already exist or when bills are unworkable.",
@@ -364,6 +364,18 @@
     text: "REMINDER: If Sort and Segregate charges are already on the bill, decline the request and provide comment why it was declined. Sample: 'Cannot add the fee lmpb/sseg is already on the bill'.\n\nAny bill that agent cannot work should be moved to VEND:\nA) Manual Rate Error – Follow OS1 for any error messages\nB) 50+ Line Error – Follow 50+ lines job aid",
     help: "Critical reminders before processing Lumper fee request.",
     image: "lmpb-images/lmpb-image2.png",
+    choices: [
+      {
+        label: "Continue",
+        next: "check_sseg_condition",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Proceed to check conditions."
+      }
+    ]
+  },
+  check_sseg_condition: {
+    text: "Does the bill have any Sort & Segregate charges or unworkable errors?",
+    help: "Select the condition that applies to the current bill.",
     choices: [
       {
         label: "No Sort & Segregate – bill is workable",
