@@ -61,7 +61,7 @@
     visibility:hidden;
   }
 
-  /* ===== BASE THEME VARIABLES (theme‑loader.js will override these) ===== */
+  /* ===== BASE THEME VARIABLES (fallback – will be overridden by theme sync) ===== */
   :root{
     --bg:#07111f;
     --bg-soft:#0c1728;
@@ -1107,7 +1107,7 @@
     padding:10px 14px;
     margin-top:8px;
     border-radius:12px;
-    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
     color:#fff;
     text-decoration:none;
     font-size:12px;
@@ -1121,7 +1121,7 @@
     box-shadow:0 14px 24px rgba(77,20,140,.25);
   }
 
-  /* ===== MODALS – fully theme‑aware, no hardcoded FedEx ===== */
+  /* ===== MODALS – fully theme‑aware, uses CSS variables ===== */
   #passwordModal,
   #editModal{
     display:none;
@@ -1275,7 +1275,7 @@
     background:color-mix(in srgb, var(--card-soft) 80%, var(--accent) 10%);
   }
 
-  /* Correction modal inner content – uses theme variables only */
+  /* Correction modal inner content – uses theme variables */
   .instructions-content{
     font-size:14px;
     line-height:1.6;
@@ -1724,7 +1724,7 @@
       </div>
     </div>
 
-    <!-- Correction Instructions Modal – fully theme‑adaptive -->
+    <!-- Correction Instructions Modal – fully dynamic -->
     <div id="correctionInstructionsModal" class="modal">
       <div class="modal-content instructions-modal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -1810,6 +1810,90 @@
   <script src="../assets/js/header.js"></script>
   <script src="../assets/js/footer-loader.js"></script>
   <script src="../assets/js/theme-loader.js"></script>
+  
+  <!-- THEME SYNC: Listen to body class changes and update CSS variables accordingly -->
+  <script>
+  (function() {
+    // Mapping from body class to CSS variable overrides.
+    // Extend this mapping with any additional themes your header may add.
+    const THEMES = {
+      'theme-fedex': {
+        '--accent': '#4d148c',
+        '--accent-2': '#6d28d9',
+        '--accent-3': '#ff6600',
+        '--card': '#ffffff',
+        '--card-soft': '#f8fafc',
+        '--text': '#0f172a',
+        '--text-soft': '#475569',
+        '--line': 'rgba(148,163,184,.18)'
+      },
+      'theme-dark': {
+        '--accent': '#8b5cf6',
+        '--accent-2': '#7c3aed',
+        '--accent-3': '#f97316',
+        '--card': '#1e293b',
+        '--card-soft': '#0f172a',
+        '--text': '#f1f5f9',
+        '--text-soft': '#cbd5e1',
+        '--line': 'rgba(255,255,255,.1)'
+      },
+      'theme-light': {
+        '--accent': '#3b82f6',
+        '--accent-2': '#2563eb',
+        '--accent-3': '#f59e0b',
+        '--card': '#ffffff',
+        '--card-soft': '#f8fafc',
+        '--text': '#0f172a',
+        '--text-soft': '#475569',
+        '--line': 'rgba(148,163,184,.18)'
+      },
+      'theme-blue': {
+        '--accent': '#1e40af',
+        '--accent-2': '#1d4ed8',
+        '--accent-3': '#eab308',
+        '--card': '#ffffff',
+        '--card-soft': '#f0f9ff',
+        '--text': '#0f172a',
+        '--text-soft': '#334155',
+        '--line': 'rgba(100,116,139,.2)'
+      }
+      // Add more themes as needed
+    };
+
+    function applyTheme(className) {
+      // Get the theme from the class name (e.g., 'theme-fedex')
+      let theme = null;
+      for (let key in THEMES) {
+        if (className.includes(key)) {
+          theme = THEMES[key];
+          break;
+        }
+      }
+      if (!theme) return;
+
+      const root = document.documentElement;
+      for (let [prop, value] of Object.entries(theme)) {
+        root.style.setProperty(prop, value);
+      }
+    }
+
+    // Initial application
+    const bodyClass = document.body.className;
+    applyTheme(bodyClass);
+
+    // Watch for class changes on the body (theme switcher may add/remove classes)
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.attributeName === 'class') {
+          const newClass = mutation.target.className;
+          applyTheme(newClass);
+        }
+      });
+    });
+    observer.observe(document.body, { attributes: true });
+  })();
+  </script>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const db = window.db || firebase.firestore();
@@ -1841,12 +1925,11 @@
       let historyStack = [];
       let currentFinalRecommendation = "";
       let currentEditType = "";
-      let commentsUnsubscribe = null;
       let ratingStars = [];
       let currentKey = "start";
       const templateCache = {};
 
-      // NODES tree (identical to before, omitted for brevity – include the full NODES as in previous version)
+      // ================= FULL NODES TREE (same as earlier – keep all nodes) =================
       const NODES = {
         start: {
           text: "SAF2 Guide",
@@ -2377,7 +2460,7 @@
         }
       };
 
-      // Helper functions (escapeHtml, normalizeId, getDocId, etc.) – same as before
+      // Helper functions (escapeHtml, normalizeId, etc.) – unchanged
       function escapeHtml(value){
         return String(value ?? "")
           .replaceAll("&", "&amp;")
