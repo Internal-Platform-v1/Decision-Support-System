@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
- <title>SAF2</title>
+  <title>SAF2</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -33,10 +33,6 @@
   window.auth = firebase.auth();
   window.db = firebase.firestore();
 
-  /* =========================================================
-     PAGE AUTH GUARD
-     Prevents direct URL access without login
-  ========================================================= */
   window.auth.onAuthStateChanged(async function(user) {
     try {
       if (!user) {
@@ -45,16 +41,13 @@
       }
 
       await user.reload();
-
       const refreshedUser = window.auth.currentUser;
-
       if (!refreshedUser || !refreshedUser.emailVerified) {
         window.location.replace("index.html");
         return;
       }
 
       document.documentElement.classList.remove("page-protected");
-
     } catch (error) {
       console.error("Auth guard error:", error);
       window.location.replace("index.html");
@@ -62,7 +55,7 @@
   });
   </script>
 
- <style>
+  <style>
   html.page-protected,
   html.page-protected body{
     visibility:hidden;
@@ -854,6 +847,16 @@
     font-size:11px;
     font-weight:800;
     color:#64748b;
+    cursor:pointer;
+    text-decoration:none;
+    transition:.2s ease;
+  }
+
+  .template-tag:hover{
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    color:#1d4ed8;
+    transform:translateY(-1px);
   }
 
   .template-copy{
@@ -875,19 +878,6 @@
     color:#166534 !important;
     border-color:#bbf7d0 !important;
   }
-
-  .template-tag{
-  cursor:pointer;
-  text-decoration:none;
-  transition:.2s ease;
-}
-
-.template-tag:hover{
-  background:#eef4ff;
-  border-color:#cfe0ff;
-  color:#1d4ed8;
-  transform:translateY(-1px);
-} 
 
   @media (max-width:1450px){
     .app-frame{
@@ -919,724 +909,648 @@
     .decision-footer{flex-direction:column;align-items:flex-start}
   }
   
-  /*images*/
-  
   .question-image{
-  margin-top:16px;
-  border-radius:18px;
-  overflow:hidden;
-  cursor:zoom-in;
-  border:1px solid #e2e8f0;
-  background:#fff;
-  max-height:320px;
-  min-height:180px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  box-shadow:0 12px 28px rgba(15,23,42,.08);
-}
+    margin-top:16px;
+    border-radius:18px;
+    overflow:hidden;
+    cursor:zoom-in;
+    border:1px solid #e2e8f0;
+    background:#fff;
+    max-height:320px;
+    min-height:180px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    box-shadow:0 12px 28px rgba(15,23,42,.08);
+  }
 
-.question-image::after{
-  content:"Click to enlarge";
-  position:absolute;
-  right:12px;
-  bottom:12px;
-  padding:7px 10px;
-  border-radius:999px;
-  background:rgba(15,23,42,.72);
-  color:#fff;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.04em;
-  opacity:0;
-  transform:translateY(6px);
-  transition:.2s ease;
-  pointer-events:none;
-}
+  .question-image::after{
+    content:"Click to enlarge";
+    position:absolute;
+    right:12px;
+    bottom:12px;
+    padding:7px 10px;
+    border-radius:999px;
+    background:rgba(15,23,42,.72);
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.04em;
+    opacity:0;
+    transform:translateY(6px);
+    transition:.2s ease;
+    pointer-events:none;
+  }
 
-.question-image:hover::after{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.question-image img{
-  width:100%;
-  height:100%;
-  max-height:320px;
-  object-fit:contain;
-  display:block;
-  transition:transform .28s ease;
-  transform-origin:center center;
-}
-
-.question-image:hover img{
-  transform:scale(1.06);
-}
-
-.image-modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  background:rgba(2,6,23,.88);
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  backdrop-filter:blur(8px);
-  cursor:zoom-out;
-}
-
-.image-modal.open{
-  display:flex;
-}
-
-.image-modal img{
-  max-width:94vw;
-  max-height:90vh;
-  width:auto;
-  height:auto;
-  object-fit:contain;
-  border-radius:18px;
-  background:#fff;
-  box-shadow:0 30px 80px rgba(0,0,0,.45);
-  cursor:default;
-}
-
-.image-modal-close{
-  position:absolute;
-  top:18px;
-  right:18px;
-  width:46px;
-  height:46px;
-  border:none;
-  border-radius:14px;
-  background:rgba(255,255,255,.12);
-  color:#fff;
-  font-size:22px;
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  transition:.2s ease;
-}
-
-.image-modal-close:hover{
-  background:rgba(255,255,255,.2);
-}
-
-@media (max-width:760px){
-  .question-image{
-    max-height:260px;
-    min-height:140px;
+  .question-image:hover::after{
+    opacity:1;
+    transform:translateY(0);
   }
 
   .question-image img{
-    max-height:260px;
+    width:100%;
+    height:100%;
+    max-height:320px;
+    object-fit:contain;
+    display:block;
+    transition:transform .28s ease;
+    transform-origin:center center;
+  }
+
+  .question-image:hover img{
+    transform:scale(1.06);
   }
 
   .image-modal{
-    padding:14px;
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:rgba(2,6,23,.88);
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    backdrop-filter:blur(8px);
+    cursor:zoom-out;
+  }
+
+  .image-modal.open{
+    display:flex;
   }
 
   .image-modal img{
-    max-width:96vw;
-    max-height:86vh;
-    border-radius:14px;
+    max-width:94vw;
+    max-height:90vh;
+    width:auto;
+    height:auto;
+    object-fit:contain;
+    border-radius:18px;
+    background:#fff;
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+    cursor:default;
   }
 
   .image-modal-close{
-    top:10px;
-    right:10px;
-    width:42px;
-    height:42px;
+    position:absolute;
+    top:18px;
+    right:18px;
+    width:46px;
+    height:46px;
+    border:none;
+    border-radius:14px;
+    background:rgba(255,255,255,.12);
+    color:#fff;
+    font-size:22px;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    transition:.2s ease;
   }
-}
 
-    /*title/subtitle*/  
-.page-title-block{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
+  .image-modal-close:hover{
+    background:rgba(255,255,255,.2);
+  }
 
-.page-title-block h1{
-  margin:0;
-  font-size:24px;
-  font-weight:900;
-  letter-spacing:-.03em;
-  color:#0f172a;
-}
+  @media (max-width:760px){
+    .question-image{
+      max-height:260px;
+      min-height:140px;
+    }
+    .question-image img{
+      max-height:260px;
+    }
+    .image-modal{
+      padding:14px;
+    }
+    .image-modal img{
+      max-width:96vw;
+      max-height:86vh;
+      border-radius:14px;
+    }
+    .image-modal-close{
+      top:10px;
+      right:10px;
+      width:42px;
+      height:42px;
+    }
+  }
 
-.page-subtitle{
-  margin:0;
-  font-size:13px;
-  color:#64748b;
-  line-height:1.6;
-  max-width:620px;
-}
+  .page-title-block{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
 
-.main-topbar{
-  align-items:flex-start; /* 🔥 important */
-}
+  .page-title-block h1{
+    margin:0;
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:-.03em;
+    color:#0f172a;
+  }
 
-/*premium note*/
-.note-card{
-  margin-top:18px;
-  padding:18px 18px 18px 20px;
-  border-radius:20px;
-  background:linear-gradient(180deg, #fff8eb 0%, #ffffff 100%);
-  border:1px solid rgba(245,158,11,.18);
-  box-shadow:
-    0 14px 30px rgba(15,23,42,.06),
-    inset 0 1px 0 rgba(255,255,255,.75);
-  position:relative;
-  overflow:hidden;
-}
+  .page-subtitle{
+    margin:0;
+    font-size:13px;
+    color:#64748b;
+    line-height:1.6;
+    max-width:620px;
+  }
 
-.note-card::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  bottom:0;
-  width:5px;
-  background:linear-gradient(180deg, #f59e0b 0%, #ff6600 100%);
-}
+  .main-topbar{
+    align-items:flex-start;
+  }
 
-.note-head{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  margin-bottom:12px;
-  padding:8px 12px;
-  border-radius:999px;
-  background:#fff7ed;
-  border:1px solid rgba(245,158,11,.18);
-  color:#b45309;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
+  .note-card{
+    margin-top:18px;
+    padding:18px 18px 18px 20px;
+    border-radius:20px;
+    background:linear-gradient(180deg, #fff8eb 0%, #ffffff 100%);
+    border:1px solid rgba(245,158,11,.18);
+    box-shadow:0 14px 30px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.75);
+    position:relative;
+    overflow:hidden;
+  }
 
-.smart-link{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 14px;
-  margin-top:8px;
-  border-radius:12px;
-  background:linear-gradient(135deg,#4d148c,#6d28d9);
-  color:#fff !important;
-  text-decoration:none;
-  font-size:12px;
-  font-weight:800;
-  box-shadow:0 10px 18px rgba(77,20,140,.18);
-  transition:.2s ease;
-}
+  .note-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    width:5px;
+    background:linear-gradient(180deg, #f59e0b 0%, #ff6600 100%);
+  }
 
-.smart-link:hover{
-  transform:translateY(-2px) scale(1.02);
-  box-shadow:0 14px 24px rgba(77,20,140,.25);
-}
+  .note-head{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:12px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:#fff7ed;
+    border:1px solid rgba(245,158,11,.18);
+    color:#b45309;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
 
-/* ===== MODALS ===== */
+  .smart-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 14px;
+    margin-top:8px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#4d148c,#6d28d9);
+    color:#fff !important;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:800;
+    box-shadow:0 10px 18px rgba(77,20,140,.18);
+    transition:.2s ease;
+  }
 
-/* Keep edit/password modals local to this guide only */
-#passwordModal,
-#editModal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(15,23,42,.45);
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  z-index:10000;
-}
+  .smart-link:hover{
+    transform:translateY(-2px) scale(1.02);
+    box-shadow:0 14px 24px rgba(77,20,140,.25);
+  }
 
-#passwordModal .modal-content,
-#editModal .modal-content{
-  background:#fff;
-  width:100%;
-  max-width:560px;
-  border-radius:22px;
-  padding:24px;
-  box-shadow:0 24px 60px rgba(15,23,42,.22);
-  border:1px solid #e2e8f0;
-  max-height:85vh;
-  overflow:auto;
-}
-
-#passwordModal .modal-header,
-#editModal .modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  font-size:20px;
-  font-weight:900;
-  margin-bottom:14px;
-  color:#0f172a;
-}
-
-#passwordModal .modal-close,
-#editModal .modal-close{
-  font-size:22px;
-  cursor:pointer;
-  color:#64748b;
-  line-height:1;
-}
-
-#passwordModal .modal-close:hover,
-#editModal .modal-close:hover{
-  color:#4d148c;
-}
-
-#passwordModal input,
-#editModal textarea{
-  width:100%;
-  border:1px solid #dbe4f0;
-  border-radius:14px;
-  padding:12px 14px;
-  font-size:14px;
-  outline:none;
-  background:#fff;
-}
-
-#passwordModal input:focus,
-#editModal textarea:focus{
-  border-color:#c4b5fd;
-  box-shadow:0 0 0 4px rgba(109,40,217,.10);
-}
-
-#editModal textarea{
-  min-height:220px;
-  resize:vertical;
-}
-
-/* Match shared header modals to index look */
-#commentModal,
-#allCommentsModal,
-#helpModal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.52);
-  justify-content:center;
-  align-items:center;
-  padding:0 24px;
-  z-index:2147483647;
-  backdrop-filter:blur(8px);
-  overflow-y:auto;
-}
-
-#commentModal .modal-content,
-#allCommentsModal .modal-content,
-#helpModal .modal-content{
-  width:100%;
-  background:#fff;
-  border-radius:28px;
-  padding:26px;
-  box-shadow:0 24px 80px rgba(2,6,23,.18);
-  max-height:min(84vh, 900px);
-  overflow:auto;
-  border:1px solid rgba(148,163,184,.16);
-  margin:110px auto 32px;
-}
-
-#commentModal .feedback-modal{
-  max-width:640px;
-  border-radius:28px;
-  padding:20px 20px 22px;
-}
-
-#allCommentsModal .modal-content{
-  max-width:760px;
-}
-
-#helpModal .help-modal{
-  max-width:760px;
-  border-radius:30px;
-  padding:18px;
-}
-
-#commentModal .modal-header,
-#allCommentsModal .modal-header,
-#helpModal .modal-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  font-size:22px;
-  font-weight:800;
-  letter-spacing:-.03em;
-  margin-bottom:14px;
-  color:#0f172a;
-}
-
-#commentModal .modal-close,
-#allCommentsModal .modal-close,
-#helpModal .modal-close{
-  cursor:pointer;
-  width:40px;
-  height:40px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  color:#64748b;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-  transition:.2s ease;
-  flex-shrink:0;
-  font-size:22px;
-  line-height:1;
-}
-
-#commentModal .modal-close:hover,
-#allCommentsModal .modal-close:hover,
-#helpModal .modal-close:hover{
-  color:#0f172a;
-  background:#eef2ff;
-}
-
-#commentModal .feedback-header{
-  margin-bottom:10px;
-}
-
-#commentModal .feedback-header span:first-child{
-  font-size:22px;
-  font-weight:800;
-  letter-spacing:-.03em;
-  color:#111827;
-}
-
-#commentModal .rating-container{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  margin:16px 0 18px;
-}
-
-#commentModal .rating-star{
-  cursor:pointer;
-  font-size:26px;
-  color:#d1d5db;
-  transition:transform .18s ease, color .18s ease;
-}
-
-#commentModal .rating-star:hover{
-  transform:translateY(-1px) scale(1.06);
-}
-
-#commentModal .rating-star.selected{
-  color:#ff6600;
-}
-
-#commentModal input,
-#commentModal textarea{
-  width:100%;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  padding:14px 16px;
-  color:#0f172a;
-  font-size:14px;
-  transition:.18s ease;
-}
-
-#commentModal input{
-  margin-top:4px;
-  margin-bottom:10px;
-}
-
-#commentModal textarea{
-  min-height:120px;
-  resize:vertical;
-  margin-top:0;
-}
-
-#commentModal input:focus,
-#commentModal textarea:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
-}
-
-#commentModal .feedback-submit-btn{
-  margin:16px 0 8px;
-  min-height:54px;
-  border-radius:18px;
-}
-
-#commentModal .feedback-bottom-link{
-  margin-top:4px;
-}
-
-#commentModal .link-text{
-  color:#4d148c;
-  cursor:pointer;
-  text-decoration:none;
-  font-size:14px;
-  font-weight:700;
-}
-
-#commentModal .link-text:hover{
-  text-decoration:underline;
-}
-
-#allCommentsModal .comment-list-item{
-  padding:14px 0;
-  border-bottom:1px solid rgba(148,163,184,.18);
-}
-
-#allCommentsModal .comment-list-item:last-child{
-  border-bottom:none;
-}
-
-#allCommentsModal .stars{
-  color:#ff6600;
-  font-size:18px;
-  margin-bottom:6px;
-  display:block;
-}
-
-@media (max-width:720px){
+  /* ===== MODALS ===== */
   #passwordModal,
   #editModal{
-    padding:14px;
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.45);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:10000;
   }
 
   #passwordModal .modal-content,
   #editModal .modal-content{
-    border-radius:18px;
-    padding:18px;
+    background:#fff;
+    width:100%;
+    max-width:560px;
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 24px 60px rgba(15,23,42,.22);
+    border:1px solid #e2e8f0;
+    max-height:85vh;
+    overflow:auto;
+  }
+
+  #passwordModal .modal-header,
+  #editModal .modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    font-size:20px;
+    font-weight:900;
+    margin-bottom:14px;
+    color:#0f172a;
+  }
+
+  #passwordModal .modal-close,
+  #editModal .modal-close{
+    font-size:22px;
+    cursor:pointer;
+    color:#64748b;
+    line-height:1;
+  }
+
+  #passwordModal .modal-close:hover,
+  #editModal .modal-close:hover{
+    color:#4d148c;
+  }
+
+  #passwordModal input,
+  #editModal textarea{
+    width:100%;
+    border:1px solid #dbe4f0;
+    border-radius:14px;
+    padding:12px 14px;
+    font-size:14px;
+    outline:none;
+    background:#fff;
+  }
+
+  #passwordModal input:focus,
+  #editModal textarea:focus{
+    border-color:#c4b5fd;
+    box-shadow:0 0 0 4px rgba(109,40,217,.10);
+  }
+
+  #editModal textarea{
+    min-height:220px;
+    resize:vertical;
   }
 
   #commentModal,
   #allCommentsModal,
-  #helpModal{
-    padding:0 14px;
+  #helpModal,
+  #correctionInstructionsModal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(2,6,23,.52);
+    justify-content:center;
+    align-items:center;
+    padding:0 24px;
+    z-index:2147483647;
+    backdrop-filter:blur(8px);
+    overflow-y:auto;
   }
 
   #commentModal .modal-content,
   #allCommentsModal .modal-content,
-  #helpModal .modal-content{
-    padding:20px;
-    border-radius:22px;
-    margin:96px auto 20px;
+  #helpModal .modal-content,
+  #correctionInstructionsModal .modal-content{
+    width:100%;
+    background:#fff;
+    border-radius:28px;
+    padding:26px;
+    box-shadow:0 24px 80px rgba(2,6,23,.18);
+    max-height:min(84vh, 900px);
+    overflow:auto;
+    border:1px solid rgba(148,163,184,.16);
+    margin:110px auto 32px;
   }
 
   #commentModal .feedback-modal{
+    max-width:640px;
+    border-radius:28px;
+    padding:20px 20px 22px;
+  }
+
+  #allCommentsModal .modal-content{
+    max-width:760px;
+  }
+
+  #helpModal .help-modal,
+  #correctionInstructionsModal .instructions-modal{
+    max-width:820px;
+    border-radius:30px;
     padding:18px;
-    border-radius:24px;
   }
 
-  #helpModal .help-modal{
-    padding:16px;
-    border-radius:24px;
+  #commentModal .modal-header,
+  #allCommentsModal .modal-header,
+  #helpModal .modal-header,
+  #correctionInstructionsModal .modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-.03em;
+    margin-bottom:14px;
+    color:#0f172a;
   }
-}
-   
- 
-.aj-card{
-  background:#f8fafc;
-  border:1px solid #e2e8f0;
-  border-radius:10px;
-  padding:14px;
-  margin-bottom:14px;
-}
 
-.aj-card h3{
-  margin-bottom:8px;
-  color:#4d148c;
-}
+  #commentModal .modal-close,
+  #allCommentsModal .modal-close,
+  #helpModal .modal-close,
+  #correctionInstructionsModal .modal-close{
+    cursor:pointer;
+    width:40px;
+    height:40px;
+    border-radius:14px;
+    display:grid;
+    place-items:center;
+    color:#64748b;
+    background:#f8fafc;
+    box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+    transition:.2s ease;
+    flex-shrink:0;
+    font-size:22px;
+    line-height:1;
+  }
 
-.advise-box{
-  background:#eef6ff;
-  border-left:4px solid #4d148c;
-  padding:10px;
-  margin:6px 0 10px;
-  border-radius:6px;
-  font-size:13px;
-}
+  #commentModal .modal-close:hover,
+  #allCommentsModal .modal-close:hover,
+  #helpModal .modal-close:hover,
+  #correctionInstructionsModal .modal-close:hover{
+    color:#0f172a;
+    background:#eef2ff;
+  }
 
-.aj-header{
-  font-weight:700;
-  cursor:pointer;
-  padding:10px;
-  background:#f1f5f9;
-  border-radius:8px;
-  transition:.2s;
-}
+  .instructions-content{
+    font-size:14px;
+    line-height:1.6;
+    color:#334155;
+  }
 
-.aj-header:hover{
-  background:#e2e8f0;
-}
+  .instructions-content h3{
+    font-size:18px;
+    font-weight:800;
+    margin:20px 0 8px;
+    color:#0f172a;
+    border-left:4px solid var(--accent-3);
+    padding-left:12px;
+  }
 
-.aj-content{
-  display:none;
-  margin-top:10px;
-  animation:fadeIn .3s ease-in;
-}
+  .instructions-content h3:first-of-type{
+    margin-top:0;
+  }
 
-.aj-search-container{
-  position:sticky;
-  top:0;
-  background:#fff;
-  padding:10px;
-  z-index:5;
-  border-bottom:1px solid #ddd;
-}
+  .instructions-content p{
+    margin:6px 0;
+  }
 
-#ajSearch{
-  width:100%;
-  padding:8px 12px;
-  font-size:13px;
-  border-radius:6px;
-  border:1px solid #ccc;
-}
+  .instructions-content ul{
+    margin:8px 0 16px 20px;
+    padding-left:0;
+  }
 
-.link-btn{
-  color:#0073e6;
-  font-weight:600;
-  cursor:pointer;
-  text-decoration:underline;
-}
+  .instructions-content li{
+    margin:4px 0;
+  }
 
-.link-btn:hover{
-  color:#005bb5;
-}
+  .corr-code-block{
+    background:#f8fafc;
+    border-left:3px solid var(--accent);
+    padding:12px 16px;
+    border-radius:14px;
+    margin:12px 0;
+  }
 
-.aj-section{
-  margin-bottom:14px;
-}
+  .corr-code-block strong{
+    color:var(--accent);
+  }
 
-.aj-subtitle{
-  font-size:12px;
-  font-weight:800;
-  color:#64748b;
-  margin-bottom:8px;
-  text-transform:uppercase;
-}
+  .instruction-note{
+    background:#fff7ed;
+    border-left:3px solid var(--accent-3);
+    padding:10px 14px;
+    border-radius:14px;
+    margin:16px 0;
+  }
 
-.aj-block{
-  margin-bottom:10px;
-}
+  @media (max-width:720px){
+    #passwordModal,
+    #editModal{
+      padding:14px;
+    }
+    #passwordModal .modal-content,
+    #editModal .modal-content{
+      border-radius:18px;
+      padding:18px;
+    }
+    #commentModal,
+    #allCommentsModal,
+    #helpModal,
+    #correctionInstructionsModal{
+      padding:0 14px;
+    }
+    #commentModal .modal-content,
+    #allCommentsModal .modal-content,
+    #helpModal .modal-content,
+    #correctionInstructionsModal .modal-content{
+      padding:20px;
+      border-radius:22px;
+      margin:96px auto 20px;
+    }
+    #commentModal .feedback-modal{
+      padding:18px;
+      border-radius:24px;
+    }
+    #helpModal .help-modal,
+    #correctionInstructionsModal .instructions-modal{
+      padding:16px;
+      border-radius:24px;
+    }
+  }
 
-.aj-label{
-  font-size:12px;
-  font-weight:700;
-  margin-bottom:4px;
-}
+  .aj-card{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:14px;
+  }
 
-.aj-list{
-  margin:8px 0;
-  padding-left:18px;
-  line-height:1.5;
-}
+  .aj-card h3{
+    margin-bottom:8px;
+    color:#4d148c;
+  }
 
-.aj-link{
-  display:inline-block;
-  margin-bottom:8px;
-  color:#4D148C;
-  text-decoration:none;
-  font-weight:600;
-}
+  .advise-box{
+    background:#eef6ff;
+    border-left:4px solid #4d148c;
+    padding:10px;
+    margin:6px 0 10px;
+    border-radius:6px;
+    font-size:13px;
+  }
 
-/* 🔧 Fix NOTE spacing (final clean version) */
+  .aj-header{
+    font-weight:700;
+    cursor:pointer;
+    padding:10px;
+    background:#f1f5f9;
+    border-radius:8px;
+    transition:.2s;
+  }
 
-.note-body{
-  color:#475569;
-  font-size:14px;
-  line-height:1.6;
-}
+  .aj-header:hover{
+    background:#e2e8f0;
+  }
 
-/* Remove excessive spacing from elements inside notes */
-.note-body p{
-  margin:6px 0;
-}
+  .aj-content{
+    display:none;
+    margin-top:10px;
+    animation:fadeIn .3s ease-in;
+  }
 
-.note-body ul{
-  margin:8px 0;
-  padding-left:18px;
-}
+  .aj-search-container{
+    position:sticky;
+    top:0;
+    background:#fff;
+    padding:10px;
+    z-index:5;
+    border-bottom:1px solid #ddd;
+  }
 
-.note-body li{
-  margin:0;
-}
+  #ajSearch{
+    width:100%;
+    padding:8px 12px;
+    font-size:13px;
+    border-radius:6px;
+    border:1px solid #ccc;
+  }
 
-/* Fix nested div spacing inside notes */
-.note-body div{
-  margin:6px 0;
-}
+  .link-btn{
+    color:#0073e6;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:underline;
+  }
 
-/* Tighten strong/inline text spacing */
-.note-body strong{
-  font-weight:600;
-}
+  .link-btn:hover{
+    color:#005bb5;
+  }
 
-/* Optional: clean link look */
-.note-body a{
-  color:#4D148C;
-  text-decoration:none;
-  font-weight:600;
-}  
+  .aj-section{
+    margin-bottom:14px;
+  }
 
-.final-note-html{
-  margin-top:12px;
-  color:#475569;
-  line-height:1.7;
-}
+  .aj-subtitle{
+    font-size:12px;
+    font-weight:800;
+    color:#64748b;
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
 
-.final-note-html a{
-  color:#4D148C;
-  text-decoration:none;
-  font-weight:600;
-}  
+  .aj-block{
+    margin-bottom:10px;
+  }
 
-/* neutral gray on final note */
-.final-note-simple {
-  margin-top: 14px;
-  padding: 12px 14px;
-  border-radius: 8px;
+  .aj-label{
+    font-size:12px;
+    font-weight:700;
+    margin-bottom:4px;
+  }
 
-  /* 🔥 KEY: blends with green but still readable */
-  background: rgba(0, 0, 0, 0.04);
+  .aj-list{
+    margin:8px 0;
+    padding-left:18px;
+    line-height:1.5;
+  }
 
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
+  .aj-link{
+    display:inline-block;
+    margin-bottom:8px;
+    color:#4D148C;
+    text-decoration:none;
+    font-weight:600;
+  }
 
-.final-note-label {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #6b7280; /* neutral gray */
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+  .note-body{
+    color:#475569;
+    font-size:14px;
+    line-height:1.6;
+  }
 
-.final-note-label i {
-  color: #6b7280;
-}
+  .note-body p{
+    margin:6px 0;
+  }
 
-.final-note-text {
-  font-size: 13.5px;
-  color: #111827; /* 🔥 dark readable text */
-  line-height: 1.6;
-}
+  .note-body ul{
+    margin:8px 0;
+    padding-left:18px;
+  }
 
+  .note-body li{
+    margin:0;
+  }
 
+  .note-body div{
+    margin:6px 0;
+  }
 
-  /* =========================================================
-     MAIN INDEX COLOR SYNC — FedEx Purple + Orange Theme
-     Added to align this guide with the premium main index page.
-     ========================================================= */
+  .note-body strong{
+    font-weight:600;
+  }
 
+  .note-body a{
+    color:#4D148C;
+    text-decoration:none;
+    font-weight:600;
+  }  
+
+  .final-note-html{
+    margin-top:12px;
+    color:#475569;
+    line-height:1.7;
+  }
+
+  .final-note-html a{
+    color:#4D148C;
+    text-decoration:none;
+    font-weight:600;
+  }  
+
+  .final-note-simple {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .final-note-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .final-note-label i {
+    color: #6b7280;
+  }
+
+  .final-note-text {
+    font-size: 13.5px;
+    color: #111827;
+    line-height: 1.6;
+  }
+
+  /* Theme overrides */
   :root{
     --bg:#07111f;
     --bg-soft:#091120;
@@ -1730,7 +1644,6 @@
     border:1px solid rgba(255,255,255,.16) !important;
     color:rgba(255,255,255,.88) !important;
     backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
   }
 
   .pill i{
@@ -1930,23 +1843,22 @@
     background:rgba(255,102,0,.20) !important;
     color:#07111f !important;
   }
-</style>
+  </style>
 </head>
 <body data-page="" class="theme-fedex">
   <div class="page">
-<div id="site-header"></div>
-
+    <div id="site-header"></div>
     <div class="app-shell">
       <div class="app-frame">
         <main class="main">
           <div class="main-topbar">
             <div>
-<div class="page-title-block">
-  <h1>SAF2</h1>
-  <p class="page-subtitle">
-    Review bills of lading, reweigh certificates, NMFC classifications, and weight discrepancies to ensure accurate billing and correction code application.
-  </p>
-</div>
+              <div class="page-title-block">
+                <h1>SAF2</h1>
+                <p class="page-subtitle">
+                  Review bills of lading, reweigh certificates, NMFC classifications, and weight discrepancies to ensure accurate billing and correction code application.
+                </p>
+              </div>
             </div>
             <div class="main-status">
               <div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div>
@@ -1998,7 +1910,6 @@
           <div class="summary-card">
             <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
             <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
-
             <div class="template-stack">
               <div class="template-card">
                 <div class="template-card-head">
@@ -2009,18 +1920,15 @@
                       <div class="template-sub">Internal case note</div>
                     </div>
                   </div>
-
                   <div class="template-actions">
                     <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
                       <i class="fa-solid fa-pen"></i>
                     </button>
                   </div>
                 </div>
-
                 <div class="template-body">
                   <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
                 </div>
-
                 <div class="template-foot">
                   <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
@@ -2036,21 +1944,18 @@
                       <div class="template-sub">Correction code guidance</div>
                     </div>
                   </div>
-
                   <div class="template-actions">
                     <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
                       <i class="fa-solid fa-pen"></i>
                     </button>
                   </div>
                 </div>
-
                 <div class="template-body">
                   <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
                 </div>
-
                 <div class="template-foot">
                   <a href="Correction Code Guide.html" target="_blank" class="template-tag">
-                  <i class="fa-solid fa-hashtag"></i> Open Corr Code
+                    <i class="fa-solid fa-hashtag"></i> Open Corr Code
                   </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
                 </div>
@@ -2065,21 +1970,18 @@
                       <div class="template-sub">Customer communication</div>
                     </div>
                   </div>
-
                   <div class="template-actions">
                     <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
                       <i class="fa-solid fa-pen"></i>
                     </button>
                   </div>
                 </div>
-
                 <div class="template-body">
                   <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
                 </div>
-
                 <div class="template-foot">
                   <a href="ebs-response-template.html" target="_blank" class="template-tag">
-                  <i class="fa-solid fa-paper-plane"></i> Open EBS Response
+                    <i class="fa-solid fa-paper-plane"></i> Open EBS Response
                   </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
                 </div>
@@ -2118,1466 +2020,1478 @@
       </div>
     </div>
 
-<div id="site-footer"></div>
- 
-    
+    <!-- Correction Instructions Modal -->
+    <div id="correctionInstructionsModal" class="modal">
+      <div class="modal-content instructions-modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <span><i class="fa-solid fa-code-branch"></i> Entering Correction Comments and Correction Codes</span>
+          <span class="modal-close" onclick="closeCorrectionModal()">×</span>
+        </div>
+        <div class="instructions-content">
+          <p><strong>Enter Correction Comment:</strong> <code>VS-SAF2-AUDT + Specific Correction Comment</code> below.</p>
+
+          <div class="corr-code-block">
+            <h3>A. Updates Entered and All is Now Billing Correctly</h3>
+            <ul>
+              <li>Click Autorater – Shift + F6</li>
+              <li>Enter Correction Comment</li>
+              <li>Enter Keyword <strong>CORR</strong></li>
+              <li>Enter Description <strong>ACCR</strong> or <strong>ECD</strong></li>
+              <li>Click Accept All – F6</li>
+              <li>Move to Next Pro to Work</li>
+            </ul>
+          </div>
+
+          <div class="corr-code-block">
+            <h3>B. Billing Entered Incorrectly from the Beginning and Billing was Updated</h3>
+            <ul>
+              <li>Click Autorater – Shift + F6</li>
+              <li>Enter Correction Comment</li>
+              <li>Enter Keyword <strong>CORR</strong></li>
+              <li>Enter Description <strong>CUSI</strong></li>
+              <li>Click Accept All – F6</li>
+              <li>Move to Next Pro to Work</li>
+            </ul>
+          </div>
+
+          <div class="corr-code-block">
+            <h3>C. Accessorial Charges are REMOVED per BOL or DR</h3>
+            <ul>
+              <li>Enter Correction Comment</li>
+              <li>Enter Keyword <strong>CORR</strong></li>
+              <li>Enter Description <strong>NACC</strong></li>
+              <li>Click Accept All – F6</li>
+              <li>Move to Next Pro to Work</li>
+            </ul>
+          </div>
+
+          <div class="corr-code-block">
+            <h3>D. After Review of BOL, if there are NO CHANGES</h3>
+            <ul>
+              <li>Enter Correction Comment: <code>VS-SAF2-AUDT – NOAC RELEASING PRO FROM SAF2 QUEUE</code></li>
+              <li>Enter Keyword <strong>CORR</strong></li>
+              <li>Enter Description <strong>VRFY</strong></li>
+              <li>Click Accept All – F6</li>
+              <li>Move to Next Pro to Work</li>
+            </ul>
+          </div>
+
+          <div class="corr-code-block">
+            <h3>E. Terms are Updated per BOL</h3>
+            <ul>
+              <li>Click Autorater – Shift + F6</li>
+              <li>Add <strong>NOAR</strong></li>
+              <li>Enter Correction Comment</li>
+              <li>Enter Keyword <strong>CORR</strong></li>
+              <li>Enter Description <strong>ETMS</strong> (if Biller Error)</li>
+              <li>Click Accept All – F6</li>
+              <li>Move to Next Pro to Work</li>
+            </ul>
+          </div>
+
+          <div class="instruction-note">
+            <i class="fa-regular fa-note-sticky"></i> Always ensure the correction comment begins with <strong>VS-SAF2-AUDT</strong> followed by the specific comment for the action taken.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="site-footer"></div>
   </div>
-<script>
-   window.SITE_BASE = "../";
-</script>
+
+  <script>
+    window.SITE_BASE = "../";
+  </script>
   <script src="../assets/js/header-loader.js"></script>
   <script src="../assets/js/header.js"></script>
   <script src="../assets/js/footer-loader.js"></script>
   <script src="../assets/js/theme-loader.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const db = window.db || firebase.firestore();
-  const TEMPLATE_COLLECTION = "saf2_template";
-  const FEEDBACK_COLLECTION = "feedback";
-  const MAX_STEPS = 8;
-
-  const els = {
-    stageCard: document.getElementById("stageCard"),
-    progressFill: document.getElementById("progressFill"),
-    progressText: document.getElementById("progressText"),
-    recommendationBox: document.getElementById("recommendationBox"),
-    pathBox: document.getElementById("pathBox"),
-    metricSteps: document.getElementById("metricSteps"),
-    metricAnswer: document.getElementById("metricAnswer"),
-    statusPill: document.getElementById("statusPill"),
-
-    suggestedComment: document.getElementById("suggestedComment"),
-    suggestedCorrCode: document.getElementById("suggestedCorrCode"),
-    suggestedEmail: document.getElementById("suggestedEmail"),
-
-    passwordModal: document.getElementById("passwordModal"),
-    editModal: document.getElementById("editModal"),
-    adminPassword: document.getElementById("adminPassword"),
-    editTextarea: document.getElementById("editTextarea"),
-    modalTitle: document.getElementById("modalTitle")
-  };
-
-  let selectedRating = 0;
-  let path = [];
-  let historyStack = [];
-  let currentFinalRecommendation = "";
-  let currentEditType = "";
-  let commentsUnsubscribe = null;
-  let ratingStars = [];
-  let currentKey = "start";
-  const templateCache = {};
-
-  // ================= FULL NODES TREE (exactly as in original working code) =================
-const NODES = {
-  start: {
-    text: "SAF2 Guide",
-    help: "Use this guide to review Airgas and Harte Hanks bills for correct NMFC application, pallet weight, and tare weight validation.",
-    choices: [
-      {
-        label: "Continue",
-        next: "saf2_intro",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Start the SAF2 review process."
-      }
-    ]
-  },
-
-  saf2_intro: {
-    text: "PAUD SAF2 is an audit trap queue to review bills for customer Airgas for the correct NMFC application and pallet weight/tare weight. The agent will be reviewing the bills of lading to match the bill to the item shipped as Airgas has NMFC specific pricing in their agreement.\n\nPAUD SAF2 will contain bills for Harte Hanks and Airgas. Agent will need to sort the queue by clicking the SORT tab and choosing REQUESTS and DEBTOR/SHIPPER SORT. This will sort the queue alphabetically by the Debtor name.",
-    help: "Overview of the SAF2 queue and review requirements.",
-    choices: [
-      {
-        label: "Continue",
-        next: "open_first_pro",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Open the first pro in the SAF2 queue."
-      }
-    ]
-  },
-
-  open_first_pro: {
-    text: "Open the first pro on the SAF2 Queue.",
-    help: "Select the first available pro after sorting the queue.",
-    image: "saf2-images/saf2-image1.png",
-    choices: [
-      {
-        label: "Continue",
-        next: "review_request",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Review the pre-populated request."
-      }
-    ]
-  },
-
-  review_request: {
-    text: "The pre-populated request will already be in the description box.",
-    help: "Review the request details before validating the documentation.",
-    image: "saf2-images/saf2-image2.png",
-    choices: [
-      {
-        label: "Continue",
-        next: "review_edm",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Review the EDM, BOL, and Reweigh Certificate."
-      }
-    ]
-  },
-
-  review_edm: {
-    text: "Review the EDM and validate the BOL and Reweigh Certificate. What do you see?",
-    help: "Select the condition that matches the documentation.",
-    choices: [
-      {
-        label: "Reweigh Certificate is showing on the BOL",
-        next: "reweigh_keyword_check",
-        icon: "fa-solid fa-scale-balanced",
-        desc: "Review the reweigh process."
-      },
-      {
-        label: "NMFC and WEIGHT is noted on the BOL",
-        next: "nmfc_weight_noted",
-        icon: "fa-solid fa-clipboard-check",
-        desc: "NMFC validation process."
-      },
-      {
-        label: "50 Lines Error",
-        next: "fifty_lines_error",
-        icon: "fa-solid fa-triangle-exclamation",
-        desc: "Bill contains a 50-line error."
-      }
-    ]
-  },
-
-  /* Placeholder nodes for future build */
-  nmfc_weight_noted: {
-    text: "NMFC and WEIGHT is noted on the BOL. (Process to be added later.)",
-    help: "Reserved for future workflow.",
-    choices: []
-  },
-
-  fifty_lines_error: {
-    text: "50 Lines Error. (Process to be added later.)",
-    help: "Reserved for future workflow.",
-    choices: []
-  },
-
-  /* OPTION 1 - REWEIGH CERTIFICATE FLOW */
-
-  reweigh_keyword_check: {
-    text: "Is the REWE keyword present on the bill body?",
-    help: "Determine whether the shipment has already been processed with a reweigh keyword.",
-    choices: [
-      {
-        label: "Yes",
-        next: "process_rewe",
-        icon: "fa-solid fa-check-circle",
-        desc: "Process the REWE request."
-      },
-      {
-        label: "No",
-        next: "move_extra_weight_check",
-        icon: "fa-solid fa-circle-question",
-        desc: "Review correction request."
-      }
-    ]
-  },
-
-  move_extra_weight_check: {
-    text: "Correction Request states 'MOVE EXTRA WEIGHT TO PRODUCT WEIGHT'. Has the shipment been reweighed?",
-    help: "Determine whether a valid reweigh exists.",
-    choices: [
-      {
-        label: "Yes",
-        next: "reweighed_yes",
-        icon: "fa-solid fa-scale-balanced",
-        desc: "Shipment has been reweighed."
-      },
-      {
-        label: "No",
-        next: "request_reweigh_certificate",
-        icon: "fa-solid fa-file-circle-xmark",
-        desc: "Reweigh certificate is required."
-      }
-    ]
-  },
-
-  request_reweigh_certificate: {
-    text: "Request the Reweigh Certificate from the Service Center to be imaged, leave pro in SAF2 Queue, and move to the next pro in queue.",
-    help: "Final action when no reweigh certificate is available.",
-    choices: []
-  },
-
-  reweighed_yes: {
-    text: "If the shipment has been reweighed, the pro should have the REWE keyword in the body of the bill, but the Reweigh Certificate may not be on image.",
-    help: "Continue validating the reweighed shipment.",
-    choices: [
-      {
-        label: "Continue",
-        next: "review_bol_pallet_weight",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Review pallet weight details."
-      }
-    ]
-  },
-
-  review_bol_pallet_weight: {
-    text: "Review the BOL and compare the steel pallet weight and pallet weight which will be shown as 'tare' weight on the BOL.",
-    help: "Validate pallet and tare weight information.",
-    choices: [
-      {
-        label: "Continue",
-        next: "steel_pallet_match",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Verify pallet weight."
-      }
-    ]
-  },
-
-  steel_pallet_match: {
-    text: "The steel pallet weight must match the BOL entry.",
-    help: "Confirm steel pallet weight accuracy.",
-    choices: [
-      {
-        label: "Continue",
-        next: "possible_missing_pallet_weight",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Review additional weight conditions."
-      }
-    ]
-  },
-
-  possible_missing_pallet_weight: {
-    text: "It is possible for the steel pallet weight or pallet weight to NOT be on the BOL (50 lbs/skid).",
-    help: "Missing pallet weight may still be acceptable.",
-    choices: [
-      {
-        label: "Continue",
-        next: "verify_reweighed_weight",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Validate reweighed shipment weight."
-      }
-    ]
-  },
-
-  verify_reweighed_weight: {
-    text: "Review BOL to verify pallet weight has been entered correctly on the pro. If the shipment was reweighed, verify the difference in weight was added to the commodity weight AND NOT the pallet weight or steel pallet weight.",
-    help: "Ensure reweigh adjustments were applied correctly.",
-    choices: [
-      {
-        label: "Continue",
-        next: "commodity_weight_check",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Validate billed pallet weight."
-      }
-    ]
-  },
-
-  commodity_weight_check: {
-    text: "It is possible that the steel pallet weight is billed as pallet weight. Also, if the shipment was reweighed, the difference in weight must be added to the commodity weight AND NOT the steel pallet weight.",
-    help: "Confirm the proper weight component was updated.",
-    choices: [
-      {
-        label: "Continue",
-        next: "nmfc_compare",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Validate NMFC."
-      }
-    ]
-  },
-
-  nmfc_compare: {
-    text: "ALWAYS compare the NMFC entered as well to ensure it matches the BOL. (NMFC must be 6 digits + 2 digits following the 6 digits with a dash (-)).",
-    help: "Verify NMFC formatting and accuracy.",
-    choices: [
-      {
-        label: "NMFC Matches",
-        next: "weight_matches",
-        icon: "fa-solid fa-check-circle",
-        desc: "Proceed to final validation."
-      }
-    ]
-  },
-
-  weight_matches: {
-    text: "Everything has been updated, and the weight matched the reweighed weight.",
-    help: "All validations are complete.",
-    choices: [
-      {
-        label: "Continue",
-        next: "final_corr_code",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Determine correction code."
-      }
-    ]
-  },
-
-  process_rewe: {
-    text: "PROCESS IF THERE IS 'REWE' ON THE BILL.",
-    help: "Follow the REWE workflow.",
-    choices: [
-      {
-        label: "Continue",
-        next: "rewe_step_1",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Calculate actual reweighed weight."
-      }
-    ]
-  },
-
-  rewe_step_1: {
-    text: "Get the reweighed weight for the actual items shipped.\nFormula: REWE verified weight - Steel Pallet - Tare weight = ACTUAL ITEM REWEIGHED WEIGHT.",
-    help: "Calculate the actual item reweighed weight.",
-    choices: [
-      {
-        label: "Continue",
-        next: "rewe_step_2",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Remove keywords."
-      }
-    ]
-  },
-
-  rewe_step_2: {
-    text: "Remove PLWT, FRWT & CHWT keywords.",
-    help: "Remove weight-related keywords before updating the bill.",
-    choices: [
-      {
-        label: "Continue",
-        next: "rewe_step_3",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Update item details."
-      }
-    ]
-  },
-
-  rewe_step_3: {
-    text: "Add ENC under 2nd column > enter PCS > type STEEL PALLETS as description > enter its Weight > enter its Class > enter its NMFC.",
-    help: "Add steel pallet line item.",
-    choices: [
-      {
-        label: "Continue",
-        next: "rewe_step_4",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Update actual item weight."
-      }
-    ]
-  },
-
-  rewe_step_4: {
-    text: "Result (difference) from Step 1 should be entered in the actual descriptions/items.",
-    help: "Apply calculated difference to the shipment items.",
-    choices: [
-      {
-        label: "Continue",
-        next: "rewe_step_5",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Validate pallet and tare weight."
-      }
-    ]
-  },
-
-  rewe_step_5: {
-    text: "Verify pallet weight and tare weight are updated correctly based on the number of skids shown on the shipment.",
-    help: "Ensure pallet and tare weights match the reweigh certificate.",
-    choices: [
-      {
-        label: "Continue",
-        next: "rewe_step_6",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Validate total weight."
-      }
-    ]
-  },
-
-  rewe_step_6: {
-    text: "Once auto-rated, make sure the total weight matches the weight amount on the reweigh certificate.",
-    help: "Final validation before posting.",
-    choices: [
-      {
-        label: "Continue",
-        next: "final_corr_code",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Determine correction code."
-      }
-    ]
-  },
-
-  final_corr_code: {
-    text: "Use correction code CORR EWPD only if the billing was not correct from the beginning. Otherwise, use CORR CUSI and Accept All (F6) to post.",
-    help: "Final posting instructions.",
-    choices: []
-  },
-  
-nmfc_weight_noted: {
-  text: "Is it matching the NMFC and WEIGHT on the BOL or Reweigh Certificate?",
-  help: "Compare the NMFC and weight billed on the pro against the BOL and/or Reweigh Certificate.",
-  choices: [
-    {
-      label: "Yes",
-      next: "nmfc_weight_match",
-      icon: "fa-solid fa-check-circle",
-      desc: "NMFC and weight match."
-    },
-    {
-      label: "No",
-      next: "review_correct_nmfc",
-      icon: "fa-solid fa-pen-to-square",
-      desc: "NMFC and/or weight requires correction."
-    }
-  ]
-},
-
-nmfc_weight_match: {
-  text: "If the invoice is billed correctly with the correct NMFC, and the weights match the Bill of Lading and/or the Reweigh Certificate, use correction code CORR VRFY then click ACCEPT ALL.",
-  help: "Final action when NMFC and weight are already correct.",
-  image: "saf2-images/saf2-image3.png",
-  choices: [
-    {
-      label: "View Next Screenshot",
-      next: "nmfc_weight_match_2",
-      icon: "fa-solid fa-image",
-      desc: "Continue reviewing examples."
-    }
-  ]
-},
-
-nmfc_weight_match_2: {
-  text: "Review example.",
-  help: "Reference screenshot.",
-  image: "saf2-images/saf2-image4.png",
-  choices: [
-    {
-      label: "Continue",
-      next: "nmfc_weight_match_3",
-      icon: "fa-solid fa-arrow-right",
-      desc: "View final example."
-    }
-  ]
-},
-
-nmfc_weight_match_3: {
-  text: "Final Recommendation: Use CORR VRFY and click ACCEPT ALL.",
-  help: "Billing was already correct.",
-  image: "saf2-images/saf2-image5.png",
-  choices: []
-},
-
-review_correct_nmfc: {
-  text: "Review the Bill of Lading to ensure the correct NMFC is being applied in the pro.",
-  help: "Validate the NMFC against the BOL.",
-  image: "saf2-images/saf2-image6.png",
-  choices: [
-    {
-      label: "Continue",
-      next: "missing_pallet_lines",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Review missing pallet and tare weight."
-    }
-  ]
-},
-
-missing_pallet_lines: {
-  text: "The bill was billed with the correct NMFC; however, the line for Tare Weight – Steel Pallets was not included. Also, the pallet weight of 40 lbs was not added. Agent will need to update the pro to include both the Steel Pallets (at the weight shown on the Bill of Lading) and add PLWT of 40 lbs. Since there was a reweigh, the Steel Pallet and PLWT will need to be deducted from the commodity weight.",
-  help: "Update the shipment with the missing steel pallet and pallet weight entries.",
-  image: "saf2-images/saf2-image7.png",
-  choices: [
-    {
-      label: "Continue",
-      next: "verify_total_weight_reweigh",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Validate total weight."
-    }
-  ]
-},
-
-verify_total_weight_reweigh: {
-  text: "Make sure the total weight matches the weight amount on the Reweigh Certificate.",
-  help: "Confirm the final total weight before posting.",
-  image: "saf2-images/saf2-image8.png",
-  choices: [
-    {
-      label: "Continue",
-      next: "final_recommendation_weight_fix",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Determine correction code."
-    }
-  ]
-},
-
-final_recommendation_weight_fix: {
-  text: "Once finished updating and the total weight matches the weight amount on the Reweigh Certificate, use correction code CORR EWPD only if the billing was not correct from the beginning. Otherwise, use CORR CUSI and Accept All (F6) to post.",
-  help: "Final posting instructions after corrections have been completed.",
-  choices: []
-},
-
-fifty_lines_error: {
-  text: "Is the pro delivered?",
-  help: "Determine whether the shipment has already been delivered.",
-  choices: [
-    {
-      label: "Yes",
-      next: "remove_blue_lines",
-      icon: "fa-solid fa-check-circle",
-      desc: "Begin reducing bill lines."
-    }
-  ]
-},
-
-remove_blue_lines: {
-  text: "Remove any BLUE lines that may have populated at the bottom of the bill first.",
-  help: "Blue lines should be removed before any additional troubleshooting.",
-  image: "saf2-images/saf2-image9.png",
-  choices: [
-    {
-      label: "Continue",
-      next: "autorate_50_lines",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Attempt autorate."
-    }
-  ]
-},
-
-autorate_50_lines: {
-  text: "Try to autorate to see if this removes the 50+ line error. If not, proceed with the next steps.",
-  help: "Autorating may automatically resolve the line count issue.",
-  choices: [
-    {
-      label: "Continue",
-      next: "remove_unnecessary_lines",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Review removable lines."
-    }
-  ]
-},
-
-remove_unnecessary_lines: {
-  text: "Remove any lines that are no longer necessary to the delivery of the freight. Review the examples below.",
-  help: "Remove unnecessary billing lines to reduce total line count.",
-  image: "saf2-images/saf2-image10.png",
-  choices: [
-    {
-      label: "Next Example",
-      next: "remove_unnecessary_lines_2",
-      icon: "fa-solid fa-arrow-right",
-      desc: "View additional examples."
-    }
-  ]
-},
-
-remove_unnecessary_lines_2: {
-  text: "Example of removable line.",
-  help: "Reference example.",
-  image: "saf2-images/saf2-image11.png",
-  choices: [
-    {
-      label: "Next Example",
-      next: "remove_unnecessary_lines_3",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Continue."
-    }
-  ]
-},
-
-remove_unnecessary_lines_3: {
-  text: "Example of removable line.",
-  help: "Reference example.",
-  image: "saf2-images/saf2-image12.png",
-  choices: [
-    {
-      label: "Next Example",
-      next: "remove_unnecessary_lines_4",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Continue."
-    }
-  ]
-},
-
-remove_unnecessary_lines_4: {
-  text: "Example of removable line.",
-  help: "Reference example.",
-  image: "saf2-images/saf2-image13.png",
-  choices: [
-    {
-      label: "Next Example",
-      next: "remove_unnecessary_lines_5",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Continue."
-    }
-  ]
-},
-
-remove_unnecessary_lines_5: {
-  text: "Example of removable line.",
-  help: "Reference example.",
-  image: "saf2-images/saf2-image14.png",
-  choices: [
-    {
-      label: "Next Example",
-      next: "remove_unnecessary_lines_6",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Continue."
-    }
-  ]
-},
-
-remove_unnecessary_lines_6: {
-  text: "Example of removable line.",
-  help: "Reference example.",
-  image: "saf2-images/saf2-image15.png",
-  choices: [
-    {
-      label: "Continue",
-      next: "remove_unnecessary_lines_7",
-      icon: "fa-solid fa-arrow-right",
-      desc: "View final example."
-    }
-  ]
-},
-
-remove_unnecessary_lines_7: {
-  text: "Final example of removable lines.",
-  help: "Reference example.",
-  image: "saf2-images/saf2-image16.png",
-  choices: [
-    {
-      label: "Continue",
-      next: "final_50_lines_resolution",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Complete the process."
-    }
-  ]
-},
-
-final_50_lines_resolution: {
-  text: "Once enough unnecessary lines have been removed and the bill can be successfully autorated, complete the billing update and post the shipment using the appropriate correction code.",
-  help: "Final action after resolving the 50+ line error.",
-  choices: []
-}
-};
-
-  function escapeHtml(value){
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
-
-  function normalizeId(str){
-    return String(str || "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "");
-  }
-
-  function getDocId(recommendation, type){
-    return `${type}__${normalizeId(recommendation)}`;
-  }
-
-  function getNodeText(node){
-    return node?.text || node?.question || "";
-  }
-
-  function getNodeHelp(node){
-    return node?.help || "";
-  }
-
-  function getNodeNote(node){
-    return node?.note || "";
-  }
-
-  function getNodeImage(node){
-    return node?.image || "";
-  }
-
-  function getNodeChoices(node){
-    return Array.isArray(node?.choices) ? node.choices : [];
-  }
-
-  function isFinalNode(node){
-    return !!node?.action || (!getNodeChoices(node).length && !node?.next);
-  }
-
-  function setTemplateValue(el, text){
-    if (!el) return;
-    el.textContent = text;
-    el.classList.toggle("empty", !text);
-  }
-
-  async function loadTemplatesForRecommendation(recommendation){
-    if(!recommendation){
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-      return;
-    }
-
-    const ids = {
-      comment: getDocId(recommendation, "comment"),
-      corr: getDocId(recommendation, "corr"),
-      email: getDocId(recommendation, "email")
-    };
-
-    try{
-      const [commentDoc, corrDoc, emailDoc] = await Promise.all([
-        db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
-        db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
-        db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
-      ]);
-
-      const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
-      const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
-      const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
-
-      templateCache[ids.comment] = finalComment;
-      templateCache[ids.corr] = finalCorr;
-      templateCache[ids.email] = finalEmail;
-
-      setTemplateValue(els.suggestedComment, finalComment);
-      setTemplateValue(els.suggestedCorrCode, finalCorr);
-      setTemplateValue(els.suggestedEmail, finalEmail);
-    } catch(err){
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-    }
-  }
-
-  function setCopiedState(btn, originalText){
-    btn.classList.add("copied");
-    btn.textContent = "Copied";
-    clearTimeout(btn._copiedTimer);
-    btn._copiedTimer = setTimeout(() => {
-      btn.classList.remove("copied");
-      btn.textContent = originalText;
-    }, 1400);
-  }
-
-  async function copyTemplateText(targetId, btn){
-    const target = document.getElementById(targetId);
-    const value = target?.innerText.trim();
-    if(!value || target.classList.contains("empty")) return;
-
-    try{
-      await navigator.clipboard.writeText(value);
-      setCopiedState(btn, btn.textContent);
-    } catch {
-      alert("Unable to copy text.");
-    }
-  }
-
-  function attemptEdit(type){
-    if(!currentFinalRecommendation){
-      alert("Reach a final recommendation first before editing templates.");
-      return;
-    }
-    currentEditType = type;
-    els.adminPassword.value = "";
-    els.passwordModal.style.display = "flex";
-  }
-
-  function closePasswordModal(){
-    els.passwordModal.style.display = "none";
-  }
-
-  function closeEditModal(){
-    els.editModal.style.display = "none";
-  }
-
-  function checkPassword(){
-    if(els.adminPassword.value === "admin"){
-      closePasswordModal();
-      openEditModal();
-    } else {
-      alert("Incorrect password");
-    }
-  }
-
-  function openEditModal(){
-    const map = {
-      comment: "suggestedComment",
-      email: "suggestedEmail",
-      corr: "suggestedCorrCode"
-    };
-
-    els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
-    els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
-    els.editModal.style.display = "flex";
-  }
-
-  async function saveEdit(){
-    const val = els.editTextarea.value.trim();
-
-    if(!val){
-      alert("Cannot save empty text.");
-      return;
-    }
-
-    const docId = getDocId(currentFinalRecommendation, currentEditType);
-
-    try{
-      await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
-        text: val,
-        type: currentEditType,
-        recommendation: currentFinalRecommendation,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      templateCache[docId] = val;
-
-      if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
-      if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
-      if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
-
-      closeEditModal();
-      alert("Saved!");
-    } catch(err){
-      alert("Unable to save right now.");
-    }
-  }
-
-  function getPercent(isFinal){
-    if (isFinal) return 100;
-
-    const currentIndex = path.findIndex(item => item.nextKey === currentKey);
-
-    if (currentIndex === -1) {
-      return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95);
-    }
-
-    const progress = ((currentIndex + 1) / MAX_STEPS) * 100;
-    return Math.min(Math.round(progress), 95);
-  }
-
-  function updateMeta(isFinal){
-    const pct = getPercent(isFinal);
-    const lastAnswer = path.length ? path[path.length - 1].answer : "—";
-    const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
-
-    els.progressFill.style.width = pct + "%";
-    els.progressText.textContent = progressLabel;
-    els.metricSteps.textContent = String(path.length);
-    els.metricAnswer.textContent = lastAnswer;
-    els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
-  }
-
-  function updatePath(){
-  if(!path.length){
-    els.pathBox.className = "path-empty";
-    els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
-    return;
-  }
-
-  const html = path.map((item, index) => {
-    const isActive =
-      currentKey === "__final__"
-        ? (
-            item.nextKey === "__final__" ||
-            (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
-          )
-        : item.fromKey === currentKey;
-
-    return `
-      <div class="path-item">
-        <button
-          type="button"
-          class="path-jump ${isActive ? "active" : ""}"
-          data-step-index="${index}"
-        >
-          <div class="path-step">Step ${index + 1}</div>
-          <div class="path-question">${escapeHtml(item.question)}</div>
-          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
-        </button>
-      </div>
-    `;
-  }).join("");
-
-  els.pathBox.className = "path-list";
-  els.pathBox.innerHTML = html;
-
-  els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const index = Number(btn.dataset.stepIndex);
-      jumpToPathStep(index);
-    });
-  });
-}
-
-  function jumpToPathStep(index){
-  if(index < 0 || index >= path.length) return;
-
-  const target = path[index];
-  if(!target) return;
-
-  currentFinalRecommendation = "";
-
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-  updateRecommendation("", false);
-
-  if(target.nextKey === "__final__" && target.finalNode){
-    renderFinal(target.finalNode);
-    return;
-  }
-
-  renderNode(target.fromKey);
-}
-
-  function updateRecommendation(text, isFinal){
-    if(!isFinal){
-      els.recommendationBox.className = "recommendation empty";
-      els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
-      return;
-    }
-
-    els.recommendationBox.className = "recommendation";
-    els.recommendationBox.textContent = text;
-  }
-
-  function openImageModal(src){
-    const modal = document.getElementById("imageModal");
-    const img = document.getElementById("imageModalImg");
-    if (!modal || !img) return;
-
-    img.src = src;
-    modal.classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-
-  function closeImageModal(e){
-    if (e) e.stopPropagation();
-
-    const modal = document.getElementById("imageModal");
-    const img = document.getElementById("imageModalImg");
-    if (!modal || !img) return;
-
-    modal.classList.remove("open");
-    img.src = "";
-    document.body.style.overflow = "";
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeImageModal();
-  });
-
-  async function renderFinal(finalNode){
-  const finalText = finalNode.action || getNodeText(finalNode) || "";
-  const finalNote = finalNode.note || "";
-  // Support both single image and array of images
-  const finalImages = finalNode.images && Array.isArray(finalNode.images) ? finalNode.images : (finalNode.image ? [finalNode.image] : []);
-
-  const formattedFinalText = escapeHtml(finalText)
-    .replace(/\r\n/g, "\n")
-    .replace(/\n/g, "<br>");
-
-  currentFinalRecommendation = finalText;
-  currentKey = "__final__";
-  updateMeta(true);
-  updatePath();
-  updateRecommendation(finalText, true);
-  await loadTemplatesForRecommendation(finalText);
-
-  let imagesHtml = "";
-  if (finalImages.length > 0) {
-    imagesHtml = `<div class="multi-images" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">`;
-    finalImages.forEach(img => {
-      imagesHtml += `
-        <div class="question-image" style="flex:1; min-width:160px;" onclick="openImageModal('${String(img).replace(/'/g, "\\'")}')">
-          <img src="${escapeHtml(img)}" alt="Final recommendation image" loading="lazy" style="max-height:200px; width:auto;">
-        </div>
-      `;
-    });
-    imagesHtml += `</div>`;
-  }
-
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
-      <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
-    </div>
-
-    <div class="final-card">
-      <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
-      <div class="final-title">Use this handling outcome</div>
-      <div class="final-text">${formattedFinalText}</div>
-      ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
-      ${imagesHtml}
-      <div class="final-actions">
-        <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
-        <button class="app-btn primary" id="inlineRestart">Start Over</button>
-      </div>
-    </div>
-  `;
-
-  const inlineBack = document.getElementById("inlineBack");
-  const inlineRestart = document.getElementById("inlineRestart");
-
-  if (inlineBack) inlineBack.onclick = goBack;
-  if (inlineRestart) inlineRestart.onclick = restart;
-}
-
-async function renderNode(key){
-  currentKey = key;
-  const node = NODES[key];
-
-  if (!node) {
-    els.stageCard.innerHTML = `
-      <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
-      </div>
-      <div class="question-wrap">
-        <div class="question-card">
-          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-          <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-          <div class="question-help">Check the node key in your NODES object.</div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  const choices = getNodeChoices(node);
-  const isFinal = isFinalNode(node);
-
-  if (isFinal) {
-    await renderFinal(node);
-    return;
-  }
-
-  currentFinalRecommendation = "";
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-
-  const nodeText = getNodeText(node);
-  const nodeHelp = getNodeHelp(node);
-  const nodeNote = getNodeNote(node);
-  // Support both single image and array of images
-  const nodeImages = node.images && Array.isArray(node.images) ? node.images : (node.image ? [node.image] : []);
-
-  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
-  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
-
-  let currentStepNumber = 0;
-
-  if (currentKey === "start") {
-    currentStepNumber = 0;
-  } else if (fromIndex !== -1) {
-    currentStepNumber = fromIndex + 1;
-  } else if (nextIndex !== -1) {
-    currentStepNumber = nextIndex + 2;
-  } else {
-    currentStepNumber = 1;
-  }
-
-  const footerStepText = currentKey === "start"
-    ? "Ready to begin"
-    : `Currently on step ${currentStepNumber}`;
-
-  const badgeStepText = currentKey === "start"
-    ? "Start"
-    : `Step ${currentStepNumber}`;
-
-  const hasPreviousStep = currentKey !== "start";
-
-  updateMeta(false);
-  updatePath();
-  updateRecommendation("", false);
-
-  const choicesHtml = choices.map(choice => `
-    <button class="choice"
-      data-next="${escapeHtml(choice.next || "")}"
-      data-label="${escapeHtml(choice.label || "")}"
-      data-action="${escapeHtml(choice.action || "")}"
-      data-note="${escapeHtml(choice.note || "")}">
-      <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-      <div class="choice-body">
-        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-        <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-      </div>
-    </button>
-  `).join("");
-
-  let imagesHtml = "";
-  if (nodeImages.length > 0) {
-    imagesHtml = `<div class="multi-images" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">`;
-    nodeImages.forEach(img => {
-      imagesHtml += `
-        <div class="question-image" style="flex:1; min-width:160px;" onclick="openImageModal('${String(img).replace(/'/g, "\\'")}')">
-          <img src="${escapeHtml(img)}" alt="Step image" loading="lazy" style="max-height:200px; width:auto;">
-        </div>
-      `;
-    });
-    imagesHtml += `</div>`;
-  }
-
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
-    </div>
-
-    <div class="question-wrap">
-      <div class="question-card">
-        <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-        <div class="question-text">${escapeHtml(nodeText)}</div>
-        ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
-
-        ${nodeNote ? `
-          <div class="note-card">
-            <div class="note-head">
-              <i class="fa-solid fa-bell"></i>
-              Reminder
-            </div>
-            <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
-          </div>
-        ` : ""}
-
-        ${imagesHtml}
-      </div>
-
-      <div class="choices">${choicesHtml}</div>
-    </div>
-
-    <div class="decision-footer">
-      <div class="decision-footer-left">
-        <div class="footer-label">Decision Guide</div>
-        <div class="footer-value">${footerStepText}</div>
-      </div>
-
-      <div class="decision-actions">
-        <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
-        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-      </div>
-    </div>
-  `;
-
-  const inlineBack = document.getElementById("inlineBack");
-  const inlineRestart = document.getElementById("inlineRestart");
-
-  if (inlineBack) inlineBack.onclick = goBack;
-  if (inlineRestart) inlineRestart.onclick = restart;
-
-  els.stageCard.querySelectorAll(".choice").forEach(btn => {
-    btn.addEventListener("click", () => {
-      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-      btn.classList.add("selected");
-
-      const next = btn.dataset.next;
-      const label = btn.dataset.label;
-      const action = btn.dataset.action;
-      const note = btn.dataset.note;
-
-      const fromIndex = path.findIndex(item => item.fromKey === currentKey);
-      const nextIndex = path.findIndex(item => item.nextKey === currentKey);
-
-      if (fromIndex !== -1) {
-        path = path.slice(0, fromIndex);
-      } else if (nextIndex !== -1) {
-        path = path.slice(0, nextIndex + 1);
-      }
-
-      historyStack.push({
-        key: currentKey,
-        path: [...path]
-      });
-
-      if (currentKey !== "start") {
-        path.push({
-          question: nodeText,
-          answer: label,
-          fromKey: currentKey,
-          nextKey: action ? "__final__" : next,
-          finalNode: action ? { action, note } : null
-        });
-      }
-
-      updatePath();
-      updateMeta(false);
-
-      setTimeout(() => {
-        if (action) {
-          renderFinal({ action, note });
-        } else {
-          renderNode(next);
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const db = window.db || firebase.firestore();
+      const TEMPLATE_COLLECTION = "saf2_template";
+      const FEEDBACK_COLLECTION = "feedback";
+      const MAX_STEPS = 8;
+
+      const els = {
+        stageCard: document.getElementById("stageCard"),
+        progressFill: document.getElementById("progressFill"),
+        progressText: document.getElementById("progressText"),
+        recommendationBox: document.getElementById("recommendationBox"),
+        pathBox: document.getElementById("pathBox"),
+        metricSteps: document.getElementById("metricSteps"),
+        metricAnswer: document.getElementById("metricAnswer"),
+        statusPill: document.getElementById("statusPill"),
+        suggestedComment: document.getElementById("suggestedComment"),
+        suggestedCorrCode: document.getElementById("suggestedCorrCode"),
+        suggestedEmail: document.getElementById("suggestedEmail"),
+        passwordModal: document.getElementById("passwordModal"),
+        editModal: document.getElementById("editModal"),
+        adminPassword: document.getElementById("adminPassword"),
+        editTextarea: document.getElementById("editTextarea"),
+        modalTitle: document.getElementById("modalTitle")
+      };
+
+      let selectedRating = 0;
+      let path = [];
+      let historyStack = [];
+      let currentFinalRecommendation = "";
+      let currentEditType = "";
+      let commentsUnsubscribe = null;
+      let ratingStars = [];
+      let currentKey = "start";
+      const templateCache = {};
+
+      // ================= FULL NODES TREE =================
+      const NODES = {
+        start: {
+          text: "SAF2 Guide",
+          help: "Use this guide to review Airgas and Harte Hanks bills for correct NMFC application, pallet weight, and tare weight validation.",
+          choices: [
+            {
+              label: "Continue",
+              next: "saf2_intro",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Start the SAF2 review process."
+            }
+          ]
+        },
+        saf2_intro: {
+          text: "PAUD SAF2 is an audit trap queue to review bills for customer Airgas for the correct NMFC application and pallet weight/tare weight. The agent will be reviewing the bills of lading to match the bill to the item shipped as Airgas has NMFC specific pricing in their agreement.\n\nPAUD SAF2 will contain bills for Harte Hanks and Airgas. Agent will need to sort the queue by clicking the SORT tab and choosing REQUESTS and DEBTOR/SHIPPER SORT. This will sort the queue alphabetically by the Debtor name.",
+          help: "Overview of the SAF2 queue and review requirements.",
+          choices: [
+            {
+              label: "Continue",
+              next: "open_first_pro",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Open the first pro in the SAF2 queue."
+            }
+          ]
+        },
+        open_first_pro: {
+          text: "Open the first pro on the SAF2 Queue.",
+          help: "Select the first available pro after sorting the queue.",
+          image: "saf2-images/saf2-image1.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "review_request",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Review the pre-populated request."
+            }
+          ]
+        },
+        review_request: {
+          text: "The pre-populated request will already be in the description box.",
+          help: "Review the request details before validating the documentation.",
+          image: "saf2-images/saf2-image2.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "review_edm",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Review the EDM, BOL, and Reweigh Certificate."
+            }
+          ]
+        },
+        review_edm: {
+          text: "Review the EDM and validate the BOL and Reweigh Certificate. What do you see?",
+          help: "Select the condition that matches the documentation.",
+          choices: [
+            {
+              label: "Reweigh Certificate is showing on the BOL",
+              next: "reweigh_keyword_check",
+              icon: "fa-solid fa-scale-balanced",
+              desc: "Review the reweigh process."
+            },
+            {
+              label: "NMFC and WEIGHT is noted on the BOL",
+              next: "nmfc_weight_noted",
+              icon: "fa-solid fa-clipboard-check",
+              desc: "NMFC validation process."
+            },
+            {
+              label: "50 Lines Error",
+              next: "fifty_lines_error",
+              icon: "fa-solid fa-triangle-exclamation",
+              desc: "Bill contains a 50-line error."
+            }
+          ]
+        },
+        nmfc_weight_noted: {
+          text: "Is it matching the NMFC and WEIGHT on the BOL or Reweigh Certificate?",
+          help: "Compare the NMFC and weight billed on the pro against the BOL and/or Reweigh Certificate.",
+          choices: [
+            {
+              label: "Yes",
+              next: "nmfc_weight_match",
+              icon: "fa-solid fa-check-circle",
+              desc: "NMFC and weight match."
+            },
+            {
+              label: "No",
+              next: "review_correct_nmfc",
+              icon: "fa-solid fa-pen-to-square",
+              desc: "NMFC and/or weight requires correction."
+            }
+          ]
+        },
+        nmfc_weight_match: {
+          text: "If the invoice is billed correctly with the correct NMFC, and the weights match the Bill of Lading and/or the Reweigh Certificate, use correction code CORR VRFY then click ACCEPT ALL.",
+          help: "Final action when NMFC and weight are already correct.",
+          image: "saf2-images/saf2-image3.png",
+          choices: [
+            {
+              label: "View Next Screenshot",
+              next: "nmfc_weight_match_2",
+              icon: "fa-solid fa-image",
+              desc: "Continue reviewing examples."
+            }
+          ]
+        },
+        nmfc_weight_match_2: {
+          text: "Review example.",
+          help: "Reference screenshot.",
+          image: "saf2-images/saf2-image4.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "nmfc_weight_match_3",
+              icon: "fa-solid fa-arrow-right",
+              desc: "View final example."
+            }
+          ]
+        },
+        nmfc_weight_match_3: {
+          text: "Final Recommendation: Use CORR VRFY and click ACCEPT ALL.",
+          help: "Billing was already correct.",
+          image: "saf2-images/saf2-image5.png",
+          choices: []
+        },
+        review_correct_nmfc: {
+          text: "Review the Bill of Lading to ensure the correct NMFC is being applied in the pro.",
+          help: "Validate the NMFC against the BOL.",
+          image: "saf2-images/saf2-image6.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "missing_pallet_lines",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Review missing pallet and tare weight."
+            }
+          ]
+        },
+        missing_pallet_lines: {
+          text: "The bill was billed with the correct NMFC; however, the line for Tare Weight – Steel Pallets was not included. Also, the pallet weight of 40 lbs was not added. Agent will need to update the pro to include both the Steel Pallets (at the weight shown on the Bill of Lading) and add PLWT of 40 lbs. Since there was a reweigh, the Steel Pallet and PLWT will need to be deducted from the commodity weight.",
+          help: "Update the shipment with the missing steel pallet and pallet weight entries.",
+          image: "saf2-images/saf2-image7.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "verify_total_weight_reweigh",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Validate total weight."
+            }
+          ]
+        },
+        verify_total_weight_reweigh: {
+          text: "Make sure the total weight matches the weight amount on the Reweigh Certificate.",
+          help: "Confirm the final total weight before posting.",
+          image: "saf2-images/saf2-image8.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "final_recommendation_weight_fix",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Determine correction code."
+            }
+          ]
+        },
+        final_recommendation_weight_fix: {
+          text: "Once finished updating and the total weight matches the weight amount on the Reweigh Certificate, use correction code CORR EWPD only if the billing was not correct from the beginning. Otherwise, use CORR CUSI and Accept All (F6) to post.",
+          help: "Final posting instructions after corrections have been completed.",
+          choices: []
+        },
+        fifty_lines_error: {
+          text: "Is the pro delivered?",
+          help: "Determine whether the shipment has already been delivered.",
+          choices: [
+            {
+              label: "Yes",
+              next: "remove_blue_lines",
+              icon: "fa-solid fa-check-circle",
+              desc: "Begin reducing bill lines."
+            }
+          ]
+        },
+        remove_blue_lines: {
+          text: "Remove any BLUE lines that may have populated at the bottom of the bill first.",
+          help: "Blue lines should be removed before any additional troubleshooting.",
+          image: "saf2-images/saf2-image9.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "autorate_50_lines",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Attempt autorate."
+            }
+          ]
+        },
+        autorate_50_lines: {
+          text: "Try to autorate to see if this removes the 50+ line error. If not, proceed with the next steps.",
+          help: "Autorating may automatically resolve the line count issue.",
+          choices: [
+            {
+              label: "Continue",
+              next: "remove_unnecessary_lines",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Review removable lines."
+            }
+          ]
+        },
+        remove_unnecessary_lines: {
+          text: "Remove any lines that are no longer necessary to the delivery of the freight. Review the examples below.",
+          help: "Remove unnecessary billing lines to reduce total line count.",
+          image: "saf2-images/saf2-image10.png",
+          choices: [
+            {
+              label: "Next Example",
+              next: "remove_unnecessary_lines_2",
+              icon: "fa-solid fa-arrow-right",
+              desc: "View additional examples."
+            }
+          ]
+        },
+        remove_unnecessary_lines_2: {
+          text: "Example of removable line.",
+          help: "Reference example.",
+          image: "saf2-images/saf2-image11.png",
+          choices: [
+            {
+              label: "Next Example",
+              next: "remove_unnecessary_lines_3",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Continue."
+            }
+          ]
+        },
+        remove_unnecessary_lines_3: {
+          text: "Example of removable line.",
+          help: "Reference example.",
+          image: "saf2-images/saf2-image12.png",
+          choices: [
+            {
+              label: "Next Example",
+              next: "remove_unnecessary_lines_4",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Continue."
+            }
+          ]
+        },
+        remove_unnecessary_lines_4: {
+          text: "Example of removable line.",
+          help: "Reference example.",
+          image: "saf2-images/saf2-image13.png",
+          choices: [
+            {
+              label: "Next Example",
+              next: "remove_unnecessary_lines_5",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Continue."
+            }
+          ]
+        },
+        remove_unnecessary_lines_5: {
+          text: "Example of removable line.",
+          help: "Reference example.",
+          image: "saf2-images/saf2-image14.png",
+          choices: [
+            {
+              label: "Next Example",
+              next: "remove_unnecessary_lines_6",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Continue."
+            }
+          ]
+        },
+        remove_unnecessary_lines_6: {
+          text: "Example of removable line.",
+          help: "Reference example.",
+          image: "saf2-images/saf2-image15.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "remove_unnecessary_lines_7",
+              icon: "fa-solid fa-arrow-right",
+              desc: "View final example."
+            }
+          ]
+        },
+        remove_unnecessary_lines_7: {
+          text: "Final example of removable lines.",
+          help: "Reference example.",
+          image: "saf2-images/saf2-image16.png",
+          choices: [
+            {
+              label: "Continue",
+              next: "final_50_lines_resolution",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Complete the process."
+            }
+          ]
+        },
+        final_50_lines_resolution: {
+          text: "Once enough unnecessary lines have been removed and the bill can be successfully autorated, complete the billing update and post the shipment using the appropriate correction code.",
+          help: "Final action after resolving the 50+ line error.",
+          choices: []
+        },
+        reweigh_keyword_check: {
+          text: "Is the REWE keyword present on the bill body?",
+          help: "Determine whether the shipment has already been processed with a reweigh keyword.",
+          choices: [
+            {
+              label: "Yes",
+              next: "process_rewe",
+              icon: "fa-solid fa-check-circle",
+              desc: "Process the REWE request."
+            },
+            {
+              label: "No",
+              next: "move_extra_weight_check",
+              icon: "fa-solid fa-circle-question",
+              desc: "Review correction request."
+            }
+          ]
+        },
+        move_extra_weight_check: {
+          text: "Correction Request states 'MOVE EXTRA WEIGHT TO PRODUCT WEIGHT'. Has the shipment been reweighed?",
+          help: "Determine whether a valid reweigh exists.",
+          choices: [
+            {
+              label: "Yes",
+              next: "reweighed_yes",
+              icon: "fa-solid fa-scale-balanced",
+              desc: "Shipment has been reweighed."
+            },
+            {
+              label: "No",
+              next: "request_reweigh_certificate",
+              icon: "fa-solid fa-file-circle-xmark",
+              desc: "Reweigh certificate is required."
+            }
+          ]
+        },
+        request_reweigh_certificate: {
+          text: "Request the Reweigh Certificate from the Service Center to be imaged, leave pro in SAF2 Queue, and move to the next pro in queue.",
+          help: "Final action when no reweigh certificate is available.",
+          choices: []
+        },
+        reweighed_yes: {
+          text: "If the shipment has been reweighed, the pro should have the REWE keyword in the body of the bill, but the Reweigh Certificate may not be on image.",
+          help: "Continue validating the reweighed shipment.",
+          choices: [
+            {
+              label: "Continue",
+              next: "review_bol_pallet_weight",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Review pallet weight details."
+            }
+          ]
+        },
+        review_bol_pallet_weight: {
+          text: "Review the BOL and compare the steel pallet weight and pallet weight which will be shown as 'tare' weight on the BOL.",
+          help: "Validate pallet and tare weight information.",
+          choices: [
+            {
+              label: "Continue",
+              next: "steel_pallet_match",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Verify pallet weight."
+            }
+          ]
+        },
+        steel_pallet_match: {
+          text: "The steel pallet weight must match the BOL entry.",
+          help: "Confirm steel pallet weight accuracy.",
+          choices: [
+            {
+              label: "Continue",
+              next: "possible_missing_pallet_weight",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Review additional weight conditions."
+            }
+          ]
+        },
+        possible_missing_pallet_weight: {
+          text: "It is possible for the steel pallet weight or pallet weight to NOT be on the BOL (50 lbs/skid).",
+          help: "Missing pallet weight may still be acceptable.",
+          choices: [
+            {
+              label: "Continue",
+              next: "verify_reweighed_weight",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Validate reweighed shipment weight."
+            }
+          ]
+        },
+        verify_reweighed_weight: {
+          text: "Review BOL to verify pallet weight has been entered correctly on the pro. If the shipment was reweighed, verify the difference in weight was added to the commodity weight AND NOT the pallet weight or steel pallet weight.",
+          help: "Ensure reweigh adjustments were applied correctly.",
+          choices: [
+            {
+              label: "Continue",
+              next: "commodity_weight_check",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Validate billed pallet weight."
+            }
+          ]
+        },
+        commodity_weight_check: {
+          text: "It is possible that the steel pallet weight is billed as pallet weight. Also, if the shipment was reweighed, the difference in weight must be added to the commodity weight AND NOT the steel pallet weight.",
+          help: "Confirm the proper weight component was updated.",
+          choices: [
+            {
+              label: "Continue",
+              next: "nmfc_compare",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Validate NMFC."
+            }
+          ]
+        },
+        nmfc_compare: {
+          text: "ALWAYS compare the NMFC entered as well to ensure it matches the BOL. (NMFC must be 6 digits + 2 digits following the 6 digits with a dash (-)).",
+          help: "Verify NMFC formatting and accuracy.",
+          choices: [
+            {
+              label: "NMFC Matches",
+              next: "weight_matches",
+              icon: "fa-solid fa-check-circle",
+              desc: "Proceed to final validation."
+            }
+          ]
+        },
+        weight_matches: {
+          text: "Everything has been updated, and the weight matched the reweighed weight.",
+          help: "All validations are complete.",
+          choices: [
+            {
+              label: "Continue",
+              next: "final_corr_code",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Determine correction code."
+            }
+          ]
+        },
+        process_rewe: {
+          text: "PROCESS IF THERE IS 'REWE' ON THE BILL.",
+          help: "Follow the REWE workflow.",
+          choices: [
+            {
+              label: "Continue",
+              next: "rewe_step_1",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Calculate actual reweighed weight."
+            }
+          ]
+        },
+        rewe_step_1: {
+          text: "Get the reweighed weight for the actual items shipped.\nFormula: REWE verified weight - Steel Pallet - Tare weight = ACTUAL ITEM REWEIGHED WEIGHT.",
+          help: "Calculate the actual item reweighed weight.",
+          choices: [
+            {
+              label: "Continue",
+              next: "rewe_step_2",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Remove keywords."
+            }
+          ]
+        },
+        rewe_step_2: {
+          text: "Remove PLWT, FRWT & CHWT keywords.",
+          help: "Remove weight-related keywords before updating the bill.",
+          choices: [
+            {
+              label: "Continue",
+              next: "rewe_step_3",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Update item details."
+            }
+          ]
+        },
+        rewe_step_3: {
+          text: "Add ENC under 2nd column > enter PCS > type STEEL PALLETS as description > enter its Weight > enter its Class > enter its NMFC.",
+          help: "Add steel pallet line item.",
+          choices: [
+            {
+              label: "Continue",
+              next: "rewe_step_4",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Update actual item weight."
+            }
+          ]
+        },
+        rewe_step_4: {
+          text: "Result (difference) from Step 1 should be entered in the actual descriptions/items.",
+          help: "Apply calculated difference to the shipment items.",
+          choices: [
+            {
+              label: "Continue",
+              next: "rewe_step_5",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Validate pallet and tare weight."
+            }
+          ]
+        },
+        rewe_step_5: {
+          text: "Verify pallet weight and tare weight are updated correctly based on the number of skids shown on the shipment.",
+          help: "Ensure pallet and tare weights match the reweigh certificate.",
+          choices: [
+            {
+              label: "Continue",
+              next: "rewe_step_6",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Validate total weight."
+            }
+          ]
+        },
+        rewe_step_6: {
+          text: "Once auto-rated, make sure the total weight matches the weight amount on the reweigh certificate.",
+          help: "Final validation before posting.",
+          choices: [
+            {
+              label: "Continue",
+              next: "final_corr_code",
+              icon: "fa-solid fa-arrow-right",
+              desc: "Determine correction code."
+            }
+          ]
+        },
+        final_corr_code: {
+          text: "Use correction code CORR EWPD only if the billing was not correct from the beginning. Otherwise, use CORR CUSI and Accept All (F6) to post.",
+          help: "Final posting instructions.",
+          choices: []
         }
-      }, 120);
-    });
-  });
-}
+      };
 
-function goBack(){
-  currentFinalRecommendation = "";
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-  updateRecommendation("", false);
-
-  // Case 1: currently on final recommendation
-  if (currentKey === "__final__") {
-    const finalIndex = path.findIndex(item => {
-      if (item.nextKey === "__final__") return true;
-
-      const nextNode = NODES[item.nextKey];
-      return !!nextNode && isFinalNode(nextNode);
-    });
-
-    if (finalIndex === -1) {
-      currentKey = "start";
-      renderNode("start");
-      return;
-    }
-
-    // Go back to the actual last question step
-    currentKey = path[finalIndex].fromKey;
-    renderNode(path[finalIndex].fromKey);
-    return;
-  }
-
-  // Case 2: current screen matches a saved step directly (fromKey)
-  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
-  if (fromIndex !== -1) {
-    if (fromIndex === 0) {
-      currentKey = "start";
-      renderNode("start");
-      return;
-    }
-
-    currentKey = path[fromIndex - 1].fromKey;
-    renderNode(path[fromIndex - 1].fromKey);
-    return;
-  }
-
-  // Case 3: current screen was reached normally from a previous step (nextKey)
-  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
-  if (nextIndex !== -1) {
-    currentKey = path[nextIndex].fromKey;
-    renderNode(path[nextIndex].fromKey);
-    return;
-  }
-
-  // Fallback
-  currentKey = "start";
-  renderNode("start");
-}
-  
-  function restart(){
-    path = [];
-    historyStack = [];
-    currentFinalRecommendation = "";
-    currentKey = "start";
-
-    setTemplateValue(els.suggestedComment, "");
-    setTemplateValue(els.suggestedCorrCode, "");
-    setTemplateValue(els.suggestedEmail, "");
-
-    updatePath();
-    updateRecommendation("", false);
-    renderNode("start");
-  }
-
-  /* ===== PAGE MODALS + FEEDBACK ONLY ===== */
-
-function openModalAnimated(id) {
-  const modal = document.getElementById(id);
-  if (!modal) return;
-
-  modal.style.display = "flex";
-  modal.classList.remove("is-closing");
-
-  requestAnimationFrame(() => {
-    modal.classList.add("is-open");
-  });
-}
-
-function closeModalAnimated(id, onClosed) {
-  const modal = document.getElementById(id);
-  if (!modal) return;
-
-  modal.classList.remove("is-open");
-  modal.classList.add("is-closing");
-
-  setTimeout(() => {
-    modal.style.display = "none";
-    modal.classList.remove("is-closing");
-    if (typeof onClosed === "function") onClosed();
-  }, 220);
-}
-
-function openComment() {
-  openModalAnimated("commentModal");
-}
-
-function closeComment() {
-  closeModalAnimated("commentModal");
-}
-
-function openHelp() {
-  openModalAnimated("helpModal");
-}
-
-function closeHelp() {
-  closeModalAnimated("helpModal");
-}
-
-function closeAllComments() {
-  closeModalAnimated("allCommentsModal");
-}
-
-function initRatingStars() {
-  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-  if (!ratingStars.length) return;
-
-  ratingStars.forEach(star => {
-    star.onclick = function (e) {
-      e.stopPropagation();
-      selectedRating = Number(this.dataset.value || 0);
-
-      ratingStars.forEach(s => {
-        const val = Number(s.dataset.value || 0);
-        s.classList.toggle("selected", val <= selectedRating);
-      });
-    };
-  });
-}
-
-async function sendComment() {
-  const nameEl = document.getElementById("commentName");
-  const textEl = document.getElementById("commentText");
-  const feedbackMessage = document.getElementById("feedbackMessage");
-
-  const name = (nameEl?.value || "").trim();
-  const comment = (textEl?.value || "").trim();
-
-  if (!selectedRating) {
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "block";
-      feedbackMessage.style.color = "#ef4444";
-      feedbackMessage.textContent = "Please select a rating first.";
-    }
-    return;
-  }
-
-  try {
-    await db.collection(FEEDBACK_COLLECTION).add({
-      name: name || "Anonymous",
-      comment,
-      rating: selectedRating,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "block";
-      feedbackMessage.style.color = "#16a34a";
-      feedbackMessage.textContent = "Feedback sent successfully.";
-    }
-
-    if (nameEl) nameEl.value = "";
-    if (textEl) textEl.value = "";
-
-    selectedRating = 0;
-    ratingStars.forEach(star => star.classList.remove("selected"));
-
-    setTimeout(() => {
-      closeComment();
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "none";
-        feedbackMessage.textContent = "";
+      function escapeHtml(value){
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
       }
-    }, 900);
-  } catch (err) {
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "block";
-      feedbackMessage.style.color = "#ef4444";
-      feedbackMessage.textContent = "Unable to send feedback right now.";
-    }
-  }
-}
 
-async function showAllComments() {
-  const commentModal = document.getElementById("commentModal");
-  const commentsList = document.getElementById("commentsList");
-  if (!commentsList) return;
+      function normalizeId(str){
+        return String(str || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "");
+      }
 
-  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+      function getDocId(recommendation, type){
+        return `${type}__${normalizeId(recommendation)}`;
+      }
 
-  const loadComments = async () => {
-    try {
-      const snap = await db
-        .collection(FEEDBACK_COLLECTION)
-        .orderBy("createdAt", "desc")
-        .get();
+      function getNodeText(node){
+        return node?.text || node?.question || "";
+      }
 
-      if (snap.empty) {
-        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
-      } else {
-        commentsList.innerHTML = snap.docs.map(doc => {
-          const data = doc.data() || {};
-          const rating = Number(data.rating || 0);
-          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
-          const empty = "☆".repeat(Math.max(0, 5 - rating));
+      function getNodeHelp(node){
+        return node?.help || "";
+      }
+
+      function getNodeNote(node){
+        return node?.note || "";
+      }
+
+      function getNodeImage(node){
+        return node?.image || "";
+      }
+
+      function getNodeChoices(node){
+        return Array.isArray(node?.choices) ? node.choices : [];
+      }
+
+      function isFinalNode(node){
+        return !!node?.action || (!getNodeChoices(node).length && !node?.next);
+      }
+
+      function setTemplateValue(el, text){
+        if (!el) return;
+        el.textContent = text;
+        el.classList.toggle("empty", !text);
+      }
+
+      async function loadTemplatesForRecommendation(recommendation){
+        if(!recommendation){
+          setTemplateValue(els.suggestedComment, "");
+          setTemplateValue(els.suggestedCorrCode, "");
+          setTemplateValue(els.suggestedEmail, "");
+          return;
+        }
+
+        const ids = {
+          comment: getDocId(recommendation, "comment"),
+          corr: getDocId(recommendation, "corr"),
+          email: getDocId(recommendation, "email")
+        };
+
+        try{
+          const [commentDoc, corrDoc, emailDoc] = await Promise.all([
+            db.collection(TEMPLATE_COLLECTION).doc(ids.comment).get(),
+            db.collection(TEMPLATE_COLLECTION).doc(ids.corr).get(),
+            db.collection(TEMPLATE_COLLECTION).doc(ids.email).get()
+          ]);
+
+          const finalComment = commentDoc.exists ? (commentDoc.data().text || "") : "";
+          const finalCorr = corrDoc.exists ? (corrDoc.data().text || "") : "";
+          const finalEmail = emailDoc.exists ? (emailDoc.data().text || "") : "";
+
+          templateCache[ids.comment] = finalComment;
+          templateCache[ids.corr] = finalCorr;
+          templateCache[ids.email] = finalEmail;
+
+          setTemplateValue(els.suggestedComment, finalComment);
+          setTemplateValue(els.suggestedCorrCode, finalCorr);
+          setTemplateValue(els.suggestedEmail, finalEmail);
+        } catch(err){
+          setTemplateValue(els.suggestedComment, "");
+          setTemplateValue(els.suggestedCorrCode, "");
+          setTemplateValue(els.suggestedEmail, "");
+        }
+      }
+
+      function setCopiedState(btn, originalText){
+        btn.classList.add("copied");
+        btn.textContent = "Copied";
+        clearTimeout(btn._copiedTimer);
+        btn._copiedTimer = setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.textContent = originalText;
+        }, 1400);
+      }
+
+      async function copyTemplateText(targetId, btn){
+        const target = document.getElementById(targetId);
+        const value = target?.innerText.trim();
+        if(!value || target.classList.contains("empty")) return;
+
+        try{
+          await navigator.clipboard.writeText(value);
+          setCopiedState(btn, btn.textContent);
+        } catch {
+          alert("Unable to copy text.");
+        }
+      }
+
+      function attemptEdit(type){
+        if(!currentFinalRecommendation){
+          alert("Reach a final recommendation first before editing templates.");
+          return;
+        }
+        currentEditType = type;
+        els.adminPassword.value = "";
+        els.passwordModal.style.display = "flex";
+      }
+
+      function closePasswordModal(){
+        els.passwordModal.style.display = "none";
+      }
+
+      function closeEditModal(){
+        els.editModal.style.display = "none";
+      }
+
+      function checkPassword(){
+        if(els.adminPassword.value === "admin"){
+          closePasswordModal();
+          openEditModal();
+        } else {
+          alert("Incorrect password");
+        }
+      }
+
+      function openEditModal(){
+        const map = {
+          comment: "suggestedComment",
+          email: "suggestedEmail",
+          corr: "suggestedCorrCode"
+        };
+
+        els.editTextarea.value = document.getElementById(map[currentEditType]).innerText;
+        els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
+        els.editModal.style.display = "flex";
+      }
+
+      async function saveEdit(){
+        const val = els.editTextarea.value.trim();
+
+        if(!val){
+          alert("Cannot save empty text.");
+          return;
+        }
+
+        const docId = getDocId(currentFinalRecommendation, currentEditType);
+
+        try{
+          await db.collection(TEMPLATE_COLLECTION).doc(docId).set({
+            text: val,
+            type: currentEditType,
+            recommendation: currentFinalRecommendation,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          templateCache[docId] = val;
+
+          if(currentEditType === "comment") setTemplateValue(els.suggestedComment, val);
+          if(currentEditType === "email") setTemplateValue(els.suggestedEmail, val);
+          if(currentEditType === "corr") setTemplateValue(els.suggestedCorrCode, val);
+
+          closeEditModal();
+          alert("Saved!");
+        } catch(err){
+          alert("Unable to save right now.");
+        }
+      }
+
+      function getPercent(isFinal){
+        if (isFinal) return 100;
+
+        const currentIndex = path.findIndex(item => item.nextKey === currentKey);
+
+        if (currentIndex === -1) {
+          return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95);
+        }
+
+        const progress = ((currentIndex + 1) / MAX_STEPS) * 100;
+        return Math.min(Math.round(progress), 95);
+      }
+
+      function updateMeta(isFinal){
+        const pct = getPercent(isFinal);
+        const lastAnswer = path.length ? path[path.length - 1].answer : "—";
+        const progressLabel = isFinal ? "Recommendation ready" : path.length ? "Flow in progress" : "Not started";
+
+        els.progressFill.style.width = pct + "%";
+        els.progressText.textContent = progressLabel;
+        els.metricSteps.textContent = String(path.length);
+        els.metricAnswer.textContent = lastAnswer;
+        els.statusPill.innerHTML = `<i class="fa-solid fa-bolt"></i> ${isFinal ? "Completed" : path.length ? "Working" : "Ready"}`;
+      }
+
+      function updatePath(){
+        if(!path.length){
+          els.pathBox.className = "path-empty";
+          els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+          return;
+        }
+
+        const html = path.map((item, index) => {
+          const isActive =
+            currentKey === "__final__"
+              ? (
+                  item.nextKey === "__final__" ||
+                  (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
+                )
+              : item.fromKey === currentKey;
 
           return `
-            <div class="comment-list-item">
-              <span class="stars">${filled}${empty}</span>
-              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
-              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            <div class="path-item">
+              <button
+                type="button"
+                class="path-jump ${isActive ? "active" : ""}"
+                data-step-index="${index}"
+              >
+                <div class="path-step">Step ${index + 1}</div>
+                <div class="path-question">${escapeHtml(item.question)}</div>
+                <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+              </button>
             </div>
           `;
         }).join("");
+
+        els.pathBox.className = "path-list";
+        els.pathBox.innerHTML = html;
+
+        els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const index = Number(btn.dataset.stepIndex);
+            jumpToPathStep(index);
+          });
+        });
       }
 
-      openModalAnimated("allCommentsModal");
-    } catch (err) {
-      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
-      openModalAnimated("allCommentsModal");
-    }
-  };
+      function jumpToPathStep(index){
+        if(index < 0 || index >= path.length) return;
 
-  if (commentModal && commentModal.style.display === "flex") {
-    closeModalAnimated("commentModal", loadComments);
-  } else {
-    loadComments();
-  }
-}
+        const target = path[index];
+        if(!target) return;
 
-window.attemptEdit = attemptEdit;
-window.closePasswordModal = closePasswordModal;
-window.closeEditModal = closeEditModal;
-window.checkPassword = checkPassword;
-window.saveEdit = saveEdit;
-window.copyTemplateText = copyTemplateText;
-window.goBack = goBack;
-window.restart = restart;
-window.openImageModal = openImageModal;
-window.closeImageModal = closeImageModal;
+        currentFinalRecommendation = "";
 
-/* keep these for header.html buttons */
-window.openComment = openComment;
-window.closeComment = closeComment;
-window.openHelp = openHelp;
-window.closeHelp = closeHelp;
-window.showAllComments = showAllComments;
-window.closeAllComments = closeAllComments;
-window.sendComment = sendComment;
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+        updateRecommendation("", false);
 
-document.addEventListener("headerLoaded", () => {
-  initRatingStars();
-});
+        if(target.nextKey === "__final__" && target.finalNode){
+          renderFinal(target.finalNode);
+          return;
+        }
 
-setTimeout(() => {
-  initRatingStars();
-}, 300);
+        renderNode(target.fromKey);
+      }
 
-renderNode("start");
-});
-</script>
-<div id="imageModal" class="image-modal" onclick="closeImageModal()">
-  <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
-  <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
-</div>
+      function updateRecommendation(text, isFinal){
+        if(!isFinal){
+          els.recommendationBox.className = "recommendation empty";
+          els.recommendationBox.textContent = "No recommendation yet. Follow the flow to reach the final instruction.";
+          return;
+        }
 
+        els.recommendationBox.className = "recommendation";
+        els.recommendationBox.textContent = text;
+      }
+
+      function openImageModal(src){
+        const modal = document.getElementById("imageModal");
+        const img = document.getElementById("imageModalImg");
+        if (!modal || !img) return;
+
+        img.src = src;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeImageModal(e){
+        if (e) e.stopPropagation();
+        const modal = document.getElementById("imageModal");
+        const img = document.getElementById("imageModalImg");
+        if (!modal || !img) return;
+        modal.classList.remove("open");
+        img.src = "";
+        document.body.style.overflow = "";
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeImageModal();
+      });
+
+      // Open/Close Correction Modal
+      window.showCorrectionModal = function() {
+        const modal = document.getElementById("correctionInstructionsModal");
+        if (modal) {
+          modal.style.display = "flex";
+          setTimeout(() => modal.classList.add("is-open"), 10);
+        }
+      };
+
+      window.closeCorrectionModal = function() {
+        const modal = document.getElementById("correctionInstructionsModal");
+        if (modal) {
+          modal.classList.remove("is-open");
+          setTimeout(() => {
+            modal.style.display = "none";
+          }, 220);
+        }
+      };
+
+      // Override renderFinal to include the correction modal link
+      async function renderFinal(finalNode){
+        const finalText = finalNode.action || getNodeText(finalNode) || "";
+        const finalNote = finalNode.note || "";
+        const finalImages = finalNode.images && Array.isArray(finalNode.images) ? finalNode.images : (finalNode.image ? [finalNode.image] : []);
+
+        const formattedFinalText = escapeHtml(finalText)
+          .replace(/\r\n/g, "\n")
+          .replace(/\n/g, "<br>");
+
+        currentFinalRecommendation = finalText;
+        currentKey = "__final__";
+        updateMeta(true);
+        updatePath();
+        updateRecommendation(finalText, true);
+        await loadTemplatesForRecommendation(finalText);
+
+        let imagesHtml = "";
+        if (finalImages.length > 0) {
+          imagesHtml = `<div class="multi-images" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">`;
+          finalImages.forEach(img => {
+            imagesHtml += `
+              <div class="question-image" style="flex:1; min-width:160px;" onclick="openImageModal('${String(img).replace(/'/g, "\\'")}')">
+                <img src="${escapeHtml(img)}" alt="Final recommendation image" loading="lazy" style="max-height:200px; width:auto;">
+              </div>
+            `;
+          });
+          imagesHtml += `</div>`;
+        }
+
+        els.stageCard.innerHTML = `
+          <div class="stage-top">
+            <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+            <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+          </div>
+          <div class="final-card">
+            <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+            <div class="final-title">Use this handling outcome</div>
+            <div class="final-text">${formattedFinalText}</div>
+            ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+            ${imagesHtml}
+            <div class="final-actions" style="justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <a href="#" onclick="showCorrectionModal(); return false;" class="smart-link" style="background: linear-gradient(135deg, #4d148c, #6d28d9);">
+                <i class="fa-regular fa-rectangle-list"></i> View Correction Comments & Codes Instructions
+              </a>
+              <div style="display:flex; gap:10px;">
+                <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+                <button class="app-btn primary" id="inlineRestart">Start Over</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const inlineBack = document.getElementById("inlineBack");
+        const inlineRestart = document.getElementById("inlineRestart");
+
+        if (inlineBack) inlineBack.onclick = goBack;
+        if (inlineRestart) inlineRestart.onclick = restart;
+      }
+
+      async function renderNode(key){
+        currentKey = key;
+        const node = NODES[key];
+
+        if (!node) {
+          els.stageCard.innerHTML = `
+            <div class="stage-top">
+              <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+            </div>
+            <div class="question-wrap">
+              <div class="question-card">
+                <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+                <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+                <div class="question-help">Check the node key in your NODES object.</div>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        const choices = getNodeChoices(node);
+        const isFinal = isFinalNode(node);
+
+        if (isFinal) {
+          await renderFinal(node);
+          return;
+        }
+
+        currentFinalRecommendation = "";
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+
+        const nodeText = getNodeText(node);
+        const nodeHelp = getNodeHelp(node);
+        const nodeNote = getNodeNote(node);
+        const nodeImages = node.images && Array.isArray(node.images) ? node.images : (node.image ? [node.image] : []);
+
+        const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+        const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+        let currentStepNumber = 0;
+
+        if (currentKey === "start") {
+          currentStepNumber = 0;
+        } else if (fromIndex !== -1) {
+          currentStepNumber = fromIndex + 1;
+        } else if (nextIndex !== -1) {
+          currentStepNumber = nextIndex + 2;
+        } else {
+          currentStepNumber = 1;
+        }
+
+        const footerStepText = currentKey === "start"
+          ? "Ready to begin"
+          : `Currently on step ${currentStepNumber}`;
+
+        const badgeStepText = currentKey === "start"
+          ? "Start"
+          : `Step ${currentStepNumber}`;
+
+        const hasPreviousStep = currentKey !== "start";
+
+        updateMeta(false);
+        updatePath();
+        updateRecommendation("", false);
+
+        const choicesHtml = choices.map(choice => `
+          <button class="choice"
+            data-next="${escapeHtml(choice.next || "")}"
+            data-label="${escapeHtml(choice.label || "")}"
+            data-action="${escapeHtml(choice.action || "")}"
+            data-note="${escapeHtml(choice.note || "")}">
+            <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+            <div class="choice-body">
+              <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+              <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+            </div>
+          </button>
+        `).join("");
+
+        let imagesHtml = "";
+        if (nodeImages.length > 0) {
+          imagesHtml = `<div class="multi-images" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">`;
+          nodeImages.forEach(img => {
+            imagesHtml += `
+              <div class="question-image" style="flex:1; min-width:160px;" onclick="openImageModal('${String(img).replace(/'/g, "\\'")}')">
+                <img src="${escapeHtml(img)}" alt="Step image" loading="lazy" style="max-height:200px; width:auto;">
+              </div>
+            `;
+          });
+          imagesHtml += `</div>`;
+        }
+
+        els.stageCard.innerHTML = `
+          <div class="stage-top">
+            <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+            <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+          </div>
+          <div class="question-wrap">
+            <div class="question-card">
+              <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+              <div class="question-text">${escapeHtml(nodeText)}</div>
+              ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
+              ${nodeNote ? `
+                <div class="note-card">
+                  <div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div>
+                  <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
+                </div>
+              ` : ""}
+              ${imagesHtml}
+            </div>
+            <div class="choices">${choicesHtml}</div>
+          </div>
+          <div class="decision-footer">
+            <div class="decision-footer-left">
+              <div class="footer-label">Decision Guide</div>
+              <div class="footer-value">${footerStepText}</div>
+            </div>
+            <div class="decision-actions">
+              <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+              <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+            </div>
+          </div>
+        `;
+
+        const inlineBack = document.getElementById("inlineBack");
+        const inlineRestart = document.getElementById("inlineRestart");
+
+        if (inlineBack) inlineBack.onclick = goBack;
+        if (inlineRestart) inlineRestart.onclick = restart;
+
+        els.stageCard.querySelectorAll(".choice").forEach(btn => {
+          btn.addEventListener("click", () => {
+            els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+            btn.classList.add("selected");
+
+            const next = btn.dataset.next;
+            const label = btn.dataset.label;
+            const action = btn.dataset.action;
+            const note = btn.dataset.note;
+
+            const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+            const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+            if (fromIndex !== -1) {
+              path = path.slice(0, fromIndex);
+            } else if (nextIndex !== -1) {
+              path = path.slice(0, nextIndex + 1);
+            }
+
+            historyStack.push({
+              key: currentKey,
+              path: [...path]
+            });
+
+            if (currentKey !== "start") {
+              path.push({
+                question: nodeText,
+                answer: label,
+                fromKey: currentKey,
+                nextKey: action ? "__final__" : next,
+                finalNode: action ? { action, note } : null
+              });
+            }
+
+            updatePath();
+            updateMeta(false);
+
+            setTimeout(() => {
+              if (action) {
+                renderFinal({ action, note });
+              } else {
+                renderNode(next);
+              }
+            }, 120);
+          });
+        });
+      }
+
+      function goBack(){
+        currentFinalRecommendation = "";
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+        updateRecommendation("", false);
+
+        if (currentKey === "__final__") {
+          const finalIndex = path.findIndex(item => {
+            if (item.nextKey === "__final__") return true;
+            const nextNode = NODES[item.nextKey];
+            return !!nextNode && isFinalNode(nextNode);
+          });
+
+          if (finalIndex === -1) {
+            currentKey = "start";
+            renderNode("start");
+            return;
+          }
+
+          currentKey = path[finalIndex].fromKey;
+          renderNode(path[finalIndex].fromKey);
+          return;
+        }
+
+        const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+        if (fromIndex !== -1) {
+          if (fromIndex === 0) {
+            currentKey = "start";
+            renderNode("start");
+            return;
+          }
+          currentKey = path[fromIndex - 1].fromKey;
+          renderNode(path[fromIndex - 1].fromKey);
+          return;
+        }
+
+        const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+        if (nextIndex !== -1) {
+          currentKey = path[nextIndex].fromKey;
+          renderNode(path[nextIndex].fromKey);
+          return;
+        }
+
+        currentKey = "start";
+        renderNode("start");
+      }
+
+      function restart(){
+        path = [];
+        historyStack = [];
+        currentFinalRecommendation = "";
+        currentKey = "start";
+
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+
+        updatePath();
+        updateRecommendation("", false);
+        renderNode("start");
+      }
+
+      // ===== FEEDBACK MODALS =====
+      function openModalAnimated(id) {
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        modal.style.display = "flex";
+        modal.classList.remove("is-closing");
+        requestAnimationFrame(() => modal.classList.add("is-open"));
+      }
+
+      function closeModalAnimated(id, onClosed) {
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        modal.classList.remove("is-open");
+        modal.classList.add("is-closing");
+        setTimeout(() => {
+          modal.style.display = "none";
+          modal.classList.remove("is-closing");
+          if (typeof onClosed === "function") onClosed();
+        }, 220);
+      }
+
+      function openComment() {
+        openModalAnimated("commentModal");
+      }
+
+      function closeComment() {
+        closeModalAnimated("commentModal");
+      }
+
+      function openHelp() {
+        openModalAnimated("helpModal");
+      }
+
+      function closeHelp() {
+        closeModalAnimated("helpModal");
+      }
+
+      function closeAllComments() {
+        closeModalAnimated("allCommentsModal");
+      }
+
+      function initRatingStars() {
+        ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+        if (!ratingStars.length) return;
+
+        ratingStars.forEach(star => {
+          star.onclick = function (e) {
+            e.stopPropagation();
+            selectedRating = Number(this.dataset.value || 0);
+
+            ratingStars.forEach(s => {
+              const val = Number(s.dataset.value || 0);
+              s.classList.toggle("selected", val <= selectedRating);
+            });
+          };
+        });
+      }
+
+      async function sendComment() {
+        const nameEl = document.getElementById("commentName");
+        const textEl = document.getElementById("commentText");
+        const feedbackMessage = document.getElementById("feedbackMessage");
+
+        const name = (nameEl?.value || "").trim();
+        const comment = (textEl?.value || "").trim();
+
+        if (!selectedRating) {
+          if (feedbackMessage) {
+            feedbackMessage.style.display = "block";
+            feedbackMessage.style.color = "#ef4444";
+            feedbackMessage.textContent = "Please select a rating first.";
+          }
+          return;
+        }
+
+        try {
+          await db.collection(FEEDBACK_COLLECTION).add({
+            name: name || "Anonymous",
+            comment,
+            rating: selectedRating,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          if (feedbackMessage) {
+            feedbackMessage.style.display = "block";
+            feedbackMessage.style.color = "#16a34a";
+            feedbackMessage.textContent = "Feedback sent successfully.";
+          }
+
+          if (nameEl) nameEl.value = "";
+          if (textEl) textEl.value = "";
+
+          selectedRating = 0;
+          ratingStars.forEach(star => star.classList.remove("selected"));
+
+          setTimeout(() => {
+            closeComment();
+            if (feedbackMessage) {
+              feedbackMessage.style.display = "none";
+              feedbackMessage.textContent = "";
+            }
+          }, 900);
+        } catch (err) {
+          if (feedbackMessage) {
+            feedbackMessage.style.display = "block";
+            feedbackMessage.style.color = "#ef4444";
+            feedbackMessage.textContent = "Unable to send feedback right now.";
+          }
+        }
+      }
+
+      async function showAllComments() {
+        const commentModal = document.getElementById("commentModal");
+        const commentsList = document.getElementById("commentsList");
+        if (!commentsList) return;
+
+        commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+        const loadComments = async () => {
+          try {
+            const snap = await db
+              .collection(FEEDBACK_COLLECTION)
+              .orderBy("createdAt", "desc")
+              .get();
+
+            if (snap.empty) {
+              commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+            } else {
+              commentsList.innerHTML = snap.docs.map(doc => {
+                const data = doc.data() || {};
+                const rating = Number(data.rating || 0);
+                const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+                const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+                return `
+                  <div class="comment-list-item">
+                    <span class="stars">${filled}${empty}</span>
+                    <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+                    <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+                  </div>
+                `;
+              }).join("");
+            }
+
+            openModalAnimated("allCommentsModal");
+          } catch (err) {
+            commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+            openModalAnimated("allCommentsModal");
+          }
+        };
+
+        if (commentModal && commentModal.style.display === "flex") {
+          closeModalAnimated("commentModal", loadComments);
+        } else {
+          loadComments();
+        }
+      }
+
+      // Expose globals
+      window.attemptEdit = attemptEdit;
+      window.closePasswordModal = closePasswordModal;
+      window.closeEditModal = closeEditModal;
+      window.checkPassword = checkPassword;
+      window.saveEdit = saveEdit;
+      window.copyTemplateText = copyTemplateText;
+      window.goBack = goBack;
+      window.restart = restart;
+      window.openImageModal = openImageModal;
+      window.closeImageModal = closeImageModal;
+      window.openComment = openComment;
+      window.closeComment = closeComment;
+      window.openHelp = openHelp;
+      window.closeHelp = closeHelp;
+      window.showAllComments = showAllComments;
+      window.closeAllComments = closeAllComments;
+      window.sendComment = sendComment;
+
+      document.addEventListener("headerLoaded", () => {
+        initRatingStars();
+      });
+
+      setTimeout(() => {
+        initRatingStars();
+      }, 300);
+
+      renderNode("start");
+    });
+  </script>
+
+  <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
+    <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
+  </div>
 </body>
 </html>
