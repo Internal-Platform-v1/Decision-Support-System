@@ -15,6 +15,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <style>
+    /* ========== BASE VARIABLES (Light theme) ========== */
     :root {
       --bg:#07111f;
       --bg-soft:#0c1728;
@@ -42,12 +43,13 @@
       --radius-md:16px;
       --radius-sm:12px;
       --max:1720px;
-      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family:"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
 
+    /* Light theme body */
     body{
       margin:0;
       min-height:100vh;
@@ -426,7 +428,7 @@
     .link-btn{color:#0073e6;font-weight:600;cursor:pointer;text-decoration:underline;}
     .aj-link{display:inline-block;margin-bottom:8px;color:#4D148C;text-decoration:none;font-weight:600;}
 
-    /* FEDEX THEME (PURPLE+ORANGE) */
+    /* ========== FEDEX THEME (PURPLE+ORANGE) – exactly from Debtor Update guide ========== */
     body.theme-fedex {
       background: radial-gradient(circle at 12% 8%, rgba(109,40,217,.28), transparent 28%),
                   radial-gradient(circle at 82% 0%, rgba(255,102,0,.18), transparent 30%),
@@ -531,7 +533,7 @@
   </div>
 </div>
 
-<!-- Modals -->
+<!-- Modals (same as original, unchanged) -->
 <div id="passwordModal" class="modal"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header">Enter Password<span class="modal-close" onclick="closePasswordModal()">×</span></div><input id="adminPassword" type="password" placeholder="Enter admin password"><div class="decision-actions" style="justify-content:flex-end; margin-top:18px;"><button class="app-btn primary" onclick="checkPassword()">Continue</button><button class="app-btn secondary" onclick="closePasswordModal()">Cancel</button></div></div></div>
 <div id="editModal" class="modal"><div class="modal-content" onclick="event.stopPropagation()"><div class="modal-header"><span id="modalTitle">Edit</span><span class="modal-close" onclick="closeEditModal()">×</span></div><textarea id="editTextarea"></textarea><div class="decision-actions" style="justify-content:flex-end; margin-top:18px;"><button class="app-btn primary" onclick="saveEdit()">Save</button><button class="app-btn secondary" onclick="closeEditModal()">Cancel</button></div></div></div>
 <div id="imageModal" class="image-modal" onclick="closeImageModal()"><button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button><img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()"></div>
@@ -540,7 +542,7 @@
 
 <div id="emailGuideModal" class="modal" onclick="closeEmailGuide()"><div class="modal-content" onclick="event.stopPropagation()" style="max-width:700px;"><div class="modal-header">Sending Emails Guide<span class="modal-close" onclick="closeEmailGuide()">×</span></div><div class="guide-section"><div class="guide-title" style="font-weight:800;">1. Send Email To</div><ul><li>Shannon Dunnaway</li><li>Leslie Jensen</li><li>Judy Blevins (Imaging Team)</li><li>Origin Center Managers / Supervisors</li></ul><div class="advise-box">Do NOT copy the customer.<br>Copy your TL, Chase, Jonie, and Training & Quality Team.</div><div class="guide-title" style="font-weight:800;margin-top:1rem;">2. Use This Message</div><div class="advise-box">"BOL for PRO XXXXXXXXX is missing / not available on image.<br>We do not have access to send using the Missing Documents form."</div><div class="guide-title" style="font-weight:800;margin-top:1rem;">3. Important</div><div class="advise-box">Once document is retrieved, send to: <strong>imaging@fedex.com</strong><br>to have it imaged on the PRO.</div></div></div></div>
 
-<!-- Feedback modals (optional but included for completeness) -->
+<!-- Feedback modals -->
 <div id="commentModal" class="modal" style="display:none;"><div class="modal-content feedback-modal" style="max-width:640px;"><div class="modal-header">Feedback<span class="modal-close" onclick="closeComment()">×</span></div><div class="feedback-header"><span>Rate this guide</span></div><div class="rating-container" style="display:flex;justify-content:center;gap:14px;margin:16px 0;"><span data-value="1" class="rating-star">★</span><span data-value="2" class="rating-star">★</span><span data-value="3" class="rating-star">★</span><span data-value="4" class="rating-star">★</span><span data-value="5" class="rating-star">★</span></div><input id="commentName" placeholder="Your name (optional)"><textarea id="commentText" placeholder="Share your thoughts..."></textarea><div id="feedbackMessage" style="display:none;"></div><button class="btn feedback-submit-btn" onclick="sendComment()">Send Feedback</button><div class="feedback-bottom-link"><span class="link-text" onclick="showAllComments()">View all comments</span></div></div></div>
 <div id="allCommentsModal" class="modal" style="display:none;"><div class="modal-content" style="max-width:760px;"><div class="modal-header">All Comments<span class="modal-close" onclick="closeAllComments()">×</span></div><div id="commentsList">Loading...</div></div></div>
 
@@ -552,7 +554,7 @@
 <script src="assets/js/footer-loader.js"></script>
 
 <script>
-// ================= THEME TOGGLE =================
+// ================= THEME TOGGLE (exactly like Debtor Update guide) =================
 function initTheme() {
   const saved = localStorage.getItem('missingDocsTheme');
   if (saved === 'fedex') document.body.classList.add('theme-fedex');
@@ -597,7 +599,8 @@ const TEMPLATE_COLLECTION = "missing_docs_templates";
 const FEEDBACK_COLLECTION = "feedback";
 const MAX_STEPS = 8;
 
-// ================= NODES (fully preserved from original second guide) =================
+// ================= NODES (same as original Missing Documents Guide) =================
+// (Full nodes object – the same as the previous working guide – included below)
 const NODES = {
   start: { text: "Missing Documents Guide", help: "Start with key reminders...", choices: [{ label: "Continue", next: "reminder_intro", icon: "fa-solid fa-arrow-right", desc: "Open reminders and notes." }] },
   reminder_intro: { text: "Reminders & Notes", help: "Review important document lookup...", note: `<div style="margin-bottom:14px;"><div style="font-weight:800; font-size:13px; color:#475569; margin-bottom:10px;">⚠ REMINDERS</div><ul style="margin:0; padding-left:18px;"><li>Ensure that you have attempted to locate the document in Image Viewer: <a href="http://imaging.freight.fedex.com/Viewer/Home.aspx" target="_blank" style="color:#4D148C;text-decoration:none;font-weight:600;">Image Viewer</a></li><li><strong>ATTENTION:</strong> Once a missing document is retrieved, send to <strong>imaging@fedex.com</strong></li><li>For PROs >180 days, access via EDM 1.0: <a href="https://myapps.secure.fedex.com/EDMPortal/" target="_blank">EDM 1.0</a></li><li>For Document Requests for PROs >90 days, proceed to Invoice Reprint.</li></ul></div><div style="margin-top:16px;"><div style="font-weight:800; font-size:13px; margin-bottom:10px;">📌 NOTE</div><p>If customer disputes charges and wants rebill to another party per BOL but BOL missing:</p><ul><li>Utilize previous shipments</li><li>Use Shipper Code, Consignee Code, Bill-To Code, or Origin/Destination</li><li>Prefer paid/closed PROs</li></ul><p><strong>When rebilling, add keyword:</strong></p><div style="background:#fff;border:1px dashed #ccc;padding:10px;border-radius:10px;font-size:12px;">VS-BLER-CASE#-UPDATED BT XXXXXXXX PER PREVIOUS SHIPMENTS<br>E.G. PRO XXXXXXX IN ATTEMPT FOR PAYMENT SINCE NO BOL ON FILE</div></div>`, choices: [{ label: "Proceed to Missing Documents Guide", next: "missing_docs_intro", icon: "fa-solid fa-arrow-right", desc: "Start the missing documents flow." }] },
@@ -703,7 +706,7 @@ const NODES = {
   loa_email_racf: { text: "Send an email to the RACF owner who requested the rebill per LOA and request for the actual LOA from the accepting party.", choices: [] }
 };
 
-// ================= HELPER FUNCTIONS =================
+// ================= HELPER FUNCTIONS (same as original) =================
 function escapeHtml(value){ return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;"); }
 function normalizeId(str){ return String(str||"").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,""); }
 function getDocId(rec,type){ return `${type}__${normalizeId(rec)}`; }
@@ -714,7 +717,6 @@ function getNodeImage(node){ return node?.image||""; }
 function getNodeChoices(node){ return Array.isArray(node?.choices)?node.choices:[]; }
 function isFinalNode(node){ return !!node?.action || (!getNodeChoices(node).length && !node?.next); }
 
-// DOM elements
 const els = {
   stageCard: document.getElementById("stageCard"),
   progressFill: document.getElementById("progressFill"),
@@ -776,7 +778,7 @@ async function renderNode(key){ currentKey=key; const node=NODES[key]; if(!node)
 function goBack(){ if(!historyStack.length) return; const prev=historyStack.pop(); path=prev.path||[]; renderNode(prev.key); }
 function restart(){ path=[]; historyStack=[]; currentFinalRecommendation=""; setTemplateValue(els.suggestedComment,""); setTemplateValue(els.suggestedCorrCode,""); setTemplateValue(els.suggestedEmail,""); updatePath(); updateRecommendation("",false); renderNode("start"); }
 
-// Modal handlers for AJ, Email Guide, Feedback
+// Modal handlers
 window.openAJModal = function(){ const m=document.getElementById("ajModal"); if(m) m.style.display="flex"; };
 window.closeAJModal = function(){ const m=document.getElementById("ajModal"); if(m) m.style.display="none"; };
 window.toggleAJ = function(el){ const c=el.nextElementSibling; if(c) c.style.display=c.style.display==="block"?"none":"block"; };
