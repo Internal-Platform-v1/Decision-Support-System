@@ -1,20 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page-protected">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Demand Invoice Guide</title>
+ <title>Demand Invoice</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="assets/css/header-footer-style.css">
+  <link rel="stylesheet" href="assets/css/guide-themes.css">
   
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
+  <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+    authDomain: "bdgg-database.firebaseapp.com",
+    projectId: "bdgg-database",
+    storageBucket: "bdgg-database.appspot.com",
+    messagingSenderId: "43574975434",
+    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  window.auth = firebase.auth();
+  window.db = firebase.firestore();
+
+  /* =========================================================
+     PAGE AUTH GUARD
+     Prevents direct URL access without login
+  ========================================================= */
+  window.auth.onAuthStateChanged(async function(user) {
+    try {
+      if (!user) {
+        window.location.replace("index.html");
+        return;
+      }
+
+      await user.reload();
+
+      const refreshedUser = window.auth.currentUser;
+
+      if (!refreshedUser || !refreshedUser.emailVerified) {
+        window.location.replace("index.html");
+        return;
+      }
+
+      document.documentElement.classList.remove("page-protected");
+
+    } catch (error) {
+      console.error("Auth guard error:", error);
+      window.location.replace("index.html");
+    }
+  });
+  </script>
+
  <style>
+  html.page-protected,
+  html.page-protected body{
+    visibility:hidden;
+  }
+
   :root{
     --bg:#07111f;
     --bg-soft:#0c1728;
@@ -641,6 +694,42 @@
     line-height:1.5;
     margin-top:6px;
   }
+  
+  .path-jump{
+    width:100%;
+    text-align:left;
+    padding:12px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e7edf4;
+    cursor:pointer;
+    transition:.18s ease;
+  }
+
+  .path-jump:hover{
+    transform:translateY(-1px);
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    box-shadow:0 10px 22px rgba(37,99,235,.08);
+  }
+
+  .path-jump.active{
+    background:#f8fafc;
+    border:2px solid #2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+  }
+
+  .path-jump.active .path-step{
+    color:#2563eb;
+  }
+
+  .path-jump.active .path-question{
+    color:#0f172a;
+  }
+
+  .path-jump.active .path-answer{
+    color:#475569;
+  }
 
   .section-note{
     font-size:12px;
@@ -786,6 +875,19 @@
     color:#166534 !important;
     border-color:#bbf7d0 !important;
   }
+
+  .template-tag{
+  cursor:pointer;
+  text-decoration:none;
+  transition:.2s ease;
+}
+
+.template-tag:hover{
+  background:#eef4ff;
+  border-color:#cfe0ff;
+  color:#1d4ed8;
+  transform:translateY(-1px);
+} 
 
   @media (max-width:1450px){
     .app-frame{
@@ -1017,24 +1119,6 @@
   text-transform:uppercase;
 }
 
-.note-body{
-  color:#475569;
-  line-height:1.8;
-  font-size:14px;
-  white-space:pre-wrap;
-}   
-
-/*links*/
-
-.note-body{
-  color:#5b6474;
-  font-size:14px;
-  line-height:1.8;
-}
-
-.note-body a{
-  text-decoration:none;
-}
 .smart-link{
   display:inline-flex;
   align-items:center;
@@ -1056,8 +1140,11 @@
   box-shadow:0 14px 24px rgba(77,20,140,.25);
 }
 
-/*for edit/save comments,email and corr code modal*/
-.modal{
+/* ===== MODALS ===== */
+
+/* Keep edit/password modals local to this guide only */
+#passwordModal,
+#editModal{
   display:none;
   position:fixed;
   inset:0;
@@ -1068,7 +1155,8 @@
   z-index:10000;
 }
 
-.modal-content{
+#passwordModal .modal-content,
+#editModal .modal-content{
   background:#fff;
   width:100%;
   max-width:560px;
@@ -1080,7 +1168,8 @@
   overflow:auto;
 }
 
-.modal-header{
+#passwordModal .modal-header,
+#editModal .modal-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -1091,14 +1180,16 @@
   color:#0f172a;
 }
 
-.modal-close{
+#passwordModal .modal-close,
+#editModal .modal-close{
   font-size:22px;
   cursor:pointer;
   color:#64748b;
   line-height:1;
 }
 
-.modal-close:hover{
+#passwordModal .modal-close:hover,
+#editModal .modal-close:hover{
   color:#4d148c;
 }
 
@@ -1123,11 +1214,725 @@
   min-height:220px;
   resize:vertical;
 }
+
+/* Match shared header modals to index look */
+#commentModal,
+#allCommentsModal,
+#helpModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,.52);
+  justify-content:center;
+  align-items:center;
+  padding:0 24px;
+  z-index:2147483647;
+  backdrop-filter:blur(8px);
+  overflow-y:auto;
+}
+
+#commentModal .modal-content,
+#allCommentsModal .modal-content,
+#helpModal .modal-content{
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 24px 80px rgba(2,6,23,.18);
+  max-height:min(84vh, 900px);
+  overflow:auto;
+  border:1px solid rgba(148,163,184,.16);
+  margin:110px auto 32px;
+}
+
+#commentModal .feedback-modal{
+  max-width:640px;
+  border-radius:28px;
+  padding:20px 20px 22px;
+}
+
+#allCommentsModal .modal-content{
+  max-width:760px;
+}
+
+#helpModal .help-modal{
+  max-width:760px;
+  border-radius:30px;
+  padding:18px;
+}
+
+#commentModal .modal-header,
+#allCommentsModal .modal-header,
+#helpModal .modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  margin-bottom:14px;
+  color:#0f172a;
+}
+
+#commentModal .modal-close,
+#allCommentsModal .modal-close,
+#helpModal .modal-close{
+  cursor:pointer;
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
+  transition:.2s ease;
+  flex-shrink:0;
+  font-size:22px;
+  line-height:1;
+}
+
+#commentModal .modal-close:hover,
+#allCommentsModal .modal-close:hover,
+#helpModal .modal-close:hover{
+  color:#0f172a;
+  background:#eef2ff;
+}
+
+#commentModal .feedback-header{
+  margin-bottom:10px;
+}
+
+#commentModal .feedback-header span:first-child{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.03em;
+  color:#111827;
+}
+
+#commentModal .rating-container{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  margin:16px 0 18px;
+}
+
+#commentModal .rating-star{
+  cursor:pointer;
+  font-size:26px;
+  color:#d1d5db;
+  transition:transform .18s ease, color .18s ease;
+}
+
+#commentModal .rating-star:hover{
+  transform:translateY(-1px) scale(1.06);
+}
+
+#commentModal .rating-star.selected{
+  color:#ff6600;
+}
+
+#commentModal input,
+#commentModal textarea{
+  width:100%;
+  border:none;
+  outline:none;
+  border-radius:16px;
+  background:#f8fafc;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
+  padding:14px 16px;
+  color:#0f172a;
+  font-size:14px;
+  transition:.18s ease;
+}
+
+#commentModal input{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+
+#commentModal textarea{
+  min-height:120px;
+  resize:vertical;
+  margin-top:0;
+}
+
+#commentModal input:focus,
+#commentModal textarea:focus{
+  background:#fff;
+  box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06);
+}
+
+#commentModal .feedback-submit-btn{
+  margin:16px 0 8px;
+  min-height:54px;
+  border-radius:18px;
+}
+
+#commentModal .feedback-bottom-link{
+  margin-top:4px;
+}
+
+#commentModal .link-text{
+  color:#4d148c;
+  cursor:pointer;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+}
+
+#commentModal .link-text:hover{
+  text-decoration:underline;
+}
+
+#allCommentsModal .comment-list-item{
+  padding:14px 0;
+  border-bottom:1px solid rgba(148,163,184,.18);
+}
+
+#allCommentsModal .comment-list-item:last-child{
+  border-bottom:none;
+}
+
+#allCommentsModal .stars{
+  color:#ff6600;
+  font-size:18px;
+  margin-bottom:6px;
+  display:block;
+}
+
+@media (max-width:720px){
+  #passwordModal,
+  #editModal{
+    padding:14px;
+  }
+
+  #passwordModal .modal-content,
+  #editModal .modal-content{
+    border-radius:18px;
+    padding:18px;
+  }
+
+  #commentModal,
+  #allCommentsModal,
+  #helpModal{
+    padding:0 14px;
+  }
+
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content{
+    padding:20px;
+    border-radius:22px;
+    margin:96px auto 20px;
+  }
+
+  #commentModal .feedback-modal{
+    padding:18px;
+    border-radius:24px;
+  }
+
+  #helpModal .help-modal{
+    padding:16px;
+    border-radius:24px;
+  }
+}
    
-  
+ 
+.aj-card{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:14px;
+}
+
+.aj-card h3{
+  margin-bottom:8px;
+  color:#4d148c;
+}
+
+.advise-box{
+  background:#eef6ff;
+  border-left:4px solid #4d148c;
+  padding:10px;
+  margin:6px 0 10px;
+  border-radius:6px;
+  font-size:13px;
+}
+
+.aj-header{
+  font-weight:700;
+  cursor:pointer;
+  padding:10px;
+  background:#f1f5f9;
+  border-radius:8px;
+  transition:.2s;
+}
+
+.aj-header:hover{
+  background:#e2e8f0;
+}
+
+.aj-content{
+  display:none;
+  margin-top:10px;
+  animation:fadeIn .3s ease-in;
+}
+
+.aj-search-container{
+  position:sticky;
+  top:0;
+  background:#fff;
+  padding:10px;
+  z-index:5;
+  border-bottom:1px solid #ddd;
+}
+
+#ajSearch{
+  width:100%;
+  padding:8px 12px;
+  font-size:13px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.link-btn{
+  color:#0073e6;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.link-btn:hover{
+  color:#005bb5;
+}
+
+.aj-section{
+  margin-bottom:14px;
+}
+
+.aj-subtitle{
+  font-size:12px;
+  font-weight:800;
+  color:#64748b;
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+
+.aj-block{
+  margin-bottom:10px;
+}
+
+.aj-label{
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.aj-list{
+  margin:8px 0;
+  padding-left:18px;
+  line-height:1.5;
+}
+
+.aj-link{
+  display:inline-block;
+  margin-bottom:8px;
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* 🔧 Fix NOTE spacing (final clean version) */
+
+.note-body{
+  color:#475569;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* Remove excessive spacing from elements inside notes */
+.note-body p{
+  margin:6px 0;
+}
+
+.note-body ul{
+  margin:8px 0;
+  padding-left:18px;
+}
+
+.note-body li{
+  margin:0;
+}
+
+/* Fix nested div spacing inside notes */
+.note-body div{
+  margin:6px 0;
+}
+
+/* Tighten strong/inline text spacing */
+.note-body strong{
+  font-weight:600;
+}
+
+/* Optional: clean link look */
+.note-body a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}  
+
+.final-note-html{
+  margin-top:12px;
+  color:#475569;
+  line-height:1.7;
+}
+
+.final-note-html a{
+  color:#4D148C;
+  text-decoration:none;
+  font-weight:600;
+}  
+
+/* neutral gray on final note */
+.final-note-simple {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+
+  /* 🔥 KEY: blends with green but still readable */
+  background: rgba(0, 0, 0, 0.04);
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.final-note-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #6b7280; /* neutral gray */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.final-note-label i {
+  color: #6b7280;
+}
+
+.final-note-text {
+  font-size: 13.5px;
+  color: #111827; /* 🔥 dark readable text */
+  line-height: 1.6;
+}
+
+
+
+  /* =========================================================
+     MAIN INDEX COLOR SYNC — FedEx Purple + Orange Theme
+     Added to align this guide with the premium main index page.
+     ========================================================= */
+
+  :root{
+    --bg:#07111f;
+    --bg-soft:#091120;
+    --panel:#121033;
+    --panel-2:#1b1240;
+    --card:#ffffff;
+    --card-soft:#f8fafc;
+    --text:#0f172a;
+    --text-soft:#475569;
+    --muted:#94a3b8;
+    --line:rgba(148,163,184,.18);
+    --white-line:rgba(255,255,255,.10);
+    --accent:#4d148c;
+    --accent-2:#6d28d9;
+    --accent-3:#ff6600;
+    --accent-soft:#f5f3ff;
+    --accent-orange-soft:#fff7ed;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --shadow-xl:0 34px 90px rgba(2,6,23,.22);
+    --shadow-lg:0 24px 60px rgba(2,6,23,.16);
+    --shadow-md:0 14px 34px rgba(15,23,42,.10);
+    --shadow-card:0 16px 40px rgba(15,23,42,.06);
+  }
+
+  body{
+    color:var(--text);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(109,40,217,.28), transparent 28%),
+      radial-gradient(circle at 82% 0%, rgba(255,102,0,.18), transparent 30%),
+      radial-gradient(circle at 40% 52%, rgba(77,20,140,.16), transparent 34%),
+      radial-gradient(circle at 88% 78%, rgba(255,102,0,.10), transparent 30%),
+      linear-gradient(180deg, #121033 0%, #091120 42%, #07111f 100%) !important;
+  }
+
+  body::before{
+    background:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px) !important;
+    background-size:44px 44px !important;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 65%) !important;
+  }
+
+  body::after{
+    content:"";
+    position:fixed;
+    width:520px;
+    height:520px;
+    right:-180px;
+    bottom:-180px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,102,0,.16), transparent 66%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .app-shell{
+    margin:28px auto 28px;
+  }
+
+  .app-frame{
+    background:rgba(255,255,255,.70) !important;
+    border:1px solid rgba(255,255,255,.82) !important;
+    box-shadow:0 34px 90px rgba(2,6,23,.22) !important;
+    backdrop-filter:blur(18px) !important;
+    -webkit-backdrop-filter:blur(18px) !important;
+  }
+
+  .main-topbar{
+    background:
+      radial-gradient(circle at 16% 16%, rgba(255,102,0,.18), transparent 28%),
+      linear-gradient(135deg, rgba(77,20,140,.96), rgba(59,15,115,.94) 52%, rgba(7,17,31,.96)) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    box-shadow:0 24px 60px rgba(2,6,23,.16) !important;
+    color:#fff !important;
+  }
+
+  .main-topbar h1,
+  .page-title-block h1{
+    color:#fff !important;
+  }
+
+  .page-subtitle,
+  .main-topbar .page-subtitle{
+    color:rgba(255,255,255,.74) !important;
+  }
+
+  .pill{
+    background:rgba(255,255,255,.12) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    color:rgba(255,255,255,.88) !important;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+  }
+
+  .pill i{
+    color:var(--accent-3) !important;
+  }
+
+  .pill.primary{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color:#fff !important;
+    border:none !important;
+    box-shadow:0 16px 30px rgba(77,20,140,.22) !important;
+  }
+
+  .progress-card,
+  .stage-card,
+  .side-panel .summary-card,
+  .template-panel .summary-card{
+    border-color:rgba(226,232,240,.92) !important;
+    box-shadow:0 16px 40px rgba(15,23,42,.08) !important;
+  }
+
+  .progress-fill{
+    background:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 58%, var(--accent-3) 100%) !important;
+  }
+
+  .badge{
+    background:#f5f3ff !important;
+    color:var(--accent) !important;
+  }
+
+  .badge.alt{
+    background:#fff7ed !important;
+    color:#9a3412 !important;
+  }
+
+  .question-card{
+    background:
+      radial-gradient(circle at top right, rgba(109,40,217,.12), transparent 30%),
+      linear-gradient(180deg,#ffffff,#fbfaff) !important;
+    border-color:#e9d5ff !important;
+  }
+
+  .question-label{
+    background:#f5f3ff !important;
+    border-color:#ddd6fe !important;
+    color:var(--accent) !important;
+  }
+
+  .choice{
+    background:linear-gradient(180deg,#ffffff 0%, #fbfaff 100%) !important;
+    border-color:#e5e7eb !important;
+  }
+
+  .choice:hover{
+    border-color:#c4b5fd !important;
+    box-shadow:0 18px 36px rgba(77,20,140,.10) !important;
+  }
+
+  .choice.selected{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color:#fff !important;
+    border-color:transparent !important;
+    box-shadow:0 18px 38px rgba(77,20,140,.24) !important;
+  }
+
+  .choice-icon{
+    background:#f5f3ff !important;
+    color:var(--accent) !important;
+  }
+
+  .choice.selected .choice-icon{
+    background:rgba(255,255,255,.14) !important;
+    color:#fff !important;
+  }
+
+  .decision-footer{
+    background:linear-gradient(180deg, rgba(248,250,252,.4), #fbfaff) !important;
+  }
+
+  .btn,
+  .app-btn.primary,
+  .template-copy{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color:#fff !important;
+    box-shadow:0 14px 24px rgba(77,20,140,.22) !important;
+  }
+
+  .btn:hover,
+  .app-btn.primary:hover,
+  .template-copy:hover{
+    box-shadow:0 18px 30px rgba(77,20,140,.30) !important;
+  }
+
+  .app-btn.secondary,
+  .app-btn.ghost{
+    color:var(--text) !important;
+  }
+
+  .final-card{
+    background:linear-gradient(180deg,#f5f3ff,#ffffff) !important;
+    border-color:#ddd6fe !important;
+    box-shadow:0 16px 34px rgba(77,20,140,.08) !important;
+  }
+
+  .final-badge{
+    background:#ede9fe !important;
+    color:var(--accent) !important;
+  }
+
+  .final-title{
+    color:var(--accent) !important;
+  }
+
+  .recommendation{
+    background:linear-gradient(180deg,#fff7ed,#fff) !important;
+    border-left-color:var(--accent-3) !important;
+  }
+
+  .summary-head i,
+  .template-icon,
+  .aj-card h3,
+  .aj-link,
+  .link-text{
+    color:var(--accent) !important;
+  }
+
+  .template-icon{
+    background:#f5f3ff !important;
+  }
+
+  .template-icon-btn:hover,
+  .path-jump:hover,
+  .template-tag:hover{
+    background:#f5f3ff !important;
+    border-color:#ddd6fe !important;
+    color:var(--accent) !important;
+  }
+
+  .path-step{
+    color:var(--accent) !important;
+  }
+
+  .path-jump.active{
+    border:2px solid var(--accent) !important;
+    box-shadow:0 0 0 4px rgba(77,20,140,.10) !important;
+  }
+
+  .path-jump.active .path-step{
+    color:var(--accent) !important;
+  }
+
+  .metric{
+    background:#fbfaff !important;
+    border-color:#ede9fe !important;
+  }
+
+  .smart-link{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    box-shadow:0 10px 18px rgba(77,20,140,.18) !important;
+  }
+
+  .advise-box{
+    background:#f5f3ff !important;
+    border-left-color:var(--accent) !important;
+  }
+
+  .aj-header:hover{
+    background:#f5f3ff !important;
+  }
+
+  #passwordModal .modal-close:hover,
+  #editModal .modal-close:hover,
+  #commentModal .link-text,
+  #allCommentsModal .stars,
+  #commentModal .rating-star.selected{
+    color:var(--accent-3) !important;
+  }
+
+  #commentModal input:focus,
+  #commentModal textarea:focus,
+  #passwordModal input:focus,
+  #editModal textarea:focus{
+    box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06) !important;
+  }
+
+  .progress-status,
+  .footer-label,
+  .section-note,
+  .template-sub,
+  .template-tag,
+  .choice-desc,
+  .question-help{
+    color:#64748b !important;
+  }
+
+  mark.search-highlight{
+    background:rgba(255,102,0,.20) !important;
+    color:#07111f !important;
+  }
 </style>
 </head>
-<body data-page="">
+<body data-page="" class="theme-fedex">
   <div class="page">
 <div id="site-header"></div>
 
@@ -1136,8 +1941,8 @@
         <main class="main">
           <div class="main-topbar">
             <div>
-             <div class="page-title-block">
-  <h1>Demand Invoice Guide</h1>
+<div class="page-title-block">
+  <h1>Demand Invoice</h1>
   <p class="page-subtitle">
     Follow a structured decision flow for demand invoice cases including PRO posted checks, queue handling, resend scenarios, and invoice types.
   </p>
@@ -1244,7 +2049,9 @@
                 </div>
 
                 <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-hashtag"></i> Corr code</span>
+                  <a href="Correction Code Guide.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-hashtag"></i> Open Corr Code
+                  </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
                 </div>
               </div>
@@ -1271,7 +2078,9 @@
                 </div>
 
                 <div class="template-foot">
-                  <span class="template-tag"><i class="fa-solid fa-paper-plane"></i> Email</span>
+                  <a href="ebs-response-template.html" target="_blank" class="template-tag">
+                  <i class="fa-solid fa-paper-plane"></i> Open EBS Response
+                  </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
                 </div>
               </div>
@@ -1310,25 +2119,19 @@
     </div>
 
 <div id="site-footer"></div>
-   
+ 
+    
   </div>
+<script>
+window.SITE_BASE = "";
+</script>
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
+  <script src="assets/js/theme-loader.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  if (!firebase.apps.length) {
-    firebase.initializeApp({
-      apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-      authDomain: "bdgg-database.firebaseapp.com",
-      projectId: "bdgg-database",
-      storageBucket: "bdgg-database.appspot.com",
-      messagingSenderId: "43574975434",
-      appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-    });
-  }
-
-  const db = firebase.firestore();
+  const db = window.db || firebase.firestore();
   const TEMPLATE_COLLECTION = "demand_invoice_template";
   const FEEDBACK_COLLECTION = "feedback";
   const MAX_STEPS = 8;
@@ -1364,156 +2167,171 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentKey = "start";
   const templateCache = {};
 
+  // ================= FULL NODES TREE (exactly as in original working code) =================
 const NODES = {
-start: {
-  text: "Is PRO Posted?",
-  help: "Start here to determine whether the PRO is already posted or still unposted.",
-  note: "REMINDER: Send ONLY to debtor.\n\n3PL → send to 3PL only\nFPAY → send to FPAY or customer\nAfter corrections → RESEND invoice\nReference change → RESEND invoice",
-  choices: [
-    {
-      label: "Yes",
-      next: "posted_request",
-      icon: "fa-solid fa-check",
-      desc: "PRO is already posted."
-    },
-    {
-      label: "No",
-      next: "queue_unposted",
-      icon: "fa-solid fa-xmark",
-      desc: "PRO is being unposted or not yet posted."
-    }
-  ]
-},
-
-      posted_request: {
-        text: "What is request?",
-        help: "Choose the request that matches the customer concern on a posted PRO.",
-        choices: [
-          { label: "Error Message Pop up?", next: "posted_error_popup", icon: "fa-solid fa-triangle-exclamation", desc: "Customer sees an error or cannot process the invoice." },
-          { label: "Not Yet Billed?", next: "posted_not_yet_billed", icon: "fa-solid fa-hourglass-half", desc: "Invoice is not yet billed or not yet fully billed." },
-          { label: "Resend Invoice", next: "resend_invoice_type", icon: "fa-solid fa-paper-plane", desc: "Customer is asking for invoice resend." },
-          { label: "Duplicate Invoice #", next: "duplicate_invoice_final", icon: "fa-solid fa-clone", desc: "Customer wants a resend with a unique invoice number." }
-        ]
-      },
-
-      posted_error_popup: {
-        text: "Pending Invoice — Replace Request\nNo Open Balance — Closed / Not invoiced\nUnposted Error — Send to TL\nNo Info — Not fully billed — Monitor",
-        help: "Use the handling note shown in the flow for error pop-up related concerns.",
-        choices: []
-      },
-
-      posted_not_yet_billed: {
-        text: "Advise: Advise the customer that Pro is still not invoiced and pending to be entered into the system and that you will monitor the PRO, once invoiced, you can proceed with the request.\n\nPend the case and monitor every day.",
-        help: "Use this when the invoice is still not billed yet.",
-        choices: []
-      },
-
-      resend_invoice_type: {
-        text: "Check Invoice Type",
-        help: "Select the invoice type or invoice group to determine the correct resend handling.",
-        choices: [
-          { label: "Paper", next: "paper_invoice_final", icon: "fa-solid fa-print", desc: "Printed paper invoice request." },
-          { label: "Email", next: "email_invoice_final", icon: "fa-solid fa-envelope", desc: "Email invoice setup is available." },
-          { label: "EDI", next: "edi_invoice_final", icon: "fa-solid fa-network-wired", desc: "EDI account or EDI redrop request." }
-        ]
-      },
-
-      paper_invoice_final: {
-        text: "PAPER — only if print setup\n\nSample Paper Invoice/Print Groups below:\nREGI\nBADA\nREGC\nREGU\nCI02\nCI15\n\nNOTE: NO LIMIT PER BATCH (PAPER)",
-        help: "Use paper invoice group reference and resend handling.",
-        choices: []
-      },
-
-      email_invoice_final: {
-        text: "EMAIL — only if email setup\n\nSample EMAIL Invoice/Print Groups below:\nEREG\nEMU\nEMC\nEDA\nENA\nEBDA (Email Balance Due)\nEIMAI (Email Past Due)\n\nNOTE: LIMIT PER BATCH (EMAIL)\n25 PROs for invoice only\n15 PROs for invoice with backup docs\n100 PROs total limit via email",
-        help: "Use email invoice group reference and resend handling.",
-        choices: []
-      },
-
-      edi_invoice_final: {
-        text: "EDI — only if EDI account\n\nSample EDI Invoice/Print Groups below:\nCI05 EDIU FLXB\nCI06 EDHU FSYN\nCI07 EDXB SRG\nCI09 EWAL SYNF\nEDI FLHD SYNS\nEDIS FLTA WEDH\nEDI7 FLTE WEDI\nEDEA FLTH WEDP\nEDEM FLTX WGVE\n\nNOTE: NO LIMIT PER BATCH (EDI)",
-        help: "Use EDI group reference and redrop handling.",
-        choices: []
-      },
-
-      duplicate_invoice_final: {
-        text: "If customer requests to resend the invoice with unique invoice number since they cannot process the same invoice numbers in their system twice, reply",
-        note: "Hi,\n\nPlease be advised that there will be no additional characters can be added for FedEx. You can add an alpha on your end to complete the payment process.\n\nThank you,",
-        choices: []
-      },
-
-      queue_unposted: {
-        text: "On what QUEUE PRO is being Unposted?",
-        help: "Choose the current queue where the unposted PRO is sitting.",
-        choices: [
-          { label: "NO QUEUE", next: "no_queue_voided", icon: "fa-solid fa-inbox", desc: "No queue is currently tagged." },
-          { label: "CORR-Q & SPEC-ERR", next: "corr_spec_final", icon: "fa-solid fa-screwdriver-wrench", desc: "Correction or special error queue." },
-          { label: "RATE-Q / PRICING", next: "rate_pricing_reopened", icon: "fa-solid fa-scale-balanced", desc: "Pricing review queue." },
-          { label: "PAUD GOVH / GORR", next: "paud_govh_final", icon: "fa-solid fa-building-columns", desc: "Government or GORR queue." },
-          { label: "OTHER QUEUE", next: "other_queue_final", icon: "fa-solid fa-share-nodes", desc: "Any other queue not listed above." }
-        ]
-      },
-
-      no_queue_voided: {
-        text: "Is it Voided?",
-        help: "Check whether the PRO is already voided.",
-        choices: [
-          { label: "Yes", next: "voided_yes_final", icon: "fa-solid fa-circle-check", desc: "PRO is already voided." },
-          { label: "No", next: "voided_no_final", icon: "fa-solid fa-circle-xmark", desc: "PRO is not voided." }
-        ]
-      },
-
-      voided_yes_final: {
-        text: "Advised the customer accordingly.",
-        help: "Use this when the PRO is already voided.",
-        choices: []
-      },
-
-      voided_no_final: {
-        text: "Open FBC → CORR VRFY → Accept All → Check FBI if posted\n\n2x4 Comment: VS-BLER-CASE#:CORR VRFY TO POST THE",
-        help: "Use this internal handling when the PRO is not voided and not sitting on a queue.",
-        choices: []
-      },
-
-      corr_spec_final: {
-        text: "Send an email to TL who will forward it to post the invoice.",
-        help: "Use the TL escalation path for CORR-Q and SPEC-ERR.",
-        choices: []
-      },
-
-      rate_pricing_reopened: {
-        text: "If case reopened and customer is still insisting",
-        help: "Choose whether this is a reopened pricing case or the initial pricing queue handling.",
-        choices: [
-          { label: "Yes", next: "rate_pricing_reopened_final", icon: "fa-solid fa-rotate-right", desc: "Case was reopened and customer still insists." },
-          { label: "No", next: "rate_pricing_initial_final", icon: "fa-solid fa-arrow-right", desc: "Initial pricing queue status." }
-        ]
-      },
-
-      rate_pricing_initial_final: {
-        text: "Advised customer: PRO XXXXXXXX is under rating queue for review and will be posted once rates are verified.",
-        help: "Use this for the initial pricing queue response.",
-        choices: []
-      },
-
-      rate_pricing_reopened_final: {
-        text: "Advised customer: The pricing on the shipments is still being reviewed and we want to verify pricing before posting. We apologize for the inconvenience.",
-        help: "Use this when the case was reopened and the customer is still insisting.",
-        choices: []
-      },
-
-      paud_govh_final: {
-        text: "Send email to TL for them to escalate to Lenita.Giannini for GOVH and to Shayne.Whealton for GORR and always cc Kendrea Wallace",
-        help: "Use this queue escalation instruction for PAUD GOVH / GORR.",
-        choices: []
-      },
-
-      other_queue_final: {
-        text: "Send an email to TL who will send to Team Kurt PAUD to post the invoice",
-        help: "Use this when the PRO is in another queue.",
-        choices: []
+  start: {
+    text: "Demand Invoice - Handling Guide",
+    help: "Start with key reminders for handling posted and unposted PROs.",
+    note: `<div style="margin-bottom:14px;"><div style="font-weight:800; font-size:13px; color:#475569; margin-bottom:10px;">⚠ REMINDERS</div><ul style="margin:0; padding-left:18px;"><li>Send invoice ONLY to debtor. For 3PL, send only to 3PL; for FPAY, send to FPAY or customer.</li><li>After corrections, RESEND invoice. For reference changes, RESEND invoice.</li><li>For error messages on posted PROs, check if pending invoice, no open balance, or unposted error.</li><li>For unposted PROs, identify the queue (CORR-Q, RATE-Q, PAUD GOVH/GORR, etc.) and follow escalation.</li></ul></div><div style="margin-top:16px;"><div style="font-weight:800; font-size:13px; margin-bottom:10px;">📌 NOTE</div><p>Always verify whether the PRO is already posted or still unposted before proceeding. Use the flow below to guide your response.</p></div>`,
+    choices: [
+      {
+        label: "Continue to Main Flow",
+        next: "posted_unposted_start",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Start the posted/unposted PRO handling process."
       }
-    };
+    ]
+  },
+
+  posted_unposted_start: {
+    text: "Is PRO Posted?",
+    help: "Start here to determine whether the PRO is already posted or still unposted.",
+    note: "REMINDER: Send ONLY to debtor.\n\n3PL → send to 3PL only\nFPAY → send to FPAY or customer\nAfter corrections → RESEND invoice\nReference change → RESEND invoice",
+    choices: [
+      {
+        label: "Yes",
+        next: "posted_request",
+        icon: "fa-solid fa-check",
+        desc: "PRO is already posted."
+      },
+      {
+        label: "No",
+        next: "queue_unposted",
+        icon: "fa-solid fa-xmark",
+        desc: "PRO is being unposted or not yet posted."
+      }
+    ]
+  },
+
+  posted_request: {
+    text: "What is request?",
+    help: "Choose the request that matches the customer concern on a posted PRO.",
+    choices: [
+      { label: "Error Message Pop up?", next: "posted_error_popup", icon: "fa-solid fa-triangle-exclamation", desc: "Customer sees an error or cannot process the invoice." },
+      { label: "Not Yet Billed?", next: "posted_not_yet_billed", icon: "fa-solid fa-hourglass-half", desc: "Invoice is not yet billed or not yet fully billed." },
+      { label: "Resend Invoice", next: "resend_invoice_type", icon: "fa-solid fa-paper-plane", desc: "Customer is asking for invoice resend." },
+      { label: "Duplicate Invoice #", next: "duplicate_invoice_final", icon: "fa-solid fa-clone", desc: "Customer wants a resend with a unique invoice number." }
+    ]
+  },
+
+  posted_error_popup: {
+    text: "Pending Invoice — Replace Request\nNo Open Balance — Closed / Not invoiced\nUnposted Error — Send to TL\nNo Info — Not fully billed — Monitor",
+    help: "Use the handling note shown in the flow for error pop-up related concerns.",
+    choices: []
+  },
+
+  posted_not_yet_billed: {
+    text: "Advise: Advise the customer that Pro is still not invoiced and pending to be entered into the system and that you will monitor the PRO, once invoiced, you can proceed with the request.\n\nPend the case and monitor every day.",
+    help: "Use this when the invoice is still not billed yet.",
+    choices: []
+  },
+
+  resend_invoice_type: {
+    text: "Check Invoice Type",
+    help: "Select the invoice type or invoice group to determine the correct resend handling.",
+    choices: [
+      { label: "Paper", next: "paper_invoice_final", icon: "fa-solid fa-print", desc: "Printed paper invoice request." },
+      { label: "Email", next: "email_invoice_final", icon: "fa-solid fa-envelope", desc: "Email invoice setup is available." },
+      { label: "EDI", next: "edi_invoice_final", icon: "fa-solid fa-network-wired", desc: "EDI account or EDI redrop request." }
+    ]
+  },
+
+  paper_invoice_final: {
+    text: "PAPER — only if print setup\n\nSample Paper Invoice/Print Groups below:\nREGI\nBADA\nREGC\nREGU\nCI02\nCI15\n\nNOTE: NO LIMIT PER BATCH (PAPER)",
+    help: "Use paper invoice group reference and resend handling.",
+    choices: []
+  },
+
+  email_invoice_final: {
+    text: "EMAIL — only if email setup\n\nSample EMAIL Invoice/Print Groups below:\nEREG\nEMU\nEMC\nEDA\nENA\nEBDA (Email Balance Due)\nEIMAI (Email Past Due)\n\nNOTE: LIMIT PER BATCH (EMAIL)\n25 PROs for invoice only\n15 PROs for invoice with backup docs\n100 PROs total limit via email",
+    help: "Use email invoice group reference and resend handling.",
+    choices: []
+  },
+
+  edi_invoice_final: {
+    text: "EDI — only if EDI account\n\nSample EDI Invoice/Print Groups below:\nCI05 EDIU FLXB\nCI06 EDHU FSYN\nCI07 EDXB SRG\nCI09 EWAL SYNF\nEDI FLHD SYNS\nEDIS FLTA WEDH\nEDI7 FLTE WEDI\nEDEA FLTH WEDP\nEDEM FLTX WGVE\n\nNOTE: NO LIMIT PER BATCH (EDI)",
+    help: "Use EDI group reference and redrop handling.",
+    choices: []
+  },
+
+  duplicate_invoice_final: {
+    text: "If customer requests to resend the invoice with unique invoice number since they cannot process the same invoice numbers in their system twice, reply",
+    note: "Hi,\n\nPlease be advised that there will be no additional characters can be added for FedEx. You can add an alpha on your end to complete the payment process.\n\nThank you,",
+    choices: []
+  },
+
+  queue_unposted: {
+    text: "On what QUEUE PRO is being Unposted?",
+    help: "Choose the current queue where the unposted PRO is sitting.",
+    choices: [
+      { label: "NO QUEUE", next: "no_queue_voided", icon: "fa-solid fa-inbox", desc: "No queue is currently tagged." },
+      { label: "CORR-Q & SPEC-ERR", next: "corr_spec_final", icon: "fa-solid fa-screwdriver-wrench", desc: "Correction or special error queue." },
+      { label: "RATE-Q / PRICING", next: "rate_pricing_reopened", icon: "fa-solid fa-scale-balanced", desc: "Pricing review queue." },
+      { label: "PAUD GOVH / GORR", next: "paud_govh_final", icon: "fa-solid fa-building-columns", desc: "Government or GORR queue." },
+      { label: "OTHER QUEUE", next: "other_queue_final", icon: "fa-solid fa-share-nodes", desc: "Any other queue not listed above." }
+    ]
+  },
+
+  no_queue_voided: {
+    text: "Is it Voided?",
+    help: "Check whether the PRO is already voided.",
+    choices: [
+      { label: "Yes", next: "voided_yes_final", icon: "fa-solid fa-circle-check", desc: "PRO is already voided." },
+      { label: "No", next: "voided_no_final", icon: "fa-solid fa-circle-xmark", desc: "PRO is not voided." }
+    ]
+  },
+
+  voided_yes_final: {
+    text: "Advised the customer accordingly.",
+    help: "Use this when the PRO is already voided.",
+    choices: []
+  },
+
+  voided_no_final: {
+    text: "Open FBC → CORR VRFY → Accept All → Check FBI if posted\n\n2x4 Comment: VS-BLER-CASE#:CORR VRFY TO POST THE",
+    help: "Use this internal handling when the PRO is not voided and not sitting on a queue.",
+    choices: []
+  },
+
+  corr_spec_final: {
+    text: "Send an email to TL who will forward it to post the invoice.",
+    help: "Use the TL escalation path for CORR-Q and SPEC-ERR.",
+    choices: []
+  },
+
+  rate_pricing_reopened: {
+    text: "If case reopened and customer is still insisting",
+    help: "Choose whether this is a reopened pricing case or the initial pricing queue handling.",
+    choices: [
+      { label: "Yes", next: "rate_pricing_reopened_final", icon: "fa-solid fa-rotate-right", desc: "Case was reopened and customer still insists." },
+      { label: "No", next: "rate_pricing_initial_final", icon: "fa-solid fa-arrow-right", desc: "Initial pricing queue status." }
+    ]
+  },
+
+  rate_pricing_initial_final: {
+    text: "Advised customer: PRO XXXXXXXX is under rating queue for review and will be posted once rates are verified.",
+    help: "Use this for the initial pricing queue response.",
+    choices: []
+  },
+
+  rate_pricing_reopened_final: {
+    text: "Advised customer: The pricing on the shipments is still being reviewed and we want to verify pricing before posting. We apologize for the inconvenience.",
+    help: "Use this when the case was reopened and the customer is still insisting.",
+    choices: []
+  },
+
+  paud_govh_final: {
+    text: "Send email to TL for them to escalate to Lenita.Giannini for GOVH and to Shayne.Whealton for GORR and always cc Kendrea Wallace",
+    help: "Use this queue escalation instruction for PAUD GOVH / GORR.",
+    choices: []
+  },
+
+  other_queue_final: {
+    text: "Send an email to TL who will send to Team Kurt PAUD to post the invoice",
+    help: "Use this when the PRO is in another queue.",
+    choices: []
+  }
+};
 
   function escapeHtml(value){
     return String(value ?? "")
@@ -1557,19 +2375,6 @@ start: {
 
   function isFinalNode(node){
     return !!node?.action || (!getNodeChoices(node).length && !node?.next);
-  }
-
-  function initRatingStars() {
-    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-
-    ratingStars.forEach(star => {
-      star.onclick = function () {
-        selectedRating = Number(this.dataset.value);
-        ratingStars.forEach(s => {
-          s.classList.toggle("selected", Number(s.dataset.value) <= selectedRating);
-        });
-      };
-    });
   }
 
   function setTemplateValue(el, text){
@@ -1650,8 +2455,13 @@ start: {
     els.passwordModal.style.display = "flex";
   }
 
-  function closePasswordModal(){ els.passwordModal.style.display = "none"; }
-  function closeEditModal(){ els.editModal.style.display = "none"; }
+  function closePasswordModal(){
+    els.passwordModal.style.display = "none";
+  }
+
+  function closeEditModal(){
+    els.editModal.style.display = "none";
+  }
 
   function checkPassword(){
     if(els.adminPassword.value === "admin"){
@@ -1673,7 +2483,6 @@ start: {
     els.modalTitle.textContent = `Edit ${currentEditType.toUpperCase()}`;
     els.editModal.style.display = "flex";
   }
-
 
   async function saveEdit(){
     const val = els.editTextarea.value.trim();
@@ -1708,8 +2517,15 @@ start: {
 
   function getPercent(isFinal){
     if (isFinal) return 100;
-    if(path.length === 0) return 0;
-    return Math.min(Math.round((path.length / MAX_STEPS) * 100), 95);
+
+    const currentIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (currentIndex === -1) {
+      return path.length === 0 ? 0 : Math.min((path.length / MAX_STEPS) * 100, 95);
+    }
+
+    const progress = ((currentIndex + 1) / MAX_STEPS) * 100;
+    return Math.min(Math.round(progress), 95);
   }
 
   function updateMeta(isFinal){
@@ -1725,23 +2541,67 @@ start: {
   }
 
   function updatePath(){
-    if(!path.length){
-      els.pathBox.className = "path-empty";
-      els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
-      return;
-    }
-
-    const html = path.map((item,index)=>`
-      <div class="path-item">
-        <div class="path-step">Step ${index + 1}</div>
-        <div class="path-question">${escapeHtml(item.question)}</div>
-        <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
-      </div>
-    `).join("");
-
-    els.pathBox.className = "path-list";
-    els.pathBox.innerHTML = html;
+  if(!path.length){
+    els.pathBox.className = "path-empty";
+    els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+    return;
   }
+
+  const html = path.map((item, index) => {
+    const isActive =
+      currentKey === "__final__"
+        ? (
+            item.nextKey === "__final__" ||
+            (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
+          )
+        : item.fromKey === currentKey;
+
+    return `
+      <div class="path-item">
+        <button
+          type="button"
+          class="path-jump ${isActive ? "active" : ""}"
+          data-step-index="${index}"
+        >
+          <div class="path-step">Step ${index + 1}</div>
+          <div class="path-question">${escapeHtml(item.question)}</div>
+          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+        </button>
+      </div>
+    `;
+  }).join("");
+
+  els.pathBox.className = "path-list";
+  els.pathBox.innerHTML = html;
+
+  els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.stepIndex);
+      jumpToPathStep(index);
+    });
+  });
+}
+
+  function jumpToPathStep(index){
+  if(index < 0 || index >= path.length) return;
+
+  const target = path[index];
+  if(!target) return;
+
+  currentFinalRecommendation = "";
+
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  if(target.nextKey === "__final__" && target.finalNode){
+    renderFinal(target.finalNode);
+    return;
+  }
+
+  renderNode(target.fromKey);
+}
 
   function updateRecommendation(text, isFinal){
     if(!isFinal){
@@ -1754,430 +2614,535 @@ start: {
     els.recommendationBox.textContent = text;
   }
 
-function openImageModal(src){
-  const modal = document.getElementById("imageModal");
-  const img = document.getElementById("imageModalImg");
-  if (!modal || !img) return;
+  function openImageModal(src){
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
 
-  img.src = src;
-  modal.classList.add("open");
-  document.body.style.overflow = "hidden";
-}
+    img.src = src;
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
 
-function closeImageModal(e){
-  if (e) e.stopPropagation();
+  function closeImageModal(e){
+    if (e) e.stopPropagation();
 
-  const modal = document.getElementById("imageModal");
-  const img = document.getElementById("imageModalImg");
-  if (!modal || !img) return;
+    const modal = document.getElementById("imageModal");
+    const img = document.getElementById("imageModalImg");
+    if (!modal || !img) return;
 
-  modal.classList.remove("open");
-  img.src = "";
-  document.body.style.overflow = "";
-}
+    modal.classList.remove("open");
+    img.src = "";
+    document.body.style.overflow = "";
+  }
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeImageModal();
-});
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeImageModal();
+  });
 
-async function renderFinal(finalNode){
-  const finalText = finalNode.action || getNodeText(finalNode) || "";
-  const finalNote = finalNode.note || "";
-  const finalImage = finalNode.image || "";
+  async function renderFinal(finalNode){
+    const finalText = finalNode.action || getNodeText(finalNode) || "";
+    const finalNote = finalNode.note || "";
+    const finalImage = finalNode.image || "";
 
-  const cleanedFinalNote = escapeHtml(finalNote)
-    .replace(/\r\n/g, "\n")
-    .replace(/^\s+/, "")
-    .split("\n")
-    .map(line => line.trimStart())
-    .join("\n")
-    .trim();
+    const formattedFinalText = escapeHtml(finalText)
+      .replace(/\r\n/g, "\n")
+      .replace(/\n/g, "<br>");
 
-  currentFinalRecommendation = finalText;
-  updateMeta(true);
-  updatePath();
-  updateRecommendation(finalText, true);
-  await loadTemplatesForRecommendation(finalText);
+    currentFinalRecommendation = finalText;
+    currentKey = "__final__";
+    updateMeta(true);
+    updatePath();
+    updateRecommendation(finalText, true);
+    await loadTemplatesForRecommendation(finalText);
 
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
-      <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
-    </div>
-
-    <div class="final-card">
-      <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
-      <div class="final-title">Use this handling outcome</div>
-      <div class="final-text">${escapeHtml(finalText)}</div>
-      ${cleanedFinalNote ? `<div style="margin-top:12px; color:#475569; line-height:1.7; white-space:pre-wrap;">${cleanedFinalNote}</div>` : ""}
-
-      ${finalImage ? `
-        <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
-          <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
-        </div>
-      ` : ""}
-
-      <div class="final-actions">
-        <button class="app-btn secondary" id="inlineBack">Go Back</button>
-        <button class="app-btn primary" id="inlineRestart">Start Over</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("inlineBack").onclick = goBack;
-  document.getElementById("inlineRestart").onclick = restart;
-}
-  
-  function formatNoteContent(text){
-  if (!text) return "";
-
-  return escapeHtml(text)
-    .replace(/\n/g, "<br>")
-    .replace(
-      /(^|[\s(>])((https?:\/\/[^\s]+)|([A-Za-z0-9._/-]+\.html))(?=$|[\s)<])/g,
-      (match, prefix, url) => {
-        const clean = url.trim();
-        const label = clean
-          .replace(".html", "")
-          .replace(/[-_]/g, " ")
-          .replace(/\b\w/g, c => c.toUpperCase());
-
-        return `${prefix}<a href="${clean}" target="_blank" class="smart-link">${label} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
-      }
-    );
-}
-
- async function renderNode(key){
-  currentKey = key;
-  const node = NODES[key];
-  if (!node) {
     els.stageCard.innerHTML = `
       <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
       </div>
-      <div class="question-wrap">
-        <div class="question-card">
-          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-          <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-          <div class="question-help">Check the node key in your NODES object.</div>
+
+      <div class="final-card">
+        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+        <div class="final-title">Use this handling outcome</div>
+        <div class="final-text">${formattedFinalText}</div>
+        ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+
+        ${finalImage ? `
+          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
+            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
+          </div>
+        ` : ""}
+
+        <div class="final-actions">
+          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart">Start Over</button>
         </div>
       </div>
     `;
-    return;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
   }
 
-  const choices = getNodeChoices(node);
-  const isFinal = isFinalNode(node);
+  async function renderNode(key){
+    currentKey = key;
+    const node = NODES[key];
 
-  if (isFinal) {
-    await renderFinal(node);
-    return;
-  }
-
-  updateMeta(false);
-  updatePath();
-  updateRecommendation("", false);
-
-  currentFinalRecommendation = "";
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-
-  const nodeText = getNodeText(node);
-  const nodeHelp = getNodeHelp(node);
-  const nodeNote = getNodeNote(node);
-  const nodeImage = getNodeImage(node);
-
-  const hasHtmlNote = nodeNote && /<[^>]+>/.test(nodeNote);
-
-  const formattedPlainNote = nodeNote
-    ? escapeHtml(nodeNote)
-        .replace(/\n/g, "<br>")
-        .replace(
-          /(^|[\s(>])([A-Za-z0-9._/-]+\.html)(?=$|[\s)<])/g,
-          '$1<a href="$2" target="_blank" class="auto-note-link">Open ${"$2".replace(".html","").replace(/[-_]/g," ")} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>'
-        )
-    : "";
-
-  const choicesHtml = choices.map(choice => `
-    <button class="choice"
-      data-next="${escapeHtml(choice.next || "")}"
-      data-label="${escapeHtml(choice.label || "")}"
-      data-action="${escapeHtml(choice.action || "")}"
-      data-note="${escapeHtml(choice.note || "")}">
-      <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-      <div class="choice-body">
-        <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-        <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-      </div>
-    </button>
-  `).join("");
-
-  const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
-
-  els.stageCard.innerHTML = `
-    <div class="stage-top">
-      <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-      <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
-    </div>
-
-    <div class="question-wrap">
-      <div class="question-card">
-        <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-        <div class="question-text">${escapeHtml(nodeText)}</div>
-        ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
-
-        ${nodeNote ? `
-          <div class="note-card">
-            <div class="note-head">
-              <i class="fa-solid fa-bell"></i>
-              Reminder
-            </div>
-            <div class="note-body">${hasHtmlNote ? nodeNote : formatNoteContent(nodeNote)}</div>
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+        </div>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
           </div>
-        ` : ""}
+        </div>
+      `;
+      return;
+    }
 
-        ${nodeImage ? `
-          <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
-            <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
-          </div>
-        ` : ""}
-      </div>
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
 
-      <div class="choices">${choicesHtml}</div>
-    </div>
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
 
-    <div class="decision-footer">
-      <div class="decision-footer-left">
-        <div class="footer-label">Decision Guide</div>
-        <div class="footer-value">${footerStepText}</div>
-      </div>
-
-      <div class="decision-actions">
-        <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-        <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-      </div>
-    </div>
-  `;
-
-  const inlineBack = document.getElementById("inlineBack");
-  const inlineRestart = document.getElementById("inlineRestart");
-
-  if(inlineBack) inlineBack.onclick = goBack;
-  if(inlineRestart) inlineRestart.onclick = restart;
-
-  els.stageCard.querySelectorAll(".choice").forEach(btn => {
-    btn.addEventListener("click", () => {
-      els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-      btn.classList.add("selected");
-
-      const next = btn.dataset.next;
-      const label = btn.dataset.label;
-      const action = btn.dataset.action;
-      const note = btn.dataset.note;
-
-      historyStack.push({ key: currentKey, path: [...path] });
-      path.push({ question: nodeText, answer: label });
-
-      updatePath();
-      updateMeta(false);
-
-      setTimeout(() => {
-        if (action) {
-          renderFinal({ action, note });
-        } else {
-          renderNode(next);
-        }
-      }, 120);
-    });
-  });
-}
-
-  function goBack(){
-    if(!historyStack.length) return;
-    const prev = historyStack.pop();
-    path = prev.path || [];
-    renderNode(prev.key);
-  }
-
-  function restart(){
-    path = [];
-    historyStack = [];
     currentFinalRecommendation = "";
     setTemplateValue(els.suggestedComment, "");
     setTemplateValue(els.suggestedCorrCode, "");
     setTemplateValue(els.suggestedEmail, "");
+
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
+
+const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+let currentStepNumber = 0;
+
+if (currentKey === "start") {
+  currentStepNumber = 0;
+} else if (fromIndex !== -1) {
+  // user is viewing a recorded step directly
+  currentStepNumber = fromIndex + 1;
+} else if (nextIndex !== -1) {
+  // user moved forward normally to the next screen
+  currentStepNumber = nextIndex + 2;
+} else {
+  // fallback for first real screen after intro
+  currentStepNumber = 1;
+}
+
+const footerStepText = currentKey === "start"
+  ? "Ready to begin"
+  : `Currently on step ${currentStepNumber}`;
+
+const badgeStepText = currentKey === "start"
+  ? "Start"
+  : `Step ${currentStepNumber}`;
+
+const hasPreviousStep = currentKey !== "start";
+
+    updateMeta(false);
+    updatePath();
+    updateRecommendation("", false);
+
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">${escapeHtml(nodeText)}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
+
+          ${nodeNote ? `
+            <div class="note-card">
+              <div class="note-head">
+                <i class="fa-solid fa-bell"></i>
+                Reminder
+              </div>
+              <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
+            </div>
+          ` : ""}
+
+          ${nodeImage ? `
+            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+            </div>
+          ` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if (inlineBack) inlineBack.onclick = goBack;
+    if (inlineRestart) inlineRestart.onclick = restart;
+
+   els.stageCard.querySelectorAll(".choice").forEach(btn => {
+  btn.addEventListener("click", () => {
+    els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    const next = btn.dataset.next;
+    const label = btn.dataset.label;
+    const action = btn.dataset.action;
+    const note = btn.dataset.note;
+
+    const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+    const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+    if (fromIndex !== -1) {
+      // user is re-answering an already-saved step
+      path = path.slice(0, fromIndex);
+    } else if (nextIndex !== -1) {
+      // user is continuing normally from the previous step
+      path = path.slice(0, nextIndex + 1);
+    }
+
+    historyStack.push({
+      key: currentKey,
+      path: [...path]
+    });
+
+    if (currentKey !== "start") {
+      path.push({
+        question: nodeText,
+        answer: label,
+        fromKey: currentKey,
+        nextKey: action ? "__final__" : next,
+        finalNode: action ? { action, note } : null
+      });
+    }
+
+    updatePath();
+    updateMeta(false);
+
+    setTimeout(() => {
+      if (action) {
+        renderFinal({ action, note });
+      } else {
+        renderNode(next);
+      }
+    }, 120);
+  });
+});
+  }
+
+function goBack(){
+  currentFinalRecommendation = "";
+  setTemplateValue(els.suggestedComment, "");
+  setTemplateValue(els.suggestedCorrCode, "");
+  setTemplateValue(els.suggestedEmail, "");
+  updateRecommendation("", false);
+
+  // Case 1: currently on final recommendation
+  if (currentKey === "__final__") {
+    const finalIndex = path.findIndex(item => {
+      if (item.nextKey === "__final__") return true;
+
+      const nextNode = NODES[item.nextKey];
+      return !!nextNode && isFinalNode(nextNode);
+    });
+
+    if (finalIndex === -1) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    // Go back to the actual last question step
+    currentKey = path[finalIndex].fromKey;
+    renderNode(path[finalIndex].fromKey);
+    return;
+  }
+
+  // Case 2: current screen matches a saved step directly (fromKey)
+  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+  if (fromIndex !== -1) {
+    if (fromIndex === 0) {
+      currentKey = "start";
+      renderNode("start");
+      return;
+    }
+
+    currentKey = path[fromIndex - 1].fromKey;
+    renderNode(path[fromIndex - 1].fromKey);
+    return;
+  }
+
+  // Case 3: current screen was reached normally from a previous step (nextKey)
+  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+  if (nextIndex !== -1) {
+    currentKey = path[nextIndex].fromKey;
+    renderNode(path[nextIndex].fromKey);
+    return;
+  }
+
+  // Fallback
+  currentKey = "start";
+  renderNode("start");
+}
+  
+  function restart(){
+    path = [];
+    historyStack = [];
+    currentFinalRecommendation = "";
+    currentKey = "start";
+
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+
     updatePath();
     updateRecommendation("", false);
     renderNode("start");
   }
 
-  function openComment() {
-    const modal = document.getElementById("commentModal");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "none";
-      feedbackMessage.textContent = "";
-    }
-    if (modal) modal.style.display = "flex";
-  }
+  /* ===== PAGE MODALS + FEEDBACK ONLY ===== */
 
-  function closeComment() {
-    const modal = document.getElementById("commentModal");
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "none";
-      feedbackMessage.textContent = "";
-    }
-    if (modal) modal.style.display = "none";
-  }
+function openModalAnimated(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
 
-  function openHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "flex";
-  }
+  modal.style.display = "flex";
+  modal.classList.remove("is-closing");
 
-  function closeHelp() {
-    const modal = document.getElementById("helpModal");
-    if (modal) modal.style.display = "none";
-  }
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+  });
+}
 
-  function closeAllComments() {
-    const modal = document.getElementById("allCommentsModal");
-    if (modal) modal.style.display = "none";
-    if (commentsUnsubscribe) {
-      commentsUnsubscribe();
-      commentsUnsubscribe = null;
-    }
-  }
+function closeModalAnimated(id, onClosed) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
 
-  async function sendComment() {
-    const commentName = document.getElementById("commentName");
-    const commentText = document.getElementById("commentText");
-    const feedbackMessage = document.getElementById("feedbackMessage");
+  modal.classList.remove("is-open");
+  modal.classList.add("is-closing");
 
-    const name = commentName ? commentName.value.trim() : "";
-    const comment = commentText ? commentText.value.trim() : "";
+  setTimeout(() => {
+    modal.style.display = "none";
+    modal.classList.remove("is-closing");
+    if (typeof onClosed === "function") onClosed();
+  }, 220);
+}
 
-    if (!selectedRating) {
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Please select a star rating first.";
-      }
-      return;
-    }
+function openComment() {
+  openModalAnimated("commentModal");
+}
 
-    try {
-      await db.collection(FEEDBACK_COLLECTION).add({
-        name: name || "Anonymous",
-        comment,
-        rating: selectedRating,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+function closeComment() {
+  closeModalAnimated("commentModal");
+}
+
+function openHelp() {
+  openModalAnimated("helpModal");
+}
+
+function closeHelp() {
+  closeModalAnimated("helpModal");
+}
+
+function closeAllComments() {
+  closeModalAnimated("allCommentsModal");
+}
+
+function initRatingStars() {
+  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+  if (!ratingStars.length) return;
+
+  ratingStars.forEach(star => {
+    star.onclick = function (e) {
+      e.stopPropagation();
+      selectedRating = Number(this.dataset.value || 0);
+
+      ratingStars.forEach(s => {
+        const val = Number(s.dataset.value || 0);
+        s.classList.toggle("selected", val <= selectedRating);
       });
+    };
+  });
+}
 
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#16a34a";
-        feedbackMessage.textContent = "Feedback sent successfully.";
-      }
+async function sendComment() {
+  const nameEl = document.getElementById("commentName");
+  const textEl = document.getElementById("commentText");
+  const feedbackMessage = document.getElementById("feedbackMessage");
 
-      if (commentName) commentName.value = "";
-      if (commentText) commentText.value = "";
-      selectedRating = 0;
-      ratingStars.forEach(s => s.classList.remove("selected"));
+  const name = (nameEl?.value || "").trim();
+  const comment = (textEl?.value || "").trim();
 
-      setTimeout(() => {
-        if (feedbackMessage) {
-          feedbackMessage.style.display = "none";
-          feedbackMessage.textContent = "";
-        }
-        closeComment();
-      }, 1200);
-    } catch (error) {
-      if (feedbackMessage) {
-        feedbackMessage.style.display = "block";
-        feedbackMessage.style.color = "#ef4444";
-        feedbackMessage.textContent = "Unable to send feedback. Please try again.";
-      }
+  if (!selectedRating) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Please select a rating first.";
     }
+    return;
   }
 
-  async function showAllComments() {
-    const commentsList = document.getElementById("commentsList");
-    const allCommentsModal = document.getElementById("allCommentsModal");
-    if (!commentsList || !allCommentsModal) return;
+  try {
+    await db.collection(FEEDBACK_COLLECTION).add({
+      name: name || "Anonymous",
+      comment,
+      rating: selectedRating,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#16a34a";
+      feedbackMessage.textContent = "Feedback sent successfully.";
+    }
+
+    if (nameEl) nameEl.value = "";
+    if (textEl) textEl.value = "";
+
+    selectedRating = 0;
+    ratingStars.forEach(star => star.classList.remove("selected"));
+
+    setTimeout(() => {
+      closeComment();
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "none";
+        feedbackMessage.textContent = "";
+      }
+    }, 900);
+  } catch (err) {
+    if (feedbackMessage) {
+      feedbackMessage.style.display = "block";
+      feedbackMessage.style.color = "#ef4444";
+      feedbackMessage.textContent = "Unable to send feedback right now.";
+    }
+  }
+}
+
+async function showAllComments() {
+  const commentModal = document.getElementById("commentModal");
+  const commentsList = document.getElementById("commentsList");
+  if (!commentsList) return;
+
+  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
+
+  const loadComments = async () => {
     try {
-      commentsList.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>";
-
-      const snap = await db.collection(FEEDBACK_COLLECTION).orderBy("createdAt","desc").get();
-      commentsList.innerHTML = "";
+      const snap = await db
+        .collection(FEEDBACK_COLLECTION)
+        .orderBy("createdAt", "desc")
+        .get();
 
       if (snap.empty) {
-        commentsList.innerHTML = `<p style="color:#64748b;">No comments yet.</p>`;
+        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
       } else {
-        snap.forEach(doc => {
-          const d = doc.data();
-          const item = document.createElement("div");
-          item.className = "comment-list-item";
-          item.innerHTML = `
-            <span class="stars">${"★".repeat(d.rating || 0)}${"☆".repeat(5 - (d.rating || 0))}</span>
-            <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(d.name || "Anonymous")}</strong>
-            <div style="color:#475569; line-height:1.7;">${escapeHtml(d.comment || "")}</div>
+        commentsList.innerHTML = snap.docs.map(doc => {
+          const data = doc.data() || {};
+          const rating = Number(data.rating || 0);
+          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+          const empty = "☆".repeat(Math.max(0, 5 - rating));
+
+          return `
+            <div class="comment-list-item">
+              <span class="stars">${filled}${empty}</span>
+              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+            </div>
           `;
-          commentsList.appendChild(item);
-        });
+        }).join("");
       }
 
-      closeComment();
-      allCommentsModal.style.display = "flex";
-    } catch(err) {
-      alert("Unable to load comments right now.");
+      openModalAnimated("allCommentsModal");
+    } catch (err) {
+      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+      openModalAnimated("allCommentsModal");
     }
+  };
+
+  if (commentModal && commentModal.style.display === "flex") {
+    closeModalAnimated("commentModal", loadComments);
+  } else {
+    loadComments();
   }
+}
 
-  window.addEventListener("click", function(e){
-    const helpModal = document.getElementById("helpModal");
-    const commentModal = document.getElementById("commentModal");
-    const allCommentsModal = document.getElementById("allCommentsModal");
+window.attemptEdit = attemptEdit;
+window.closePasswordModal = closePasswordModal;
+window.closeEditModal = closeEditModal;
+window.checkPassword = checkPassword;
+window.saveEdit = saveEdit;
+window.copyTemplateText = copyTemplateText;
+window.goBack = goBack;
+window.restart = restart;
+window.openImageModal = openImageModal;
+window.closeImageModal = closeImageModal;
 
-    if(e.target === helpModal) closeHelp();
-    if(e.target === commentModal) closeComment();
-    if(e.target === allCommentsModal) closeAllComments();
-    if(e.target === els.passwordModal) closePasswordModal();
-    if(e.target === els.editModal) closeEditModal();
-  });
+/* keep these for header.html buttons */
+window.openComment = openComment;
+window.closeComment = closeComment;
+window.openHelp = openHelp;
+window.closeHelp = closeHelp;
+window.showAllComments = showAllComments;
+window.closeAllComments = closeAllComments;
+window.sendComment = sendComment;
 
-  window.openComment = openComment;
-  window.closeComment = closeComment;
-  window.openHelp = openHelp;
-  window.closeHelp = closeHelp;
-  window.closeAllComments = closeAllComments;
-  window.sendComment = sendComment;
-  window.showAllComments = showAllComments;
+document.addEventListener("headerLoaded", () => {
+  initRatingStars();
+});
 
-  window.attemptEdit = attemptEdit;
-  window.copyTemplateText = copyTemplateText;
-  window.closePasswordModal = closePasswordModal;
-  window.closeEditModal = closeEditModal;
-  window.checkPassword = checkPassword;
-  window.saveEdit = saveEdit;
-  window.goBack = goBack;
-  window.restart = restart;
-  window.openImageModal = openImageModal;
-  window.closeImageModal = closeImageModal;
+setTimeout(() => {
+  initRatingStars();
+}, 300);
 
-  document.addEventListener("headerLoaded", () => {
-    initRatingStars();
-  });
-
-  renderNode("start");
+renderNode("start");
 });
 </script>
 <div id="imageModal" class="image-modal" onclick="closeImageModal()">
   <button type="button" class="image-modal-close" onclick="closeImageModal(event)">×</button>
   <img id="imageModalImg" src="" alt="Expanded step image" onclick="event.stopPropagation()">
 </div>
+
 </body>
 </html>
