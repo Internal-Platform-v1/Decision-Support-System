@@ -2922,238 +2922,245 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape") closeImageModal();
   });
 
-  async function renderFinal(finalNode){
-    const finalText = finalNode.action || getNodeText(finalNode) || "";
-    const finalNote = finalNode.note || "";
-    const finalImage = finalNode.image || "";
+async function renderFinal(finalNode){
+        const finalText = finalNode.action || getNodeText(finalNode) || "";
+        const finalNote = finalNode.note || "";
+        const finalImages = finalNode.images && Array.isArray(finalNode.images) ? finalNode.images : (finalNode.image ? [finalNode.image] : []);
 
-    const formattedFinalText = escapeHtml(finalText)
-      .replace(/\r\n/g, "\n")
-      .replace(/\n/g, "<br>");
+        const formattedFinalText = escapeHtml(finalText)
+          .replace(/\r\n/g, "\n")
+          .replace(/\n/g, "<br>");
 
-    currentFinalRecommendation = finalText;
-    currentKey = "__final__";
-    updateMeta(true);
-    updatePath();
-    updateRecommendation(finalText, true);
-    await loadTemplatesForRecommendation(finalText);
+        currentFinalRecommendation = finalText;
+        currentKey = "__final__";
+        updateMeta(true);
+        updatePath();
+        updateRecommendation(finalText, true);
+        await loadTemplatesForRecommendation(finalText);
 
-    els.stageCard.innerHTML = `
-      <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
-        <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
-      </div>
-
-      <div class="final-card">
-        <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
-        <div class="final-title">Use this handling outcome</div>
-        <div class="final-text">${formattedFinalText}</div>
-        ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
-
-        ${finalImage ? `
-          <div class="question-image" style="margin-top:18px;" onclick="openImageModal('${String(finalImage).replace(/'/g, "\\'")}')">
-            <img src="${escapeHtml(finalImage)}" alt="Final recommendation image" loading="lazy">
-          </div>
-        ` : ""}
-
-        <div class="final-actions">
-          <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
-          <button class="app-btn primary" id="inlineRestart">Start Over</button>
-        </div>
-      </div>
-    `;
-
-    const inlineBack = document.getElementById("inlineBack");
-    const inlineRestart = document.getElementById("inlineRestart");
-
-    if (inlineBack) inlineBack.onclick = goBack;
-    if (inlineRestart) inlineRestart.onclick = restart;
-  }
-
-  async function renderNode(key){
-    currentKey = key;
-    const node = NODES[key];
-
-    if (!node) {
-      els.stageCard.innerHTML = `
-        <div class="stage-top">
-          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
-        </div>
-        <div class="question-wrap">
-          <div class="question-card">
-            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-            <div class="question-help">Check the node key in your NODES object.</div>
-          </div>
-        </div>
-      `;
-      return;
-    }
-
-    const choices = getNodeChoices(node);
-    const isFinal = isFinalNode(node);
-
-    if (isFinal) {
-      await renderFinal(node);
-      return;
-    }
-
-    currentFinalRecommendation = "";
-    setTemplateValue(els.suggestedComment, "");
-    setTemplateValue(els.suggestedCorrCode, "");
-    setTemplateValue(els.suggestedEmail, "");
-
-    const nodeText = getNodeText(node);
-    const nodeHelp = getNodeHelp(node);
-    const nodeNote = getNodeNote(node);
-    const nodeImage = getNodeImage(node);
-
-const fromIndex = path.findIndex(item => item.fromKey === currentKey);
-const nextIndex = path.findIndex(item => item.nextKey === currentKey);
-
-let currentStepNumber = 0;
-
-if (currentKey === "start") {
-  currentStepNumber = 0;
-} else if (fromIndex !== -1) {
-  // user is viewing a recorded step directly
-  currentStepNumber = fromIndex + 1;
-} else if (nextIndex !== -1) {
-  // user moved forward normally to the next screen
-  currentStepNumber = nextIndex + 2;
-} else {
-  // fallback for first real screen after intro
-  currentStepNumber = 1;
-}
-
-const footerStepText = currentKey === "start"
-  ? "Ready to begin"
-  : `Currently on step ${currentStepNumber}`;
-
-const badgeStepText = currentKey === "start"
-  ? "Start"
-  : `Step ${currentStepNumber}`;
-
-const hasPreviousStep = currentKey !== "start";
-
-    updateMeta(false);
-    updatePath();
-    updateRecommendation("", false);
-
-    const choicesHtml = choices.map(choice => `
-      <button class="choice"
-        data-next="${escapeHtml(choice.next || "")}"
-        data-label="${escapeHtml(choice.label || "")}"
-        data-action="${escapeHtml(choice.action || "")}"
-        data-note="${escapeHtml(choice.note || "")}">
-        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-        <div class="choice-body">
-          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-        </div>
-      </button>
-    `).join("");
-
-    els.stageCard.innerHTML = `
-      <div class="stage-top">
-        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
-      </div>
-
-      <div class="question-wrap">
-        <div class="question-card">
-          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-          <div class="question-text">${escapeHtml(nodeText)}</div>
-          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
-
-          ${nodeNote ? `
-            <div class="note-card">
-              <div class="note-head">
-                <i class="fa-solid fa-bell"></i>
-                Reminder
+        let imagesHtml = "";
+        if (finalImages.length > 0) {
+          imagesHtml = `<div class="multi-images" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">`;
+          finalImages.forEach(img => {
+            imagesHtml += `
+              <div class="question-image" style="flex:1; min-width:160px;" onclick="openImageModal('${String(img).replace(/'/g, "\\'")}')">
+                <img src="${escapeHtml(img)}" alt="Final recommendation image" loading="lazy" style="max-height:200px; width:auto;">
               </div>
-              <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
+            `;
+          });
+          imagesHtml += `</div>`;
+        }
+
+        els.stageCard.innerHTML = `
+          <div class="stage-top">
+            <div class="badge"><i class="fa-solid fa-circle-check"></i> Flow Complete</div>
+            <div class="badge alt"><i class="fa-solid fa-wand-magic-sparkles"></i> Final instruction ready</div>
+          </div>
+          <div class="final-card">
+            <div class="final-badge"><i class="fa-solid fa-badge-check"></i> Recommended Action</div>
+            <div class="final-title">Use this handling outcome</div>
+            <div class="final-text">${formattedFinalText}</div>
+            ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
+            ${imagesHtml}
+            <div class="final-actions" style="justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <a href="#" onclick="showCorrectionModal(); return false;" class="smart-link" style="background: linear-gradient(135deg, #4d148c, #6d28d9);">
+                <i class="fa-regular fa-rectangle-list"></i> View Correction Comments & Codes Instructions
+              </a>
+              <div style="display:flex; gap:10px;">
+                <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
+                <button class="app-btn primary" id="inlineRestart">Start Over</button>
+              </div>
             </div>
-          ` : ""}
+          </div>
+        `;
 
-          ${nodeImage ? `
-            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
-              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
-            </div>
-          ` : ""}
-        </div>
+        const inlineBack = document.getElementById("inlineBack");
+        const inlineRestart = document.getElementById("inlineRestart");
 
-        <div class="choices">${choicesHtml}</div>
-      </div>
-
-      <div class="decision-footer">
-        <div class="decision-footer-left">
-          <div class="footer-label">Decision Guide</div>
-          <div class="footer-value">${footerStepText}</div>
-        </div>
-
-        <div class="decision-actions">
-          <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
-          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
-        </div>
-      </div>
-    `;
-
-    const inlineBack = document.getElementById("inlineBack");
-    const inlineRestart = document.getElementById("inlineRestart");
-
-    if (inlineBack) inlineBack.onclick = goBack;
-    if (inlineRestart) inlineRestart.onclick = restart;
-
-   els.stageCard.querySelectorAll(".choice").forEach(btn => {
-  btn.addEventListener("click", () => {
-    els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-    btn.classList.add("selected");
-
-    const next = btn.dataset.next;
-    const label = btn.dataset.label;
-    const action = btn.dataset.action;
-    const note = btn.dataset.note;
-
-    const fromIndex = path.findIndex(item => item.fromKey === currentKey);
-    const nextIndex = path.findIndex(item => item.nextKey === currentKey);
-
-    if (fromIndex !== -1) {
-      // user is re-answering an already-saved step
-      path = path.slice(0, fromIndex);
-    } else if (nextIndex !== -1) {
-      // user is continuing normally from the previous step
-      path = path.slice(0, nextIndex + 1);
-    }
-
-    historyStack.push({
-      key: currentKey,
-      path: [...path]
-    });
-
-    if (currentKey !== "start") {
-      path.push({
-        question: nodeText,
-        answer: label,
-        fromKey: currentKey,
-        nextKey: action ? "__final__" : next,
-        finalNode: action ? { action, note } : null
-      });
-    }
-
-    updatePath();
-    updateMeta(false);
-
-    setTimeout(() => {
-      if (action) {
-        renderFinal({ action, note });
-      } else {
-        renderNode(next);
+        if (inlineBack) inlineBack.onclick = goBack;
+        if (inlineRestart) inlineRestart.onclick = restart;
       }
-    }, 120);
-  });
-});
-  }
+
+      async function renderNode(key){
+        currentKey = key;
+        const node = NODES[key];
+
+        if (!node) {
+          els.stageCard.innerHTML = `
+            <div class="stage-top">
+              <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
+            </div>
+            <div class="question-wrap">
+              <div class="question-card">
+                <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+                <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+                <div class="question-help">Check the node key in your NODES object.</div>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        const choices = getNodeChoices(node);
+        const isFinal = isFinalNode(node);
+
+        if (isFinal) {
+          await renderFinal(node);
+          return;
+        }
+
+        currentFinalRecommendation = "";
+        setTemplateValue(els.suggestedComment, "");
+        setTemplateValue(els.suggestedCorrCode, "");
+        setTemplateValue(els.suggestedEmail, "");
+
+        const nodeText = getNodeText(node);
+        const nodeHelp = getNodeHelp(node);
+        const nodeNote = getNodeNote(node);
+        const nodeImages = node.images && Array.isArray(node.images) ? node.images : (node.image ? [node.image] : []);
+
+        const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+        const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+        let currentStepNumber = 0;
+
+        if (currentKey === "start") {
+          currentStepNumber = 0;
+        } else if (fromIndex !== -1) {
+          currentStepNumber = fromIndex + 1;
+        } else if (nextIndex !== -1) {
+          currentStepNumber = nextIndex + 2;
+        } else {
+          currentStepNumber = 1;
+        }
+
+        const footerStepText = currentKey === "start"
+          ? "Ready to begin"
+          : `Currently on step ${currentStepNumber}`;
+
+        const badgeStepText = currentKey === "start"
+          ? "Start"
+          : `Step ${currentStepNumber}`;
+
+        const hasPreviousStep = currentKey !== "start";
+
+        updateMeta(false);
+        updatePath();
+        updateRecommendation("", false);
+
+        const choicesHtml = choices.map(choice => `
+          <button class="choice"
+            data-next="${escapeHtml(choice.next || "")}"
+            data-label="${escapeHtml(choice.label || "")}"
+            data-action="${escapeHtml(choice.action || "")}"
+            data-note="${escapeHtml(choice.note || "")}">
+            <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+            <div class="choice-body">
+              <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+              <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+            </div>
+          </button>
+        `).join("");
+
+        let imagesHtml = "";
+        if (nodeImages.length > 0) {
+          imagesHtml = `<div class="multi-images" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">`;
+          nodeImages.forEach(img => {
+            imagesHtml += `
+              <div class="question-image" style="flex:1; min-width:160px;" onclick="openImageModal('${String(img).replace(/'/g, "\\'")}')">
+                <img src="${escapeHtml(img)}" alt="Step image" loading="lazy" style="max-height:200px; width:auto;">
+              </div>
+            `;
+          });
+          imagesHtml += `</div>`;
+        }
+
+        els.stageCard.innerHTML = `
+          <div class="stage-top">
+            <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+            <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${badgeStepText}</div>
+          </div>
+          <div class="question-wrap">
+            <div class="question-card">
+              <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+              <div class="question-text">${escapeHtml(nodeText)}</div>
+              ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp).replace(/\n/g, "<br>")}</div>` : ""}
+              ${nodeNote ? `
+                <div class="note-card">
+                  <div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div>
+                  <div class="note-body">${nodeNote}</div>
+                </div>
+              ` : ""}
+              ${imagesHtml}
+            </div>
+            <div class="choices">${choicesHtml}</div>
+          </div>
+          <div class="decision-footer">
+            <div class="decision-footer-left">
+              <div class="footer-label">Decision Guide</div>
+              <div class="footer-value">${footerStepText}</div>
+            </div>
+            <div class="decision-actions">
+              <button class="app-btn ghost" id="inlineBack" ${hasPreviousStep ? "" : 'style="display:none;"'}>Go Back</button>
+              <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+            </div>
+          </div>
+        `;
+
+        const inlineBack = document.getElementById("inlineBack");
+        const inlineRestart = document.getElementById("inlineRestart");
+
+        if (inlineBack) inlineBack.onclick = goBack;
+        if (inlineRestart) inlineRestart.onclick = restart;
+
+        els.stageCard.querySelectorAll(".choice").forEach(btn => {
+          btn.addEventListener("click", () => {
+            els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+            btn.classList.add("selected");
+
+            const next = btn.dataset.next;
+            const label = btn.dataset.label;
+            const action = btn.dataset.action;
+            const note = btn.dataset.note;
+
+            const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+            const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+
+            if (fromIndex !== -1) {
+              path = path.slice(0, fromIndex);
+            } else if (nextIndex !== -1) {
+              path = path.slice(0, nextIndex + 1);
+            }
+
+            historyStack.push({
+              key: currentKey,
+              path: [...path]
+            });
+
+            if (currentKey !== "start") {
+              path.push({
+                question: nodeText,
+                answer: label,
+                fromKey: currentKey,
+                nextKey: action ? "__final__" : next,
+                finalNode: action ? { action, note } : null
+              });
+            }
+
+            updatePath();
+            updateMeta(false);
+
+            setTimeout(() => {
+              if (action) {
+                renderFinal({ action, note });
+              } else {
+                renderNode(next);
+              }
+            }, 120);
+          });
+        });
+      }
+
 
 function goBack(){
   currentFinalRecommendation = "";
