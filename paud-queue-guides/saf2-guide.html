@@ -39,14 +39,12 @@
         window.location.replace("index.html");
         return;
       }
-
       await user.reload();
       const refreshedUser = window.auth.currentUser;
       if (!refreshedUser || !refreshedUser.emailVerified) {
         window.location.replace("index.html");
         return;
       }
-
       document.documentElement.classList.remove("page-protected");
     } catch (error) {
       console.error("Auth guard error:", error);
@@ -61,7 +59,6 @@
     visibility:hidden;
   }
 
-  /* ===== BASE THEME VARIABLES (fallback – will be overridden by theme sync) ===== */
   :root{
     --bg:#07111f;
     --bg-soft:#0c1728;
@@ -848,16 +845,6 @@
     font-size:11px;
     font-weight:800;
     color:#64748b;
-    cursor:pointer;
-    text-decoration:none;
-    transition:.2s ease;
-  }
-
-  .template-tag:hover{
-    background:#eef4ff;
-    border-color:#cfe0ff;
-    color:#1d4ed8;
-    transform:translateY(-1px);
   }
 
   .template-copy{
@@ -879,6 +866,19 @@
     color:#166534 !important;
     border-color:#bbf7d0 !important;
   }
+
+  .template-tag{
+  cursor:pointer;
+  text-decoration:none;
+  transition:.2s ease;
+}
+
+.template-tag:hover{
+  background:#eef4ff;
+  border-color:#cfe0ff;
+  color:#1d4ed8;
+  transform:translateY(-1px);
+} 
 
   @media (max-width:1450px){
     .app-frame{
@@ -1069,7 +1069,9 @@
     border-radius:20px;
     background:linear-gradient(180deg, #fff8eb 0%, #ffffff 100%);
     border:1px solid rgba(245,158,11,.18);
-    box-shadow:0 14px 30px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.75);
+    box-shadow:
+      0 14px 30px rgba(15,23,42,.06),
+      inset 0 1px 0 rgba(255,255,255,.75);
     position:relative;
     overflow:hidden;
   }
@@ -1107,8 +1109,8 @@
     padding:10px 14px;
     margin-top:8px;
     border-radius:12px;
-    background:linear-gradient(135deg, var(--accent), var(--accent-2));
-    color:#fff;
+    background:linear-gradient(135deg,#4d148c,#6d28d9);
+    color:#fff !important;
     text-decoration:none;
     font-size:12px;
     font-weight:800;
@@ -1121,7 +1123,120 @@
     box-shadow:0 14px 24px rgba(77,20,140,.25);
   }
 
-  /* ===== MODALS – fully theme‑aware, uses CSS variables ===== */
+  /* ===== MODALS – same as working Missing Document Guide ===== */
+  #commentModal,
+  #allCommentsModal,
+  #helpModal,
+  #correctionInstructionsModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.52);
+    justify-content: center;
+    align-items: center;
+    padding: 0 24px;
+    z-index: 2147483647;
+    backdrop-filter: blur(8px);
+    overflow-y: auto;
+  }
+
+  #commentModal .modal-content,
+  #allCommentsModal .modal-content,
+  #helpModal .modal-content,
+  #correctionInstructionsModal .modal-content {
+    width: 100%;
+    background: #fff;
+    border-radius: 28px;
+    padding: 26px;
+    box-shadow: 0 24px 80px rgba(2, 6, 23, 0.18);
+    max-height: min(84vh, 900px);
+    overflow: auto;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    margin: 110px auto 32px;
+  }
+
+  #commentModal .feedback-modal,
+  #correctionInstructionsModal .instructions-modal {
+    max-width: 820px;
+    border-radius: 30px;
+    padding: 18px;
+  }
+
+  #commentModal .modal-header,
+  #allCommentsModal .modal-header,
+  #helpModal .modal-header,
+  #correctionInstructionsModal .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    margin-bottom: 14px;
+    color: #0f172a;
+  }
+
+  #commentModal .modal-close,
+  #allCommentsModal .modal-close,
+  #helpModal .modal-close,
+  #correctionInstructionsModal .modal-close {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    color: #64748b;
+    background: #f8fafc;
+    box-shadow: inset 0 0 0 1px rgba(148,163,184,.16);
+    transition: .2s ease;
+    flex-shrink: 0;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  #commentModal .modal-close:hover,
+  #allCommentsModal .modal-close:hover,
+  #helpModal .modal-close:hover,
+  #correctionInstructionsModal .modal-close:hover {
+    color: #0f172a;
+    background: #eef2ff;
+  }
+
+  /* Inner content – no hardcoded colours, inherits from theme */
+  .instructions-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: inherit;
+  }
+
+  .instructions-content h3 {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 24px 0 12px;
+    color: inherit;
+    border-left: 4px solid #ff6600;
+    padding-left: 12px;
+  }
+
+  .corr-code-block {
+    background: rgba(0, 0, 0, 0.04);
+    border-left: 3px solid #4d148c;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin: 12px 0;
+  }
+
+  .instruction-note {
+    background: rgba(255, 102, 0, 0.08);
+    border-left: 3px solid #ff6600;
+    padding: 10px 14px;
+    border-radius: 14px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
   #passwordModal,
   #editModal{
     display:none;
@@ -1136,13 +1251,13 @@
 
   #passwordModal .modal-content,
   #editModal .modal-content{
-    background:var(--card);
+    background:#fff;
     width:100%;
     max-width:560px;
     border-radius:22px;
     padding:24px;
-    box-shadow:var(--shadow-lg);
-    border:1px solid var(--line);
+    box-shadow:0 24px 60px rgba(15,23,42,.22);
+    border:1px solid #e2e8f0;
     max-height:85vh;
     overflow:auto;
   }
@@ -1156,37 +1271,36 @@
     font-size:20px;
     font-weight:900;
     margin-bottom:14px;
-    color:var(--text);
+    color:#0f172a;
   }
 
   #passwordModal .modal-close,
   #editModal .modal-close{
     font-size:22px;
     cursor:pointer;
-    color:var(--text-soft);
+    color:#64748b;
     line-height:1;
   }
 
   #passwordModal .modal-close:hover,
   #editModal .modal-close:hover{
-    color:var(--accent);
+    color:#4d148c;
   }
 
   #passwordModal input,
   #editModal textarea{
     width:100%;
-    border:1px solid var(--line);
+    border:1px solid #dbe4f0;
     border-radius:14px;
     padding:12px 14px;
     font-size:14px;
     outline:none;
-    background:var(--card);
-    color:var(--text);
+    background:#fff;
   }
 
   #passwordModal input:focus,
   #editModal textarea:focus{
-    border-color:var(--accent-2);
+    border-color:#c4b5fd;
     box-shadow:0 0 0 4px rgba(109,40,217,.10);
   }
 
@@ -1195,180 +1309,9 @@
     resize:vertical;
   }
 
-  #commentModal,
-  #allCommentsModal,
-  #helpModal,
-  #correctionInstructionsModal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(2,6,23,.88);
-    justify-content:center;
-    align-items:center;
-    padding:0 24px;
-    z-index:2147483647;
-    backdrop-filter:blur(12px);
-    overflow-y:auto;
-  }
-
-  #commentModal .modal-content,
-  #allCommentsModal .modal-content,
-  #helpModal .modal-content,
-  #correctionInstructionsModal .modal-content{
-    width:100%;
-    background:var(--card);
-    border-radius:28px;
-    padding:26px;
-    box-shadow:var(--shadow-xl);
-    max-height:min(84vh, 900px);
-    overflow:auto;
-    border:1px solid var(--line);
-    margin:110px auto 32px;
-  }
-
-  #commentModal .feedback-modal,
-  #correctionInstructionsModal .instructions-modal{
-    max-width:820px;
-    border-radius:30px;
-    padding:18px;
-  }
-
-  #commentModal .modal-header,
-  #allCommentsModal .modal-header,
-  #helpModal .modal-header,
-  #correctionInstructionsModal .modal-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:14px;
-    font-size:22px;
-    font-weight:800;
-    letter-spacing:-.03em;
-    margin-bottom:14px;
-    color:var(--text);
-  }
-
-  #commentModal .modal-close,
-  #allCommentsModal .modal-close,
-  #helpModal .modal-close,
-  #correctionInstructionsModal .modal-close{
-    cursor:pointer;
-    width:40px;
-    height:40px;
-    border-radius:14px;
-    display:grid;
-    place-items:center;
-    color:var(--text-soft);
-    background:var(--card-soft);
-    box-shadow:inset 0 0 0 1px var(--line);
-    transition:.2s ease;
-    flex-shrink:0;
-    font-size:22px;
-    line-height:1;
-  }
-
-  #commentModal .modal-close:hover,
-  #allCommentsModal .modal-close:hover,
-  #helpModal .modal-close:hover,
-  #correctionInstructionsModal .modal-close:hover{
-    color:var(--text);
-    background:color-mix(in srgb, var(--card-soft) 80%, var(--accent) 10%);
-  }
-
-  /* Correction modal inner content – uses theme variables */
-  .instructions-content{
-    font-size:14px;
-    line-height:1.6;
-    color:var(--text);
-  }
-
-  .instructions-content h3{
-    font-size:18px;
-    font-weight:800;
-    margin:24px 0 12px;
-    color:var(--accent);
-    border-left:4px solid var(--accent-3);
-    padding-left:12px;
-  }
-
-  .instructions-content h3:first-of-type{
-    margin-top:0;
-  }
-
-  .instructions-content p{
-    margin:6px 0;
-  }
-
-  .instructions-content ul{
-    margin:8px 0 16px 20px;
-    padding-left:0;
-  }
-
-  .instructions-content li{
-    margin:4px 0;
-  }
-
-  .corr-code-block{
-    background:var(--card-soft);
-    border-left:3px solid var(--accent);
-    padding:12px 16px;
-    border-radius:14px;
-    margin:12px 0;
-    transition:background .2s;
-  }
-
-  .corr-code-block:hover{
-    background:color-mix(in srgb, var(--card-soft) 80%, var(--accent) 10%);
-  }
-
-  .corr-code-block strong{
-    color:var(--accent);
-  }
-
-  .instruction-note{
-    background:color-mix(in srgb, var(--card-soft) 85%, var(--accent-3) 10%);
-    border-left:3px solid var(--accent-3);
-    padding:10px 14px;
-    border-radius:14px;
-    margin:16px 0;
-    font-size:13px;
-  }
-
-  @media (max-width:720px){
-    #passwordModal,
-    #editModal{
-      padding:14px;
-    }
-    #passwordModal .modal-content,
-    #editModal .modal-content{
-      border-radius:18px;
-      padding:18px;
-    }
-    #commentModal,
-    #allCommentsModal,
-    #helpModal,
-    #correctionInstructionsModal{
-      padding:0 14px;
-    }
-    #commentModal .modal-content,
-    #allCommentsModal .modal-content,
-    #helpModal .modal-content,
-    #correctionInstructionsModal .modal-content{
-      padding:20px;
-      border-radius:22px;
-      margin:96px auto 20px;
-    }
-    #commentModal .feedback-modal,
-    #correctionInstructionsModal .instructions-modal{
-      padding:16px;
-      border-radius:24px;
-    }
-  }
-
-  /* Additional generic styles */
   .aj-card{
-    background:var(--card-soft);
-    border:1px solid var(--line);
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
     border-radius:10px;
     padding:14px;
     margin-bottom:14px;
@@ -1376,12 +1319,12 @@
 
   .aj-card h3{
     margin-bottom:8px;
-    color:var(--accent);
+    color:#4d148c;
   }
 
   .advise-box{
-    background:color-mix(in srgb, var(--card-soft) 90%, var(--accent) 10%);
-    border-left:4px solid var(--accent);
+    background:#eef6ff;
+    border-left:4px solid #4d148c;
     padding:10px;
     margin:6px 0 10px;
     border-radius:6px;
@@ -1392,13 +1335,13 @@
     font-weight:700;
     cursor:pointer;
     padding:10px;
-    background:var(--card-soft);
+    background:#f1f5f9;
     border-radius:8px;
     transition:.2s;
   }
 
   .aj-header:hover{
-    background:var(--line);
+    background:#e2e8f0;
   }
 
   .aj-content{
@@ -1410,10 +1353,10 @@
   .aj-search-container{
     position:sticky;
     top:0;
-    background:var(--card);
+    background:#fff;
     padding:10px;
     z-index:5;
-    border-bottom:1px solid var(--line);
+    border-bottom:1px solid #ddd;
   }
 
   #ajSearch{
@@ -1421,20 +1364,18 @@
     padding:8px 12px;
     font-size:13px;
     border-radius:6px;
-    border:1px solid var(--line);
-    background:var(--card);
-    color:var(--text);
+    border:1px solid #ccc;
   }
 
   .link-btn{
-    color:var(--accent);
+    color:#0073e6;
     font-weight:600;
     cursor:pointer;
     text-decoration:underline;
   }
 
   .link-btn:hover{
-    color:var(--accent-2);
+    color:#005bb5;
   }
 
   .aj-section{
@@ -1444,7 +1385,7 @@
   .aj-subtitle{
     font-size:12px;
     font-weight:800;
-    color:var(--text-soft);
+    color:#64748b;
     margin-bottom:8px;
     text-transform:uppercase;
   }
@@ -1468,13 +1409,13 @@
   .aj-link{
     display:inline-block;
     margin-bottom:8px;
-    color:var(--accent);
+    color:#4D148C;
     text-decoration:none;
     font-weight:600;
   }
 
   .note-body{
-    color:var(--text-soft);
+    color:#475569;
     font-size:14px;
     line-height:1.6;
   }
@@ -1501,19 +1442,19 @@
   }
 
   .note-body a{
-    color:var(--accent);
+    color:#4D148C;
     text-decoration:none;
     font-weight:600;
   }  
 
   .final-note-html{
     margin-top:12px;
-    color:var(--text-soft);
+    color:#475569;
     line-height:1.7;
   }
 
   .final-note-html a{
-    color:var(--accent);
+    color:#4D148C;
     text-decoration:none;
     font-weight:600;
   }  
@@ -1544,80 +1485,310 @@
 
   .final-note-text {
     font-size: 13.5px;
-    color: var(--text);
+    color: #111827;
     line-height: 1.6;
   }
 
-    /* Make the correction modal blend with any theme */
-#correctionInstructionsModal {
-  background: rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(12px) !important;
-}
+  /* Theme overrides – FedEx Purple + Orange (default) */
+  :root{
+    --bg:#07111f;
+    --bg-soft:#091120;
+    --panel:#121033;
+    --panel-2:#1b1240;
+    --card:#ffffff;
+    --card-soft:#f8fafc;
+    --text:#0f172a;
+    --text-soft:#475569;
+    --muted:#94a3b8;
+    --line:rgba(148,163,184,.18);
+    --white-line:rgba(255,255,255,.10);
+    --accent:#4d148c;
+    --accent-2:#6d28d9;
+    --accent-3:#ff6600;
+    --accent-soft:#f5f3ff;
+    --accent-orange-soft:#fff7ed;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --shadow-xl:0 34px 90px rgba(2,6,23,.22);
+    --shadow-lg:0 24px 60px rgba(2,6,23,.16);
+    --shadow-md:0 14px 34px rgba(15,23,42,.10);
+    --shadow-card:0 16px 40px rgba(15,23,42,.06);
+  }
 
-#correctionInstructionsModal .modal-content {
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(8px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: inherit !important;
-}
+  body{
+    color:var(--text);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(109,40,217,.28), transparent 28%),
+      radial-gradient(circle at 82% 0%, rgba(255,102,0,.18), transparent 30%),
+      radial-gradient(circle at 40% 52%, rgba(77,20,140,.16), transparent 34%),
+      radial-gradient(circle at 88% 78%, rgba(255,102,0,.10), transparent 30%),
+      linear-gradient(180deg, #121033 0%, #091120 42%, #07111f 100%) !important;
+  }
 
-/* For dark themes, use darker glass */
-body.theme-dark #correctionInstructionsModal .modal-content,
-body:not(.theme-fedex) #correctionInstructionsModal .modal-content {
-  background: rgba(0, 0, 0, 0.75) !important;
-  color: #f1f5f9 !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-}
+  body::before{
+    background:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px) !important;
+    background-size:44px 44px !important;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 65%) !important;
+  }
 
-/* The inner boxes become semi‑transparent and adapt */
-#correctionInstructionsModal .corr-code-block,
-#correctionInstructionsModal .instruction-note {
-  background: rgba(0, 0, 0, 0.08) !important;
-  border-left-color: var(--accent, #4d148c) !important;
-}
-body.theme-dark #correctionInstructionsModal .corr-code-block,
-body.theme-dark #correctionInstructionsModal .instruction-note {
-  background: rgba(255, 255, 255, 0.1) !important;
-}
+  body::after{
+    content:"";
+    position:fixed;
+    width:520px;
+    height:520px;
+    right:-180px;
+    bottom:-180px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,102,0,.16), transparent 66%);
+    pointer-events:none;
+    z-index:0;
+  }
 
-/* Correction modal – follows any theme automatically */
-#correctionInstructionsModal {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-}
+  .app-shell{
+    margin:28px auto 28px;
+  }
 
-#correctionInstructionsModal .modal-content {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #0f172a; /* default dark text */
-}
+  .app-frame{
+    background:rgba(255,255,255,.70) !important;
+    border:1px solid rgba(255,255,255,.82) !important;
+    box-shadow:0 34px 90px rgba(2,6,23,.22) !important;
+    backdrop-filter:blur(18px) !important;
+    -webkit-backdrop-filter:blur(18px) !important;
+  }
 
-/* For dark themes, switch to dark glass */
-body.theme-dark #correctionInstructionsModal .modal-content,
-body:is(.theme-dark, .theme-ebs, [class*="dark"]) #correctionInstructionsModal .modal-content {
-  background: rgba(10, 10, 20, 0.85);
-  color: #f1f5f9;
-  border-color: rgba(255, 255, 255, 0.1);
-}
+  .main-topbar{
+    background:
+      radial-gradient(circle at 16% 16%, rgba(255,102,0,.18), transparent 28%),
+      linear-gradient(135deg, rgba(77,20,140,.96), rgba(59,15,115,.94) 52%, rgba(7,17,31,.96)) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    box-shadow:0 24px 60px rgba(2,6,23,.16) !important;
+    color:#fff !important;
+  }
 
-/* Inner blocks become semi‑transparent and adapt */
-#correctionInstructionsModal .corr-code-block,
-#correctionInstructionsModal .instruction-note {
-  background: rgba(0, 0, 0, 0.06);
-  border-left-color: #4d148c; /* fallback */
-}
+  .main-topbar h1,
+  .page-title-block h1{
+    color:#fff !important;
+  }
 
-body.theme-dark #correctionInstructionsModal .corr-code-block,
-body.theme-dark #correctionInstructionsModal .instruction-note {
-  background: rgba(255, 255, 255, 0.08);
-  border-left-color: #ff6600;
-}    
-      </style>
+  .page-subtitle,
+  .main-topbar .page-subtitle{
+    color:rgba(255,255,255,.74) !important;
+  }
+
+  .pill{
+    background:rgba(255,255,255,.12) !important;
+    border:1px solid rgba(255,255,255,.16) !important;
+    color:rgba(255,255,255,.88) !important;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+  }
+
+  .pill i{
+    color:var(--accent-3) !important;
+  }
+
+  .pill.primary{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color:#fff !important;
+    border:none !important;
+    box-shadow:0 16px 30px rgba(77,20,140,.22) !important;
+  }
+
+  .progress-card,
+  .stage-card,
+  .side-panel .summary-card,
+  .template-panel .summary-card{
+    border-color:rgba(226,232,240,.92) !important;
+    box-shadow:0 16px 40px rgba(15,23,42,.08) !important;
+  }
+
+  .progress-fill{
+    background:linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 58%, var(--accent-3) 100%) !important;
+  }
+
+  .badge{
+    background:#f5f3ff !important;
+    color:var(--accent) !important;
+  }
+
+  .badge.alt{
+    background:#fff7ed !important;
+    color:#9a3412 !important;
+  }
+
+  .question-card{
+    background:
+      radial-gradient(circle at top right, rgba(109,40,217,.12), transparent 30%),
+      linear-gradient(180deg,#ffffff,#fbfaff) !important;
+    border-color:#e9d5ff !important;
+  }
+
+  .question-label{
+    background:#f5f3ff !important;
+    border-color:#ddd6fe !important;
+    color:var(--accent) !important;
+  }
+
+  .choice{
+    background:linear-gradient(180deg,#ffffff 0%, #fbfaff 100%) !important;
+    border-color:#e5e7eb !important;
+  }
+
+  .choice:hover{
+    border-color:#c4b5fd !important;
+    box-shadow:0 18px 36px rgba(77,20,140,.10) !important;
+  }
+
+  .choice.selected{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color:#fff !important;
+    border-color:transparent !important;
+    box-shadow:0 18px 38px rgba(77,20,140,.24) !important;
+  }
+
+  .choice-icon{
+    background:#f5f3ff !important;
+    color:var(--accent) !important;
+  }
+
+  .choice.selected .choice-icon{
+    background:rgba(255,255,255,.14) !important;
+    color:#fff !important;
+  }
+
+  .decision-footer{
+    background:linear-gradient(180deg, rgba(248,250,252,.4), #fbfaff) !important;
+  }
+
+  .btn,
+  .app-btn.primary,
+  .template-copy{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    color:#fff !important;
+    box-shadow:0 14px 24px rgba(77,20,140,.22) !important;
+  }
+
+  .btn:hover,
+  .app-btn.primary:hover,
+  .template-copy:hover{
+    box-shadow:0 18px 30px rgba(77,20,140,.30) !important;
+  }
+
+  .app-btn.secondary,
+  .app-btn.ghost{
+    color:var(--text) !important;
+  }
+
+  .final-card{
+    background:linear-gradient(180deg,#f5f3ff,#ffffff) !important;
+    border-color:#ddd6fe !important;
+    box-shadow:0 16px 34px rgba(77,20,140,.08) !important;
+  }
+
+  .final-badge{
+    background:#ede9fe !important;
+    color:var(--accent) !important;
+  }
+
+  .final-title{
+    color:var(--accent) !important;
+  }
+
+  .recommendation{
+    background:linear-gradient(180deg,#fff7ed,#fff) !important;
+    border-left-color:var(--accent-3) !important;
+  }
+
+  .summary-head i,
+  .template-icon,
+  .aj-card h3,
+  .aj-link,
+  .link-text{
+    color:var(--accent) !important;
+  }
+
+  .template-icon{
+    background:#f5f3ff !important;
+  }
+
+  .template-icon-btn:hover,
+  .path-jump:hover,
+  .template-tag:hover{
+    background:#f5f3ff !important;
+    border-color:#ddd6fe !important;
+    color:var(--accent) !important;
+  }
+
+  .path-step{
+    color:var(--accent) !important;
+  }
+
+  .path-jump.active{
+    border:2px solid var(--accent) !important;
+    box-shadow:0 0 0 4px rgba(77,20,140,.10) !important;
+  }
+
+  .path-jump.active .path-step{
+    color:var(--accent) !important;
+  }
+
+  .metric{
+    background:#fbfaff !important;
+    border-color:#ede9fe !important;
+  }
+
+  .smart-link{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+    box-shadow:0 10px 18px rgba(77,20,140,.18) !important;
+  }
+
+  .advise-box{
+    background:#f5f3ff !important;
+    border-left-color:var(--accent) !important;
+  }
+
+  .aj-header:hover{
+    background:#f5f3ff !important;
+  }
+
+  #passwordModal .modal-close:hover,
+  #editModal .modal-close:hover,
+  #commentModal .link-text,
+  #allCommentsModal .stars,
+  #commentModal .rating-star.selected{
+    color:var(--accent-3) !important;
+  }
+
+  #commentModal input:focus,
+  #commentModal textarea:focus,
+  #passwordModal input:focus,
+  #editModal textarea:focus{
+    box-shadow:inset 0 0 0 2px rgba(77,20,140,.16), 0 0 0 5px rgba(77,20,140,.06) !important;
+  }
+
+  .progress-status,
+  .footer-label,
+  .section-note,
+  .template-sub,
+  .template-tag,
+  .choice-desc,
+  .question-help{
+    color:#64748b !important;
+  }
+
+  mark.search-highlight{
+    background:rgba(255,102,0,.20) !important;
+    color:#07111f !important;
+  }
+  </style>
 </head>
 <body data-page="" class="theme-fedex">
   <div class="page">
     <div id="site-header"></div>
+
     <div class="app-shell">
       <div class="app-frame">
         <main class="main">
@@ -1680,6 +1851,7 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
           <div class="summary-card">
             <div class="summary-head"><i class="fa-solid fa-wand-magic-sparkles"></i> Suggested Templates</div>
             <div class="section-note">Ready-to-use content blocks that fit the final workflow result.</div>
+
             <div class="template-stack">
               <div class="template-card">
                 <div class="template-card-head">
@@ -1690,15 +1862,18 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
                       <div class="template-sub">Internal case note</div>
                     </div>
                   </div>
+
                   <div class="template-actions">
                     <button class="template-icon-btn" type="button" onclick="attemptEdit('comment')" title="Edit">
                       <i class="fa-solid fa-pen"></i>
                     </button>
                   </div>
                 </div>
+
                 <div class="template-body">
                   <div id="suggestedComment" class="template-box empty">No template yet. Complete the flow first.</div>
                 </div>
+
                 <div class="template-foot">
                   <span class="template-tag"><i class="fa-solid fa-file-lines"></i> Case comment</span>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedComment', this)">Copy</button>
@@ -1714,18 +1889,21 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
                       <div class="template-sub">Correction code guidance</div>
                     </div>
                   </div>
+
                   <div class="template-actions">
                     <button class="template-icon-btn" type="button" onclick="attemptEdit('corr')" title="Edit">
                       <i class="fa-solid fa-pen"></i>
                     </button>
                   </div>
                 </div>
+
                 <div class="template-body">
                   <div id="suggestedCorrCode" class="template-box empty">No template yet. Complete the flow first.</div>
                 </div>
+
                 <div class="template-foot">
                   <a href="Correction Code Guide.html" target="_blank" class="template-tag">
-                    <i class="fa-solid fa-hashtag"></i> Open Corr Code
+                  <i class="fa-solid fa-hashtag"></i> Open Corr Code
                   </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedCorrCode', this)">Copy</button>
                 </div>
@@ -1740,18 +1918,21 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
                       <div class="template-sub">Customer communication</div>
                     </div>
                   </div>
+
                   <div class="template-actions">
                     <button class="template-icon-btn" type="button" onclick="attemptEdit('email')" title="Edit">
                       <i class="fa-solid fa-pen"></i>
                     </button>
                   </div>
                 </div>
+
                 <div class="template-body">
                   <div id="suggestedEmail" class="template-box empty">No template yet. Complete the flow first.</div>
                 </div>
+
                 <div class="template-foot">
                   <a href="ebs-response-template.html" target="_blank" class="template-tag">
-                    <i class="fa-solid fa-paper-plane"></i> Open EBS Response
+                  <i class="fa-solid fa-paper-plane"></i> Open EBS Response
                   </a>
                   <button class="template-copy" type="button" onclick="copyTemplateText('suggestedEmail', this)">Copy</button>
                 </div>
@@ -1790,7 +1971,7 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
       </div>
     </div>
 
-    <!-- Correction Instructions Modal – fully dynamic -->
+    <!-- Correction Instructions Modal – theme‑aware (same as working Missing Document Guide) -->
     <div id="correctionInstructionsModal" class="modal">
       <div class="modal-content instructions-modal" onclick="event.stopPropagation()">
         <div class="modal-header">
@@ -1876,89 +2057,6 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
   <script src="../assets/js/header.js"></script>
   <script src="../assets/js/footer-loader.js"></script>
   <script src="../assets/js/theme-loader.js"></script>
-  
-  <!-- THEME SYNC: Listen to body class changes and update CSS variables accordingly -->
-  <script>
-  (function() {
-    // Mapping from body class to CSS variable overrides.
-    // Extend this mapping with any additional themes your header may add.
-    const THEMES = {
-      'theme-fedex': {
-        '--accent': '#4d148c',
-        '--accent-2': '#6d28d9',
-        '--accent-3': '#ff6600',
-        '--card': '#ffffff',
-        '--card-soft': '#f8fafc',
-        '--text': '#0f172a',
-        '--text-soft': '#475569',
-        '--line': 'rgba(148,163,184,.18)'
-      },
-      'theme-dark': {
-        '--accent': '#8b5cf6',
-        '--accent-2': '#7c3aed',
-        '--accent-3': '#f97316',
-        '--card': '#1e293b',
-        '--card-soft': '#0f172a',
-        '--text': '#f1f5f9',
-        '--text-soft': '#cbd5e1',
-        '--line': 'rgba(255,255,255,.1)'
-      },
-      'theme-light': {
-        '--accent': '#3b82f6',
-        '--accent-2': '#2563eb',
-        '--accent-3': '#f59e0b',
-        '--card': '#ffffff',
-        '--card-soft': '#f8fafc',
-        '--text': '#0f172a',
-        '--text-soft': '#475569',
-        '--line': 'rgba(148,163,184,.18)'
-      },
-      'theme-blue': {
-        '--accent': '#1e40af',
-        '--accent-2': '#1d4ed8',
-        '--accent-3': '#eab308',
-        '--card': '#ffffff',
-        '--card-soft': '#f0f9ff',
-        '--text': '#0f172a',
-        '--text-soft': '#334155',
-        '--line': 'rgba(100,116,139,.2)'
-      }
-      // Add more themes as needed
-    };
-
-    function applyTheme(className) {
-      // Get the theme from the class name (e.g., 'theme-fedex')
-      let theme = null;
-      for (let key in THEMES) {
-        if (className.includes(key)) {
-          theme = THEMES[key];
-          break;
-        }
-      }
-      if (!theme) return;
-
-      const root = document.documentElement;
-      for (let [prop, value] of Object.entries(theme)) {
-        root.style.setProperty(prop, value);
-      }
-    }
-
-    // Initial application
-    const bodyClass = document.body.className;
-    applyTheme(bodyClass);
-
-    // Watch for class changes on the body (theme switcher may add/remove classes)
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.attributeName === 'class') {
-          const newClass = mutation.target.className;
-          applyTheme(newClass);
-        }
-      });
-    });
-    observer.observe(document.body, { attributes: true });
-  })();
-  </script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -1991,11 +2089,12 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
       let historyStack = [];
       let currentFinalRecommendation = "";
       let currentEditType = "";
+      let commentsUnsubscribe = null;
       let ratingStars = [];
       let currentKey = "start";
       const templateCache = {};
 
-      // ================= FULL NODES TREE (same as earlier – keep all nodes) =================
+      // ================= FULL NODES TREE =================
       const NODES = {
         start: {
           text: "SAF2 Guide",
@@ -2010,8 +2109,9 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
           ]
         },
         saf2_intro: {
-          text: "PAUD SAF2 is an audit trap queue to review bills for customer Airgas for the correct NMFC application and pallet weight/tare weight. The agent will be reviewing the bills of lading to match the bill to the item shipped as Airgas has NMFC specific pricing in their agreement.\n\nPAUD SAF2 will contain bills for Harte Hanks and Airgas. Agent will need to sort the queue by clicking the SORT tab and choosing REQUESTS and DEBTOR/SHIPPER SORT. This will sort the queue alphabetically by the Debtor name.",
-          help: "Overview of the SAF2 queue and review requirements.",
+          text: "Overview & Reminders",
+          help: "",
+          note: `<div style="margin-bottom:14px;"><div style="font-weight:800; font-size:13px; color:#475569; margin-bottom:10px;">⚠ REMINDERS</div><ul style="margin:0; padding-left:18px;"><li>PAUD SAF2 is an audit trap queue to review bills for customer Airgas for the correct NMFC application and pallet weight/tare weight.</li><li>The agent will be reviewing the bills of lading to match the bill to the item shipped as Airgas has NMFC specific pricing in their agreement.</li><li>PAUD SAF2 will contain bills for Harte Hanks and Airgas.</li><li>Agent will need to sort the queue by clicking the SORT tab and choosing REQUESTS and DEBTOR/SHIPPER SORT. This will sort the queue alphabetically by the Debtor name.</li></ul></div><div style="margin-top:16px;"><div style="font-weight:800; font-size:13px; margin-bottom:10px;">📌 NOTE</div><p>Always verify the reweigh certificate and the BOL match the bill details before proceeding with any corrections.</p></div>`,
           choices: [
             {
               label: "Continue",
@@ -2526,7 +2626,7 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
         }
       };
 
-      // Helper functions (escapeHtml, normalizeId, etc.) – unchanged
+      // Helper functions (escapeHtml, normalizeId, getDocId, etc.) unchanged
       function escapeHtml(value){
         return String(value ?? "")
           .replaceAll("&", "&amp;")
@@ -2557,6 +2657,10 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
 
       function getNodeNote(node){
         return node?.note || "";
+      }
+
+      function getNodeImage(node){
+        return node?.image || "";
       }
 
       function getNodeChoices(node){
@@ -2887,7 +2991,7 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
             ${finalNote ? `<div class="final-note-html">${finalNote}</div>` : ""}
             ${imagesHtml}
             <div class="final-actions" style="justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
-              <a href="#" onclick="showCorrectionModal(); return false;" class="smart-link">
+              <a href="#" onclick="showCorrectionModal(); return false;" class="smart-link" style="background: linear-gradient(135deg, #4d148c, #6d28d9);">
                 <i class="fa-regular fa-rectangle-list"></i> View Correction Comments & Codes Instructions
               </a>
               <div style="display:flex; gap:10px;">
@@ -3012,7 +3116,7 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
               ${nodeNote ? `
                 <div class="note-card">
                   <div class="note-head"><i class="fa-solid fa-bell"></i> Reminder</div>
-                  <div class="note-body">${escapeHtml(nodeNote).replace(/\n/g, "<br>")}</div>
+                  <div class="note-body">${nodeNote}</div>
                 </div>
               ` : ""}
               ${imagesHtml}
@@ -3148,7 +3252,7 @@ body.theme-dark #correctionInstructionsModal .instruction-note {
         renderNode("start");
       }
 
-      // FEEDBACK MODALS (unchanged)
+      // ===== FEEDBACK MODALS (unchanged) =====
       function openModalAnimated(id) {
         const modal = document.getElementById(id);
         if (!modal) return;
