@@ -2673,14 +2673,13 @@ pat8_acc_no: {
     if (e.key === "Escape") closeImageModal();
   });
 
- async function renderFinal(finalNode){
+async function renderFinal(finalNode){
   const finalText = finalNode.action || getNodeText(finalNode) || "";
   const finalNote = finalNode.note || "";
   const finalImage = finalNode.image || "";
 
-  const formattedFinalText = escapeHtml(finalText)
-    .replace(/\r\n/g, "\n")
-    .replace(/\n/g, "<br>");
+  // ✅ Do NOT escape HTML – trust internal content, allow <br> and other safe tags
+  const formattedFinalText = finalText;
 
   currentFinalRecommendation = finalText;
   currentKey = "__final__";
@@ -2720,7 +2719,7 @@ pat8_acc_no: {
   if (inlineBack) inlineBack.onclick = goBack;
   if (inlineRestart) inlineRestart.onclick = restart;
 }
-
+  
  async function renderNode(key){
   currentKey = key;
   const node = NODES[key];
