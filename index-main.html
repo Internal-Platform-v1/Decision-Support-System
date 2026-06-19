@@ -826,13 +826,13 @@
             isolation: isolate;
         }
 
-        /* Tile border glow on hover */
+        /* Tile border glow on hover - THEME OVERRIDES APPLIED BELOW */
         .guide-tile::after {
             content: "";
             position: absolute;
             inset: -1px;
             border-radius: 31px;
-            background: linear-gradient(135deg, rgba(77, 20, 140, .0), rgba(255, 102, 0, .0), rgba(255, 255, 255, .0));
+            background: linear-gradient(135deg, rgba(77, 20, 140, .25), rgba(255, 102, 0, .18), rgba(255, 255, 255, .30));
             opacity: 0;
             transition: opacity 0.45s ease, background 0.45s ease;
             pointer-events: none;
@@ -841,7 +841,6 @@
 
         .guide-tile:hover::after {
             opacity: 1;
-            background: linear-gradient(135deg, rgba(77, 20, 140, .25), rgba(255, 102, 0, .18), rgba(255, 255, 255, .30));
         }
 
         .guide-tile:hover {
@@ -850,25 +849,31 @@
             border-color: rgba(255, 255, 255, .96);
         }
 
-        /* Tile inner border ring (existing) */
+        /* Tile inner border ring */
         .guide-tile::before {
             content: "";
             position: absolute;
             inset: 0;
             border-radius: inherit;
             padding: 1px;
-            background: linear-gradient(135deg, rgba(14, 83, 97, .26), rgba(255, 102, 0, .20), rgba(255, 255, 255, .30));
+            background: linear-gradient(135deg, rgba(77, 20, 140, .25), rgba(255, 102, 0, .18), rgba(255, 255, 255, .30));
             -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.45s ease;
+            transition: opacity 0.45s ease, background 0.45s ease;
             z-index: 1;
         }
 
         .guide-tile:hover::before {
             opacity: 1;
+        }
+
+        /* Ensure content sits above pseudo-elements */
+        .guide-tile>* {
+            position: relative;
+            z-index: 2;
         }
 
         /* ─── TILE TOP ROW (badge + icon) ─── */
@@ -2255,11 +2260,25 @@
             box-shadow: var(--shadow-md) !important;
         }
 
+        /* THEME-SPECIFIC TILE HOVER GLOW & BORDER */
         body.theme-fedex .guide-tile::before,
+        body.theme-fedex .guide-tile::after {
+            background: linear-gradient(135deg, rgba(77, 20, 140, .35), rgba(255, 102, 0, .25), rgba(255, 255, 255, .40)) !important;
+        }
+
         body.theme-atlas .guide-tile::before,
+        body.theme-atlas .guide-tile::after {
+            background: linear-gradient(135deg, rgba(14, 83, 97, .35), rgba(201, 201, 54, .25), rgba(255, 255, 255, .40)) !important;
+        }
+
         body.theme-basic .guide-tile::before,
-        body.theme-simple .guide-tile::before {
-            background: linear-gradient(135deg, var(--teal), var(--olive), var(--yellow)) !important;
+        body.theme-basic .guide-tile::after {
+            background: linear-gradient(135deg, rgba(55, 65, 81, .35), rgba(209, 213, 219, .25), rgba(255, 255, 255, .40)) !important;
+        }
+
+        body.theme-simple .guide-tile::before,
+        body.theme-simple .guide-tile::after {
+            background: linear-gradient(135deg, rgba(37, 99, 235, .35), rgba(96, 165, 250, .25), rgba(255, 255, 255, .40)) !important;
         }
 
         body.theme-fedex .guide-tile-meta,
@@ -2520,30 +2539,6 @@
         .guide-tile:hover .guide-tile-icon {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 18px 34px rgba(14, 83, 97, .24);
-        }
-
-        /* Tile border glow */
-        .guide-tile::after {
-            content: "";
-            position: absolute;
-            inset: -1px;
-            border-radius: 31px;
-            background: linear-gradient(135deg, rgba(77, 20, 140, .0), rgba(255, 102, 0, .0), rgba(255, 255, 255, .0));
-            opacity: 0;
-            transition: opacity 0.45s ease, background 0.45s ease;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .guide-tile:hover::after {
-            opacity: 1;
-            background: linear-gradient(135deg, rgba(77, 20, 140, .25), rgba(255, 102, 0, .18), rgba(255, 255, 255, .30));
-        }
-
-        /* Ensure content sits above pseudo-elements */
-        .guide-tile>* {
-            position: relative;
-            z-index: 2;
         }
 
         /* Fix for tile meta badge on small screens */
@@ -3346,12 +3341,12 @@
                             const item = doc.data();
                             const stars = "★".repeat(item.rating || 0) + "☆".repeat(5 - (item.rating || 0));
                             html += `
-                        <div class="comment-list-item">
-                          <span class="stars">${stars}</span>
-                          <strong>${escapeHtml(item.name || "Anonymous")}</strong>
-                          <p style="margin:6px 0 0;">${escapeHtml(item.comment || "No comment provided.")}</p>
-                        </div>
-                      `;
+                            <div class="comment-list-item">
+                              <span class="stars">${stars}</span>
+                              <strong>${escapeHtml(item.name || "Anonymous")}</strong>
+                              <p style="margin:6px 0 0;">${escapeHtml(item.comment || "No comment provided.")}</p>
+                            </div>
+                          `;
                         });
 
                         list.innerHTML = html;
