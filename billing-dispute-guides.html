@@ -658,7 +658,7 @@ button{-webkit-tap-highlight-color:transparent}
   font-size:15px;
 }
 
-/* ===== BENTO GRID ===== */
+/* ===== GRID (uniform, aligned) ===== */
 .guide-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -676,8 +676,9 @@ button{-webkit-tap-highlight-color:transparent}
   position:relative;
   overflow:hidden;
   padding:22px 22px 16px;
-  min-height:280px;
-  height:100%;
+  min-height:320px;
+  height:auto;
+  max-height:420px; /* initial collapsed height */
   border-radius:30px;
   background:
     radial-gradient(circle at var(--mx) var(--my), rgba(255,102,0,.08), transparent 32%),
@@ -686,42 +687,28 @@ button{-webkit-tap-highlight-color:transparent}
   box-shadow:var(--shadow-md);
   backdrop-filter:blur(16px);
   transition:
+    max-height 0.5s cubic-bezier(0.22,1,0.36,1),
     transform 0.45s cubic-bezier(0.22,1,0.36,1),
     box-shadow 0.45s cubic-bezier(0.22,1,0.36,1),
     border-color 0.35s ease;
   display:flex;
   flex-direction:column;
   transform-style:preserve-3d;
-  will-change:transform;
+  will-change:transform, max-height;
   isolation:isolate;
 }
 
-/* Card hover lift & shadow */
+.guide-card.expanded{
+  max-height: 900px; /* enough to show all content */
+}
+
 .guide-card:hover{
-  transform:translateY(-8px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
-  box-shadow:0 32px 72px rgba(18,31,21,.16);
+  transform:translateY(-6px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  box-shadow:0 28px 56px rgba(18,31,21,.14);
   border-color:rgba(255,255,255,.96);
 }
 
-/* Content stacking context */
 .guide-card>*{position:relative;z-index:2;}
-
-/* Bento Grid Specifics - Featured Cards (1 and 5) */
-.guide-card:nth-child(1),
-.guide-card:nth-child(5) {
-  grid-column: span 2;
-  grid-row: span 1;
-  background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(255,255,255,0.88)) !important;
-  border-color: var(--teal) !important;
-  border-width: 2px !important;
-  box-shadow: 0 20px 40px rgba(14, 83, 97, 0.12) !important;
-}
-
-.guide-card:nth-child(1):hover,
-.guide-card:nth-child(5):hover {
-  border-color: var(--olive-2) !important;
-  box-shadow: 0 28px 56px rgba(14, 83, 97, 0.20) !important;
-}
 
 .guide-card-top{
   position:relative;
@@ -792,17 +779,23 @@ button{-webkit-tap-highlight-color:transparent}
 .lead{
   position:relative;
   z-index:2;
-  min-height:72px;
-  max-height:78px;
-  overflow:hidden;
-  display:-webkit-box;
-  -webkit-line-clamp:3;
-  -webkit-box-orient:vertical;
   line-height:1.6;
   font-size:14px;
   margin:0 0 14px;
   color:var(--muted);
   flex-shrink:0;
+  max-height:78px;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  transition: max-height 0.5s ease, -webkit-line-clamp 0.5s ease;
+}
+
+.guide-card.expanded .lead{
+  max-height: 500px;
+  -webkit-line-clamp: unset;
+  overflow: auto;
 }
 
 .card-meta{
@@ -876,12 +869,6 @@ button{-webkit-tap-highlight-color:transparent}
 .small{
   position:relative;
   z-index:2;
-  min-height:38px;
-  max-height:44px;
-  overflow:hidden;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
   line-height:1.5;
   font-size:12.5px;
   margin-top:auto !important;
@@ -891,374 +878,64 @@ button{-webkit-tap-highlight-color:transparent}
   width:100%;
   color:var(--muted);
   flex-shrink:0;
+  max-height:44px;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  transition: max-height 0.5s ease, -webkit-line-clamp 0.5s ease;
+}
+
+.guide-card.expanded .small{
+  max-height: 200px;
+  -webkit-line-clamp: unset;
+  overflow: auto;
+}
+
+/* ===== EXPAND BUTTON ===== */
+.expand-btn{
+  position:relative;
+  z-index:2;
+  margin-top:12px;
+  padding:6px 0 2px;
+  text-align:center;
+  color:var(--teal);
+  cursor:pointer;
+  user-select:none;
+  font-size:14px;
+  font-weight:700;
+  transition:color 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-top:1px solid transparent;
+  flex-shrink:0;
+}
+.expand-btn:hover{
+  color:var(--olive-2);
+}
+.expand-btn i{
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  font-size:16px;
+}
+.guide-card.expanded .expand-btn i{
+  transform:rotate(180deg);
+}
+.expand-btn .label{
+  font-size:13px;
+  font-weight:600;
+}
+.guide-card.expanded .expand-btn .label{
+  content: "Show less";
 }
 
 .guide-card.is-hidden{display:none;}
 
-/* ===== RESPONSIVE BENTO ===== */
-@media (max-width: 1080px) {
-  .guide-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  .guide-card:nth-child(1),
-  .guide-card:nth-child(5) {
-    grid-column: span 2;
-  }
+/* ===== RESPONSIVE ===== */
+@media (max-width:1280px){
+  .guide-grid{grid-template-columns:repeat(3,1fr);}
 }
-
-@media (max-width: 760px) {
-  .guide-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px;
-  }
-  .guide-card {
-    grid-column: span 1 !important;
-    grid-row: span 1 !important;
-    min-height: unset;
-  }
-  .guide-card:nth-child(1),
-  .guide-card:nth-child(5) {
-    grid-column: span 1 !important;
-    border-width: 1px !important;
-  }
-  .guide-card h3,
-  .lead {
-    min-height: unset;
-  }
-}
-
-/* ===== INFO PANELS ===== */
-.info-panels{
-  display:grid;
-  grid-template-columns:1fr .85fr;
-  gap:18px;
-  margin-top:22px;
-}
-
-.tips-panel,
-.support-panel{
-  border-radius:28px;
-  padding:22px;
-  background:rgba(255,255,255,.76);
-  border:1px solid rgba(255,255,255,.88);
-  box-shadow:var(--shadow-md);
-  backdrop-filter:blur(16px);
-}
-
-.support-panel{
-  background:linear-gradient(135deg, var(--teal), var(--dark));
-  color:#fff;
-}
-
-.tips-panel strong,
-.support-panel strong{
-  display:block;
-  margin-bottom:10px;
-  font-size:16px;
-  color:inherit;
-}
-
-.tips-panel ul{
-  margin:0;
-  padding-left:18px;
-  color:var(--muted);
-  line-height:1.8;
-  font-size:14px;
-}
-
-.support-panel span{
-  display:block;
-  color:rgba(255,255,255,.72);
-  line-height:1.75;
-  font-size:14px;
-}
-
-.reveal{
-  opacity:0;
-  transform:translateY(22px);
-  transition:opacity .7s var(--ease), transform .7s var(--ease);
-}
-.reveal.in-view{opacity:1;transform:none;}
-.delay-1{transition-delay:.08s}
-.delay-2{transition-delay:.16s}
-.delay-3{transition-delay:.24s}
-.delay-4{transition-delay:.32s}
-.delay-5{transition-delay:.40s}
-.delay-6{transition-delay:.48s}
-
-/* ===== HEADER MODALS / CLOCK FIX ===== */
-#commentModal,
-#allCommentsModal,
-#helpModal,
-#timeSettingsModal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:2147483647;
-  justify-content:center;
-  align-items:center;
-  padding:0 24px;
-  background:rgba(2,6,23,.52);
-  backdrop-filter:blur(8px);
-  overflow-y:auto;
-}
-
-#commentModal .modal-content,
-#allCommentsModal .modal-content,
-#helpModal .modal-content,
-#timeSettingsModal .modal-content{
-  width:100%;
-  background:#fff;
-  border-radius:28px;
-  padding:26px;
-  box-shadow:0 24px 80px rgba(2,6,23,.18);
-  border:1px solid rgba(148,163,184,.16);
-  max-height:min(84vh, 900px);
-  overflow:auto;
-  margin:110px auto 32px;
-}
-
-#commentModal .feedback-modal{
-  max-width:640px;
-  border-radius:28px;
-  padding:20px 20px 22px;
-}
-
-#allCommentsModal .modal-content,
-#helpModal .help-modal{
-  max-width:760px;
-}
-
-#timeSettingsModal .modal-content{
-  max-width:580px;
-}
-
-#commentModal .modal-header,
-#allCommentsModal .modal-header,
-#helpModal .modal-header,
-#timeSettingsModal .modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:14px;
-  letter-spacing:-.03em;
-  color:#0f172a;
-}
-
-#commentModal .modal-close,
-#allCommentsModal .modal-close,
-#helpModal .modal-close,
-#timeSettingsModal .modal-close{
-  cursor:pointer;
-  width:40px;
-  height:40px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  color:#64748b;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-  transition:.2s ease;
-  flex-shrink:0;
-  font-size:22px;
-  line-height:1;
-}
-
-#commentModal .modal-close:hover,
-#allCommentsModal .modal-close:hover,
-#helpModal .modal-close:hover,
-#timeSettingsModal .modal-close:hover{
-  color:#0f172a;
-  background:#eef2ff;
-}
-
-#commentModal .rating-container{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  margin:16px 0 18px;
-}
-
-#commentModal .rating-star{
-  cursor:pointer;
-  font-size:26px;
-  color:#d1d5db;
-  transition:transform .18s ease, color .18s ease;
-}
-#commentModal .rating-star:hover{
-  transform:translateY(-1px) scale(1.06);
-}
-#commentModal .rating-star.selected{
-  color:var(--yellow);
-}
-
-#commentModal input,
-#commentModal textarea,
-#timeSettingsModal input,
-#timeSettingsModal textarea,
-#timeSettingsModal select{
-  width:100%;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  padding:14px 16px;
-  color:#0f172a;
-  font-size:14px;
-  transition:.18s ease;
-}
-
-#commentModal input{margin-top:4px;margin-bottom:10px}
-#commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
-
-#commentModal input:focus,
-#commentModal textarea:focus,
-#timeSettingsModal select:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(14,83,97,.16), 0 0 0 5px rgba(14,83,97,.06);
-}
-
-#commentModal .link-text{
-  color:var(--teal);
-  cursor:pointer;
-  text-decoration:none;
-  font-size:14px;
-  font-weight:700;
-}
-#commentModal .link-text:hover{text-decoration:underline}
-
-#allCommentsModal .comment-list-item{
-  padding:14px 0;
-  border-bottom:1px solid rgba(148,163,184,.18);
-}
-#allCommentsModal .comment-list-item:last-child{border-bottom:none}
-#allCommentsModal .stars{
-  color:var(--yellow);
-  font-size:18px;
-  margin-bottom:6px;
-  display:block;
-}
-
-#timeCalendarPopup{
-  display:none;
-  position:fixed;
-  top:92px;
-  right:24px;
-  width:min(360px, calc(100vw - 32px));
-  z-index:2147483647;
-  padding:20px;
-  border-radius:28px;
-  background:rgba(255,255,255,.94);
-  border:1px solid rgba(148,163,184,.16);
-  box-shadow:0 24px 80px rgba(2,6,23,.18);
-  backdrop-filter:blur(16px);
-}
-
-.popup-time{
-  font-size:34px;
-  font-weight:800;
-  color:#0f172a;
-  margin-bottom:4px;
-}
-
-.popup-date{
-  font-size:14px;
-  color:#64748b;
-  margin-bottom:16px;
-}
-
-.calendar-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:10px;
-  padding:10px 12px;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-}
-
-.calendar-header span{
-  cursor:pointer;
-  color:var(--teal);
-  font-weight:800;
-  font-size:18px;
-  user-select:none;
-  width:28px;
-  text-align:center;
-}
-
-.calendar-title{
-  font-weight:800;
-  color:#0f172a;
-}
-
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
-}
-
-footer{
-  background:var(--teal);
-  color:white;
-  padding:10px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-size:15px;
-  gap:16px;
-  flex-wrap:wrap;
-}
-
-
-/* ===== FEDEX FULL BACKGROUND READABILITY ===== */
-.section-title{
-  color:#ffffff;
-  text-shadow:0 18px 44px rgba(2,6,23,.28);
-}
-
-.section-copy{
-  color:rgba(226,232,240,.78);
-}
-
-.section-kicker{
-  color:var(--yellow-soft);
-  background:rgba(77,20,140,.38);
-  border-color:rgba(255,102,0,.22);
-  box-shadow:0 12px 26px rgba(2,6,23,.12);
-}
-
-.search-panel,
-.guide-card,
-.tips-panel{
-  background:rgba(255,255,255,.86);
-  border-color:rgba(255,255,255,.90);
-}
-
-.support-panel,
-.focus-card.dark{
-  background:linear-gradient(135deg, #4d148c, #07111f);
-}
-
-.hero-main-btn{
-  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
-  color:#fff;
-  box-shadow:0 18px 34px rgba(255,102,0,.22);
-}
-
-.pill i,
-.focus-card.dark .card-label span,
-#commentModal .rating-star.selected,
-#allCommentsModal .stars{
-  color:var(--yellow-soft);
-}
-
 @media (max-width:1080px){
   .hero-shell{grid-template-columns:1fr}
   .hero-card{min-height:auto}
@@ -1266,8 +943,8 @@ footer{
   .filter-row{justify-content:flex-start}
   .section-head{align-items:flex-start;flex-direction:column}
   .info-panels{grid-template-columns:1fr}
+  .guide-grid{grid-template-columns:repeat(2,1fr);}
 }
-
 @media (max-width:760px){
   .container{width:min(calc(100% - 20px), var(--max))}
   .hero{padding:28px 0 18px}
@@ -1275,6 +952,9 @@ footer{
   .hero-card::after{border-radius:29px}
   .hero h1{font-size:3.05rem}
   .hero-metrics{grid-template-columns:1fr}
+  .guide-grid{grid-template-columns:1fr;}
+  .guide-card{max-height:400px;}
+  .guide-card.expanded{max-height:900px;}
   #commentModal,
   #allCommentsModal,
   #helpModal,
@@ -1294,6 +974,9 @@ footer{
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none}
+  .guide-card{max-height:none;overflow:visible;}
+  .lead, .small{max-height:none;-webkit-line-clamp:unset;overflow:visible;}
+  .expand-btn{display:none;}
 }
 
 /* ===== MAIN INDEX FIX: HEADER DATE/TIME BUTTON WIDTH ===== */
@@ -3191,6 +2874,7 @@ footer.site-footer .footer-right{
             </div>
             <a href="BD GENERAL GUIDE.html" class="guide-link">Open BD General Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this guide to verify billing responsibility and correct the billed party based on Bill of Lading details.</p>
+            <div class="expand-btn"><i class="fa-solid fa-chevron-down"></i> <span class="label">Read more</span></div>
           </article>
 
           <article class="guide-card reveal delay-2" data-category="rebill" data-keywords="loa rebill debtor 3pl fpay collector">
@@ -3206,6 +2890,7 @@ footer.site-footer .footer-right{
             </div>
             <a href="Rebill per LOA General Guide.html" class="guide-link">Open LOA Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this guide to validate LOA details and process debtor updates based on the requesting party.</p>
+            <div class="expand-btn"><i class="fa-solid fa-chevron-down"></i> <span class="label">Read more</span></div>
           </article>
 
           <article class="guide-card reveal delay-3" data-category="billing" data-keywords="rvsl debtor update billing reversal refusal">
@@ -3221,6 +2906,7 @@ footer.site-footer .footer-right{
             </div>
             <a href="rvsl-guide.html" class="guide-link">Open RVSL Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this guide to review refusal scenarios, check reversal eligibility, and process rebill or denial accordingly.</p>
+            <div class="expand-btn"><i class="fa-solid fa-chevron-down"></i> <span class="label">Read more</span></div>
           </article>
 
           <article class="guide-card reveal delay-4" data-category="reweigh" data-keywords="weight update bol reweigh dispute pallet">
@@ -3236,6 +2922,7 @@ footer.site-footer .footer-right{
             </div>
             <a href="weight-update-per-bol-guide.html" class="guide-link">Open Weight Update Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this guide to review weight disputes, validate BOL information, and direct cases to the proper resolution path.</p>
+            <div class="expand-btn"><i class="fa-solid fa-chevron-down"></i> <span class="label">Read more</span></div>
           </article>
 
           <article class="guide-card reveal delay-5" data-category="service" data-keywords="service level type validation bol">
@@ -3251,6 +2938,7 @@ footer.site-footer .footer-right{
             </div>
             <a href="service-level-type-guide.html" class="guide-link">Open Service Level/Type Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this guide to review, validate, and update service level discrepancies or route the case to the proper resolution.</p>
+            <div class="expand-btn"><i class="fa-solid fa-chevron-down"></i> <span class="label">Read more</span></div>
           </article>
 
           <article class="guide-card reveal delay-6" data-category="billing" data-keywords="reference number add edit delete demand invoice">
@@ -3266,9 +2954,8 @@ footer.site-footer .footer-right{
             </div>
             <a href="reference-number-guide.html" class="guide-link">Open Reference Number Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Use this guide to complete reference edits, apply corrections, and handle invoice requests based on customer needs.</p>
+            <div class="expand-btn"><i class="fa-solid fa-chevron-down"></i> <span class="label">Read more</span></div>
           </article>
-
-          
         </div>
       </div>
     </section>
@@ -3419,6 +3106,28 @@ function initCardMotion(){
     card.addEventListener("pointerleave", () => {
       card.style.setProperty("--rx", "0deg");
       card.style.setProperty("--ry", "0deg");
+    });
+  });
+}
+
+/* ===== EXPAND FUNCTIONALITY ===== */
+function initExpandButtons(){
+  document.querySelectorAll('.expand-btn').forEach(btn => {
+    const card = btn.closest('.guide-card');
+    if (!card) return;
+
+    // Toggle on hover
+    btn.addEventListener('mouseenter', () => {
+      card.classList.add('expanded');
+    });
+    btn.addEventListener('mouseleave', () => {
+      card.classList.remove('expanded');
+    });
+
+    // Also allow click toggle for touch devices
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      card.classList.toggle('expanded');
     });
   });
 }
@@ -3625,11 +3334,13 @@ document.addEventListener("DOMContentLoaded", () => {
   setupGuideFilters();
   initRevealMotion();
   initCardMotion();
+  initExpandButtons();
 });
 
 document.addEventListener("headerLoaded", () => {
   initRatingStars();
   setupGuideFilters();
+  initExpandButtons();
 });
 
 setTimeout(() => {
