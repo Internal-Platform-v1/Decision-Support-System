@@ -2451,12 +2451,20 @@ const NODES = {
   },
 
   // --- Existing 50 Lines Error flow (unchanged, but now entry from option 5) ---
-  fifty_lines_error: {
-    text: "Is the pro delivered?",
-    help: "Determine whether the shipment has already been delivered.",
-    choices: [{ label: "Yes", next: "remove_blue_lines", icon: "fa-solid fa-check-circle", desc: "Begin reducing bill lines." }]
-    // Note: if "No" is not present, we assume delivered.
-  },
+fifty_lines_error: {
+  text: "Is the pro delivered?",
+  help: "Determine whether the shipment has already been delivered.",
+  choices: [
+    { label: "Yes", next: "remove_blue_lines", icon: "fa-solid fa-check-circle", desc: "Begin reducing bill lines." },
+    { label: "No", next: "fifty_lines_not_delivered", icon: "fa-solid fa-clock", desc: "Leave pro in SAF2 queue." }
+  ]
+},
+
+  fifty_lines_not_delivered: {
+  text: "Leave Pro in SAF2 Queue until Shipment has been Delivered.",
+  help: "No action taken; recheck later.",
+  choices: []
+},
   remove_blue_lines: {
     text: "Remove any BLUE lines that may have populated at the bottom of the bill first.",
     help: "Blue lines should be removed before any additional troubleshooting.",
