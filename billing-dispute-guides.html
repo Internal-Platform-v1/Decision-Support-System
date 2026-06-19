@@ -659,82 +659,113 @@ button{-webkit-tap-highlight-color:transparent}
   font-size:15px;
 }
 
+/* ===== TILE GRID ===== */
 .guide-grid{
   display:grid;
-  grid-template-columns:repeat(3, minmax(0,1fr));
-  gap:18px;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
   align-items:stretch;
   perspective:1200px;
 }
 
+/* ===== TILE CARD (aligned with main index) ===== */
 .guide-card{
   --mx:50%;
   --my:0%;
+  --rx:0deg;
+  --ry:0deg;
   position:relative;
   overflow:hidden;
-  padding:22px;
-  min-height:330px;
+  padding:22px 22px 16px;
+  min-height:340px;
+  height:100%;
   border-radius:30px;
   background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(201,201,54,.16), transparent 32%),
+    radial-gradient(circle at var(--mx) var(--my), rgba(255,102,0,.10), transparent 32%),
     rgba(255,255,255,.76);
   border:1px solid rgba(255,255,255,.88);
   box-shadow:var(--shadow-md);
   backdrop-filter:blur(16px);
-  transition:transform .28s var(--ease), box-shadow .28s var(--ease);
+  transition:
+    transform 0.45s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.45s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.35s ease;
   display:flex;
   flex-direction:column;
   transform-style:preserve-3d;
+  will-change:transform;
+  isolation:isolate;
 }
 
+/* Border glow on hover – theme overrides below */
+.guide-card::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:31px;
+  background:linear-gradient(135deg, rgba(77,20,140,.25), rgba(255,102,0,.18), rgba(255,255,255,.30));
+  opacity:0;
+  transition:opacity 0.45s ease, background 0.45s ease;
+  pointer-events:none;
+  z-index:0;
+}
+.guide-card:hover::after{opacity:1;}
+
+.guide-card:hover{
+  transform:translateY(-8px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  box-shadow:0 32px 72px rgba(18,31,21,.16);
+  border-color:rgba(255,255,255,.96);
+}
+
+/* Inner border ring */
 .guide-card::before{
   content:"";
   position:absolute;
   inset:0;
   border-radius:inherit;
   padding:1px;
-  background:linear-gradient(135deg, rgba(14,83,97,.26), rgba(201,201,54,.22), rgba(255,255,255,.30));
+  background:linear-gradient(135deg, rgba(77,20,140,.25), rgba(255,102,0,.18), rgba(255,255,255,.30));
   -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask-composite:exclude;
   opacity:0;
   pointer-events:none;
-  transition:.28s var(--ease);
+  transition:opacity 0.45s ease, background 0.45s ease;
+  z-index:1;
 }
+.guide-card:hover::before{opacity:1;}
 
-.guide-card:hover{
-  transform:translateY(-8px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  box-shadow:0 28px 64px rgba(18,31,21,.14);
-}
-
-.guide-card:hover::before{opacity:1}
+/* Ensure content sits above pseudo-elements */
+.guide-card>*{position:relative;z-index:2;}
 
 .guide-card-top{
   position:relative;
-  z-index:1;
+  z-index:2;
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:14px;
-  margin-bottom:18px;
+  margin-bottom:16px;
+  flex-shrink:0;
 }
 
 .guide-meta{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:9px 12px;
+  padding:8px 13px;
   border-radius:999px;
   background:#fff;
   border:1px solid rgba(58,64,24,.08);
   color:var(--olive-2);
-  font-size:12px;
+  font-size:11px;
   font-weight:900;
   letter-spacing:.03em;
   box-shadow:0 10px 22px rgba(18,31,21,.05);
+  white-space:nowrap;
+  flex-shrink:0;
 }
-
-.guide-meta i{color:var(--teal)}
+.guide-meta i{color:var(--teal);font-size:12px;}
 
 .guide-icon{
   width:52px;
@@ -746,42 +777,57 @@ button{-webkit-tap-highlight-color:transparent}
   background:linear-gradient(135deg, var(--teal), var(--dark));
   box-shadow:0 14px 26px rgba(14,83,97,.18);
   flex-shrink:0;
-  transition:.22s var(--ease);
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+  font-size:20px;
+  position:relative;
+  z-index:2;
 }
-
 .guide-card:hover .guide-icon{
-  transform:translateY(-2px) scale(1.04);
+  transform:translateY(-3px) scale(1.05);
+  box-shadow:0 18px 34px rgba(14,83,97,.24);
 }
 
 .guide-card h3{
   position:relative;
-  z-index:1;
-  margin:0 0 12px;
+  z-index:2;
+  margin:0 0 10px;
   color:var(--ink);
-  font-size:22px;
-  line-height:1.12;
-  letter-spacing:-.045em;
-  font-weight:950;
-  min-height:50px;
+  font-size:20px;
+  line-height:1.2;
+  letter-spacing:-.04em;
+  font-weight:900;
+  min-height:48px;
+  flex-shrink:0;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
 
 .lead{
   position:relative;
-  z-index:1;
-  margin:0 0 18px;
-  color:var(--muted);
-  line-height:1.7;
+  z-index:2;
+  min-height:72px;
+  max-height:78px;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  line-height:1.6;
   font-size:14px;
-  min-height:74px;
+  margin:0 0 14px;
+  color:var(--muted);
+  flex-shrink:0;
 }
 
 .card-meta{
   position:relative;
-  z-index:1;
+  z-index:2;
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  margin:0 0 16px;
+  margin-bottom:16px;
+  flex-shrink:0;
 }
 
 .meta-pill{
@@ -800,10 +846,11 @@ button{-webkit-tap-highlight-color:transparent}
 
 .guide-link{
   position:relative;
-  z-index:1;
+  z-index:2;
   margin-top:auto;
+  flex-shrink:0;
   min-height:50px;
-  padding:0 16px;
+  padding:0 18px;
   border-radius:17px;
   display:inline-flex;
   align-items:center;
@@ -812,10 +859,17 @@ button{-webkit-tap-highlight-color:transparent}
   width:100%;
   color:#fff;
   font-weight:900;
+  font-size:14px;
   background:linear-gradient(135deg, var(--dark), var(--teal));
   box-shadow:0 16px 30px rgba(14,83,97,.16);
-  transition:.22s var(--ease);
+  transition:
+    transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+    box-shadow 0.35s ease,
+    background 0.35s ease;
   overflow:hidden;
+  border:none;
+  cursor:pointer;
+  text-decoration:none;
 }
 
 .guide-link::before{
@@ -824,31 +878,39 @@ button{-webkit-tap-highlight-color:transparent}
   inset:0;
   background:linear-gradient(115deg, transparent, rgba(255,255,255,.18), transparent);
   transform:translateX(-110%);
-  transition:.65s var(--ease);
+  transition:transform 0.65s cubic-bezier(0.22,1,0.36,1);
 }
-
 .guide-link:hover{
   transform:translateY(-2px);
   box-shadow:0 22px 38px rgba(14,83,97,.22);
 }
-
-.guide-link:hover::before{transform:translateX(110%)}
-.guide-link i{transition:.22s var(--ease)}
-.guide-link:hover i{transform:translateX(3px)}
+.guide-link:hover::before{transform:translateX(110%);}
+.guide-link i{transition:transform 0.3s ease;font-size:13px;}
+.guide-link:hover i{transform:translateX(4px);}
 
 .small{
   position:relative;
-  z-index:1;
-  margin:14px 0 0;
+  z-index:2;
+  min-height:38px;
+  max-height:44px;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  line-height:1.5;
+  font-size:12.5px;
+  margin-top:auto !important;
+  margin-bottom:0 !important;
   padding-top:14px;
   border-top:1px dashed rgba(58,64,24,.16);
+  width:100%;
   color:var(--muted);
-  font-size:13px;
-  line-height:1.65;
+  flex-shrink:0;
 }
 
-.guide-card.is-hidden{display:none}
+.guide-card.is-hidden{display:none;}
 
+/* ===== INFO PANELS ===== */
 .info-panels{
   display:grid;
   grid-template-columns:1fr .85fr;
@@ -899,12 +961,7 @@ button{-webkit-tap-highlight-color:transparent}
   transform:translateY(22px);
   transition:opacity .7s var(--ease), transform .7s var(--ease);
 }
-
-.reveal.in-view{
-  opacity:1;
-  transform:none;
-}
-
+.reveal.in-view{opacity:1;transform:none;}
 .delay-1{transition-delay:.08s}
 .delay-2{transition-delay:.16s}
 .delay-3{transition-delay:.24s}
@@ -1014,11 +1071,9 @@ button{-webkit-tap-highlight-color:transparent}
   color:#d1d5db;
   transition:transform .18s ease, color .18s ease;
 }
-
 #commentModal .rating-star:hover{
   transform:translateY(-1px) scale(1.06);
 }
-
 #commentModal .rating-star.selected{
   color:var(--yellow);
 }
@@ -1057,16 +1112,13 @@ button{-webkit-tap-highlight-color:transparent}
   font-size:14px;
   font-weight:700;
 }
-
 #commentModal .link-text:hover{text-decoration:underline}
 
 #allCommentsModal .comment-list-item{
   padding:14px 0;
   border-bottom:1px solid rgba(148,163,184,.18);
 }
-
 #allCommentsModal .comment-list-item:last-child{border-bottom:none}
-
 #allCommentsModal .stars{
   color:var(--yellow);
   font-size:18px;
@@ -1191,7 +1243,7 @@ footer{
 }
 
 @media (max-width:1280px){
-  .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .guide-grid{grid-template-columns:repeat(3,1fr);}
 }
 
 @media (max-width:1080px){
@@ -1234,8 +1286,6 @@ footer{
 }
 
 /* ===== MAIN INDEX FIX: HEADER DATE/TIME BUTTON WIDTH ===== */
-/* This prevents main-index page button styles from overriding header modal buttons */
-
 #timeCalendarPopup .btn,
 #timeSettingsModal .btn,
 #timeSettingsModal #saveTimeSettings,
@@ -1260,7 +1310,7 @@ footer{
 #timeCalendarPopup #openTimeSettings {
   margin-top: 14px !important;
 }
-  
+
 /* =========================================================
    SHARED THEME BRIDGE — INDEX / CASE DIRECTORY / EBS / FBC / LINKS
    Works with the header profile theme selector.
@@ -2510,11 +2560,22 @@ body.theme-simple .guide-card{
   -webkit-backdrop-filter:blur(16px) !important;
 }
 
+/* THEME-SPECIFIC TILE HOVER GLOW & BORDER */
 body.theme-fedex .guide-card::before,
+body.theme-fedex .guide-card::after {
+  background: linear-gradient(135deg, rgba(77,20,140,.35), rgba(255,102,0,.25), rgba(255,255,255,.40)) !important;
+}
 body.theme-atlas .guide-card::before,
+body.theme-atlas .guide-card::after {
+  background: linear-gradient(135deg, rgba(14,83,97,.35), rgba(201,201,54,.25), rgba(255,255,255,.40)) !important;
+}
 body.theme-basic .guide-card::before,
-body.theme-simple .guide-card::before{
-  background:linear-gradient(135deg, var(--accent-focus), color-mix(in srgb, var(--yellow) 20%, transparent), rgba(255,255,255,.30)) !important;
+body.theme-basic .guide-card::after {
+  background: linear-gradient(135deg, rgba(55,65,81,.35), rgba(209,213,219,.25), rgba(255,255,255,.40)) !important;
+}
+body.theme-simple .guide-card::before,
+body.theme-simple .guide-card::after {
+  background: linear-gradient(135deg, rgba(37,99,235,.35), rgba(96,165,250,.25), rgba(255,255,255,.40)) !important;
 }
 
 body.theme-fedex .guide-card h3,
