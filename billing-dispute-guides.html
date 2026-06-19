@@ -658,7 +658,7 @@ button{-webkit-tap-highlight-color:transparent}
   font-size:15px;
 }
 
-/* ===== TILE GRID ===== */
+/* ===== BENTO GRID ===== */
 .guide-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -667,7 +667,7 @@ button{-webkit-tap-highlight-color:transparent}
   perspective:1200px;
 }
 
-/* ===== TILE CARD — matching main index 3D motion ===== */
+/* ===== TILE CARD ===== */
 .guide-card{
   --mx:50%;
   --my:0%;
@@ -676,12 +676,12 @@ button{-webkit-tap-highlight-color:transparent}
   position:relative;
   overflow:hidden;
   padding:22px 22px 16px;
-  min-height:340px;
+  min-height:280px;
   height:100%;
   border-radius:30px;
   background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(255,102,0,.10), transparent 32%),
-    rgba(255,255,255,.76);
+    radial-gradient(circle at var(--mx) var(--my), rgba(255,102,0,.08), transparent 32%),
+    rgba(255,255,255,.86);
   border:1px solid rgba(255,255,255,.88);
   box-shadow:var(--shadow-md);
   backdrop-filter:blur(16px);
@@ -696,46 +696,32 @@ button{-webkit-tap-highlight-color:transparent}
   isolation:isolate;
 }
 
-/* Border glow on hover – theme overrides below */
-.guide-card::after{
-  content:"";
-  position:absolute;
-  inset:-1px;
-  border-radius:31px;
-  background:linear-gradient(135deg, rgba(77,20,140,.25), rgba(255,102,0,.18), rgba(255,255,255,.30));
-  opacity:0;
-  transition:opacity 0.45s ease, background 0.45s ease;
-  pointer-events:none;
-  z-index:0;
-}
-.guide-card:hover::after{opacity:1;}
-
+/* Card hover lift & shadow */
 .guide-card:hover{
   transform:translateY(-8px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
   box-shadow:0 32px 72px rgba(18,31,21,.16);
   border-color:rgba(255,255,255,.96);
 }
 
-/* Inner border ring */
-.guide-card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  padding:1px;
-  background:linear-gradient(135deg, rgba(77,20,140,.25), rgba(255,102,0,.18), rgba(255,255,255,.30));
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.45s ease, background 0.45s ease;
-  z-index:1;
-}
-.guide-card:hover::before{opacity:1;}
-
-/* Ensure content sits above pseudo-elements */
+/* Content stacking context */
 .guide-card>*{position:relative;z-index:2;}
+
+/* Bento Grid Specifics - Featured Cards (1 and 5) */
+.guide-card:nth-child(1),
+.guide-card:nth-child(5) {
+  grid-column: span 2;
+  grid-row: span 1;
+  background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(255,255,255,0.88)) !important;
+  border-color: var(--teal) !important;
+  border-width: 2px !important;
+  box-shadow: 0 20px 40px rgba(14, 83, 97, 0.12) !important;
+}
+
+.guide-card:nth-child(1):hover,
+.guide-card:nth-child(5):hover {
+  border-color: var(--olive-2) !important;
+  box-shadow: 0 28px 56px rgba(14, 83, 97, 0.20) !important;
+}
 
 .guide-card-top{
   position:relative;
@@ -908,6 +894,38 @@ button{-webkit-tap-highlight-color:transparent}
 }
 
 .guide-card.is-hidden{display:none;}
+
+/* ===== RESPONSIVE BENTO ===== */
+@media (max-width: 1080px) {
+  .guide-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .guide-card:nth-child(1),
+  .guide-card:nth-child(5) {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .guide-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  .guide-card {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+    min-height: unset;
+  }
+  .guide-card:nth-child(1),
+  .guide-card:nth-child(5) {
+    grid-column: span 1 !important;
+    border-width: 1px !important;
+  }
+  .guide-card h3,
+  .lead {
+    min-height: unset;
+  }
+}
 
 /* ===== INFO PANELS ===== */
 .info-panels{
@@ -1241,10 +1259,6 @@ footer{
   color:var(--yellow-soft);
 }
 
-@media (max-width:1280px){
-  .guide-grid{grid-template-columns:repeat(3,1fr);}
-}
-
 @media (max-width:1080px){
   .hero-shell{grid-template-columns:1fr}
   .hero-card{min-height:auto}
@@ -1260,9 +1274,7 @@ footer{
   .hero-card{padding:28px;border-radius:30px}
   .hero-card::after{border-radius:29px}
   .hero h1{font-size:3.05rem}
-  .hero-metrics,.guide-grid{grid-template-columns:1fr}
-  .guide-card{min-height:unset}
-  .guide-card h3,.lead{min-height:unset}
+  .hero-metrics{grid-template-columns:1fr}
   #commentModal,
   #allCommentsModal,
   #helpModal,
@@ -2300,13 +2312,6 @@ body.theme-simple .guide-tile{
   box-shadow:var(--shadow-md) !important;
 }
 
-body.theme-fedex .guide-tile::before,
-body.theme-atlas .guide-tile::before,
-body.theme-basic .guide-tile::before,
-body.theme-simple .guide-tile::before{
-  background:linear-gradient(135deg,var(--teal),var(--olive),var(--yellow)) !important;
-}
-
 body.theme-fedex .guide-tile-meta,
 body.theme-atlas .guide-tile-meta,
 body.theme-basic .guide-tile-meta,
@@ -2557,24 +2562,6 @@ body.theme-simple .guide-card{
   box-shadow:var(--shadow-md) !important;
   backdrop-filter:blur(16px) !important;
   -webkit-backdrop-filter:blur(16px) !important;
-}
-
-/* ===== FIXED: THEME-SPECIFIC TILE HOVER GLOW & BORDER ===== */
-body.theme-fedex .guide-card::before,
-body.theme-fedex .guide-card::after {
-  background: linear-gradient(135deg, rgba(109,40,217,.35), rgba(139,92,246,.25), rgba(255,255,255,.35)) !important;
-}
-body.theme-atlas .guide-card::before,
-body.theme-atlas .guide-card::after {
-  background: linear-gradient(135deg, rgba(14,83,97,.35), rgba(201,201,54,.25), rgba(255,255,255,.40)) !important;
-}
-body.theme-basic .guide-card::before,
-body.theme-basic .guide-card::after {
-  background: linear-gradient(135deg, rgba(55,65,81,.35), rgba(209,213,219,.25), rgba(255,255,255,.40)) !important;
-}
-body.theme-simple .guide-card::before,
-body.theme-simple .guide-card::after {
-  background: linear-gradient(135deg, rgba(37,99,235,.35), rgba(96,165,250,.25), rgba(255,255,255,.40)) !important;
 }
 
 body.theme-fedex .guide-card h3,
