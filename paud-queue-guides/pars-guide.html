@@ -2797,15 +2797,13 @@ parker_update_consignee: {
     if (e.key === "Escape") closeImageModal();
   });
 
-// MODIFIED renderFinal with single button "Correction Code / Comment" and theme styling
 async function renderFinal(finalNode){
   const finalText = finalNode.action || getNodeText(finalNode) || "";
   const finalNote = finalNode.note || "";
   const finalImage = finalNode.image || "";
 
-  const formattedFinalText = escapeHtml(finalText)
-    .replace(/\r\n/g, "\n")
-    .replace(/\n/g, "<br>");
+  // ✅ Do NOT escape HTML – trust internal content, allow <br> and other safe tags
+  const formattedFinalText = finalText;
 
   currentFinalRecommendation = finalText;
   currentKey = "__final__";
@@ -2833,9 +2831,6 @@ async function renderFinal(finalNode){
       ` : ""}
 
       <div class="final-actions" style="margin-top:20px; gap:12px; flex-wrap:wrap; display:flex; align-items:center;">
-        <button class="app-btn primary" onclick="openCorrectionModal()" style="background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:white; box-shadow:0 4px 12px rgba(77,20,140,.3);">
-          <i class="fa-regular fa-folder-open"></i> Correction Code / Comment
-        </button>
         <button class="app-btn secondary" id="inlineBack" ${path.length ? "" : 'style="display:none;"'}>Go Back</button>
         <button class="app-btn primary" id="inlineRestart">Start Over</button>
       </div>
@@ -2848,7 +2843,7 @@ async function renderFinal(finalNode){
   if (inlineBack) inlineBack.onclick = goBack;
   if (inlineRestart) inlineRestart.onclick = restart;
 }
-
+  
  async function renderNode(key){
   currentKey = key;
   const node = NODES[key];
