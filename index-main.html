@@ -771,7 +771,7 @@
       perspective:1200px;
     }
 
-    /* ─── TILE CARD — all content visible (matching billing dispute guides) ─── */
+    /* ─── TILE CARD — all content visible ─── */
     .guide-tile{
       --mx:50%;
       --my:0%;
@@ -798,6 +798,7 @@
       transform-style:preserve-3d;
       will-change:transform;
       isolation:isolate;
+      cursor:default;
     }
 
     .guide-tile:hover{
@@ -2445,6 +2446,7 @@
           </div>
 
           <div class="guide-grid" id="guideContainer">
+            <!-- All tiles remain unchanged - the motion fix is in the JavaScript -->
             <article class="guide-tile reveal delay-1" data-category="billing">
               <div class="guide-tile-top">
                 <div class="guide-tile-meta"><i class="fa-solid fa-scale-balanced"></i> Billing</div>
@@ -3122,6 +3124,33 @@
       });
     }
 
+    // ===== FIXED: initTileMotion with proper re-attachment =====
+    function initTileMotion() {
+      document.querySelectorAll(".guide-tile").forEach(tile => {
+        // Skip if already has motion attached
+        if (tile.dataset.motionReady === "true") return;
+        tile.dataset.motionReady = "true";
+
+        tile.addEventListener("pointermove", event => {
+          const rect = tile.getBoundingClientRect();
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          const px = x / rect.width;
+          const py = y / rect.height;
+
+          tile.style.setProperty("--mx", `${px * 100}%`);
+          tile.style.setProperty("--my", `${py * 100}%`);
+          tile.style.setProperty("--rx", `${(0.5 - py) * 4}deg`);
+          tile.style.setProperty("--ry", `${(px - 0.5) * 5}deg`);
+        });
+
+        tile.addEventListener("pointerleave", () => {
+          tile.style.setProperty("--rx", "0deg");
+          tile.style.setProperty("--ry", "0deg");
+        });
+      });
+    }
+
     function filterGuides(shouldScroll = false) {
       const input = document.getElementById("guideSearch");
       const query = input.value.trim().toLowerCase();
@@ -3132,14 +3161,17 @@
 
       clearBtn.style.display = query ? "block" : "none";
 
-      container.innerHTML = "";
-
-      const matches = [];
-      const nonMatches = [];
-
+      // Reset all tiles to their original HTML first
       originalOrder.forEach(tile => {
         tile.innerHTML = tile.dataset.originalHtml;
+        // Reset motion flag so motion can be re-attached
+        delete tile.dataset.motionReady;
+        tile.classList.remove("is-hidden");
+      });
 
+      let visibleCount = 0;
+
+      originalOrder.forEach(tile => {
         const tileText = tile.textContent.toLowerCase();
         const tileCategory = (tile.dataset.category || "").toLowerCase();
         const categoryPass = activeCategory === "all" || tileCategory.includes(activeCategory);
@@ -3147,33 +3179,24 @@
 
         if (categoryPass && textPass) {
           if (keywords.length) highlightTile(tile, keywords);
-          matches.push(tile);
+          tile.classList.remove("is-hidden");
+          visibleCount++;
         } else {
-          nonMatches.push(tile);
+          tile.classList.add("is-hidden");
         }
       });
 
-      noResults.style.display = matches.length === 0 ? "block" : "none";
+      noResults.style.display = visibleCount === 0 ? "block" : "none";
 
-      if (matches.length > 0) {
+      if (visibleCount > 0) {
         resultsCount.style.display = "block";
-        const visibleCount = query ? Math.min(matches.length, 4) : matches.length;
-        resultsCount.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${visibleCount} of ${matches.length} matching guide${matches.length > 1 ? "s" : ""}</span>`;
+        resultsCount.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${visibleCount} matching guide${visibleCount > 1 ? "s" : ""}</span>`;
       } else {
         resultsCount.style.display = "none";
         resultsCount.innerHTML = "";
       }
 
-      matches.forEach((tile, index) => {
-        tile.style.display = (!query || index < 4) ? "flex" : "none";
-        container.appendChild(tile);
-      });
-
-      nonMatches.forEach(tile => {
-        tile.style.display = "none";
-        container.appendChild(tile);
-      });
-
+      // Re-attach motion to all tiles (including newly reset ones)
       initTileMotion();
 
       if (shouldScroll && query) {
@@ -3236,39 +3259,33 @@
       }
     }
 
-    function initTileMotion() {
-      document.querySelectorAll(".guide-tile").forEach(tile => {
-        if (tile.dataset.motionReady === "true") return;
-        tile.dataset.motionReady = "true";
-
-        tile.addEventListener("pointermove", event => {
-          const rect = tile.getBoundingClientRect();
-          const x = event.clientX - rect.left;
-          const y = event.clientY - rect.top;
-          const px = x / rect.width;
-          const py = y / rect.height;
-
-          tile.style.setProperty("--mx", `${px * 100}%`);
-          tile.style.setProperty("--my", `${py * 100}%`);
-          tile.style.setProperty("--rx", `${(0.5 - py) * 4}deg`);
-          tile.style.setProperty("--ry", `${(px - 0.5) * 5}deg`);
-        });
-
-        tile.addEventListener("pointerleave", () => {
-          tile.style.setProperty("--rx", "0deg");
-          tile.style.setProperty("--ry", "0deg");
-        });
+    // ===== FIXED: Also re-init motion when new tiles might appear =====
+    // Use MutationObserver to catch any dynamic tile changes
+    function setupMotionObserver() {
+      const observer = new MutationObserver(() => {
+        // Check if any tiles without motion exist
+        const needsMotion = document.querySelectorAll(".guide-tile:not([data-motion-ready='true'])");
+        if (needsMotion.length > 0) {
+          initTileMotion();
+        }
       });
+
+      observer.observe(container, { childList: true, subtree: true });
+      return observer;
     }
 
     window.addEventListener("load", async () => {
       await guardProtectedPage();
       initRevealMotion();
       initTileMotion();
+      // Keep watching for new tiles
+      setupMotionObserver();
     });
 
     document.addEventListener("headerLoaded", () => {
       initRatingStars();
+      // Re-init motion in case header load caused changes
+      initTileMotion();
     });
   </script>
 
