@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="assets/css/guide-themes.css">
 
   <style>
-    /* ===== all existing styles remain exactly as they were ===== */
     html.page-protected,
     html.page-protected body{
       visibility:hidden;
@@ -711,13 +710,6 @@
       box-shadow:0 10px 22px rgba(18,31,21,.06);
     }
 
-    mark.search-highlight{
-      background:rgba(255,102,0,.20);
-      color:var(--dark-2);
-      padding:0 3px;
-      border-radius:6px;
-    }
-
     .section{
       padding:42px 0;
     }
@@ -772,7 +764,7 @@
       perspective:1200px;
     }
 
-    /* ─── TILE CARD — all content visible ─── */
+    /* ─── TILE CARD — matching billing dispute guides exactly ─── */
     .guide-tile{
       --mx:50%;
       --my:0%;
@@ -2412,7 +2404,7 @@
             <div class="search-bar">
               <div class="search-input-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input id="guideSearch" type="text" placeholder="Search guides, processes, actions, or keywords." oninput="filterGuides(true)">
+                <input id="guideSearch" type="text" placeholder="Search guides, processes, actions, or keywords." oninput="filterGuides()">
                 <button id="clearSearchBtn" type="button" onclick="clearSearch()">×</button>
               </div>
 
@@ -2774,19 +2766,6 @@
 
     const container = document.getElementById("guideContainer");
     const tiles = Array.from(container.querySelectorAll(".guide-tile"));
-    const originalOrder = [...tiles];
-
-    // Store original HTML and text content for highlighting
-    tiles.forEach(tile => {
-      tile.dataset.originalHtml = tile.innerHTML;
-      // Store original text of each searchable element
-      const h3 = tile.querySelector("h3");
-      const desc = tile.querySelector(".guide-desc");
-      const small = tile.querySelector(".guide-small");
-      if (h3) h3.dataset.originalText = h3.textContent;
-      if (desc) desc.dataset.originalText = desc.textContent;
-      if (small) small.dataset.originalText = small.textContent;
-    });
 
     function normalizeEmail(email) {
       return String(email || "").trim().toLowerCase();
@@ -3117,29 +3096,10 @@
       });
     }
 
-    // ===== IMPROVED HIGHLIGHTING — preserves DOM structure =====
-    function highlightTile(tile, keywords) {
-      const selectors = ["h3", ".guide-desc", ".guide-small"];
-      selectors.forEach(selector => {
-        const el = tile.querySelector(selector);
-        if (!el) return;
-        // Get original text from data attribute or fallback to textContent
-        const original = el.dataset.originalText || el.textContent;
-        let html = original;
-        keywords.forEach(keyword => {
-          const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          const regex = new RegExp(`(${escaped})`, "gi");
-          html = html.replace(regex, '<mark class="search-highlight">$1</mark>');
-        });
-        el.innerHTML = html;
-      });
-    }
-
-    // ===== FIXED: FILTER GUIDES without resetting innerHTML =====
+    // ===== FILTER GUIDES — same approach as billing dispute page =====
     function filterGuides(shouldScroll = false) {
       const input = document.getElementById("guideSearch");
       const query = input.value.trim().toLowerCase();
-      const keywords = query.split(/\s+/).filter(Boolean);
       const clearBtn = document.getElementById("clearSearchBtn");
       const noResults = document.getElementById("noResults");
       const resultsCount = document.getElementById("resultsCount");
@@ -3148,34 +3108,19 @@
 
       let visibleCount = 0;
 
-      originalOrder.forEach(tile => {
-        // Restore original HTML first (removes any old highlights)
-        tile.innerHTML = tile.dataset.originalHtml;
-        // Re-set original text data for children (since we reset innerHTML, data attributes on children are lost)
-        const h3 = tile.querySelector("h3");
-        const desc = tile.querySelector(".guide-desc");
-        const small = tile.querySelector(".guide-small");
-        // The original text is stored on the tile's dataset for each element? We stored it on the elements themselves initially, but after resetting innerHTML they are new elements.
-        // We need to re-store the original text from the tile's dataset if we stored it there, but we stored on elements. Better: store on tile dataset.
-        // Let's store original text on tile dataset for each selector.
-        // We'll do that in a separate step.
-        // For now, we can just use textContent.
-        // But we need to store original text for highlighting later.
-        // We'll store original text in data attributes on the tile for each selector.
-        // Let's do that before resetting? Actually, we need to store the original text of the new elements.
-        // Since we are resetting innerHTML to originalHtml, the text is already the original.
-        // So we can set data-original-text on the elements after reset.
-        if (h3) h3.dataset.originalText = h3.textContent;
-        if (desc) desc.dataset.originalText = desc.textContent;
-        if (small) small.dataset.originalText = small.textContent;
+      tiles.forEach(tile => {
+        const category = (tile.dataset.category || "").toLowerCase();
+        const title = tile.querySelector("h3")?.textContent?.toLowerCase() || "";
+        const desc = tile.querySelector(".guide-desc")?.textContent?.toLowerCase() || "";
+        const small = tile.querySelector(".guide-small")?.textContent?.toLowerCase() || "";
+        const allText = title + " " + desc + " " + small;
 
-        const tileText = tile.textContent.toLowerCase();
-        const tileCategory = (tile.dataset.category || "").toLowerCase();
-        const categoryPass = activeCategory === "all" || tileCategory.includes(activeCategory);
-        const textPass = !query || keywords.every(keyword => tileText.includes(keyword));
+        const matchesCategory = activeCategory === "all" || category === activeCategory;
+        const matchesSearch = !query || allText.includes(query);
 
-        if (categoryPass && textPass) {
-          if (keywords.length) highlightTile(tile, keywords);
+        const isVisible = matchesCategory && matchesSearch;
+
+        if (isVisible) {
           tile.classList.remove("is-hidden");
           visibleCount++;
         } else {
@@ -3192,9 +3137,6 @@
         resultsCount.style.display = "none";
         resultsCount.innerHTML = "";
       }
-
-      // Motion listeners are already attached (they never get removed), so no need to re-init.
-      // But we do need to ensure the motion works on newly reset tiles? The tile elements are the same, listeners remain.
 
       if (shouldScroll && query) {
         requestAnimationFrame(() => {
@@ -3256,7 +3198,7 @@
       }
     }
 
-    // ===== MOTION: attach once and never remove =====
+    // ===== MOTION — attached once, never removed =====
     function initTileMotion() {
       document.querySelectorAll(".guide-tile").forEach(tile => {
         if (tile.dataset.motionReady === "true") return;
@@ -3290,7 +3232,6 @@
 
     document.addEventListener("headerLoaded", () => {
       initRatingStars();
-      // Ensure motion is attached if header load adds new tiles (shouldn't)
     });
   </script>
 
