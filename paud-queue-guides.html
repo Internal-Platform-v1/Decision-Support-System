@@ -35,7 +35,6 @@ window.db = firebase.firestore();
 
 /* =========================================================
    PAGE AUTH GUARD
-   Prevents direct URL access without login
 ========================================================= */
 window.auth.onAuthStateChanged(async function(user) {
   try {
@@ -63,7 +62,6 @@ window.auth.onAuthStateChanged(async function(user) {
 </script>
 
 <style>
-/* (all existing styles remain exactly as provided – unchanged) */
 html.page-protected,
 html.page-protected body{
   visibility:hidden;
@@ -91,7 +89,7 @@ html.page-protected body{
   --radius-2xl:36px;
   --radius-xl:28px;
   --radius-lg:20px;
-  --ease:cubic-bezier(.2,.8,.2,1);
+  --ease:cubic-bezier(.22,1,.36,1);
   --max:1440px;
   font-family:"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -660,82 +658,80 @@ button{-webkit-tap-highlight-color:transparent}
   font-size:15px;
 }
 
+/* ===== GRID (uniform, aligned) ===== */
 .guide-grid{
   display:grid;
-  grid-template-columns:repeat(3, minmax(0,1fr));
-  gap:18px;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
   align-items:stretch;
   perspective:1200px;
 }
 
+/* ===== TILE CARD ===== */
 .guide-card{
   --mx:50%;
   --my:0%;
+  --rx:0deg;
+  --ry:0deg;
   position:relative;
   overflow:hidden;
-  padding:22px;
-  min-height:330px;
+  padding:22px 22px 16px;
+  min-height:320px;
+  height:auto;
   border-radius:30px;
   background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(201,201,54,.16), transparent 32%),
-    rgba(255,255,255,.76);
+    radial-gradient(circle at var(--mx) var(--my), rgba(255,102,0,.08), transparent 32%),
+    rgba(255,255,255,.86);
   border:1px solid rgba(255,255,255,.88);
   box-shadow:var(--shadow-md);
   backdrop-filter:blur(16px);
-  transition:transform .28s var(--ease), box-shadow .28s var(--ease);
+  transition:
+    transform 0.45s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.45s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.35s ease;
   display:flex;
   flex-direction:column;
   transform-style:preserve-3d;
-}
-
-.guide-card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  padding:1px;
-  background:linear-gradient(135deg, rgba(14,83,97,.26), rgba(201,201,54,.22), rgba(255,255,255,.30));
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  opacity:0;
-  pointer-events:none;
-  transition:.28s var(--ease);
+  will-change:transform;
+  isolation:isolate;
 }
 
 .guide-card:hover{
-  transform:translateY(-8px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  box-shadow:0 28px 64px rgba(18,31,21,.14);
+  transform:translateY(-6px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  box-shadow:0 28px 56px rgba(18,31,21,.14);
+  border-color:rgba(255,255,255,.96);
 }
 
-.guide-card:hover::before{opacity:1}
+.guide-card>*{position:relative;z-index:2;}
 
 .guide-card-top{
   position:relative;
-  z-index:1;
+  z-index:2;
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:14px;
-  margin-bottom:18px;
+  margin-bottom:16px;
+  flex-shrink:0;
 }
 
 .guide-meta{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:9px 12px;
+  padding:8px 13px;
   border-radius:999px;
   background:#fff;
   border:1px solid rgba(58,64,24,.08);
   color:var(--olive-2);
-  font-size:12px;
+  font-size:11px;
   font-weight:900;
   letter-spacing:.03em;
   box-shadow:0 10px 22px rgba(18,31,21,.05);
+  white-space:nowrap;
+  flex-shrink:0;
 }
-
-.guide-meta i{color:var(--teal)}
+.guide-meta i{color:var(--teal);font-size:12px;}
 
 .guide-icon{
   width:52px;
@@ -747,42 +743,47 @@ button{-webkit-tap-highlight-color:transparent}
   background:linear-gradient(135deg, var(--teal), var(--dark));
   box-shadow:0 14px 26px rgba(14,83,97,.18);
   flex-shrink:0;
-  transition:.22s var(--ease);
+  transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+  font-size:20px;
+  position:relative;
+  z-index:2;
 }
-
 .guide-card:hover .guide-icon{
-  transform:translateY(-2px) scale(1.04);
+  transform:translateY(-3px) scale(1.05);
+  box-shadow:0 18px 34px rgba(14,83,97,.24);
 }
 
 .guide-card h3{
   position:relative;
-  z-index:1;
-  margin:0 0 12px;
+  z-index:2;
+  margin:0 0 10px;
   color:var(--ink);
-  font-size:22px;
-  line-height:1.12;
-  letter-spacing:-.045em;
-  font-weight:950;
-  min-height:50px;
+  font-size:20px;
+  line-height:1.2;
+  letter-spacing:-.04em;
+  font-weight:900;
+  flex-shrink:0;
 }
 
 .lead{
   position:relative;
-  z-index:1;
-  margin:0 0 18px;
-  color:var(--muted);
-  line-height:1.7;
+  z-index:2;
+  line-height:1.6;
   font-size:14px;
-  min-height:74px;
+  margin:0 0 14px;
+  color:var(--muted);
+  flex-shrink:0;
+  overflow:visible;
 }
 
 .card-meta{
   position:relative;
-  z-index:1;
+  z-index:2;
   display:flex;
   flex-wrap:wrap;
   gap:8px;
-  margin:0 0 16px;
+  margin-bottom:16px;
+  flex-shrink:0;
 }
 
 .meta-pill{
@@ -801,10 +802,11 @@ button{-webkit-tap-highlight-color:transparent}
 
 .guide-link{
   position:relative;
-  z-index:1;
+  z-index:2;
   margin-top:auto;
+  flex-shrink:0;
   min-height:50px;
-  padding:0 16px;
+  padding:0 18px;
   border-radius:17px;
   display:inline-flex;
   align-items:center;
@@ -813,10 +815,17 @@ button{-webkit-tap-highlight-color:transparent}
   width:100%;
   color:#fff;
   font-weight:900;
+  font-size:14px;
   background:linear-gradient(135deg, var(--dark), var(--teal));
   box-shadow:0 16px 30px rgba(14,83,97,.16);
-  transition:.22s var(--ease);
+  transition:
+    transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+    box-shadow 0.35s ease,
+    background 0.35s ease;
   overflow:hidden;
+  border:none;
+  cursor:pointer;
+  text-decoration:none;
 }
 
 .guide-link::before{
@@ -825,376 +834,37 @@ button{-webkit-tap-highlight-color:transparent}
   inset:0;
   background:linear-gradient(115deg, transparent, rgba(255,255,255,.18), transparent);
   transform:translateX(-110%);
-  transition:.65s var(--ease);
+  transition:transform 0.65s cubic-bezier(0.22,1,0.36,1);
 }
-
 .guide-link:hover{
   transform:translateY(-2px);
   box-shadow:0 22px 38px rgba(14,83,97,.22);
 }
-
-.guide-link:hover::before{transform:translateX(110%)}
-.guide-link i{transition:.22s var(--ease)}
-.guide-link:hover i{transform:translateX(3px)}
+.guide-link:hover::before{transform:translateX(110%);}
+.guide-link i{transition:transform 0.3s ease;font-size:13px;}
+.guide-link:hover i{transform:translateX(4px);}
 
 .small{
   position:relative;
-  z-index:1;
-  margin:14px 0 0;
+  z-index:2;
+  line-height:1.5;
+  font-size:12.5px;
+  margin-top:auto !important;
+  margin-bottom:0 !important;
   padding-top:14px;
   border-top:1px dashed rgba(58,64,24,.16);
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.65;
-}
-
-.guide-card.is-hidden{display:none}
-
-.info-panels{
-  display:grid;
-  grid-template-columns:1fr .85fr;
-  gap:18px;
-  margin-top:22px;
-}
-
-.tips-panel,
-.support-panel{
-  border-radius:28px;
-  padding:22px;
-  background:rgba(255,255,255,.76);
-  border:1px solid rgba(255,255,255,.88);
-  box-shadow:var(--shadow-md);
-  backdrop-filter:blur(16px);
-}
-
-.support-panel{
-  background:linear-gradient(135deg, var(--teal), var(--dark));
-  color:#fff;
-}
-
-.tips-panel strong,
-.support-panel strong{
-  display:block;
-  margin-bottom:10px;
-  font-size:16px;
-  color:inherit;
-}
-
-.tips-panel ul{
-  margin:0;
-  padding-left:18px;
-  color:var(--muted);
-  line-height:1.8;
-  font-size:14px;
-}
-
-.support-panel span{
-  display:block;
-  color:rgba(255,255,255,.72);
-  line-height:1.75;
-  font-size:14px;
-}
-
-.reveal{
-  opacity:0;
-  transform:translateY(22px);
-  transition:opacity .7s var(--ease), transform .7s var(--ease);
-}
-
-.reveal.in-view{
-  opacity:1;
-  transform:none;
-}
-
-.delay-1{transition-delay:.08s}
-.delay-2{transition-delay:.16s}
-.delay-3{transition-delay:.24s}
-.delay-4{transition-delay:.32s}
-.delay-5{transition-delay:.40s}
-.delay-6{transition-delay:.48s}
-
-/* ===== HEADER MODALS / CLOCK FIX ===== */
-#commentModal,
-#allCommentsModal,
-#helpModal,
-#timeSettingsModal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:2147483647;
-  justify-content:center;
-  align-items:center;
-  padding:0 24px;
-  background:rgba(2,6,23,.52);
-  backdrop-filter:blur(8px);
-  overflow-y:auto;
-}
-
-#commentModal .modal-content,
-#allCommentsModal .modal-content,
-#helpModal .modal-content,
-#timeSettingsModal .modal-content{
   width:100%;
-  background:#fff;
-  border-radius:28px;
-  padding:26px;
-  box-shadow:0 24px 80px rgba(2,6,23,.18);
-  border:1px solid rgba(148,163,184,.16);
-  max-height:min(84vh, 900px);
-  overflow:auto;
-  margin:110px auto 32px;
-}
-
-#commentModal .feedback-modal{
-  max-width:640px;
-  border-radius:28px;
-  padding:20px 20px 22px;
-}
-
-#allCommentsModal .modal-content,
-#helpModal .help-modal{
-  max-width:760px;
-}
-
-#timeSettingsModal .modal-content{
-  max-width:580px;
-}
-
-#commentModal .modal-header,
-#allCommentsModal .modal-header,
-#helpModal .modal-header,
-#timeSettingsModal .modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:14px;
-  letter-spacing:-.03em;
-  color:#0f172a;
-}
-
-#commentModal .modal-close,
-#allCommentsModal .modal-close,
-#helpModal .modal-close,
-#timeSettingsModal .modal-close{
-  cursor:pointer;
-  width:40px;
-  height:40px;
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  color:#64748b;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-  transition:.2s ease;
+  color:var(--muted);
   flex-shrink:0;
-  font-size:22px;
-  line-height:1;
+  overflow:visible;
 }
 
-#commentModal .modal-close:hover,
-#allCommentsModal .modal-close:hover,
-#helpModal .modal-close:hover,
-#timeSettingsModal .modal-close:hover{
-  color:#0f172a;
-  background:#eef2ff;
-}
+.guide-card.is-hidden{display:none;}
 
-#commentModal .rating-container{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  margin:16px 0 18px;
-}
-
-#commentModal .rating-star{
-  cursor:pointer;
-  font-size:26px;
-  color:#d1d5db;
-  transition:transform .18s ease, color .18s ease;
-}
-
-#commentModal .rating-star:hover{
-  transform:translateY(-1px) scale(1.06);
-}
-
-#commentModal .rating-star.selected{
-  color:var(--yellow);
-}
-
-#commentModal input,
-#commentModal textarea,
-#timeSettingsModal input,
-#timeSettingsModal textarea,
-#timeSettingsModal select{
-  width:100%;
-  border:none;
-  outline:none;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.18);
-  padding:14px 16px;
-  color:#0f172a;
-  font-size:14px;
-  transition:.18s ease;
-}
-
-#commentModal input{margin-top:4px;margin-bottom:10px}
-#commentModal textarea{min-height:120px;resize:vertical;margin-top:0}
-
-#commentModal input:focus,
-#commentModal textarea:focus,
-#timeSettingsModal select:focus{
-  background:#fff;
-  box-shadow:inset 0 0 0 2px rgba(14,83,97,.16), 0 0 0 5px rgba(14,83,97,.06);
-}
-
-#commentModal .link-text{
-  color:var(--teal);
-  cursor:pointer;
-  text-decoration:none;
-  font-size:14px;
-  font-weight:700;
-}
-
-#commentModal .link-text:hover{text-decoration:underline}
-
-#allCommentsModal .comment-list-item{
-  padding:14px 0;
-  border-bottom:1px solid rgba(148,163,184,.18);
-}
-
-#allCommentsModal .comment-list-item:last-child{border-bottom:none}
-
-#allCommentsModal .stars{
-  color:var(--yellow);
-  font-size:18px;
-  margin-bottom:6px;
-  display:block;
-}
-
-#timeCalendarPopup{
-  display:none;
-  position:fixed;
-  top:92px;
-  right:24px;
-  width:min(360px, calc(100vw - 32px));
-  z-index:2147483647;
-  padding:20px;
-  border-radius:28px;
-  background:rgba(255,255,255,.94);
-  border:1px solid rgba(148,163,184,.16);
-  box-shadow:0 24px 80px rgba(2,6,23,.18);
-  backdrop-filter:blur(16px);
-}
-
-.popup-time{
-  font-size:34px;
-  font-weight:800;
-  color:#0f172a;
-  margin-bottom:4px;
-}
-
-.popup-date{
-  font-size:14px;
-  color:#64748b;
-  margin-bottom:16px;
-}
-
-.calendar-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:10px;
-  padding:10px 12px;
-  border-radius:16px;
-  background:#f8fafc;
-  box-shadow:inset 0 0 0 1px rgba(148,163,184,.16);
-}
-
-.calendar-header span{
-  cursor:pointer;
-  color:var(--teal);
-  font-weight:800;
-  font-size:18px;
-  user-select:none;
-  width:28px;
-  text-align:center;
-}
-
-.calendar-title{
-  font-weight:800;
-  color:#0f172a;
-}
-
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
-}
-
-footer{
-  background:var(--teal);
-  color:white;
-  padding:10px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-size:15px;
-  gap:16px;
-  flex-wrap:wrap;
-}
-
-
-/* ===== FEDEX FULL BACKGROUND READABILITY ===== */
-.section-title{
-  color:#ffffff;
-  text-shadow:0 18px 44px rgba(2,6,23,.28);
-}
-
-.section-copy{
-  color:rgba(226,232,240,.78);
-}
-
-.section-kicker{
-  color:var(--yellow-soft);
-  background:rgba(77,20,140,.38);
-  border-color:rgba(255,102,0,.22);
-  box-shadow:0 12px 26px rgba(2,6,23,.12);
-}
-
-.search-panel,
-.guide-card,
-.tips-panel{
-  background:rgba(255,255,255,.86);
-  border-color:rgba(255,255,255,.90);
-}
-
-.support-panel,
-.focus-card.dark{
-  background:linear-gradient(135deg, #4d148c, #07111f);
-}
-
-.hero-main-btn{
-  background:linear-gradient(135deg, var(--yellow), var(--yellow-soft));
-  color:#fff;
-  box-shadow:0 18px 34px rgba(255,102,0,.22);
-}
-
-.pill i,
-.focus-card.dark .card-label span,
-#commentModal .rating-star.selected,
-#allCommentsModal .stars{
-  color:var(--yellow-soft);
-}
-
+/* ===== RESPONSIVE ===== */
 @media (max-width:1280px){
-  .guide-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .guide-grid{grid-template-columns:repeat(3,1fr);}
 }
-
 @media (max-width:1080px){
   .hero-shell{grid-template-columns:1fr}
   .hero-card{min-height:auto}
@@ -1202,17 +872,17 @@ footer{
   .filter-row{justify-content:flex-start}
   .section-head{align-items:flex-start;flex-direction:column}
   .info-panels{grid-template-columns:1fr}
+  .guide-grid{grid-template-columns:repeat(2,1fr);}
 }
-
 @media (max-width:760px){
   .container{width:min(calc(100% - 20px), var(--max))}
   .hero{padding:28px 0 18px}
   .hero-card{padding:28px;border-radius:30px}
   .hero-card::after{border-radius:29px}
   .hero h1{font-size:3.05rem}
-  .hero-metrics,.guide-grid{grid-template-columns:1fr}
-  .guide-card{min-height:unset}
-  .guide-card h3,.lead{min-height:unset}
+  .hero-metrics{grid-template-columns:1fr}
+  .guide-grid{grid-template-columns:1fr;}
+  .guide-card{min-height:unset;}
   #commentModal,
   #allCommentsModal,
   #helpModal,
@@ -1232,11 +902,11 @@ footer{
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none}
+  .guide-card{max-height:none;overflow:visible;}
+  .lead, .small{max-height:none;-webkit-line-clamp:unset;overflow:visible;}
 }
 
 /* ===== MAIN INDEX FIX: HEADER DATE/TIME BUTTON WIDTH ===== */
-/* This prevents main-index page button styles from overriding header modal buttons */
-
 #timeCalendarPopup .btn,
 #timeSettingsModal .btn,
 #timeSettingsModal #saveTimeSettings,
@@ -1261,7 +931,7 @@ footer{
 #timeCalendarPopup #openTimeSettings {
   margin-top: 14px !important;
 }
-  
+
 /* =========================================================
    SHARED THEME BRIDGE — INDEX / CASE DIRECTORY / EBS / FBC / LINKS
    Works with the header profile theme selector.
@@ -2252,13 +1922,6 @@ body.theme-simple .guide-tile{
   box-shadow:var(--shadow-md) !important;
 }
 
-body.theme-fedex .guide-tile::before,
-body.theme-atlas .guide-tile::before,
-body.theme-basic .guide-tile::before,
-body.theme-simple .guide-tile::before{
-  background:linear-gradient(135deg,var(--teal),var(--olive),var(--yellow)) !important;
-}
-
 body.theme-fedex .guide-tile-meta,
 body.theme-atlas .guide-tile-meta,
 body.theme-basic .guide-tile-meta,
@@ -2511,11 +2174,22 @@ body.theme-simple .guide-card{
   -webkit-backdrop-filter:blur(16px) !important;
 }
 
+/* THEME-SPECIFIC TILE HOVER GLOW & BORDER */
 body.theme-fedex .guide-card::before,
+body.theme-fedex .guide-card::after {
+  background: linear-gradient(135deg, rgba(77,20,140,.35), rgba(255,102,0,.25), rgba(255,255,255,.40)) !important;
+}
 body.theme-atlas .guide-card::before,
+body.theme-atlas .guide-card::after {
+  background: linear-gradient(135deg, rgba(14,83,97,.35), rgba(201,201,54,.25), rgba(255,255,255,.40)) !important;
+}
 body.theme-basic .guide-card::before,
-body.theme-simple .guide-card::before{
-  background:linear-gradient(135deg, var(--accent-focus), color-mix(in srgb, var(--yellow) 20%, transparent), rgba(255,255,255,.30)) !important;
+body.theme-basic .guide-card::after {
+  background: linear-gradient(135deg, rgba(55,65,81,.35), rgba(209,213,219,.25), rgba(255,255,255,.40)) !important;
+}
+body.theme-simple .guide-card::before,
+body.theme-simple .guide-card::after {
+  background: linear-gradient(135deg, rgba(37,99,235,.35), rgba(96,165,250,.25), rgba(255,255,255,.40)) !important;
 }
 
 body.theme-fedex .guide-card h3,
@@ -2999,8 +2673,6 @@ footer.site-footer .footer-right{
 </style>
 </head>
 
-
-
 <body class="theme-fedex" data-page="home">
 <div class="page">
   <div id="site-header"></div>
@@ -3146,8 +2818,8 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-map-location-dot"></i> Region</span>
               <span class="meta-pill"><i class="fa-solid fa-shuffle"></i> EHOT</span>
             </div>
-            <a href="paud-queue-guides/region-and-ehot-queue.html" class="guide-link">Open Regions and EHOT Queue Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for EHOT queue requests, account setup validation, shipment volume checks, and related service updates.</p>
+            <a href="paud-queue-guides/region-and-ehot-queue.html" class="guide-link">Open Regions and EHOT Queue Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
           <article class="guide-card reveal delay-2" data-category="routing" data-keywords="tplo bill to shipper consignee spoc validation account mapping routing paud queue">
@@ -3161,8 +2833,8 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-route"></i> Routing</span>
               <span class="meta-pill"><i class="fa-solid fa-building-circle-check"></i> Account</span>
             </div>
-            <a href="paud-queue-guides/tplo-guide.html" class="guide-link">Open TPLO Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for account relationship checks, SPOC routing, and CORR ACCR billing actions.</p>
+            <a href="paud-queue-guides/tplo-guide.html" class="guide-link">Open TPLO Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
           <article class="guide-card reveal delay-3" data-category="account" data-keywords="tphi temp sys match charge account to account temp audit auto matching process paud queue">
@@ -3176,8 +2848,8 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-user-check"></i> Account</span>
               <span class="meta-pill"><i class="fa-solid fa-link"></i> Mapping</span>
             </div>
-            <a href="paud-queue-guides/tphi-guide.html" class="guide-link">Open TPHI Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Covers account validation, archived/invalid debtor handling, and proper mapping steps.</p>
+            <a href="paud-queue-guides/tphi-guide.html" class="guide-link">Open TPHI Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
           <article class="guide-card reveal delay-4" data-category="account" data-keywords="paud tpkn correction request account check auto rate noar shipper consignee paud queue">
@@ -3191,8 +2863,8 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-arrow-right-arrow-left"></i> TPKN</span>
               <span class="meta-pill"><i class="fa-solid fa-circle-check"></i> Validation</span>
             </div>
-            <a href="paud-queue-guides/paud-tpkn-guide.html" class="guide-link">Open PAUD / TPKN Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Covers queue movement, NOAR scenarios, pricing checks, and correction steps.</p>
+            <a href="paud-queue-guides/paud-tpkn-guide.html" class="guide-link">Open PAUD / TPKN Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
           <article class="guide-card reveal delay-5" data-category="request" data-keywords="crau cra u request decision guide collection validation shipment review request paud queue">
@@ -3206,8 +2878,8 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-file-lines"></i> CRAU</span>
               <span class="meta-pill"><i class="fa-solid fa-circle-check"></i> Review</span>
             </div>
-            <a href="paud-queue-guides/crau-guide.html" class="guide-link">Open CRAU Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for CRAU request handling, validation, queue review, and processing decisions.</p>
+            <a href="paud-queue-guides/crau-guide.html" class="guide-link">Open CRAU Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
           <article class="guide-card reveal delay-6" data-category="payment" data-keywords="paud fpay payment billing account validation financial payment paud queue">
@@ -3221,8 +2893,8 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-file-invoice-dollar"></i> FPAY</span>
               <span class="meta-pill"><i class="fa-solid fa-shield-halved"></i> Review</span>
             </div>
-            <a href="paud-queue-guides/PAUD FPAY Guide.html" class="guide-link">Open PAUD-FPAY Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for payment queue review, account validation, and structured PAUD-FPAY decision handling.</p>
+            <a href="paud-queue-guides/PAUD FPAY Guide.html" class="guide-link">Open PAUD-FPAY Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
           <article class="guide-card reveal delay-1" data-category="billing" data-keywords="cod collect on delivery add remove cod loa cbl remit amount correction paud queue">
@@ -3236,8 +2908,8 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-plus-minus"></i> Add / Remove</span>
               <span class="meta-pill"><i class="fa-solid fa-file-contract"></i> LOA / CBL</span>
             </div>
-            <a href="paud-queue-guides/cod-guide.html" class="guide-link">Open COD Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for COD validation, adding COD charges, removing COD via LOA, keyword cleanup, and billing correction handling.</p>
+            <a href="paud-queue-guides/cod-guide.html" class="guide-link">Open COD Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
           <article class="guide-card reveal delay-2" data-category="account" data-keywords="ispd invalid consignee shipper account accops freight corrections bol edm aem accf accr paud queue">
@@ -3251,11 +2923,10 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-user-check"></i> Shipper / Consignee</span>
               <span class="meta-pill"><i class="fa-solid fa-file-invoice"></i> ISPD</span>
             </div>
-            <a href="paud-queue-guides/ispd-guide.html" class="guide-link">Open ISPD Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for invalid shipper or consignee account review, BOL validation, AEM account checks, and ACCR correction handling.</p>
+            <a href="paud-queue-guides/ispd-guide.html" class="guide-link">Open ISPD Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
-          <!-- NEW: LMPB (Lumper Fee) Guide -->
           <article class="guide-card reveal delay-3" data-category="billing" data-keywords="lmpb lumper fee sort segregate prepaid third party correction paud queue">
             <div class="guide-card-top">
               <span class="guide-meta"><i class="fa-solid fa-hand-holding-heart"></i> Billing</span>
@@ -3267,143 +2938,123 @@ footer.site-footer .footer-right{
               <span class="meta-pill"><i class="fa-solid fa-truck-ramp-box"></i> Lumper</span>
               <span class="meta-pill"><i class="fa-solid fa-tag"></i> LMPB/LMPP</span>
             </div>
-            <a href="paud-queue-guides/lmpb-guide.html" class="guide-link">Open LMPB Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for Lumper fee requests, Sort & Segregate validation, prepaid/3rd party handling, and CORR ACC correction.</p>
+            <a href="paud-queue-guides/lmpb-guide.html" class="guide-link">Open LMPB Guide <i class="fa-solid fa-arrow-right"></i></a>
           </article>
 
-<article class="guide-card reveal delay-4" data-category="billing" data-keywords="irt1 po number division validation prepaid collect third party fedi cedi correction code paud queue">
-  <div class="guide-card-top">
-    <span class="guide-meta"><i class="fa-solid fa-hashtag"></i> PO Validation</span>
-    <div class="guide-icon"><i class="fa-solid fa-hashtag"></i></div>
-  </div>
-  <h3>IRT1 – PO Number & Division Validation</h3>
-  <p class="lead">
-    Follow a structured decision flow to validate PO number and division information on the BOL. Select from Prepaid, Collect, 3rd Party, or all‑correct scenarios to update billing terms, correct account numbers, add missing PO numbers, or apply the Decline process when terms are correct but the PO was not billed.
-  </p>
-  <div class="card-meta">
-    <span class="meta-pill"><i class="fa-solid fa-file-alt"></i> PO Validation</span>
-    <span class="meta-pill"><i class="fa-solid fa-truck"></i>Service Terms</span>
-  </div>
-  <a href="paud-queue-guides/irt1-guide.html" class="guide-link">Open IRT1 Guide <i class="fa-solid fa-arrow-right"></i></a>
-  <p class="small">
-    Best for IRT1 queue handling, division validation, billing term updates, account corrections (White Cap → HD Supply), and correction code selection (FEDI, CEDI, VRFY).
-  </p>
-</article>
+          <article class="guide-card reveal delay-4" data-category="billing" data-keywords="irt1 po number division validation prepaid collect third party fedi cedi correction code paud queue">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-hashtag"></i> PO Validation</span>
+              <div class="guide-icon"><i class="fa-solid fa-hashtag"></i></div>
+            </div>
+            <h3>IRT1 – PO Number & Division Validation</h3>
+            <p class="lead">
+              Follow a structured decision flow to validate PO number and division information on the BOL. Select from Prepaid, Collect, 3rd Party, or all‑correct scenarios to update billing terms, correct account numbers, add missing PO numbers, or apply the Decline process when terms are correct but the PO was not billed.
+            </p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-file-alt"></i> PO Validation</span>
+              <span class="meta-pill"><i class="fa-solid fa-truck"></i>Service Terms</span>
+            </div>
+            <p class="small">
+              Best for IRT1 queue handling, division validation, billing term updates, account corrections (White Cap → HD Supply), and correction code selection (FEDI, CEDI, VRFY).
+            </p>
+            <a href="paud-queue-guides/irt1-guide.html" class="guide-link">Open IRT1 Guide <i class="fa-solid fa-arrow-right"></i></a>
+          </article>
 
-<!-- IRT/VSAT Guide – Grainger, Rio Bravo, Hino -->
-<article class="guide-card reveal delay-5" data-category="billing" data-keywords="irt vsat grainger rio bravo hino noar capl correction corr vrfy corr cae corr accr consignee account update">
-  <div class="guide-card-top">
-    <span class="guide-meta"><i class="fa-solid fa-file-pen"></i> Billing</span>
-    <div class="guide-icon"><i class="fa-solid fa-file-pen"></i></div>
-  </div>
-  <h3>IRT/VSAT – Queue Guide</h3>
-  <p class="lead">
-    Follow structured steps for Grainger (NOAR deletion and CAPL remark), Rio Bravo (consignee correction), and Hino (account mapping and term updates) to ensure accurate billing and proper correction code application.
-  </p>
-  <div class="card-meta">
-    <span class="meta-pill"><i class="fa-solid fa-check-double"></i> Validation</span>
-    <span class="meta-pill"><i class="fa-solid fa-code-branch"></i> Correction Codes</span>
-  </div>
-  <a href="paud-queue-guides/irt-vsat-guide.html" class="guide-link">
-    Open IRT/VSAT Guide <i class="fa-solid fa-arrow-right"></i>
-  </a>
-  <p class="small">
-    Best for IRT/VSAT queue handling, Grainger NOAR/CAPL corrections, Rio Bravo consignee updates, Hino account mapping, and correction code selection (VRFY, CAE, ACCR).
-  </p>
-</article>          
+          <article class="guide-card reveal delay-5" data-category="billing" data-keywords="irt vsat grainger rio bravo hino noar capl correction corr vrfy corr cae corr accr consignee account update">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-file-pen"></i> Billing</span>
+              <div class="guide-icon"><i class="fa-solid fa-file-pen"></i></div>
+            </div>
+            <h3>IRT/VSAT – Queue Guide</h3>
+            <p class="lead">
+              Follow structured steps for Grainger (NOAR deletion and CAPL remark), Rio Bravo (consignee correction), and Hino (account mapping and term updates) to ensure accurate billing and proper correction code application.
+            </p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-check-double"></i> Validation</span>
+              <span class="meta-pill"><i class="fa-solid fa-code-branch"></i> Correction Codes</span>
+            </div>
+            <p class="small">
+              Best for IRT/VSAT queue handling, Grainger NOAR/CAPL corrections, Rio Bravo consignee updates, Hino account mapping, and correction code selection (VRFY, CAE, ACCR).
+            </p>
+            <a href="paud-queue-guides/irt-vsat-guide.html" class="guide-link">Open IRT/VSAT Guide <i class="fa-solid fa-arrow-right"></i></a>
+          </article>
 
-<!-- SAF2 Guide -->
-<article class="guide-card reveal delay-4" data-category="billing" data-keywords="saf2 airgas harte hanks nmfc reweigh certificate pallet weight tare weight rewe correction code corr ewpd corr cusi corr vrfy paud queue">
-  <div class="guide-card-top">
-    <span class="guide-meta"><i class="fa-solid fa-scale-balanced"></i> Billing Audit</span>
-    <div class="guide-icon"><i class="fa-solid fa-scale-balanced"></i></div>
-  </div>
-  <h3>SAF2 Guide – NMFC, Reweigh & Weight Validation</h3>
-  <p class="lead">
-    Follow a structured decision flow to validate NMFC classifications, pallet and tare weights, reweigh certificates, and billing corrections for Airgas and Harte Hanks shipments.
-  </p>
-  <div class="card-meta">
-    <span class="meta-pill">
-      <i class="fa-solid fa-file-invoice"></i> NMFC Review
-    </span>
-    <span class="meta-pill">
-      <i class="fa-solid fa-weight-scale"></i> Reweigh Validation
-    </span>
-  </div>
-  <a href="paud-queue-guides/saf2-guide.html" class="guide-link">
-    Open SAF2 Guide <i class="fa-solid fa-arrow-right"></i>
-  </a>
-  <p class="small">
-    Best for Airgas and Harte Hanks audit review, NMFC validation, pallet and tare weight verification, reweigh certificate processing, 50-line error handling, and correction code selection (VRFY, EWPD, CUSI).
-  </p>
-</article> 
+          <article class="guide-card reveal delay-6" data-category="billing" data-keywords="saf2 airgas harte hanks nmfc reweigh certificate pallet weight tare weight rewe correction code corr ewpd corr cusi corr vrfy paud queue">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-scale-balanced"></i> Billing Audit</span>
+              <div class="guide-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            </div>
+            <h3>SAF2 Guide – NMFC, Reweigh & Weight Validation</h3>
+            <p class="lead">
+              Follow a structured decision flow to validate NMFC classifications, pallet and tare weights, reweigh certificates, and billing corrections for Airgas and Harte Hanks shipments.
+            </p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-file-invoice"></i> NMFC Review</span>
+              <span class="meta-pill"><i class="fa-solid fa-weight-scale"></i> Reweigh Validation</span>
+            </div>
+            <p class="small">
+              Best for Airgas and Harte Hanks audit review, NMFC validation, pallet and tare weight verification, reweigh certificate processing, 50-line error handling, and correction code selection (VRFY, EWPD, CUSI).
+            </p>
+            <a href="paud-queue-guides/saf2-guide.html" class="guide-link">Open SAF2 Guide <i class="fa-solid fa-arrow-right"></i></a>
+          </article>
 
-<!-- BLOA Guide – Accessorial & Terms Validation -->
-<article class="guide-card reveal delay-5" data-category="billing" data-keywords="bloa letter of authority accessorial surcharges lifc idc dunc prepaid collect driver spotted delivery receipt blanket loa corr etms paud queue">
-  <div class="guide-card-top">
-    <span class="guide-meta"><i class="fa-solid fa-file-signature"></i> Billing</span>
-    <div class="guide-icon"><i class="fa-solid fa-file-signature"></i></div>
-  </div>
-  <h3>BLOA Guide – Accessorial & Terms Validation</h3>
-  <p class="lead">
-    Follow request to change any surcharges billed collect to prepaid (vice versa). Accessorial should always match the terms per the letter of authority covering the bill to. Surcharges refer to all collect surcharges (LIFC, IDC, DUNC).
-  </p>
-  <div class="card-meta">
-    <span class="meta-pill"><i class="fa-solid fa-scale-balanced"></i> Accessorials</span>
-    <span class="meta-pill"><i class="fa-solid fa-file-contract"></i> LOA / Blanket</span>
-  </div>
-  <a href="paud-queue-guides/bloa-guide.html" class="guide-link">
-    Open BLOA Guide <i class="fa-solid fa-arrow-right"></i>
-  </a>
-  <p class="small">
-    Best for BLOA queue handling, accessorial term matching, Driver Spotted exceptions, missing DR handling, and CORR ETMS corrections.
-  </p>
-</article>        
+          <article class="guide-card reveal delay-1" data-category="billing" data-keywords="bloa letter of authority accessorial surcharges lifc idc dunc prepaid collect driver spotted delivery receipt blanket loa corr etms paud queue">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-file-signature"></i> Billing</span>
+              <div class="guide-icon"><i class="fa-solid fa-file-signature"></i></div>
+            </div>
+            <h3>BLOA Guide – Accessorial & Terms Validation</h3>
+            <p class="lead">
+              Follow request to change any surcharges billed collect to prepaid (vice versa). Accessorial should always match the terms per the letter of authority covering the bill to. Surcharges refer to all collect surcharges (LIFC, IDC, DUNC).
+            </p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-scale-balanced"></i> Accessorials</span>
+              <span class="meta-pill"><i class="fa-solid fa-file-contract"></i> LOA / Blanket</span>
+            </div>
+            <p class="small">
+              Best for BLOA queue handling, accessorial term matching, Driver Spotted exceptions, missing DR handling, and CORR ETMS corrections.
+            </p>
+            <a href="paud-queue-guides/bloa-guide.html" class="guide-link">Open BLOA Guide <i class="fa-solid fa-arrow-right"></i></a>
+          </article>
 
-<!-- PAT8 Guide – Multi‑Company Queue -->
-<article class="guide-card reveal delay-5" data-category="billing" data-keywords="pat8 emerson sid pilgrims harte hanks top value fabrics stps stpl accessorial removal correction queue paud">
-  <div class="guide-card-top">
-    <span class="guide-meta"><i class="fa-solid fa-building"></i> Multi‑Company</span>
-    <div class="guide-icon"><i class="fa-solid fa-building"></i></div>
-  </div>
-  <h3>PAT8 – Multi‑Company Queue Guide</h3>
-  <p class="lead">
-    PAUD PAT8 contains bills for different companies. Follow structured steps for EMERSON (SID# validation), PILGRIMS (terms update), Harte Hanks (NMFC correction), Top Value Fabrics (STPS/STPL keywords), and accessorial removal requests.
-  </p>
-  <div class="card-meta">
-    <span class="meta-pill"><i class="fa-solid fa-hashtag"></i> SID# Validation</span>
-    <span class="meta-pill"><i class="fa-solid fa-scale-balanced"></i> NMFC / STPS</span>
-  </div>
-  <a href="paud-queue-guides/pat8-guide.html" class="guide-link">
-    Open PAT8 Guide <i class="fa-solid fa-arrow-right"></i>
-  </a>
-  <p class="small">
-    Best for EMERSON SID# corrections, PILGRIMS terms updates, Harte Hanks NMFC corrections, Top Value Fabrics keyword handling, and accessorial removal validation.
-  </p>
-</article>
+          <article class="guide-card reveal delay-2" data-category="billing" data-keywords="pat8 emerson sid pilgrims harte hanks top value fabrics stps stpl accessorial removal correction queue paud">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-building"></i> Multi‑Company</span>
+              <div class="guide-icon"><i class="fa-solid fa-building"></i></div>
+            </div>
+            <h3>PAT8 – Multi‑Company Queue Guide</h3>
+            <p class="lead">
+              PAUD PAT8 contains bills for different companies. Follow structured steps for EMERSON (SID# validation), PILGRIMS (terms update), Harte Hanks (NMFC correction), Top Value Fabrics (STPS/STPL keywords), and accessorial removal requests.
+            </p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-hashtag"></i> SID# Validation</span>
+              <span class="meta-pill"><i class="fa-solid fa-scale-balanced"></i> NMFC / STPS</span>
+            </div>
+            <p class="small">
+              Best for EMERSON SID# corrections, PILGRIMS terms updates, Harte Hanks NMFC corrections, Top Value Fabrics keyword handling, and accessorial removal validation.
+            </p>
+            <a href="paud-queue-guides/pat8-guide.html" class="guide-link">Open PAT8 Guide <i class="fa-solid fa-arrow-right"></i></a>
+          </article>
 
-<!-- PARS Guide – Parker Hannifin Queue -->
-<article class="guide-card reveal delay-6" data-category="account" data-keywords="pars parker hannifin debtor consignee account update terms prepaid collect correction queue validation">
-  <div class="guide-card-top">
-    <span class="guide-meta"><i class="fa-solid fa-user-check"></i> Account</span>
-    <div class="guide-icon"><i class="fa-solid fa-user-check"></i></div>
-  </div>
-  <h3>PARS – Parker Hannifin Queue Guide</h3>
-  <p class="lead">
-    Validate Parker Hannifin as the debtor per the Bill of Lading, update the consignee to account 105188579, compare Prepaid vs Collect rates to apply the lesser charge (only when Parker is both shipper and consignee), and apply CORR VRFY, CORR CUSI, or decline handling based on BOL verification and address matching.
-  </p>
-  <div class="card-meta">
-    <span class="meta-pill"><i class="fa-solid fa-building"></i> Parker Hannifin</span>
-    <span class="meta-pill"><i class="fa-solid fa-file-invoice"></i> Debtor Validation</span>
-  </div>
-  <a href="paud-queue-guides/pars-guide.html" class="guide-link">
-    Open PARS Guide <i class="fa-solid fa-arrow-right"></i>
-  </a>
-  <p class="small">
-    Best for Parker Hannifin queue handling, consignee updates, prepaid/collect rate comparisons, and correction code selection (VRFY, CUSI, ETMS).
-  </p>
-</article>          
-
+          <article class="guide-card reveal delay-3" data-category="account" data-keywords="pars parker hannifin debtor consignee account update terms prepaid collect correction queue validation">
+            <div class="guide-card-top">
+              <span class="guide-meta"><i class="fa-solid fa-user-check"></i> Account</span>
+              <div class="guide-icon"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+            <h3>PARS – Parker Hannifin Queue Guide</h3>
+            <p class="lead">
+              Validate Parker Hannifin as the debtor per the Bill of Lading, update the consignee to account 105188579, compare Prepaid vs Collect rates to apply the lesser charge (only when Parker is both shipper and consignee), and apply CORR VRFY, CORR CUSI, or decline handling based on BOL verification and address matching.
+            </p>
+            <div class="card-meta">
+              <span class="meta-pill"><i class="fa-solid fa-building"></i> Parker Hannifin</span>
+              <span class="meta-pill"><i class="fa-solid fa-file-invoice"></i> Debtor Validation</span>
+            </div>
+            <p class="small">
+              Best for Parker Hannifin queue handling, consignee updates, prepaid/collect rate comparisons, and correction code selection (VRFY, CUSI, ETMS).
+            </p>
+            <a href="paud-queue-guides/pars-guide.html" class="guide-link">Open PARS Guide <i class="fa-solid fa-arrow-right"></i></a>
+          </article>
         </div>
       </div>
     </section>
