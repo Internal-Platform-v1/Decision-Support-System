@@ -710,6 +710,13 @@
       box-shadow:0 10px 22px rgba(18,31,21,.06);
     }
 
+    mark.search-highlight{
+      background:rgba(255,102,0,.20);
+      color:var(--dark-2);
+      padding:0 3px;
+      border-radius:6px;
+    }
+
     .section{
       padding:42px 0;
     }
@@ -764,7 +771,7 @@
       perspective:1200px;
     }
 
-    /* ─── TILE CARD — matching billing dispute guides exactly ─── */
+    /* ─── TILE CARD — exactly matching billing dispute guides ─── */
     .guide-tile{
       --mx:50%;
       --my:0%;
@@ -3096,7 +3103,7 @@
       });
     }
 
-    // ===== FILTER GUIDES — same approach as billing dispute page =====
+    // ===== FILTER GUIDES — only toggles visibility, no DOM rebuild =====
     function filterGuides(shouldScroll = false) {
       const input = document.getElementById("guideSearch");
       const query = input.value.trim().toLowerCase();
@@ -3118,9 +3125,7 @@
         const matchesCategory = activeCategory === "all" || category === activeCategory;
         const matchesSearch = !query || allText.includes(query);
 
-        const isVisible = matchesCategory && matchesSearch;
-
-        if (isVisible) {
+        if (matchesCategory && matchesSearch) {
           tile.classList.remove("is-hidden");
           visibleCount++;
         } else {
@@ -3198,7 +3203,7 @@
       }
     }
 
-    // ===== MOTION — attached once, never removed =====
+    // ===== MOTION — exactly like billing dispute guides =====
     function initTileMotion() {
       document.querySelectorAll(".guide-tile").forEach(tile => {
         if (tile.dataset.motionReady === "true") return;
@@ -3227,7 +3232,7 @@
     window.addEventListener("load", async () => {
       await guardProtectedPage();
       initRevealMotion();
-      initTileMotion(); // attach once
+      initTileMotion();
     });
 
     document.addEventListener("headerLoaded", () => {
