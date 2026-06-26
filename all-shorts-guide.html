@@ -2268,12 +2268,14 @@ const NODES = {
   allshorts_claim_exists: {
     text: "Reply to the customer:\nPlease be advised that PRO XXXXXX with Claim#0021110862 is being reviewed by the claims department. For updates, kindly reach out to file.freightclaim@fedex.com or contact Cargo Claims at 800-308-3963.",
     help: "Inform the customer that their claim is under review and provide contact information.",
+    note: "Escalation Process for Claims - if customer states that they already processed a claim but didn't receive any update after it, forward the iSell email to Barbara, do not copy the customer, do not copy freightclaim email.",
     choices: []
   },
 
   allshorts_no_claim: {
     text: "Reply to the customer:\nFor further assistance, please submit a claim request via file.freightclaim@fedex.com or contact Cargo Claims at 800-308-3963.",
     help: "Direct the customer to submit a claim request.",
+    note: "Escalation Process for Claims - if customer states that they already processed a claim but didn't receive any update after it, forward the iSell email to Barbara, do not copy the customer, do not copy freightclaim email.",
     choices: []
   },
 
@@ -2335,16 +2337,10 @@ const NODES = {
     help: "Check if a Letter of Authority exists confirming shipment details.",
     choices: [
       {
-        label: "YES – LOA exists (No freight)",
-        next: "allshorts_customer_loa_no_freight",
+        label: "YES – LOA exists",
+        next: "allshorts_customer_loa_yes",
         icon: "fa-solid fa-check-circle",
-        desc: "LOA confirms no freight shipped."
-      },
-      {
-        label: "YES – LOA exists (Only 1 freight)",
-        next: "allshorts_customer_loa_one_freight",
-        icon: "fa-solid fa-check-circle",
-        desc: "LOA confirms only 1 freight shipped."
+        desc: "LOA exists; process request."
       },
       {
         label: "NO – LOA not available",
@@ -2355,28 +2351,69 @@ const NODES = {
     ]
   },
 
-  allshorts_customer_loa_no_freight: {
-    text: "Once LOA is received follow this:\nTo further process your request, please send us a confirmation stating that no freight was shipped for (Consignee name and address) on (include ship date) for PRO XXXXXXXX.",
-    help: "Request confirmation from customer that no freight was shipped.",
+  // ===== YES – LOA exists =====
+  allshorts_customer_loa_yes: {
+    text: "Forward to imaging@fedex.com and request to image under BL for all PROs involved.",
+    help: "Send the LOA to imaging@fedex.com to be imaged under the Bill of Lading for all PROs involved.",
+    choices: [
+      {
+        label: "Continue",
+        next: "allshorts_customer_loa_yes_comment",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Enter FBC comment."
+      }
+    ]
+  },
+
+  allshorts_customer_loa_yes_comment: {
+    text: "Once LOA is imaged, enter FBC Comment:\nVS-BLER-CASE#-PER COMPANY POLICY, REMOVE CHARGES ON FREIGHT PREPAID/COLLECT AND IS COMPLETE ALL SHORT PER DR. LOA ON FILE",
+    help: "Enter the FBC comment after LOA is imaged.",
+    choices: [
+      {
+        label: "Continue",
+        next: "allshorts_customer_loa_yes_moveq",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Enter VOID in queue and move Q."
+      }
+    ]
+  },
+
+  allshorts_customer_loa_yes_moveq: {
+    text: "Enter VOID in the QUEUE field then click MOVE Q.",
+    help: "Move the PRO to the VOID queue.",
+    choices: [
+      {
+        label: "Continue",
+        next: "allshorts_customer_loa_yes_pend",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Pend the case."
+      }
+    ]
+  },
+
+  allshorts_customer_loa_yes_pend: {
+    text: "Pend the case. Review PRO every day, once VOID is approved. Advise customer charges have been removed.",
+    help: "Pend the case and monitor daily until VOID is approved.",
     choices: []
   },
 
-  allshorts_customer_loa_one_freight: {
-    text: "Once LOA is received follow this:\nTo further process your request, please send us a confirmation stating you shipped only one shipment for (Consignee name and address) on (include ship date) as the driver signature is different at the bottom of each BOL which means that 2 BOL's were tendered to FedEx.",
-    help: "Request confirmation from customer that only one shipment was tendered.",
-    choices: []
-  },
-
+  // ===== NO – LOA not available =====
   allshorts_customer_loa_no: {
-    text: "To further process your request, please send us a confirmation stating you shipped only one shipment for (Consignee name and address) on (include ship date) as the both DR's had different signatures which means both freighters were delivered and received.",
-    help: "Request confirmation from customer regarding shipment delivery.",
-    choices: []
+    text: "Select the appropriate reply for the customer:\n\nOption 1 – No freight shipped:\nReply to the customer: To further process your request, please send us a confirmation stating that no freight was shipped for (Consignee name and address) on (include ship date) for PRO XXXXXXXX.\n\nOption 2 – Only 1 shipment (different BOL signatures):\nReply to the customer: To further process your request, please send us a confirmation stating you shipped only one shipment for (Consignee name and address) on (include ship date) as the driver signature is different at the bottom of each BOL which means that 2 BOL's were tendered to FedEx.\n\nOption 3 – Only 1 shipment (different DR signatures):\nReply to the customer: To further process your request, please send us a confirmation stating you shipped only one shipment for (Consignee name and address) on (include ship date) as the both DR's had different signatures which means both freighters were delivered and received.",
+    help: "Choose the appropriate reply based on the customer's situation.",
+    choices: [
+      {
+        label: "Continue",
+        next: "allshorts_customer_loa_received",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Once LOA is received, follow this."
+      }
+    ]
   },
 
-  // ===== ESCALATION PROCESS (appears after claim check) =====
-  allshorts_escalation: {
-    text: "Escalation Process for Claims - if customer states that they already processed a claim but didn't receive any update after it, forward the iSell email to Barbara, do not copy the customer, do not copy freightclaim email.",
-    help: "Forward iSell email to Barbara for claim escalation.",
+  allshorts_customer_loa_received: {
+    text: "Once LOA is received follow this:\nProceed with processing the request based on the confirmation received.",
+    help: "Continue with the appropriate action once LOA is received.",
     choices: []
   },
 
@@ -2421,12 +2458,11 @@ const NODES = {
   },
 
   partialshort_final: {
-    text: "Final recommendation:\nUpdate the piece/pallet count and total weight on the invoice to reflect the delivered items only.",
+    text: "Update the piece/pallet count and total weight on the invoice to reflect the delivered items only.",
     help: "Update the invoice with the corrected piece count and weight based on delivered items.",
     choices: []
   }
 };
-
   function escapeHtml(value){
     return String(value ?? "")
       .replaceAll("&", "&amp;")
