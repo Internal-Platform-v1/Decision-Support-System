@@ -2777,8 +2777,9 @@ async function renderFinal(finalNode){
   const finalNote = finalNode.note || "";
   const finalImage = finalNode.image || "";
 
-  // ✅ Do NOT escape HTML – trust internal content, allow <br> and other safe tags
-  const formattedFinalText = finalText;
+  const formattedFinalText = escapeHtml(finalText)
+    .replace(/\r\n/g, "\n")
+    .replace(/\n/g, "<br>");
 
   currentFinalRecommendation = finalText;
   currentKey = "__final__";
@@ -2818,7 +2819,7 @@ async function renderFinal(finalNode){
   if (inlineBack) inlineBack.onclick = goBack;
   if (inlineRestart) inlineRestart.onclick = restart;
 }
-  
+
  async function renderNode(key){
   currentKey = key;
   const node = NODES[key];
