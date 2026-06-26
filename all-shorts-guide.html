@@ -2205,19 +2205,19 @@ const NODES = {
     help: "Identify the billing type of the shipment to follow the correct process.",
     choices: [
       {
-        label: "Prepaid / 3rd Party / Prepaid True 3rd Party / All Short (Open/Paid)",
+        label: "Prepaid / 3rd Party / All Short (Open/Paid)",
         next: "allshorts_prepaid",
         icon: "fa-solid fa-credit-card",
         desc: "Prepaid or 3rd Party billing."
       },
       {
-        label: "Collect / 3rd Party / Collect All Short (Paid)",
-        next: "allshorts_collect",
+        label: "Collect / 3rd Party / All Short (Paid)",
+        next: "allshorts_collect_paid",
         icon: "fa-solid fa-hand-holding-dollar",
-        desc: "Collect or 3rd Party billing."
+        desc: "Collect or 3rd Party billing (Paid)."
       },
       {
-        label: "Collect / 3rd Party / Collect All Short (Open)",
+        label: "Collect / 3rd Party / All Short (Open)",
         next: "allshorts_collect_open",
         icon: "fa-solid fa-file-invoice",
         desc: "Collect/3rd Party All Short with open status."
@@ -2225,8 +2225,28 @@ const NODES = {
     ]
   },
 
-  // ===== Prepaid / 3rd Party =====
+  // ===== Prepaid / 3rd Party (Open/Paid) =====
   allshorts_prepaid: {
+    text: "Check the Shipment History. Has a claim already been filed?",
+    help: "Review the shipment history to determine if a claim has been filed.",
+    choices: [
+      {
+        label: "YES – Claim already filed",
+        next: "allshorts_claim_exists",
+        icon: "fa-solid fa-file-lines",
+        desc: "Claim exists; refer customer to claims."
+      },
+      {
+        label: "NO – No claim filed",
+        next: "allshorts_no_claim",
+        icon: "fa-solid fa-circle-plus",
+        desc: "No claim; direct customer to file."
+      }
+    ]
+  },
+
+  // ===== Collect / 3rd Party (Paid) =====
+  allshorts_collect_paid: {
     text: "Check the Shipment History. Has a claim already been filed?",
     help: "Review the shipment history to determine if a claim has been filed.",
     choices: [
@@ -2257,27 +2277,7 @@ const NODES = {
     choices: []
   },
 
-  // ===== Collect / 3rd Party (Paid) =====
-  allshorts_collect: {
-    text: "Check the Shipment History. Has a claim already been filed?",
-    help: "Review the shipment history to determine if a claim has been filed.",
-    choices: [
-      {
-        label: "YES – Claim already filed",
-        next: "allshorts_claim_exists",
-        icon: "fa-solid fa-file-lines",
-        desc: "Claim exists; refer customer to claims."
-      },
-      {
-        label: "NO – No claim filed",
-        next: "allshorts_no_claim",
-        icon: "fa-solid fa-circle-plus",
-        desc: "No claim; direct customer to file."
-      }
-    ]
-  },
-
-  // ===== Collect / 3rd Party (Open) =====
+  // ===== Collect / 3rd Party (Open) – Who sent the dispute? =====
   allshorts_collect_open: {
     text: "Who sent the dispute?",
     help: "Identify who initiated the dispute to determine the correct response.",
@@ -2297,6 +2297,7 @@ const NODES = {
     ]
   },
 
+  // ===== Sales Representative Path =====
   allshorts_sales_rep: {
     text: "Is there a LOA from Shipper stating that no freight or only 1 freight was shipped to the Consignee?",
     help: "Check if a Letter of Authority exists confirming shipment details.",
@@ -2328,6 +2329,7 @@ const NODES = {
     choices: []
   },
 
+  // ===== Shipper/Consignee/Third Party Path =====
   allshorts_customer: {
     text: "Is there a LOA from Shipper stating that no freight or only 1 freight was shipped to the Consignee?",
     help: "Check if a Letter of Authority exists confirming shipment details.",
@@ -2371,7 +2373,7 @@ const NODES = {
     choices: []
   },
 
-  // ===== ESCALATION PROCESS =====
+  // ===== ESCALATION PROCESS (appears after claim check) =====
   allshorts_escalation: {
     text: "Escalation Process for Claims - if customer states that they already processed a claim but didn't receive any update after it, forward the iSell email to Barbara, do not copy the customer, do not copy freightclaim email.",
     help: "Forward iSell email to Barbara for claim escalation.",
