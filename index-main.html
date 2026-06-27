@@ -2642,35 +2642,34 @@
             </div>
           </div>
 
-          <aside class="side-stack">
-            <!-- ===== UPDATED: HISTORY & QUICK ACCESS PANEL ===== -->
-            <div class="focus-card reveal delay-2">
-              <div class="card-label">
-                <span><i class="fa-solid fa-compass"></i> HISTORY</span>
-                <i class="fa-solid fa-clock-rotate-left"></i>
-              </div>
-              <h2>Pick up where you left off</h2>
-              <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
+<aside class="side-stack">
+  <div class="focus-card reveal delay-2">
+    <div class="card-label">
+      <span><i class="fa-solid fa-compass"></i> HISTORY</span>
+      <i class="fa-solid fa-clock-rotate-left"></i>
+    </div>
+    <h2>Pick up where you left off</h2>
+    <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
 
-              <ul class="quick-list">
-                <li class="quick-item">
-                  <div class="quick-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-                  <div><strong>HISTORY</strong><span>View your recent guide history and resume where you left off.</span></div>
-                </li>
-                <li class="quick-item">
-                  <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
-                  <div><strong>Recent Guide</strong><span>Billing Dispute Guides — Continue your last workflow.</span></div>
-                </li>
-                <li class="quick-item">
-                  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
-                  <div><strong>Most used guide</strong><span>Pricing General Guides — Your most frequently used guide.</span></div>
-                </li>
-                <li class="quick-item">
-                  <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
-                  <div><strong>Other</strong><span>Bookmarks &amp; favorites for quick access to important guides.</span></div>
-                </li>
-              </ul>
-            </div>
+    <ul class="quick-list">
+      <li class="quick-item" id="history-item">
+        <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div><strong>HISTORY</strong><span>View your full guide history →</span></div>
+      </li>
+      <li class="quick-item" id="recent-item">
+        <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
+        <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
+      </li>
+      <li class="quick-item" id="mostused-item">
+        <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+        <div><strong>Most used guide</strong><span id="mostused-guide-label">Loading…</span></div>
+      </li>
+      <li class="quick-item" id="other-item">
+        <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div><strong>Other</strong><span>Bookmarks &amp; favorites (coming soon)</span></div>
+      </li>
+    </ul>
+  </div>
 
             <div class="focus-card dark reveal delay-3">
               <div class="card-label">
@@ -3486,7 +3485,104 @@
     });
   }
 
-  // ===== FEEDBACK MODALS (same as before) =====
+// ===== HISTORY TRACKING & PANEL =====
+const HISTORY_KEY = 'guideHistory';
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+}
+function saveHistory(history) { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
+
+function addGuideToHistory(title, url) {
+  const history = getHistory();
+  const filtered = history.filter(item => item.url !== url);
+  filtered.push({ title, url, timestamp: Date.now() });
+  saveHistory(filtered);
+}
+
+function getMostRecentGuide(history) {
+  if (!history.length) return null;
+  return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
+}
+
+function getMostUsedGuide(history) {
+  if (!history.length) return null;
+  const counts = {};
+  history.forEach(item => { counts[item.url] = (counts[item.url] || 0) + 1; });
+  let maxCount = 0, mostUsedUrl = history[0].url;
+  for (const [url, count] of Object.entries(counts)) {
+    if (count > maxCount) { maxCount = count; mostUsedUrl = url; }
+  }
+  return history.find(item => item.url === mostUsedUrl);
+}
+
+function updateHistoryPanel() {
+  const history = getHistory();
+  const recent = getMostRecentGuide(history);
+  const mostUsed = getMostUsedGuide(history);
+
+  const recentLabel = document.getElementById('recent-guide-label');
+  const mostUsedLabel = document.getElementById('mostused-guide-label');
+  const recentItem = document.getElementById('recent-item');
+  const mostUsedItem = document.getElementById('mostused-item');
+  const historyItem = document.getElementById('history-item');
+
+  if (recent) {
+    recentLabel.textContent = recent.title;
+    recentItem.style.cursor = 'pointer';
+    recentItem.onclick = () => window.location.href = recent.url;
+  } else {
+    recentLabel.textContent = 'No history yet';
+    recentItem.style.cursor = 'default';
+    recentItem.onclick = null;
+  }
+
+  if (mostUsed) {
+    mostUsedLabel.textContent = mostUsed.title;
+    mostUsedItem.style.cursor = 'pointer';
+    mostUsedItem.onclick = () => window.location.href = mostUsed.url;
+  } else {
+    mostUsedLabel.textContent = 'No history yet';
+    mostUsedItem.style.cursor = 'default';
+    mostUsedItem.onclick = null;
+  }
+
+  historyItem.style.cursor = 'pointer';
+  historyItem.onclick = () => {
+    const all = getHistory();
+    if (!all.length) { alert('No guide history yet.'); return; }
+    const list = all.slice().reverse().map((item, idx) =>
+      `${idx+1}. ${item.title} (${new Date(item.timestamp).toLocaleString()})`
+    ).join('\n');
+    alert('Guide History:\n\n' + list);
+  };
+}
+
+function attachHistoryTracking() {
+  document.querySelectorAll('.guide-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const card = this.closest('.guide-card');
+      if (!card) return;
+      const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
+      const url = this.getAttribute('href');
+      if (url) addGuideToHistory(title, url);
+      // let the link navigate normally
+    });
+  });
+}
+
+// Run after page loads and after dynamic content (header/footer) loads
+function initHistory() {
+  updateHistoryPanel();
+  attachHistoryTracking();
+}
+
+// Call when ready
+document.addEventListener('DOMContentLoaded', initHistory);
+document.addEventListener('headerLoaded', initHistory);
+// Also call after a short delay to catch any late-rendered cards
+setTimeout(initHistory, 1000);
+  
   // (The functions openComment, closeComment, sendComment, showAllComments, etc. are included below)
   let selectedRating = 0;
   let ratingStars = [];
