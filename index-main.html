@@ -2600,6 +2600,142 @@
         max-width:100% !important;
       }
     }
+
+/* ===== PREMIUM HISTORY DROPDOWN ===== */
+#history-item {
+  position: relative;
+}
+
+#history-dropdown {
+  display: block;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 10px 6px;
+  border-radius: var(--radius-xl, 24px);
+  background: var(--soft-card, rgba(255,255,255,.82));
+  border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
+  box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 200;
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+  transform-origin: top left;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#history-dropdown.is-open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+/* Scrollbar styling */
+#history-dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+#history-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+#history-dropdown::-webkit-scrollbar-thumb {
+  background: var(--line, rgba(148,163,184,.3));
+  border-radius: 999px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 4px 4px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease;
+  color: var(--ink, #0f172a);
+  font-weight: 600;
+  font-size: 14px;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.history-item:hover {
+  background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
+  border-color: var(--line, rgba(148,163,184,.12));
+  transform: translateX(6px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(2,6,23,.06);
+}
+
+.history-item .history-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.history-item .history-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
+  color: var(--teal, #4d148c);
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.history-item:hover .history-icon {
+  background: var(--teal, #4d148c);
+  color: #fff;
+  transform: scale(1.05) rotate(-4deg);
+}
+
+.history-item .history-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink, #0f172a);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.history-item .history-time {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, #475569);
+  background: var(--cream, #eef4fb);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line, rgba(148,163,184,.12));
+}
+
+.history-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--muted, #475569);
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-empty i {
+  font-size: 28px;
+  color: var(--line, rgba(148,163,184,.4));
+}
+    
   </style>
 </head>
 
@@ -2652,32 +2788,15 @@
     <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
 
     <ul class="quick-list">
-      <li class="quick-item" id="history-item" style="position:relative;">
+      <li class="quick-item" id="history-item">
         <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
         <div>
           <strong>HISTORY</strong>
-          <span>Click to open history dropdown ▼</span>
+          <span>Click to open history ▼</span>
         </div>
-        <!-- Dropdown container -->
-        <div id="history-dropdown" style="
-          display:none;
-          position:absolute;
-          top:100%;
-          left:0;
-          width:100%;
-          max-height:240px;
-          overflow-y:auto;
-          background:#fff;
-          border-radius:18px;
-          box-shadow:0 18px 48px rgba(2,6,23,.28);
-          border:1px solid rgba(255,255,255,.9);
-          z-index:100;
-          padding:8px 0;
-          margin-top:6px;
-          backdrop-filter:blur(18px);
-        ">
-          <!-- Items will be injected here -->
-          <div id="history-dropdown-list" style="display:flex;flex-direction:column;gap:2px;"></div>
+        <!-- Premium Dropdown -->
+        <div id="history-dropdown">
+          <div id="history-dropdown-list"></div>
         </div>
       </li>
       <li class="quick-item" id="recent-item">
@@ -3510,7 +3629,7 @@
   }
 
 // =========================================================
-// HISTORY TRACKING & DROPDOWN
+// PREMIUM HISTORY TRACKING & DROPDOWN
 // =========================================================
 const HISTORY_KEY = 'guideHistory';
 
@@ -3542,73 +3661,55 @@ function getMostUsedGuide(history) {
   return history.find(item => item.url === mostUsedUrl);
 }
 
-// Render the dropdown list
+// Render dropdown with clean HTML classes
 function renderHistoryDropdown() {
   const history = getHistory();
-  const listContainer = document.getElementById('history-dropdown-list');
-  const dropdown = document.getElementById('history-dropdown');
-  if (!listContainer || !dropdown) return;
+  const list = document.getElementById('history-dropdown-list');
+  if (!list) return;
 
   if (!history.length) {
-    listContainer.innerHTML = '<div style="padding:12px 18px;color:#475569;font-weight:600;">No history yet</div>';
+    list.innerHTML = `
+      <div class="history-empty">
+        <i class="fa-solid fa-inbox"></i>
+        <span>No history yet</span>
+      </div>
+    `;
     return;
   }
 
-  // Show newest first
-  const sorted = history.slice().reverse();
+  const sorted = history.slice().reverse(); // newest first
   let html = '';
-  sorted.forEach((item, index) => {
+  sorted.forEach((item) => {
     const time = new Date(item.timestamp).toLocaleString();
     html += `
-      <div class="history-item" style="
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:10px 18px;
-        cursor:pointer;
-        transition:background .15s;
-        border-radius:12px;
-        margin:0 6px;
-        font-weight:600;
-        color:#0f172a;
-      " data-url="${item.url}">
-        <span style="display:flex;align-items:center;gap:10px;">
-          <i class="fa-solid fa-file-lines" style="color:#6d28d9;font-size:14px;"></i>
-          <span>${item.title}</span>
-        </span>
-        <span style="font-size:11px;color:#94a3b8;font-weight:400;">${time}</span>
+      <div class="history-item" data-url="${item.url}">
+        <div class="history-left">
+          <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
+          <span class="history-title">${item.title}</span>
+        </div>
+        <span class="history-time">${time}</span>
       </div>
     `;
   });
-  listContainer.innerHTML = html;
+  list.innerHTML = html;
 
-  // Attach click events to each history item
-  listContainer.querySelectorAll('.history-item').forEach(el => {
+  // Attach click events
+  list.querySelectorAll('.history-item').forEach(el => {
     el.addEventListener('click', function(e) {
       const url = this.dataset.url;
       if (url) window.location.href = url;
     });
-    // Hover effect
-    el.addEventListener('mouseenter', function() {
-      this.style.background = '#f1f5f9';
-    });
-    el.addEventListener('mouseleave', function() {
-      this.style.background = 'transparent';
-    });
   });
 }
 
-// Toggle dropdown visibility
+// Toggle dropdown with CSS class
 function toggleHistoryDropdown(e) {
   e.stopPropagation();
   const dropdown = document.getElementById('history-dropdown');
   if (!dropdown) return;
-  const isOpen = dropdown.style.display === 'block';
-  // Close all other open dropdowns if any (none)
-  dropdown.style.display = isOpen ? 'none' : 'block';
-  if (!isOpen) {
-    renderHistoryDropdown(); // refresh content
-  }
+  const isOpen = dropdown.classList.contains('is-open');
+  if (!isOpen) renderHistoryDropdown(); // refresh content
+  dropdown.classList.toggle('is-open');
 }
 
 // Close dropdown when clicking outside
@@ -3616,11 +3717,11 @@ document.addEventListener('click', function(e) {
   const dropdown = document.getElementById('history-dropdown');
   const historyItem = document.getElementById('history-item');
   if (dropdown && historyItem && !historyItem.contains(e.target)) {
-    dropdown.style.display = 'none';
+    dropdown.classList.remove('is-open');
   }
 });
 
-// Update the panel (Recent, Most used) + attach toggle
+// Update panel labels
 function updateHistoryPanel() {
   const history = getHistory();
   const recent = getMostRecentGuide(history);
@@ -3632,7 +3733,6 @@ function updateHistoryPanel() {
   const mostUsedItem = document.getElementById('mostused-item');
   const historyItem = document.getElementById('history-item');
 
-  // Recent Guide
   if (recent) {
     recentLabel.textContent = recent.title;
     recentItem.style.cursor = 'pointer';
@@ -3643,7 +3743,6 @@ function updateHistoryPanel() {
     recentItem.onclick = null;
   }
 
-  // Most used guide
   if (mostUsed) {
     mostUsedLabel.textContent = mostUsed.title;
     mostUsedItem.style.cursor = 'pointer';
@@ -3654,14 +3753,13 @@ function updateHistoryPanel() {
     mostUsedItem.onclick = null;
   }
 
-  // HISTORY – toggle dropdown
   if (historyItem) {
     historyItem.style.cursor = 'pointer';
     historyItem.onclick = toggleHistoryDropdown;
   }
 }
 
-// Attach tracking to guide links
+// Track guide opens
 function attachHistoryTracking() {
   document.querySelectorAll('.guide-link').forEach(link => {
     link.addEventListener('click', function(e) {
@@ -3670,21 +3768,19 @@ function attachHistoryTracking() {
       const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
       const url = this.getAttribute('href');
       if (url) addGuideToHistory(title, url);
-      // Let navigation proceed normally
     });
   });
 }
 
-// Initialise
 function initHistory() {
   updateHistoryPanel();
   attachHistoryTracking();
-  // Ensure dropdown is closed on load
+  // Ensure dropdown is closed initially
   const dropdown = document.getElementById('history-dropdown');
-  if (dropdown) dropdown.style.display = 'none';
+  if (dropdown) dropdown.classList.remove('is-open');
 }
 
-// Run when ready
+// Run on load
 document.addEventListener('DOMContentLoaded', initHistory);
 document.addEventListener('headerLoaded', initHistory);
 setTimeout(initHistory, 1000);
