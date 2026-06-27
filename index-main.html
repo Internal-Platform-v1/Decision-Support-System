@@ -2735,6 +2735,73 @@
   font-size: 28px;
   color: var(--line, rgba(148,163,184,.4));
 }
+
+/* ===== HISTORY DROPDOWN – CLEAR BUTTONS ===== */
+#history-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 6px 16px;
+  border-bottom: 1px solid var(--line, rgba(148,163,184,.12));
+  margin-bottom: 4px;
+}
+
+#history-dropdown-header span {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.history-clear-all {
+  background: transparent;
+  border: none;
+  color: var(--muted, #475569);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.history-clear-all:hover {
+  background: color-mix(in srgb, var(--teal, #4d148c) 8%, var(--cream-2, #f5f8fc));
+  color: var(--teal, #4d148c);
+  border-color: var(--line, rgba(148,163,184,.12));
+}
+
+.history-clear-all:active {
+  transform: scale(0.96);
+}
+
+.history-item {
+  position: relative; /* for delete button positioning */
+}
+
+.history-delete {
+  background: transparent;
+  border: none;
+  color: var(--muted, #475569);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+  line-height: 1;
+  opacity: 0.4;
+}
+
+.history-item:hover .history-delete {
+  opacity: 1;
+}
+
+.history-delete:hover {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  color: #ef4444;
+}    
     
   </style>
 </head>
@@ -2795,9 +2862,13 @@
           <span>Click to open history ▼</span>
         </div>
         <!-- Premium Dropdown -->
-        <div id="history-dropdown">
-          <div id="history-dropdown-list"></div>
-        </div>
+       <div id="history-dropdown">
+        <div id="history-dropdown-header">
+          <span><i class="fa-regular fa-clock"></i> History</span>
+          <button class="history-clear-all" id="clearAllHistoryBtn">Clear all</button>
+          </div>
+        <div id="history-dropdown-list"></div>
+      </div>
       </li>
       <li class="quick-item" id="recent-item">
         <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
@@ -3629,7 +3700,7 @@
   }
 
 // =========================================================
-// PREMIUM HISTORY TRACKING & DROPDOWN
+// PREMIUM HISTORY – TRACKING, DROPDOWN, CLEAR
 // =========================================================
 const HISTORY_KEY = 'guideHistory';
 
@@ -3661,7 +3732,25 @@ function getMostUsedGuide(history) {
   return history.find(item => item.url === mostUsedUrl);
 }
 
-// Render dropdown with clean HTML classes
+// ---- Clear functions ----
+function removeHistoryItem(url) {
+  let history = getHistory();
+  history = history.filter(item => item.url !== url);
+  saveHistory(history);
+  updateHistoryPanel();
+  renderHistoryDropdown();
+}
+
+function clearAllHistory() {
+  if (getHistory().length === 0) return;
+  if (confirm('Delete all history entries?')) {
+    saveHistory([]);
+    updateHistoryPanel();
+    renderHistoryDropdown();
+  }
+}
+
+// ---- Render dropdown ----
 function renderHistoryDropdown() {
   const history = getHistory();
   const list = document.getElementById('history-dropdown-list');
@@ -3677,42 +3766,56 @@ function renderHistoryDropdown() {
     return;
   }
 
-  const sorted = history.slice().reverse(); // newest first
+  const sorted = history.slice().reverse();
   let html = '';
   sorted.forEach((item) => {
     const time = new Date(item.timestamp).toLocaleString();
+    const safeTitle = item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     html += `
       <div class="history-item" data-url="${item.url}">
         <div class="history-left">
           <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
-          <span class="history-title">${item.title}</span>
+          <span class="history-title">${safeTitle}</span>
         </div>
-        <span class="history-time">${time}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="history-time">${time}</span>
+          <button class="history-delete" data-url="${item.url}" title="Remove from history"><i class="fa-solid fa-xmark"></i></button>
+        </div>
       </div>
     `;
   });
   list.innerHTML = html;
 
-  // Attach click events
-  list.querySelectorAll('.history-item').forEach(el => {
-    el.addEventListener('click', function(e) {
+  // Click on item (except delete button) opens guide
+  list.querySelectorAll('.history-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      if (e.target.closest('.history-delete')) return;
       const url = this.dataset.url;
       if (url) window.location.href = url;
     });
   });
+
+  // Delete button events
+  list.querySelectorAll('.history-delete').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const url = this.dataset.url;
+      if (url) removeHistoryItem(url);
+    });
+  });
 }
 
-// Toggle dropdown with CSS class
+// ---- Toggle dropdown ----
 function toggleHistoryDropdown(e) {
   e.stopPropagation();
   const dropdown = document.getElementById('history-dropdown');
   if (!dropdown) return;
   const isOpen = dropdown.classList.contains('is-open');
-  if (!isOpen) renderHistoryDropdown(); // refresh content
+  if (!isOpen) renderHistoryDropdown();
   dropdown.classList.toggle('is-open');
 }
 
-// Close dropdown when clicking outside
+// ---- Close dropdown on outside click ----
 document.addEventListener('click', function(e) {
   const dropdown = document.getElementById('history-dropdown');
   const historyItem = document.getElementById('history-item');
@@ -3721,7 +3824,7 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// Update panel labels
+// ---- Update panel labels ----
 function updateHistoryPanel() {
   const history = getHistory();
   const recent = getMostRecentGuide(history);
@@ -3759,7 +3862,7 @@ function updateHistoryPanel() {
   }
 }
 
-// Track guide opens
+// ---- Track guide opens ----
 function attachHistoryTracking() {
   document.querySelectorAll('.guide-link').forEach(link => {
     link.addEventListener('click', function(e) {
@@ -3772,12 +3875,21 @@ function attachHistoryTracking() {
   });
 }
 
+// ---- Initialise ----
 function initHistory() {
   updateHistoryPanel();
   attachHistoryTracking();
-  // Ensure dropdown is closed initially
   const dropdown = document.getElementById('history-dropdown');
   if (dropdown) dropdown.classList.remove('is-open');
+
+  // Clear all button
+  const clearAllBtn = document.getElementById('clearAllHistoryBtn');
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      clearAllHistory();
+    });
+  }
 }
 
 // Run on load
