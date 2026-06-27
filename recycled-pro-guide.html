@@ -2167,9 +2167,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentKey = "start";
   const templateCache = {};
 
-  // ================= FULL NODES TREE (exactly as in original working code) =================
-const NODES = {
-
+  // ================= FULL NODES TREE =================
+  const NODES = {
     start: {
       text: "Validation Process",
       choices: [
@@ -2194,26 +2193,17 @@ const NODES = {
       ]
     },
 
-click_history_icon: {
-  text: `Then you will click the History Icon 
-    <img src="recycled-pro-guide/history-icon.png"
-         style="
-           height:54px; 
-           width:auto; 
-           margin-left:8px; 
-           vertical-align:middle;
-           border-radius:6px;
-         ">
-  `,
-  choices: [
-    {
-      label: "Continue",
-      next: "freight_bill_variables",
-      icon: "fa-solid fa-arrow-right",
-      desc: "Open the Freight Bill Variables page."
-    }
-  ]
-},
+    click_history_icon: {
+      text: `Then you will click the History Icon <img src="recycled-pro-guide/history-icon.png" style="height:54px; width:auto; margin-left:8px; vertical-align:middle; border-radius:6px;">`,
+      choices: [
+        {
+          label: "Continue",
+          next: "freight_bill_variables",
+          icon: "fa-solid fa-arrow-right",
+          desc: "Open the Freight Bill Variables page."
+        }
+      ]
+    },
 
     freight_bill_variables: {
       text: "This will take you to a Freight Bill Variables page and you will see that there is old dates listed that are years and years old.",
@@ -2256,7 +2246,6 @@ click_history_icon: {
       text: "For the mean time, send an email to the Origin Center to provide the issue regarding the recycled PRO and request for a new PRO for the most recent shipment. If the recycled PRO has an old version that you can use as reference, you can manually update the PRO matching the information of the old version.",
       action: "Send an email to the Origin Center regarding the recycled PRO and request a new PRO for the most recent shipment. If there is an old version available, manually update the PRO using the old version information as reference."
     }
-
   };
 
   function escapeHtml(value){
@@ -2467,67 +2456,83 @@ click_history_icon: {
   }
 
   function updatePath(){
-  if(!path.length){
-    els.pathBox.className = "path-empty";
-    els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
-    return;
-  }
+    if(!path.length){
+      els.pathBox.className = "path-empty";
+      els.pathBox.innerHTML = "No steps selected yet. The full path will appear here as the user moves through the app.";
+      return;
+    }
 
-  const html = path.map((item, index) => {
-    const isActive =
-      currentKey === "__final__"
-        ? (
-            item.nextKey === "__final__" ||
-            (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey]))
-          )
+    const html = path.map((item, index) => {
+      const isActive = currentKey === "__final__"
+        ? (item.nextKey === "__final__" || (NODES[item.nextKey] && isFinalNode(NODES[item.nextKey])))
         : item.fromKey === currentKey;
 
-    return `
-      <div class="path-item">
-        <button
-          type="button"
-          class="path-jump ${isActive ? "active" : ""}"
-          data-step-index="${index}"
-        >
-          <div class="path-step">Step ${index + 1}</div>
-          <div class="path-question">${escapeHtml(item.question)}</div>
-          <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
-        </button>
-      </div>
-    `;
-  }).join("");
+      return `
+        <div class="path-item">
+          <button
+            type="button"
+            class="path-jump ${isActive ? "active" : ""}"
+            data-step-index="${index}"
+          >
+            <div class="path-step">Step ${index + 1}</div>
+            <div class="path-question">${escapeHtml(item.question)}</div>
+            <div class="path-answer">→ ${escapeHtml(item.answer)}</div>
+          </button>
+        </div>
+      `;
+    }).join("");
 
-  els.pathBox.className = "path-list";
-  els.pathBox.innerHTML = html;
+    els.pathBox.className = "path-list";
+    els.pathBox.innerHTML = html;
 
-  els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const index = Number(btn.dataset.stepIndex);
-      jumpToPathStep(index);
+    els.pathBox.querySelectorAll(".path-jump").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const index = Number(btn.dataset.stepIndex);
+        jumpToPathStep(index);
+      });
     });
-  });
-}
-
-  function jumpToPathStep(index){
-  if(index < 0 || index >= path.length) return;
-
-  const target = path[index];
-  if(!target) return;
-
-  currentFinalRecommendation = "";
-
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-  updateRecommendation("", false);
-
-  if(target.nextKey === "__final__" && target.finalNode){
-    renderFinal(target.finalNode);
-    return;
   }
 
-  renderNode(target.fromKey);
-}
+  function jumpToPathStep(index){
+    if(index < 0 || index >= path.length) return;
+
+    const target = path[index];
+    if(!target) return;
+
+    currentFinalRecommendation = "";
+
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+    updateRecommendation("", false);
+
+    // If this step points to a final node, render the final node
+    if(target.nextKey && NODES[target.nextKey] && isFinalNode(NODES[target.nextKey])){
+      renderFinal(NODES[target.nextKey]);
+      return;
+    }
+
+    // If there's a final node stored directly
+    if(target.finalNode){
+      renderFinal(target.finalNode);
+      return;
+    }
+
+    // Otherwise render the node from the fromKey
+    if(target.fromKey && NODES[target.fromKey]){
+      renderNode(target.fromKey);
+      return;
+    }
+
+    // Fallback: render the nextKey if it exists
+    if(target.nextKey && NODES[target.nextKey]){
+      renderNode(target.nextKey);
+      return;
+    }
+
+    // Last resort: go to start
+    renderNode("start");
+  }
 
   function updateRecommendation(text, isFinal){
     if(!isFinal){
@@ -2571,7 +2576,8 @@ click_history_icon: {
     const finalNote = finalNode.note || "";
     const finalImage = finalNode.image || "";
 
-    const formattedFinalText = escapeHtml(finalText)
+    // Don't escape HTML for action text (it may contain formatting)
+    const formattedFinalText = String(finalText)
       .replace(/\r\n/g, "\n")
       .replace(/\n/g, "<br>");
 
@@ -2615,186 +2621,227 @@ click_history_icon: {
   }
 
   async function renderNode(key){
-      currentKey = key;
-      const node = NODES[key];
-      if (!node) {
-        els.stageCard.innerHTML = `
-          <div class="stage-top">
-            <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
-          </div>
-          <div class="question-wrap">
-            <div class="question-card">
-              <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-              <div class="question-text">Node not found: ${escapeHtml(key)}</div>
-              <div class="question-help">Check the node key in your NODES object.</div>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      const choices = getNodeChoices(node);
-      const isFinal = isFinalNode(node);
-
-      if (isFinal) {
-        await renderFinal(node);
-        return;
-      }
-
-      updateMeta(false);
-      updatePath();
-      updateRecommendation("", false);
-
-      currentFinalRecommendation = "";
-      setTemplateValue(els.suggestedComment, "");
-      setTemplateValue(els.suggestedCorrCode, "");
-      setTemplateValue(els.suggestedEmail, "");
-
-      const nodeText = getNodeText(node);
-      const nodeHelp = getNodeHelp(node);
-      const nodeNote = getNodeNote(node);
-      const nodeImage = getNodeImage(node);
-
-      const choicesHtml = choices.map(choice => `
-        <button class="choice"
-          data-next="${escapeHtml(choice.next || "")}"
-          data-label="${escapeHtml(choice.label || "")}"
-          data-action="${escapeHtml(choice.action || "")}"
-          data-note="${escapeHtml(choice.note || "")}">
-          <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
-          <div class="choice-body">
-            <div class="choice-title">${escapeHtml(choice.label || "")}</div>
-            <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
-          </div>
-        </button>
-      `).join("");
-
-      const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
-
-els.stageCard.innerHTML = `
-  <div class="stage-top">
-    <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
-    <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
-  </div>
-
-  <div class="question-wrap">
-    <div class="question-card">
-      <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
-      <div class="question-text">${nodeText}</div>
-      ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
-      ${nodeNote ? `<div class="note-card" style="margin-top:16px; white-space:pre-wrap;">${escapeHtml(nodeNote)}</div>` : ""}
-      ${nodeImage ? `
-        <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
-          <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+    currentKey = key;
+    const node = NODES[key];
+    if (!node) {
+      els.stageCard.innerHTML = `
+        <div class="stage-top">
+          <div class="badge"><i class="fa-solid fa-triangle-exclamation"></i> Missing Node</div>
         </div>
-      ` : ""}
-    </div>
-
-    <div class="choices">${choicesHtml}</div>
-  </div>
-
-
-        <div class="decision-footer">
-          <div class="decision-footer-left">
-            <div class="footer-label">Decision Guide</div>
-            <div class="footer-value">${footerStepText}</div>
-          </div>
-
-          <div class="decision-actions">
-            <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
-            <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        <div class="question-wrap">
+          <div class="question-card">
+            <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+            <div class="question-text">Node not found: ${escapeHtml(key)}</div>
+            <div class="question-help">Check the node key in your NODES object.</div>
           </div>
         </div>
       `;
+      return;
+    }
 
-      const inlineBack = document.getElementById("inlineBack");
-      const inlineRestart = document.getElementById("inlineRestart");
+    const choices = getNodeChoices(node);
+    const isFinal = isFinalNode(node);
 
-      if(inlineBack) inlineBack.onclick = goBack;
-      if(inlineRestart) inlineRestart.onclick = restart;
+    if (isFinal) {
+      await renderFinal(node);
+      return;
+    }
 
-      els.stageCard.querySelectorAll(".choice").forEach(btn => {
-        btn.addEventListener("click", () => {
-          els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
-          btn.classList.add("selected");
+    updateMeta(false);
+    updatePath();
+    updateRecommendation("", false);
 
-          const next = btn.dataset.next;
-          const label = btn.dataset.label;
-          const action = btn.dataset.action;
-          const note = btn.dataset.note;
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
 
-          historyStack.push({ key: currentKey, path: [...path] });
-          path.push({ question: nodeText, answer: label });
+    const nodeText = getNodeText(node);
+    const nodeHelp = getNodeHelp(node);
+    const nodeNote = getNodeNote(node);
+    const nodeImage = getNodeImage(node);
 
-          updatePath();
-          updateMeta(false);
+    const choicesHtml = choices.map(choice => `
+      <button class="choice"
+        data-next="${escapeHtml(choice.next || "")}"
+        data-label="${escapeHtml(choice.label || "")}"
+        data-action="${escapeHtml(choice.action || "")}"
+        data-note="${escapeHtml(choice.note || "")}">
+        <div class="choice-icon"><i class="${choice.icon || "fa-solid fa-circle"}"></i></div>
+        <div class="choice-body">
+          <div class="choice-title">${escapeHtml(choice.label || "")}</div>
+          <div class="choice-desc">${escapeHtml(choice.desc || "Continue to the next step in the flow.")}</div>
+        </div>
+      </button>
+    `).join("");
 
-          setTimeout(() => {
-            if (action) {
-              renderFinal({ action, note });
-            } else {
-              renderNode(next);
-            }
-          }, 120);
-        });
+    const footerStepText = path.length ? `Currently on step ${path.length}` : "Ready to begin";
+
+    els.stageCard.innerHTML = `
+      <div class="stage-top">
+        <div class="badge"><i class="fa-solid fa-compass"></i> Guided Decision</div>
+        <div class="badge alt"><i class="fa-solid fa-layer-group"></i> ${path.length ? `Step ${path.length}` : "Start"}</div>
+      </div>
+
+      <div class="question-wrap">
+        <div class="question-card">
+          <div class="question-label"><i class="fa-solid fa-circle-nodes"></i> Current Step</div>
+          <div class="question-text">${nodeText}</div>
+          ${nodeHelp ? `<div class="question-help">${escapeHtml(nodeHelp)}</div>` : ""}
+          ${nodeNote ? `<div class="note-card" style="margin-top:16px; white-space:pre-wrap;">${escapeHtml(nodeNote)}</div>` : ""}
+          ${nodeImage ? `
+            <div class="question-image" onclick="openImageModal('${String(nodeImage).replace(/'/g, "\\'")}')">
+              <img src="${escapeHtml(nodeImage)}" alt="Step image" loading="lazy">
+            </div>
+          ` : ""}
+        </div>
+
+        <div class="choices">${choicesHtml}</div>
+      </div>
+
+      <div class="decision-footer">
+        <div class="decision-footer-left">
+          <div class="footer-label">Decision Guide</div>
+          <div class="footer-value">${footerStepText}</div>
+        </div>
+
+        <div class="decision-actions">
+          <button class="app-btn ghost" id="inlineBack" ${historyStack.length ? "" : 'style="display:none;"'}>Go Back</button>
+          <button class="app-btn primary" id="inlineRestart" ${path.length ? "" : 'style="display:none;"'}>Start Over</button>
+        </div>
+      </div>
+    `;
+
+    const inlineBack = document.getElementById("inlineBack");
+    const inlineRestart = document.getElementById("inlineRestart");
+
+    if(inlineBack) inlineBack.onclick = goBack;
+    if(inlineRestart) inlineRestart.onclick = restart;
+
+    els.stageCard.querySelectorAll(".choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        els.stageCard.querySelectorAll(".choice").forEach(el => el.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        const next = btn.dataset.next;
+        const label = btn.dataset.label;
+        const action = btn.dataset.action;
+        const note = btn.dataset.note;
+
+        historyStack.push({ key: currentKey, path: [...path] });
+
+        // Store the current node info for the path
+        const pathEntry = {
+          question: nodeText,
+          answer: label,
+          fromKey: currentKey,
+          nextKey: next
+        };
+
+        // If the choice has an action, it's a final node
+        if (action) {
+          pathEntry.finalNode = { action, note };
+          pathEntry.nextKey = "__final__";
+        }
+
+        path.push(pathEntry);
+
+        updatePath();
+        updateMeta(false);
+
+        setTimeout(() => {
+          if (action) {
+            renderFinal({ action, note });
+          } else {
+            renderNode(next);
+          }
+        }, 120);
       });
-    }
-
-function goBack(){
-  currentFinalRecommendation = "";
-  setTemplateValue(els.suggestedComment, "");
-  setTemplateValue(els.suggestedCorrCode, "");
-  setTemplateValue(els.suggestedEmail, "");
-  updateRecommendation("", false);
-
-  // Case 1: currently on final recommendation
-  if (currentKey === "__final__") {
-    const finalIndex = path.findIndex(item => {
-      if (item.nextKey === "__final__") return true;
-
-      const nextNode = NODES[item.nextKey];
-      return !!nextNode && isFinalNode(nextNode);
     });
+  }
 
-    if (finalIndex === -1) {
+  function goBack(){
+    currentFinalRecommendation = "";
+    setTemplateValue(els.suggestedComment, "");
+    setTemplateValue(els.suggestedCorrCode, "");
+    setTemplateValue(els.suggestedEmail, "");
+    updateRecommendation("", false);
+
+    // Case 1: currently on final recommendation
+    if (currentKey === "__final__") {
+      const finalIndex = path.findIndex(item => {
+        if (item.nextKey === "__final__") return true;
+        const nextNode = NODES[item.nextKey];
+        return !!nextNode && isFinalNode(nextNode);
+      });
+
+      if (finalIndex === -1) {
+        currentKey = "start";
+        renderNode("start");
+        return;
+      }
+
+      const fromKey = path[finalIndex].fromKey;
+      if (fromKey && NODES[fromKey]) {
+        currentKey = fromKey;
+        renderNode(fromKey);
+        return;
+      }
+
       currentKey = "start";
       renderNode("start");
       return;
     }
 
-    // Go back to the actual last question step
-    currentKey = path[finalIndex].fromKey;
-    renderNode(path[finalIndex].fromKey);
-    return;
-  }
+    // Case 2: current screen matches a saved step directly (fromKey)
+    const fromIndex = path.findIndex(item => item.fromKey === currentKey);
+    if (fromIndex !== -1) {
+      if (fromIndex === 0) {
+        currentKey = "start";
+        renderNode("start");
+        return;
+      }
 
-  // Case 2: current screen matches a saved step directly (fromKey)
-  const fromIndex = path.findIndex(item => item.fromKey === currentKey);
-  if (fromIndex !== -1) {
-    if (fromIndex === 0) {
+      const prevKey = path[fromIndex - 1].fromKey;
+      if (prevKey && NODES[prevKey]) {
+        currentKey = prevKey;
+        renderNode(prevKey);
+        return;
+      }
+
       currentKey = "start";
       renderNode("start");
       return;
     }
 
-    currentKey = path[fromIndex - 1].fromKey;
-    renderNode(path[fromIndex - 1].fromKey);
-    return;
+    // Case 3: current screen was reached normally from a previous step (nextKey)
+    const nextIndex = path.findIndex(item => item.nextKey === currentKey);
+    if (nextIndex !== -1) {
+      const fromKey = path[nextIndex].fromKey;
+      if (fromKey && NODES[fromKey]) {
+        currentKey = fromKey;
+        renderNode(fromKey);
+        return;
+      }
+    }
+
+    // Fallback: go to the previous path item
+    if (path.length > 0) {
+      const lastIndex = path.length - 1;
+      const last = path[lastIndex];
+      if (last && last.fromKey && NODES[last.fromKey]) {
+        // Remove the last step
+        path.pop();
+        currentKey = last.fromKey;
+        renderNode(last.fromKey);
+        return;
+      }
+    }
+
+    currentKey = "start";
+    renderNode("start");
   }
 
-  // Case 3: current screen was reached normally from a previous step (nextKey)
-  const nextIndex = path.findIndex(item => item.nextKey === currentKey);
-  if (nextIndex !== -1) {
-    currentKey = path[nextIndex].fromKey;
-    renderNode(path[nextIndex].fromKey);
-    return;
-  }
-
-  // Fallback
-  currentKey = "start";
-  renderNode("start");
-}
-  
   function restart(){
     path = [];
     historyStack = [];
@@ -2810,200 +2857,199 @@ function goBack(){
     renderNode("start");
   }
 
-  /* ===== PAGE MODALS + FEEDBACK ONLY ===== */
+  /* ===== PAGE MODALS + FEEDBACK ===== */
 
-function openModalAnimated(id) {
-  const modal = document.getElementById(id);
-  if (!modal) return;
+  function openModalAnimated(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
 
-  modal.style.display = "flex";
-  modal.classList.remove("is-closing");
-
-  requestAnimationFrame(() => {
-    modal.classList.add("is-open");
-  });
-}
-
-function closeModalAnimated(id, onClosed) {
-  const modal = document.getElementById(id);
-  if (!modal) return;
-
-  modal.classList.remove("is-open");
-  modal.classList.add("is-closing");
-
-  setTimeout(() => {
-    modal.style.display = "none";
+    modal.style.display = "flex";
     modal.classList.remove("is-closing");
-    if (typeof onClosed === "function") onClosed();
-  }, 220);
-}
 
-function openComment() {
-  openModalAnimated("commentModal");
-}
-
-function closeComment() {
-  closeModalAnimated("commentModal");
-}
-
-function openHelp() {
-  openModalAnimated("helpModal");
-}
-
-function closeHelp() {
-  closeModalAnimated("helpModal");
-}
-
-function closeAllComments() {
-  closeModalAnimated("allCommentsModal");
-}
-
-function initRatingStars() {
-  ratingStars = Array.from(document.querySelectorAll(".rating-star"));
-  if (!ratingStars.length) return;
-
-  ratingStars.forEach(star => {
-    star.onclick = function (e) {
-      e.stopPropagation();
-      selectedRating = Number(this.dataset.value || 0);
-
-      ratingStars.forEach(s => {
-        const val = Number(s.dataset.value || 0);
-        s.classList.toggle("selected", val <= selectedRating);
-      });
-    };
-  });
-}
-
-async function sendComment() {
-  const nameEl = document.getElementById("commentName");
-  const textEl = document.getElementById("commentText");
-  const feedbackMessage = document.getElementById("feedbackMessage");
-
-  const name = (nameEl?.value || "").trim();
-  const comment = (textEl?.value || "").trim();
-
-  if (!selectedRating) {
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "block";
-      feedbackMessage.style.color = "#ef4444";
-      feedbackMessage.textContent = "Please select a rating first.";
-    }
-    return;
+    requestAnimationFrame(() => {
+      modal.classList.add("is-open");
+    });
   }
 
-  try {
-    await db.collection(FEEDBACK_COLLECTION).add({
-      name: name || "Anonymous",
-      comment,
-      rating: selectedRating,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  function closeModalAnimated(id, onClosed) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
 
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "block";
-      feedbackMessage.style.color = "#16a34a";
-      feedbackMessage.textContent = "Feedback sent successfully.";
-    }
-
-    if (nameEl) nameEl.value = "";
-    if (textEl) textEl.value = "";
-
-    selectedRating = 0;
-    ratingStars.forEach(star => star.classList.remove("selected"));
+    modal.classList.remove("is-open");
+    modal.classList.add("is-closing");
 
     setTimeout(() => {
-      closeComment();
+      modal.style.display = "none";
+      modal.classList.remove("is-closing");
+      if (typeof onClosed === "function") onClosed();
+    }, 220);
+  }
+
+  function openComment() {
+    openModalAnimated("commentModal");
+  }
+
+  function closeComment() {
+    closeModalAnimated("commentModal");
+  }
+
+  function openHelp() {
+    openModalAnimated("helpModal");
+  }
+
+  function closeHelp() {
+    closeModalAnimated("helpModal");
+  }
+
+  function closeAllComments() {
+    closeModalAnimated("allCommentsModal");
+  }
+
+  function initRatingStars() {
+    ratingStars = Array.from(document.querySelectorAll(".rating-star"));
+    if (!ratingStars.length) return;
+
+    ratingStars.forEach(star => {
+      star.onclick = function (e) {
+        e.stopPropagation();
+        selectedRating = Number(this.dataset.value || 0);
+
+        ratingStars.forEach(s => {
+          const val = Number(s.dataset.value || 0);
+          s.classList.toggle("selected", val <= selectedRating);
+        });
+      };
+    });
+  }
+
+  async function sendComment() {
+    const nameEl = document.getElementById("commentName");
+    const textEl = document.getElementById("commentText");
+    const feedbackMessage = document.getElementById("feedbackMessage");
+
+    const name = (nameEl?.value || "").trim();
+    const comment = (textEl?.value || "").trim();
+
+    if (!selectedRating) {
       if (feedbackMessage) {
-        feedbackMessage.style.display = "none";
-        feedbackMessage.textContent = "";
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#ef4444";
+        feedbackMessage.textContent = "Please select a rating first.";
       }
-    }, 900);
-  } catch (err) {
-    if (feedbackMessage) {
-      feedbackMessage.style.display = "block";
-      feedbackMessage.style.color = "#ef4444";
-      feedbackMessage.textContent = "Unable to send feedback right now.";
+      return;
     }
-  }
-}
 
-async function showAllComments() {
-  const commentModal = document.getElementById("commentModal");
-  const commentsList = document.getElementById("commentsList");
-  if (!commentsList) return;
-
-  commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
-
-  const loadComments = async () => {
     try {
-      const snap = await db
-        .collection(FEEDBACK_COLLECTION)
-        .orderBy("createdAt", "desc")
-        .get();
+      await db.collection(FEEDBACK_COLLECTION).add({
+        name: name || "Anonymous",
+        comment,
+        rating: selectedRating,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
-      if (snap.empty) {
-        commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
-      } else {
-        commentsList.innerHTML = snap.docs.map(doc => {
-          const data = doc.data() || {};
-          const rating = Number(data.rating || 0);
-          const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
-          const empty = "☆".repeat(Math.max(0, 5 - rating));
-
-          return `
-            <div class="comment-list-item">
-              <span class="stars">${filled}${empty}</span>
-              <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
-              <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
-            </div>
-          `;
-        }).join("");
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#16a34a";
+        feedbackMessage.textContent = "Feedback sent successfully.";
       }
 
-      openModalAnimated("allCommentsModal");
+      if (nameEl) nameEl.value = "";
+      if (textEl) textEl.value = "";
+
+      selectedRating = 0;
+      ratingStars.forEach(star => star.classList.remove("selected"));
+
+      setTimeout(() => {
+        closeComment();
+        if (feedbackMessage) {
+          feedbackMessage.style.display = "none";
+          feedbackMessage.textContent = "";
+        }
+      }, 900);
     } catch (err) {
-      commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
-      openModalAnimated("allCommentsModal");
+      if (feedbackMessage) {
+        feedbackMessage.style.display = "block";
+        feedbackMessage.style.color = "#ef4444";
+        feedbackMessage.textContent = "Unable to send feedback right now.";
+      }
     }
-  };
-
-  if (commentModal && commentModal.style.display === "flex") {
-    closeModalAnimated("commentModal", loadComments);
-  } else {
-    loadComments();
   }
-}
 
-window.attemptEdit = attemptEdit;
-window.closePasswordModal = closePasswordModal;
-window.closeEditModal = closeEditModal;
-window.checkPassword = checkPassword;
-window.saveEdit = saveEdit;
-window.copyTemplateText = copyTemplateText;
-window.goBack = goBack;
-window.restart = restart;
-window.openImageModal = openImageModal;
-window.closeImageModal = closeImageModal;
+  async function showAllComments() {
+    const commentModal = document.getElementById("commentModal");
+    const commentsList = document.getElementById("commentsList");
+    if (!commentsList) return;
 
-/* keep these for header.html buttons */
-window.openComment = openComment;
-window.closeComment = closeComment;
-window.openHelp = openHelp;
-window.closeHelp = closeHelp;
-window.showAllComments = showAllComments;
-window.closeAllComments = closeAllComments;
-window.sendComment = sendComment;
+    commentsList.innerHTML = `<p style="color:#64748b;">Loading comments...</p>`;
 
-document.addEventListener("headerLoaded", () => {
-  initRatingStars();
-});
+    const loadComments = async () => {
+      try {
+        const snap = await db
+          .collection(FEEDBACK_COLLECTION)
+          .orderBy("createdAt", "desc")
+          .get();
 
-setTimeout(() => {
-  initRatingStars();
-}, 300);
+        if (snap.empty) {
+          commentsList.innerHTML = `<p style="color:#64748b;">No comments and ratings yet.</p>`;
+        } else {
+          commentsList.innerHTML = snap.docs.map(doc => {
+            const data = doc.data() || {};
+            const rating = Number(data.rating || 0);
+            const filled = "★".repeat(Math.max(0, Math.min(5, rating)));
+            const empty = "☆".repeat(Math.max(0, 5 - rating));
 
-renderNode("start");
+            return `
+              <div class="comment-list-item">
+                <span class="stars">${filled}${empty}</span>
+                <strong style="display:block; color:#0f172a; margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong>
+                <div style="color:#475569; line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div>
+              </div>
+            `;
+          }).join("");
+        }
+
+        openModalAnimated("allCommentsModal");
+      } catch (err) {
+        commentsList.innerHTML = `<p style="color:#ef4444;">Unable to load comments right now.</p>`;
+        openModalAnimated("allCommentsModal");
+      }
+    };
+
+    if (commentModal && commentModal.style.display === "flex") {
+      closeModalAnimated("commentModal", loadComments);
+    } else {
+      loadComments();
+    }
+  }
+
+  // Expose functions globally
+  window.attemptEdit = attemptEdit;
+  window.closePasswordModal = closePasswordModal;
+  window.closeEditModal = closeEditModal;
+  window.checkPassword = checkPassword;
+  window.saveEdit = saveEdit;
+  window.copyTemplateText = copyTemplateText;
+  window.goBack = goBack;
+  window.restart = restart;
+  window.openImageModal = openImageModal;
+  window.closeImageModal = closeImageModal;
+  window.openComment = openComment;
+  window.closeComment = closeComment;
+  window.openHelp = openHelp;
+  window.closeHelp = closeHelp;
+  window.showAllComments = showAllComments;
+  window.closeAllComments = closeAllComments;
+  window.sendComment = sendComment;
+
+  document.addEventListener("headerLoaded", () => {
+    initRatingStars();
+  });
+
+  setTimeout(() => {
+    initRatingStars();
+  }, 300);
+
+  renderNode("start");
 });
 </script>
 <div id="imageModal" class="image-modal" onclick="closeImageModal()">
