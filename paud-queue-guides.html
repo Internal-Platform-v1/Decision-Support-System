@@ -2670,6 +2670,208 @@ footer.site-footer .footer-right{
     max-width:100% !important;
   }
 }
+
+/* ===== PREMIUM HISTORY DROPDOWN ===== */
+#history-item {
+  position: relative;
+}
+
+#history-dropdown {
+  display: block;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 10px 6px;
+  border-radius: var(--radius-xl, 24px);
+  background: var(--soft-card, rgba(255,255,255,.82));
+  border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
+  box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 200;
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+  transform-origin: top left;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#history-dropdown.is-open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+/* Scrollbar styling */
+#history-dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+#history-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+#history-dropdown::-webkit-scrollbar-thumb {
+  background: var(--line, rgba(148,163,184,.3));
+  border-radius: 999px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 4px 4px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease;
+  color: var(--ink, #0f172a);
+  font-weight: 600;
+  font-size: 14px;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.history-item:hover {
+  background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
+  border-color: var(--line, rgba(148,163,184,.12));
+  transform: translateX(6px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(2,6,23,.06);
+}
+
+.history-item .history-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.history-item .history-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
+  color: var(--teal, #4d148c);
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.history-item:hover .history-icon {
+  background: var(--teal, #4d148c);
+  color: #fff;
+  transform: scale(1.05) rotate(-4deg);
+}
+
+.history-item .history-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink, #0f172a);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.history-item .history-time {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, #475569);
+  background: var(--cream, #eef4fb);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line, rgba(148,163,184,.12));
+}
+
+.history-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--muted, #475569);
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-empty i {
+  font-size: 28px;
+  color: var(--line, rgba(148,163,184,.4));
+}
+
+/* ===== HISTORY DROPDOWN – CLEAR BUTTONS ===== */
+#history-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 6px 16px;
+  border-bottom: 1px solid var(--line, rgba(148,163,184,.12));
+  margin-bottom: 4px;
+}
+
+#history-dropdown-header span {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted, #475569);
+}
+
+.history-clear-all {
+  background: transparent;
+  border: none;
+  color: var(--muted, #475569);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.history-clear-all:hover {
+  background: color-mix(in srgb, var(--teal, #4d148c) 8%, var(--cream-2, #f5f8fc));
+  color: var(--teal, #4d148c);
+  border-color: var(--line, rgba(148,163,184,.12));
+}
+
+.history-clear-all:active {
+  transform: scale(0.96);
+}
+
+.history-item {
+  position: relative; /* for delete button positioning */
+}
+
+.history-delete {
+  background: transparent;
+  border: none;
+  color: var(--muted, #475569);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+  line-height: 1;
+  opacity: 0.4;
+}
+
+.history-item:hover .history-delete {
+  opacity: 1;
+}
+
+.history-delete:hover {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  color: #ef4444;
+}  
 </style>
 </head>
 
@@ -2711,39 +2913,45 @@ footer.site-footer .footer-right{
             </div>
           </div>
 
-          <aside class="side-stack">
-            <div class="focus-card reveal delay-2">
-              <div class="card-label">
-                <span><i class="fa-solid fa-compass"></i> Quick access</span>
-                <i class="fa-solid fa-route"></i>
-              </div>
-              <h2>Start with the PAUD queue concern.</h2>
-              <p>Use the quick options below or search the library to open the correct PAUD handling path.</p>
+<aside class="side-stack">
+  <div class="focus-card reveal delay-2">
+    <div class="card-label">
+      <span><i class="fa-solid fa-compass"></i> HISTORY</span>
+      <i class="fa-solid fa-clock-rotate-left"></i>
+    </div>
+    <h2>Pick up where you left off</h2>
+    <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
 
-              <ul class="quick-list">
-                <li class="quick-item">
-                  <div class="quick-icon"><i class="fa-solid fa-earth-americas"></i></div>
-                  <div>
-                    <strong>Regions / EHOT</strong>
-                    <span>Use this for region handling, EHOT validation, routing checks, and account/location review.</span>
-                  </div>
-                </li>
-                <li class="quick-item">
-                  <div class="quick-icon"><i class="fa-solid fa-sitemap"></i></div>
-                  <div>
-                    <strong>TPLO / TPHI</strong>
-                    <span>Open the correct guide for account mapping, SPOC validation, TEMP-SYS matching, and account correction handling.</span>
-                  </div>
-                </li>
-                <li class="quick-item">
-                  <div class="quick-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-                  <div>
-                    <strong>TPKN / CRAU / FPAY</strong>
-                    <span>Review PAUD replacement, CRAU request handling, and payment-related queue decisions.</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
+    <ul class="quick-list">
+      <li class="quick-item" id="history-item">
+        <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div>
+          <strong>HISTORY</strong>
+          <span>Click to open history ▼</span>
+        </div>
+        <!-- Premium Dropdown -->
+       <div id="history-dropdown">
+        <div id="history-dropdown-header">
+          <span><i class="fa-regular fa-clock"></i> History</span>
+          <button class="history-clear-all" id="clearAllHistoryBtn">Clear all</button>
+          </div>
+        <div id="history-dropdown-list"></div>
+      </div>
+      </li>
+      <li class="quick-item" id="recent-item">
+        <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
+        <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
+      </li>
+      <li class="quick-item" id="mostused-item">
+        <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+        <div><strong>Most used guide</strong><span id="mostused-guide-label">Loading…</span></div>
+      </li>
+      <li class="quick-item" id="other-item">
+        <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div><strong>Other</strong><span>Bookmarks &amp; favorites (coming soon)</span></div>
+      </li>
+    </ul>
+  </div>
 
             <div class="focus-card dark reveal delay-3">
               <div class="card-label">
@@ -3249,6 +3457,204 @@ function initCardMotion(){
     });
   });
 }
+
+// =========================================================
+// PREMIUM HISTORY – TRACKING, DROPDOWN, CLEAR
+// =========================================================
+const HISTORY_KEY = 'guideHistory';
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+}
+function saveHistory(history) { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
+
+function addGuideToHistory(title, url) {
+  const history = getHistory();
+  const filtered = history.filter(item => item.url !== url);
+  filtered.push({ title, url, timestamp: Date.now() });
+  saveHistory(filtered);
+}
+
+function getMostRecentGuide(history) {
+  if (!history.length) return null;
+  return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
+}
+
+function getMostUsedGuide(history) {
+  if (!history.length) return null;
+  const counts = {};
+  history.forEach(item => { counts[item.url] = (counts[item.url] || 0) + 1; });
+  let maxCount = 0, mostUsedUrl = history[0].url;
+  for (const [url, count] of Object.entries(counts)) {
+    if (count > maxCount) { maxCount = count; mostUsedUrl = url; }
+  }
+  return history.find(item => item.url === mostUsedUrl);
+}
+
+// ---- Clear functions ----
+function removeHistoryItem(url) {
+  let history = getHistory();
+  history = history.filter(item => item.url !== url);
+  saveHistory(history);
+  updateHistoryPanel();
+  renderHistoryDropdown();
+}
+
+function clearAllHistory() {
+  if (getHistory().length === 0) return;
+  if (confirm('Delete all history entries?')) {
+    saveHistory([]);
+    updateHistoryPanel();
+    renderHistoryDropdown();
+  }
+}
+
+// ---- Render dropdown ----
+function renderHistoryDropdown() {
+  const history = getHistory();
+  const list = document.getElementById('history-dropdown-list');
+  if (!list) return;
+
+  if (!history.length) {
+    list.innerHTML = `
+      <div class="history-empty">
+        <i class="fa-solid fa-inbox"></i>
+        <span>No history yet</span>
+      </div>
+    `;
+    return;
+  }
+
+  const sorted = history.slice().reverse();
+  let html = '';
+  sorted.forEach((item) => {
+    const time = new Date(item.timestamp).toLocaleString();
+    const safeTitle = item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    html += `
+      <div class="history-item" data-url="${item.url}">
+        <div class="history-left">
+          <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
+          <span class="history-title">${safeTitle}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="history-time">${time}</span>
+          <button class="history-delete" data-url="${item.url}" title="Remove from history"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+
+  // Click on item (except delete button) opens guide
+  list.querySelectorAll('.history-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      if (e.target.closest('.history-delete')) return;
+      const url = this.dataset.url;
+      if (url) window.location.href = url;
+    });
+  });
+
+  // Delete button events
+  list.querySelectorAll('.history-delete').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const url = this.dataset.url;
+      if (url) removeHistoryItem(url);
+    });
+  });
+}
+
+// ---- Toggle dropdown ----
+function toggleHistoryDropdown(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('history-dropdown');
+  if (!dropdown) return;
+  const isOpen = dropdown.classList.contains('is-open');
+  if (!isOpen) renderHistoryDropdown();
+  dropdown.classList.toggle('is-open');
+}
+
+// ---- Close dropdown on outside click ----
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('history-dropdown');
+  const historyItem = document.getElementById('history-item');
+  if (dropdown && historyItem && !historyItem.contains(e.target)) {
+    dropdown.classList.remove('is-open');
+  }
+});
+
+// ---- Update panel labels ----
+function updateHistoryPanel() {
+  const history = getHistory();
+  const recent = getMostRecentGuide(history);
+  const mostUsed = getMostUsedGuide(history);
+
+  const recentLabel = document.getElementById('recent-guide-label');
+  const mostUsedLabel = document.getElementById('mostused-guide-label');
+  const recentItem = document.getElementById('recent-item');
+  const mostUsedItem = document.getElementById('mostused-item');
+  const historyItem = document.getElementById('history-item');
+
+  if (recent) {
+    recentLabel.textContent = recent.title;
+    recentItem.style.cursor = 'pointer';
+    recentItem.onclick = () => window.location.href = recent.url;
+  } else {
+    recentLabel.textContent = 'No history yet';
+    recentItem.style.cursor = 'default';
+    recentItem.onclick = null;
+  }
+
+  if (mostUsed) {
+    mostUsedLabel.textContent = mostUsed.title;
+    mostUsedItem.style.cursor = 'pointer';
+    mostUsedItem.onclick = () => window.location.href = mostUsed.url;
+  } else {
+    mostUsedLabel.textContent = 'No history yet';
+    mostUsedItem.style.cursor = 'default';
+    mostUsedItem.onclick = null;
+  }
+
+  if (historyItem) {
+    historyItem.style.cursor = 'pointer';
+    historyItem.onclick = toggleHistoryDropdown;
+  }
+}
+
+// ---- Track guide opens ----
+function attachHistoryTracking() {
+  document.querySelectorAll('.guide-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const card = this.closest('.guide-card');
+      if (!card) return;
+      const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
+      const url = this.getAttribute('href');
+      if (url) addGuideToHistory(title, url);
+    });
+  });
+}
+
+// ---- Initialise ----
+function initHistory() {
+  updateHistoryPanel();
+  attachHistoryTracking();
+  const dropdown = document.getElementById('history-dropdown');
+  if (dropdown) dropdown.classList.remove('is-open');
+
+  // Clear all button
+  const clearAllBtn = document.getElementById('clearAllHistoryBtn');
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      clearAllHistory();
+    });
+  }
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', initHistory);
+document.addEventListener('headerLoaded', initHistory);
+setTimeout(initHistory, 1000);  
 
 /* FEEDBACK + HELP FOR HEADER MODALS */
 let selectedRating = 0;
