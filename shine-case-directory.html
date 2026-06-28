@@ -1,0 +1,2024 @@
+<!doctype html>
+<html lang="en" class="page-protected">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BD Tools — Shine Case Directory</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/header-footer-style.css">
+    <link rel="stylesheet" href="assets/css/guide-themes.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+    </script>
+
+    <style>
+        /* ===== PAGE PROTECT OVERRIDE ===== */
+        html.page-protected,
+        html.page-protected body {
+            visibility: visible;
+        }
+
+        /* ===== ROOT VARIABLES ===== */
+        :root {
+            --cream: #f7f8fb;
+            --cream-2: #edf0f6;
+            --cream-3: #dfe4ee;
+            --yellow: #ff6600;
+            --yellow-soft: #ff8a33;
+            --olive: #6d28d9;
+            --olive-2: #4d148c;
+            --teal: #4d148c;
+            --teal-2: #3b0f73;
+            --dark: #1e293b;
+            --dark-2: #07111f;
+            --ink: #0f172a;
+            --muted: #475569;
+            --line: rgba(148, 163, 184, .18);
+            --white: rgba(255, 255, 255, .86);
+            --shadow-xl: 0 34px 90px rgba(2, 6, 23, .22);
+            --shadow-lg: 0 24px 60px rgba(2, 6, 23, .16);
+            --shadow-md: 0 14px 34px rgba(15, 23, 42, .10);
+            --radius-2xl: 36px;
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --ease: cubic-bezier(.2, .8, .2, 1);
+            --max: 1440px;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        /* ===== BASE RESET & BODY ===== */
+        * {
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 8%, rgba(109, 40, 217, .28), transparent 28%),
+                radial-gradient(circle at 82% 0%, rgba(255, 102, 0, .18), transparent 30%),
+                radial-gradient(circle at 40% 52%, rgba(77, 20, 140, .16), transparent 34%),
+                radial-gradient(circle at 88% 78%, rgba(255, 102, 0, .10), transparent 30%),
+                linear-gradient(180deg, #121033 0%, #091120 42%, #07111f 100%);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, .8), transparent 65%);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 520px;
+            height: 520px;
+            right: -180px;
+            bottom: -180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 102, 0, .16), transparent 66%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            width: min(calc(100% - 32px), var(--max));
+            margin: 0 auto;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            padding: 42px 0 26px;
+        }
+
+        .hero-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(360px, .9fr);
+            gap: 26px;
+            align-items: stretch;
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            min-height: 540px;
+            border-radius: var(--radius-2xl);
+            padding: 42px;
+            background:
+                radial-gradient(circle at 16% 16%, rgba(255, 102, 0, .24), transparent 26%),
+                linear-gradient(135deg, var(--teal) 0%, var(--teal-2) 50%, var(--dark-2) 100%);
+            color: #fff;
+            box-shadow: var(--shadow-xl);
+            isolation: isolate;
+        }
+
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            inset: -40%;
+            background: conic-gradient(from 180deg, transparent, rgba(255, 102, 0, .18), transparent, rgba(255, 255, 255, .10), transparent);
+            animation: spin 18s linear infinite;
+            z-index: -2;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            inset: 1px;
+            border-radius: 35px;
+            background:
+                radial-gradient(circle at 78% 24%, rgba(255, 255, 255, .12), transparent 20%),
+                linear-gradient(135deg, rgba(77, 20, 140, .96), rgba(59, 15, 115, .94) 50%, rgba(7, 17, 31, .96));
+            z-index: -1;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .pill {
+            width: max-content;
+            max-width: 100%;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .12);
+            border: 1px solid rgba(255, 255, 255, .16);
+            color: rgba(255, 255, 255, .88);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .10em;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+            margin-bottom: 24px;
+        }
+
+        .pill i {
+            color: var(--yellow-soft);
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2.8rem, 6vw, 5.7rem);
+            line-height: .9;
+            letter-spacing: -.08em;
+            max-width: 900px;
+            text-wrap: balance;
+        }
+
+        .hero p {
+            margin: 24px 0 0;
+            max-width: 760px;
+            color: rgba(255, 255, 255, .76);
+            font-size: 17px;
+            line-height: 1.75;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .hero-main-btn,
+        .hero-ghost-btn {
+            min-height: 54px;
+            padding: 0 22px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 900;
+            transition: .22s var(--ease);
+            border: none;
+            cursor: pointer;
+        }
+
+        .hero-main-btn {
+            background: linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+            color: #fff;
+            box-shadow: 0 18px 34px rgba(255, 102, 0, .24);
+        }
+
+        .hero-ghost-btn {
+            background: rgba(255, 255, 255, .10);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, .15);
+        }
+
+        .hero-main-btn:hover,
+        .hero-ghost-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .hero-metrics {
+            margin-top: auto;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            padding-top: 42px;
+        }
+
+        .metric {
+            padding: 16px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, .10);
+            border: 1px solid rgba(255, 255, 255, .10);
+            backdrop-filter: blur(10px);
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 28px;
+            letter-spacing: -.04em;
+        }
+
+        .metric span {
+            display: block;
+            margin-top: 6px;
+            color: rgba(255, 255, 255, .66);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .side-stack {
+            display: grid;
+            gap: 18px;
+        }
+
+        /* ===== FOCUS CARDS ===== */
+        .focus-card {
+            border-radius: var(--radius-2xl);
+            padding: 24px;
+            background: rgba(255, 255, 255, .74);
+            border: 1px solid rgba(255, 255, 255, .92);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(18px);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .focus-card.dark {
+            color: #fff;
+            background: linear-gradient(135deg, var(--teal), var(--dark-2));
+            border-color: rgba(255, 255, 255, .12);
+        }
+
+        .focus-card::before {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            right: -70px;
+            top: -80px;
+            background: radial-gradient(circle, rgba(255, 102, 0, .18), transparent 68%);
+            pointer-events: none;
+        }
+
+        .card-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .card-label span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--olive-2);
+        }
+
+        .focus-card.dark .card-label span {
+            color: var(--yellow-soft);
+        }
+
+        .card-label i:last-child {
+            width: 42px;
+            height: 42px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: #fff;
+            color: var(--teal);
+            box-shadow: 0 12px 24px rgba(18, 31, 21, .08);
+        }
+
+        .focus-card h2 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.02;
+            letter-spacing: -.055em;
+            color: var(--ink);
+        }
+
+        .focus-card.dark h2 {
+            color: #fff;
+        }
+
+        .focus-card p {
+            margin: 14px 0 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .focus-card.dark p {
+            color: rgba(255, 255, 255, .68);
+        }
+
+        .mini-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .mini-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .68);
+            border: 1px solid rgba(58, 64, 24, .08);
+        }
+
+        .mini-item i {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: var(--cream-3);
+            color: var(--dark);
+            flex-shrink: 0;
+        }
+
+        .mini-item strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .mini-item span {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* ===== DASHBOARD ===== */
+        .case-dashboard {
+            padding: 18px 0 58px;
+        }
+
+        .directory-frame {
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) 390px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .directory-main,
+        .directory-side-card {
+            border-radius: var(--radius-2xl);
+            padding: 20px;
+            background: rgba(255, 255, 255, .74);
+            border: 1px solid rgba(255, 255, 255, .88);
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(18px);
+        }
+
+        .directory-main {
+            min-width: 0;
+        }
+
+        .directory-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .directory-title-block h2 {
+            margin: 0 0 6px;
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            line-height: 1;
+            letter-spacing: -.06em;
+            color: var(--ink);
+        }
+
+        .directory-title-block p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+            max-width: 760px;
+        }
+
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 13px;
+            border-radius: 999px;
+            color: var(--olive-2);
+            background: rgba(255, 102, 0, .10);
+            border: 1px solid rgba(77, 20, 140, .12);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 0 14px;
+            border-radius: 999px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--dark), var(--teal));
+            box-shadow: 0 16px 30px rgba(14, 83, 97, .18);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* ===== SEARCH ===== */
+        .directory-search-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 14px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .search-input-wrap {
+            position: relative;
+        }
+
+        .search-input-wrap i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        #directorySearch {
+            width: 100%;
+            min-height: 62px;
+            border: none;
+            outline: none;
+            border-radius: 20px;
+            padding: 0 54px 0 50px;
+            background: #fff;
+            color: var(--ink);
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: inset 0 0 0 1px rgba(58, 64, 24, .12);
+            transition: .22s var(--ease);
+        }
+
+        #directorySearch:focus {
+            box-shadow: inset 0 0 0 2px rgba(77, 20, 140, .24), 0 0 0 7px rgba(77, 20, 140, .08);
+            transform: translateY(-1px);
+        }
+
+        #directorySearch::placeholder {
+            color: #9aa697;
+            font-weight: 600;
+        }
+
+        #clearSearchBtn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 999px;
+            background: var(--cream-2);
+            color: var(--dark);
+            font-weight: 900;
+            cursor: pointer;
+            display: none;
+        }
+
+        .directory-search-btn {
+            min-height: 62px;
+            padding: 0 22px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--yellow), var(--yellow-soft));
+            color: #fff;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 16px 30px rgba(255, 102, 0, .20);
+            transition: .22s var(--ease);
+            white-space: nowrap;
+        }
+
+        .directory-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 22px 38px rgba(255, 102, 0, .28);
+        }
+
+        /* ===== ROUTING CARD / TABLE ===== */
+        .routing-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(255, 102, 0, .08), transparent 28%),
+                rgba(255, 255, 255, .76);
+            border: 1px solid rgba(255, 255, 255, .88);
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(16px);
+            padding: 18px;
+        }
+
+        .routing-card::before {
+            content: "";
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            top: 0;
+            height: 4px;
+            border-radius: 0 0 999px 999px;
+            background: linear-gradient(90deg, var(--teal), var(--olive), var(--yellow));
+        }
+
+        .routing-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .routing-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid rgba(58, 64, 24, .08);
+            color: var(--olive-2);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 22px rgba(18, 31, 21, .05);
+            margin-bottom: 10px;
+        }
+
+        .routing-title {
+            margin: 0;
+            color: var(--ink);
+            font-size: 22px;
+            line-height: 1.1;
+            letter-spacing: -.04em;
+            font-weight: 950;
+        }
+
+        .routing-lead {
+            margin: 8px 0 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .routing-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            background: linear-gradient(135deg, var(--teal), var(--dark));
+            box-shadow: 0 14px 26px rgba(14, 83, 97, .18);
+            flex-shrink: 0;
+        }
+
+        .table-wrap {
+            max-height: 650px;
+            overflow: auto;
+            border: 1px solid rgba(226, 232, 240, .95);
+            border-radius: 24px;
+            background: #fff;
+            box-shadow: 0 16px 36px rgba(15, 23, 42, .06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1400px;
+            /* wide for 9 columns */
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            padding: 14px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 14px 10px;
+            vertical-align: top;
+            border-bottom: 1px solid #eef2f7;
+            color: #0f172a;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        tbody tr:nth-child(odd) {
+            background: #fcfdff;
+        }
+        tbody tr:hover {
+            background: #f8fbff;
+        }
+        tbody td:first-child {
+            font-weight: 800;
+        }
+
+        pre {
+            margin: 0;
+            background: #f8fafc;
+            border: 1px solid #e7edf4;
+            border-radius: 12px;
+            padding: 8px 10px;
+            white-space: pre-wrap;
+            font-family: inherit;
+            color: #334155;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 34px 20px;
+            color: #64748b;
+        }
+
+        .queue-link {
+            color: #0f172a;
+            font-weight: 900;
+            cursor: pointer;
+            text-decoration: none;
+            transition: .18s ease;
+        }
+
+        .queue-link:hover {
+            color: var(--teal);
+            text-decoration: underline;
+        }
+
+        .queue-link i {
+            font-size: 12px;
+            opacity: .8;
+            margin-left: 6px;
+        }
+
+        mark.search-highlight {
+            background: rgba(255, 102, 0, .20);
+            color: #07111f;
+            padding: 0 3px;
+            border-radius: 6px;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .directory-side {
+            display: grid;
+            gap: 18px;
+        }
+
+        .directory-side-card {
+            padding: 22px;
+        }
+
+        .directory-side-card.reminder {
+            background: linear-gradient(180deg, rgba(255, 247, 237, .86), rgba(255, 255, 255, .78));
+            border-color: rgba(255, 255, 255, .9);
+        }
+
+        .side-card-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: var(--ink);
+            font-weight: 950;
+            letter-spacing: -.02em;
+        }
+
+        .side-card-head i {
+            color: var(--yellow);
+        }
+
+        .section-note {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .quick-stat {
+            padding: 14px;
+            border-radius: 18px;
+            background: #fff;
+            border: 1px solid rgba(58, 64, 24, .08);
+            box-shadow: 0 10px 22px rgba(18, 31, 21, .04);
+        }
+
+        .quick-stat+.quick-stat {
+            margin-top: 10px;
+        }
+
+        .quick-label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--muted);
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .quick-value {
+            color: var(--ink);
+            font-size: 22px;
+            font-weight: 950;
+            letter-spacing: -.04em;
+            word-break: break-word;
+        }
+
+        .helper-text {
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .helper-list {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .helper-list li+li {
+            margin-top: 4px;
+        }
+
+        /* ===== TOAST ===== */
+        #toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 99999;
+            background: #111827;
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 14px;
+            box-shadow: 0 16px 34px rgba(15, 23, 42, .18);
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            transition: .22s ease;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        /* ===== DETAIL MODAL ===== */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, .52);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 2147483647;
+            backdrop-filter: blur(8px);
+            overflow-y: auto;
+        }
+
+        .detail-modal-content {
+            width: 100%;
+            max-width: 1650px;
+            min-height: 560px;
+            max-height: 90vh;
+            background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+            border: 1px solid #dbe4f0;
+            border-radius: 30px;
+            padding: 26px;
+            box-shadow: 0 34px 90px rgba(2, 6, 23, .28);
+            position: relative;
+            overflow: auto;
+            opacity: 0;
+            transform: translateY(10px) scale(.985);
+            transition: opacity .22s ease, transform .22s ease;
+        }
+
+        .detail-modal.is-open .detail-modal-content {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .detail-modal.is-closing .detail-modal-content {
+            opacity: 0;
+            transform: translateY(10px) scale(.985);
+        }
+
+        .detail-modal-content::before {
+            content: "";
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            top: 0;
+            height: 4px;
+            border-radius: 0 0 999px 999px;
+            background: linear-gradient(90deg, var(--teal), var(--olive), var(--yellow));
+        }
+
+        .detail-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .detail-modal-title {
+            font-size: 26px;
+            font-weight: 950;
+            letter-spacing: -.03em;
+            color: #0f172a;
+        }
+
+        .detail-modal-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .view-toggle-icon {
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #eef2ff;
+            color: #4338ca;
+            font-size: 16px;
+            cursor: pointer;
+            transition: .18s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-toggle-icon:hover {
+            background: #e0e7ff;
+            transform: translateY(-1px);
+        }
+
+        .view-toggle-icon.active {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--olive) 100%);
+            color: #fff;
+            box-shadow: 0 12px 24px rgba(77, 20, 140, .18);
+        }
+
+        .modal-close {
+            font-size: 32px;
+            line-height: 1;
+            cursor: pointer;
+            color: #94a3b8;
+            padding: 0 6px;
+            transition: .18s ease;
+        }
+        .modal-close:hover {
+            color: #0f172a;
+        }
+
+        /* detail table (default view) */
+        .detail-table {
+            display: grid;
+            grid-template-columns: 1.1fr 1.3fr 1.3fr 1.1fr 1.1fr 1.1fr 1.1fr 1.1fr 1.2fr;
+            gap: 12px;
+        }
+
+        .detail-col {
+            background: #f8fafc;
+            border: 1px solid #e5edf6;
+            border-radius: 18px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            font-weight: 950;
+            color: #64748b;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .detail-col div {
+            font-size: 13px;
+            color: #0f172a;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        /* premium view */
+        .premium-detail-view {
+            display: none;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            align-items: start;
+        }
+
+        .premium-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid #e4ebf5;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, .05);
+            min-width: 0;
+            width: 100%;
+        }
+
+        .premium-card.full {
+            grid-column: 1 / -1;
+            width: 100%;
+            display: block;
+        }
+
+        .premium-card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            font-weight: 950;
+            color: #64748b;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .premium-card-title i {
+            color: var(--teal);
+        }
+
+        .premium-card-value {
+            color: #0f172a;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 4px;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .detail-modal-content.premium-mode .detail-table {
+            display: none;
+        }
+
+        .detail-modal-content.premium-mode .premium-detail-view {
+            display: grid;
+        }
+
+        /* ===== THEME OVERRIDES (keep FedEx as default) ===== */
+        body.theme-fedex {
+            --cream: #f7f8fb;
+            --cream-2: #edf0f6;
+            --cream-3: #dfe4ee;
+            --yellow: #ff6600;
+            --yellow-soft: #ff8a33;
+            --olive: #6d28d9;
+            --olive-2: #4d148c;
+            --teal: #4d148c;
+            --teal-2: #3b0f73;
+            --dark: #1e293b;
+            --dark-2: #07111f;
+            --ink: #0f172a;
+            --muted: #475569;
+            --line: rgba(148, 163, 184, .18);
+            --white: rgba(255, 255, 255, .86);
+            --shadow-xl: 0 34px 90px rgba(2, 6, 23, .22);
+            --shadow-lg: 0 24px 60px rgba(2, 6, 23, .16);
+            --shadow-md: 0 14px 34px rgba(15, 23, 42, .10);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1280px) {
+            .hero-shell {
+                grid-template-columns: 1fr;
+            }
+            .hero-card {
+                min-height: auto;
+            }
+            .detail-table {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 1080px) {
+            .directory-frame {
+                grid-template-columns: 1fr;
+            }
+            .hero-metrics {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 820px) {
+            .detail-table {
+                grid-template-columns: 1fr 1fr;
+            }
+            .premium-detail-view {
+                grid-template-columns: 1fr 1fr;
+            }
+            .premium-card.full {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .container {
+                width: min(calc(100% - 20px), var(--max));
+            }
+            .hero {
+                padding-top: 28px;
+            }
+            .hero-card {
+                padding: 28px;
+                border-radius: 30px;
+            }
+            .hero-card::after {
+                border-radius: 29px;
+            }
+            .hero h1 {
+                font-size: 3.1rem;
+            }
+            .hero-metrics {
+                grid-template-columns: 1fr;
+            }
+            .directory-search-row {
+                grid-template-columns: 1fr;
+            }
+            .directory-search-btn {
+                width: 100%;
+            }
+            .directory-main,
+            .directory-side-card {
+                padding: 16px;
+                border-radius: 28px;
+            }
+            .detail-modal {
+                padding: 12px;
+            }
+            .detail-modal-content {
+                padding: 20px;
+                border-radius: 24px;
+                min-height: auto;
+                max-height: 92vh;
+            }
+            .detail-modal-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .detail-modal-actions {
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            .detail-table {
+                grid-template-columns: 1fr;
+            }
+            .premium-detail-view {
+                grid-template-columns: 1fr;
+            }
+            .premium-card.full {
+                grid-column: 1;
+            }
+            table {
+                min-width: 1000px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+            .reveal {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* ===== HEADER MODAL BUTTON WIDTH FIX ===== */
+        #timeCalendarPopup .btn,
+        #timeSettingsModal .btn,
+        #timeSettingsModal #saveTimeSettings,
+        #timeCalendarPopup #openTimeSettings {
+            width: 100% !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            min-height: 54px !important;
+            padding: 0 18px !important;
+            border-radius: 18px !important;
+            border: none !important;
+            box-sizing: border-box !important;
+        }
+
+        #timeSettingsModal #saveTimeSettings {
+            margin-top: 16px !important;
+        }
+        #timeCalendarPopup #openTimeSettings {
+            margin-top: 14px !important;
+        }
+
+        /* ===== REVEAL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity .7s var(--ease), transform .7s var(--ease);
+        }
+
+        .reveal.in-view {
+            opacity: 1;
+            transform: none;
+        }
+
+        .delay-1 {
+            transition-delay: .08s;
+        }
+        .delay-2 {
+            transition-delay: .16s;
+        }
+        .delay-3 {
+            transition-delay: .24s;
+        }
+        .delay-4 {
+            transition-delay: .32s;
+        }
+        .delay-5 {
+            transition-delay: .40s;
+        }
+        .delay-6 {
+            transition-delay: .48s;
+        }
+
+        /* ===== THEME BRIDGE ===== */
+        body.theme-fedex .hero-card {
+            background:
+                radial-gradient(circle at 16% 16%, rgba(255, 102, 0, .24), transparent 26%),
+                linear-gradient(135deg, #4d148c 0%, #3b0f73 50%, #07111f 100%) !important;
+        }
+        body.theme-fedex .hero-card::before {
+            background: conic-gradient(from 180deg, transparent, rgba(255, 102, 0, .18), transparent, rgba(255, 255, 255, .10), transparent) !important;
+        }
+        body.theme-fedex .hero-card::after {
+            background:
+                radial-gradient(circle at 78% 24%, rgba(255, 255, 255, .12), transparent 20%),
+                linear-gradient(135deg, rgba(77, 20, 140, .96), rgba(59, 15, 115, .94) 50%, rgba(7, 17, 31, .96)) !important;
+        }
+        body.theme-fedex .directory-main,
+        body.theme-fedex .directory-side-card,
+        body.theme-fedex .focus-card,
+        body.theme-fedex .routing-card {
+            background: rgba(255, 255, 255, .74) !important;
+            border-color: rgba(255, 255, 255, .88) !important;
+        }
+        body.theme-fedex .section-kicker {
+            color: var(--olive-2) !important;
+            background: rgba(255, 102, 0, .10) !important;
+            border-color: rgba(77, 20, 140, .12) !important;
+        }
+    </style>
+</head>
+
+<body data-page="shine-case-directory" class="theme-fedex">
+    <div class="page">
+        <div id="site-header"></div>
+
+        <main>
+            <!-- ===== HERO ===== -->
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-shell">
+                        <div class="hero-card reveal delay-1">
+                            <div class="hero-content">
+                                <div class="pill"><i class="fa-solid fa-folder-tree"></i> Shine Case Directory</div>
+                                <h1 class="case-hero-title">Find the right queue and route with confidence.</h1>
+                                <p>
+                                    Search the Shine Case Directory by ISELL QUEUE, CASE RECORD TYPE, owner,
+                                    additional info, type, sub type, category, or description to quickly identify
+                                    the correct destination for each case.
+                                </p>
+
+                                <div class="hero-actions">
+                                    <button class="hero-main-btn" type="button" onclick="scrollToDirectory()">Explore Directory <i class="fa-solid fa-arrow-down"></i></button>
+                                    <button class="hero-ghost-btn" type="button" onclick="focusDirectorySearch()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+
+                                <div class="hero-metrics">
+                                    <div class="metric">
+                                        <strong id="heroCaseCount">—</strong>
+                                        <span>Total rows in the Shine Case Directory.</span>
+                                    </div>
+                                    <div class="metric">
+                                        <strong id="heroQueueCount">—</strong>
+                                        <span>Unique ISELL QUEUES available.</span>
+                                    </div>
+                                    <div class="metric">
+                                        <strong id="heroMatchCount">—</strong>
+                                        <span>Results shown for the current search.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <aside class="side-stack">
+                            <div class="focus-card reveal delay-2">
+                                <div class="card-label">
+                                    <span><i class="fa-solid fa-compass"></i> How to use</span>
+                                    <i class="fa-solid fa-route"></i>
+                                </div>
+                                <h2>Search first, then confirm the routing details.</h2>
+                                <p>Use the directory to narrow the case, review the type and owner, and confirm the correct destination before moving the case.</p>
+
+                                <div class="mini-list">
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <div><strong>Search the case</strong><span>Use ISELL QUEUE, type, owner, or description keywords.</span></div>
+                                    </div>
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-list-check"></i>
+                                        <div><strong>Review the row details</strong><span>Compare record type, owner, and additional info before routing.</span></div>
+                                    </div>
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-circle-nodes"></i>
+                                        <div><strong>Confirm the destination</strong><span>Make sure the queue and case record type match the handling path.</span></div>
+                                    </div>
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-share"></i>
+                                        <div><strong>Move the case correctly</strong><span>Use the result to route the case cleanly and avoid rework.</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="focus-card dark reveal delay-3">
+                                <div class="card-label">
+                                    <span><i class="fa-solid fa-shield-halved"></i> Directory ready</span>
+                                    <i class="fa-solid fa-truck-fast"></i>
+                                </div>
+                                <h2>Everything you need is ready in one place.</h2>
+                                <p>Use the search, routing table, and quick snapshot to confirm the right destination. If something does not match, use Get Help or ask your team lead before moving the case.</p>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== DASHBOARD ===== -->
+            <section id="directoryWorkspace" class="case-dashboard reveal delay-2">
+                <div class="container">
+                    <div class="directory-frame">
+                        <section class="directory-main">
+                            <div class="directory-top">
+                                <div class="directory-title-block">
+                                    <div class="section-kicker"><i class="fa-solid fa-table"></i> Shine Routing Table</div>
+                                    <h2>Shine Case Directory</h2>
+                                    <p>Search the routing directory below to identify the correct ISELL QUEUE, record type, owner, and additional details before moving the case.</p>
+                                </div>
+
+                                <div class="status-pill" id="statusPill">
+                                    <i class="fa-solid fa-database"></i> Waiting for Data
+                                </div>
+                            </div>
+
+                            <div class="directory-search-row">
+                                <div class="search-input-wrap">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input id="directorySearch" type="text" placeholder="Search ISELL QUEUE, record type, owner, type, sub type, category, or description.">
+                                    <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()">×</button>
+                                </div>
+
+                                <button class="directory-search-btn" type="button" onclick="focusDirectorySearch()">
+                                    Focus search
+                                </button>
+                            </div>
+
+                            <div class="routing-card">
+                                <div class="routing-head">
+                                    <div>
+                                        <div class="routing-kicker"><i class="fa-solid fa-folder-open"></i> Live directory</div>
+                                        <h3 class="routing-title">Search and review the correct destination</h3>
+                                        <p class="routing-lead">Use the live directory below to check where a case should go before routing it.</p>
+                                    </div>
+                                    <div class="routing-icon"><i class="fa-solid fa-folder-open"></i></div>
+                                </div>
+
+                                <div class="table-wrap">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>ISELL QUEUE</th>
+                                                <th>CASE RECORD TYPE</th>
+                                                <th>Automatic Case Owner</th>
+                                                <th>CORRECT CASE OWNER</th>
+                                                <th>Additional Info Required</th>
+                                                <th>TYPE</th>
+                                                <th>SUB TYPE</th>
+                                                <th>CATEGORY</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rows"></tbody>
+                                    </table>
+                                </div>
+
+                                <div id="emptyState" class="empty-state" style="display:none;">
+                                    <i class="fa-solid fa-circle-exclamation" style="font-size:28px; margin-bottom:10px; color:#94a3b8;"></i>
+                                    <div>No matching results found for the current search.</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <aside class="directory-side">
+                            <div class="directory-side-card">
+                                <div class="side-card-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+                                <div class="section-note">Live context while reviewing the directory.</div>
+
+                                <div class="quick-stat">
+                                    <span class="quick-label">Total Rows</span>
+                                    <span class="quick-value" id="totalRowsValue">—</span>
+                                </div>
+
+                                <div class="quick-stat">
+                                    <span class="quick-label">Unique Queues</span>
+                                    <span class="quick-value" id="uniqueQueuesValue">—</span>
+                                </div>
+
+                                <div class="quick-stat">
+                                    <span class="quick-label">Visible Results</span>
+                                    <span class="quick-value" id="visibleResultsValue">—</span>
+                                </div>
+                            </div>
+
+                            <div class="directory-side-card reminder">
+                                <div class="side-card-head"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
+                                <div class="helper-text">Before routing the case, confirm the ISELL QUEUE, record type, and correct case owner together to avoid moving the case to the wrong team.</div>
+                            </div>
+
+                            <div class="directory-side-card">
+                                <div class="side-card-head"><i class="fa-solid fa-lightbulb"></i> Search Tips</div>
+                                <ul class="helper-list">
+                                    <li>Search by ISELL QUEUE first when possible.</li>
+                                    <li>Try TYPE, SUB TYPE, or CATEGORY if the queue is unknown.</li>
+                                    <li>Use owner or description fields to confirm the final destination.</li>
+                                    <li>Review highlighted text before moving the case.</li>
+                                </ul>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div id="site-footer"></div>
+    </div>
+
+    <div id="toast">Copied!</div>
+
+    <!-- ===== FIREBASE ===== -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js">
+    </script>
+
+    <script>
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+                authDomain: "bdgg-database.firebaseapp.com",
+                projectId: "bdgg-database",
+                storageBucket: "bdgg-database.appspot.com",
+                messagingSenderId: "43574975434",
+                appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+            });
+        }
+
+        window.auth = firebase.auth();
+        window.db = firebase.firestore();
+
+        /* =========================================================
+           PAGE AUTH GUARD
+        ========================================================= */
+        window.auth.onAuthStateChanged(async function(user) {
+            try {
+                if (!user) {
+                    window.location.replace("index.html");
+                    return;
+                }
+
+                await user.reload();
+                const refreshedUser = window.auth.currentUser;
+
+                if (!refreshedUser || !refreshedUser.emailVerified) {
+                    window.location.replace("index.html");
+                    return;
+                }
+
+                document.documentElement.classList.remove("page-protected");
+
+            } catch (error) {
+                console.error("Auth guard error:", error);
+                window.location.replace("index.html");
+            }
+        });
+    </script>
+
+    <script>
+        window.SITE_BASE = "";
+    </script>
+    <script src="assets/js/header-loader.js">
+    </script>
+    <script src="assets/js/header.js">
+    </script>
+    <script src="assets/js/footer-loader.js">
+    </script>
+    <script src="assets/js/theme-loader.js">
+    </script>
+
+    <script>
+        /* =========================================================
+           SHINE CASE DIRECTORY — MAIN LOGIC
+           File: shine-case-directory.xlsx (9 columns)
+           ========================================================= */
+
+        let shineDirectoryInitialized = false;
+        let currentCaseDetailView = localStorage.getItem("shineCaseDetailView") || "default";
+
+        /* ===== SCROLL HELPERS ===== */
+        window.scrollToDirectory = function() {
+            const target = document.getElementById("directoryWorkspace");
+            if (!target) return;
+            const y = target.getBoundingClientRect().top + window.scrollY - 20;
+            window.scrollTo({ top: y, behavior: "smooth" });
+        };
+
+        window.clearDirectorySearch = function() {
+            const searchInput = document.getElementById("directorySearch");
+            const clearBtn = document.getElementById("clearSearchBtn");
+            if (searchInput) searchInput.value = "";
+            if (clearBtn) clearBtn.style.display = "none";
+            renderShineTable(window._SHINE_CASES || []);
+            if (searchInput) searchInput.focus();
+        };
+
+        window.focusDirectorySearch = function() {
+            const searchInput = document.getElementById("directorySearch");
+            if (!searchInput) return;
+            searchInput.focus();
+            searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        };
+
+        /* ===== HIGHLIGHT ===== */
+        function escapeRegExp(str) {
+            return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        function highlightText(value, query) {
+            if (!query) return value || "";
+            const regex = new RegExp(`(${escapeRegExp(query)})`, "gi");
+            return String(value || "").replace(regex, '<mark class="search-highlight">$1</mark>');
+        }
+
+        /* ===== RENDER TABLE ===== */
+        function renderShineTable(rows, query) {
+            query = (query || "").toLowerCase().trim();
+            const tbody = document.getElementById("rows");
+            const empty = document.getElementById("emptyState");
+            const heroCaseCount = document.getElementById("heroCaseCount");
+            const heroQueueCount = document.getElementById("heroQueueCount");
+            const heroMatchCount = document.getElementById("heroMatchCount");
+            const totalRowsValue = document.getElementById("totalRowsValue");
+            const uniqueQueuesValue = document.getElementById("uniqueQueuesValue");
+            const visibleResultsValue = document.getElementById("visibleResultsValue");
+            const statusPill = document.getElementById("statusPill");
+
+            const allCases = window._SHINE_CASES || [];
+            const filtered = query ? rows : allCases;
+
+            // Update counts
+            const uniqueQueues = [...new Set(allCases.map(r => (r["ISELL QUEUE"] || "").trim()).filter(Boolean))];
+            heroCaseCount.textContent = allCases.length || "0";
+            totalRowsValue.textContent = allCases.length || "0";
+            heroQueueCount.textContent = uniqueQueues.length || "0";
+            uniqueQueuesValue.textContent = uniqueQueues.length || "0";
+            heroMatchCount.textContent = filtered.length || "0";
+            visibleResultsValue.textContent = filtered.length || "0";
+
+            if (!allCases.length) {
+                statusPill.innerHTML = `<i class="fa-solid fa-database"></i> Waiting for Data`;
+            } else if (!filtered.length) {
+                statusPill.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> No Match Found`;
+            } else if (query) {
+                statusPill.innerHTML = `<i class="fa-solid fa-filter"></i> Filtered Results`;
+            } else {
+                statusPill.innerHTML = `<i class="fa-solid fa-circle-check"></i> Directory Ready`;
+            }
+
+            if (!filtered.length) {
+                tbody.innerHTML = "";
+                empty.style.display = "block";
+                return;
+            }
+
+            empty.style.display = "none";
+
+            tbody.innerHTML = filtered.map(r => {
+                const queue = r["ISELL QUEUE"] || "";
+                const recordType = r["CASE RECORD TYPE"] || "";
+                const autoOwner = r["Automatic Case Owner"] || "";
+                const correctOwner = r["CORRECT CASE OWNER"] || "";
+                const additional = r["Additional Information Required When Moving"] || "";
+                const type = r["TYPE"] || "";
+                const subType = r["SUB TYPE"] || "";
+                const category = r["CATEGORY"] || "";
+                const desc = r["Description"] || "";
+
+                const rowObj = {
+                    "ISELL QUEUE": queue,
+                    "CASE RECORD TYPE": recordType,
+                    "Automatic Case Owner": autoOwner,
+                    "CORRECT CASE OWNER": correctOwner,
+                    "Additional Information Required When Moving": additional,
+                    "TYPE": type,
+                    "SUB TYPE": subType,
+                    "CATEGORY": category,
+                    "Description": desc
+                };
+
+                return `
+                    <tr>
+                        <td>
+                            <span class="queue-link" onclick='openShineCaseDetail(${JSON.stringify(JSON.stringify(rowObj))})'>
+                                ${highlightText(queue, query)}
+                                <i class="fa-solid fa-up-right-from-square"></i>
+                            </span>
+                        </td>
+                        <td>${highlightText(recordType, query)}</td>
+                        <td>${highlightText(autoOwner, query)}</td>
+                        <td>${highlightText(correctOwner, query)}</td>
+                        <td style="white-space:pre-line">${highlightText(additional, query)}</td>
+                        <td>${highlightText(type, query)}</td>
+                        <td>${highlightText(subType, query)}</td>
+                        <td>${highlightText(category, query)}</td>
+                        <td><pre>${highlightText(desc, query)}</pre></td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        /* ===== SORT MATCHES ===== */
+        function sortShineMatches(query, cases) {
+            if (!query) return cases;
+            const q = query.toLowerCase().trim();
+
+            const startsWithQueue = [];
+            const includesQueue = [];
+            const otherMatches = [];
+
+            cases.forEach(r => {
+                const queue = (r["ISELL QUEUE"] || "").toLowerCase().trim();
+                const recordType = (r["CASE RECORD TYPE"] || "").toLowerCase().trim();
+                const autoOwner = (r["Automatic Case Owner"] || "").toLowerCase().trim();
+                const correctOwner = (r["CORRECT CASE OWNER"] || "").toLowerCase().trim();
+                const additional = (r["Additional Information Required When Moving"] || "").toLowerCase()
+                .trim();
+                const type = (r["TYPE"] || "").toLowerCase().trim();
+                const subType = (r["SUB TYPE"] || "").toLowerCase().trim();
+                const category = (r["CATEGORY"] || "").toLowerCase().trim();
+                const desc = (r["Description"] || "").toLowerCase().trim();
+
+                const allFields = [queue, recordType, autoOwner, correctOwner, additional, type, subType,
+                    category, desc
+                ];
+
+                if (queue.startsWith(q)) {
+                    startsWithQueue.push(r);
+                } else if (queue.includes(q)) {
+                    includesQueue.push(r);
+                } else if (allFields.some(f => f.includes(q))) {
+                    otherMatches.push(r);
+                }
+            });
+
+            return [...startsWithQueue, ...includesQueue, ...otherMatches];
+        }
+
+        /* ===== DETAIL MODAL ===== */
+        window.openShineCaseDetail = function(serializedRow) {
+            const row = JSON.parse(serializedRow);
+            const modal = document.getElementById("shineCaseDetailModal");
+            if (!modal) return;
+
+            const fields = [
+                { key: "ISELL QUEUE", id: "detailQueue" },
+                { key: "CASE RECORD TYPE", id: "detailRecordType" },
+                { key: "Automatic Case Owner", id: "detailAutoOwner" },
+                { key: "CORRECT CASE OWNER", id: "detailCorrectOwner" },
+                { key: "Additional Information Required When Moving", id: "detailAdditional" },
+                { key: "TYPE", id: "detailType" },
+                { key: "SUB TYPE", id: "detailSubType" },
+                { key: "CATEGORY", id: "detailCategory" },
+                { key: "Description", id: "detailDescription" }
+            ];
+
+            fields.forEach(f => {
+                const el = document.getElementById(f.id);
+                if (el) el.textContent = row[f.key] || "";
+            });
+
+            // Premium view
+            const premiumFields = [
+                { key: "ISELL QUEUE", id: "premiumDetailQueue" },
+                { key: "CASE RECORD TYPE", id: "premiumDetailRecordType" },
+                { key: "Automatic Case Owner", id: "premiumDetailAutoOwner" },
+                { key: "CORRECT CASE OWNER", id: "premiumDetailCorrectOwner" },
+                { key: "Additional Information Required When Moving", id: "premiumDetailAdditional" },
+                { key: "TYPE", id: "premiumDetailType" },
+                { key: "SUB TYPE", id: "premiumDetailSubType" },
+                { key: "CATEGORY", id: "premiumDetailCategory" },
+                { key: "Description", id: "premiumDetailDescription" }
+            ];
+
+            premiumFields.forEach(f => {
+                const el = document.getElementById(f.id);
+                if (el) el.textContent = row[f.key] || "";
+            });
+
+            // Restore view preference
+            setShineCaseDetailView(currentCaseDetailView);
+
+            modal.style.display = "flex";
+            modal.classList.remove("is-closing");
+            document.body.classList.add("modal-open");
+
+            requestAnimationFrame(() => {
+                modal.classList.add("is-open");
+            });
+        };
+
+        window.closeShineCaseDetail = function() {
+            const modal = document.getElementById("shineCaseDetailModal");
+            if (!modal) return;
+
+            modal.classList.remove("is-open");
+            modal.classList.add("is-closing");
+
+            setTimeout(() => {
+                modal.style.display = "none";
+                modal.classList.remove("is-closing");
+                document.body.classList.remove("modal-open");
+            }, 220);
+        };
+
+        function setShineCaseDetailView(view) {
+            currentCaseDetailView = view;
+            localStorage.setItem("shineCaseDetailView", view);
+
+            const modalContent = document.getElementById("shineCaseDetailModalContent");
+            const toggleBtn = document.getElementById("shineViewToggleBtn");
+            if (!modalContent || !toggleBtn) return;
+
+            if (view === "premium") {
+                modalContent.classList.add("premium-mode");
+                toggleBtn.classList.add("active");
+                toggleBtn.innerHTML = '<i class="fa-solid fa-table-columns"></i>';
+                toggleBtn.title = "Switch to default view";
+            } else {
+                modalContent.classList.remove("premium-mode");
+                toggleBtn.classList.remove("active");
+                toggleBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i>';
+                toggleBtn.title = "Switch to premium view";
+            }
+        }
+
+        window.toggleShineView = function() {
+            if (currentCaseDetailView === "default") {
+                setShineCaseDetailView("premium");
+            } else {
+                setShineCaseDetailView("default");
+            }
+        };
+
+        // Close modal on overlay click
+        document.addEventListener("click", function(e) {
+            const modal = document.getElementById("shineCaseDetailModal");
+            if (e.target === modal) closeShineCaseDetail();
+        });
+
+        /* ===== INIT ===== */
+        function initShineCaseDirectory() {
+            if (shineDirectoryInitialized) return;
+            shineDirectoryInitialized = true;
+
+            const searchInput = document.getElementById("directorySearch");
+            const clearBtn = document.getElementById("clearSearchBtn");
+            const statusPill = document.getElementById("statusPill");
+
+            window._SHINE_CASES = [];
+
+            function setStatus(label, icon = "fa-database") {
+                if (statusPill) {
+                    statusPill.innerHTML = `<i class="fa-solid ${icon}"></i> ${label}`;
+                }
+            }
+
+            // Load Excel
+            fetch("shine-case-directory.xlsx")
+                .then(res => {
+                    if (!res.ok) throw new Error("File not found: shine-case-directory.xlsx");
+                    return res.arrayBuffer();
+                })
+                .then(data => {
+                    const workbook = XLSX.read(data, { type: "array" });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+                    window._SHINE_CASES = json;
+                    renderShineTable(json);
+                    setStatus("Directory Ready", "fa-circle-check");
+                })
+                .catch(err => {
+                    console.error("Failed to load shine-case-directory.xlsx:", err);
+                    const tbody = document.getElementById("rows");
+                    const empty = document.getElementById("emptyState");
+                    if (tbody) tbody.innerHTML = "";
+                    if (empty) {
+                        empty.style.display = "block";
+                        empty.innerHTML = `
+                            <i class="fa-solid fa-triangle-exclamation" style="font-size:28px; margin-bottom:10px; color:#ef4444;"></i>
+                            <div>Failed to load shine-case-directory.xlsx</div>
+                            <div style="font-size:12px; margin-top:8px; color:#94a3b8;">Please make sure the file exists in the same folder.</div>
+                        `;
+                    }
+                    setStatus("Error Loading", "fa-circle-exclamation");
+                    // Update metrics to show 0
+                    document.getElementById("heroCaseCount").textContent = "0";
+                    document.getElementById("heroQueueCount").textContent = "0";
+                    document.getElementById("heroMatchCount").textContent = "0";
+                    document.getElementById("totalRowsValue").textContent = "0";
+                    document.getElementById("uniqueQueuesValue").textContent = "0";
+                    document.getElementById("visibleResultsValue").textContent = "0";
+                });
+
+            // Search
+            searchInput.addEventListener("input", function(e) {
+                const query = e.target.value;
+                const q = query.trim();
+                clearBtn.style.display = q ? "block" : "none";
+
+                const allCases = window._SHINE_CASES || [];
+                if (!q) {
+                    renderShineTable(allCases);
+                    return;
+                }
+
+                const matched = sortShineMatches(q, allCases);
+                renderShineTable(matched, q);
+            });
+
+            // Enter key triggers search
+            searchInput.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    const query = this.value.trim();
+                    const allCases = window._SHINE_CASES || [];
+                    if (!query) {
+                        renderShineTable(allCases);
+                    } else {
+                        const matched = sortShineMatches(query, allCases);
+                        renderShineTable(matched, query);
+                    }
+                }
+            });
+
+            // Restore view preference
+            setShineCaseDetailView(currentCaseDetailView);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initShineCaseDirectory();
+        });
+
+        document.addEventListener("headerLoaded", function() {
+            initShineCaseDirectory();
+        });
+    </script>
+
+    <!-- ===== SHINE CASE DETAIL MODAL ===== -->
+    <div id="shineCaseDetailModal" class="modal detail-modal">
+        <div class="modal-content detail-modal-content" id="shineCaseDetailModalContent" onclick="event.stopPropagation()">
+
+            <div class="modal-header detail-modal-header">
+                <span class="detail-modal-title">Shine Case — Detail</span>
+
+                <div class="detail-modal-actions">
+                    <button type="button" class="view-toggle-icon" id="shineViewToggleBtn" onclick="toggleShineView()" title="Switch to premium view">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </button>
+                    <span class="modal-close" onclick="closeShineCaseDetail()">×</span>
+                </div>
+            </div>
+
+            <!-- Default view: 9 columns in a grid -->
+            <div class="detail-table">
+                <div class="detail-col">
+                    <span class="detail-label">ISELL QUEUE</span>
+                    <div id="detailQueue"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">CASE RECORD TYPE</span>
+                    <div id="detailRecordType"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">Automatic Case Owner</span>
+                    <div id="detailAutoOwner"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">CORRECT CASE OWNER</span>
+                    <div id="detailCorrectOwner"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">Additional Info Required</span>
+                    <div id="detailAdditional"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">TYPE</span>
+                    <div id="detailType"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">SUB TYPE</span>
+                    <div id="detailSubType"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">CATEGORY</span>
+                    <div id="detailCategory"></div>
+                </div>
+                <div class="detail-col">
+                    <span class="detail-label">Description</span>
+                    <div id="detailDescription"></div>
+                </div>
+            </div>
+
+            <!-- Premium view: 3-column card layout -->
+            <div class="premium-detail-view">
+                <div class="premium-card full">
+                    <div class="premium-card-title"><i class="fa-solid fa-folder-open"></i> ISELL QUEUE</div>
+                    <div class="premium-card-value" id="premiumDetailQueue"></div>
+                </div>
+
+                <div class="premium-card">
+                    <div class="premium-card-title"><i class="fa-solid fa-tag"></i> CASE RECORD TYPE</div>
+                    <div class="premium-card-value" id="premiumDetailRecordType"></div>
+                </div>
+
+                <div class="premium-card">
+                    <div class="premium-card-title"><i class="fa-solid fa-user"></i> Automatic Case Owner</div>
+                    <div class="premium-card-value" id="premiumDetailAutoOwner"></div>
+                </div>
+
+                <div class="premium-card">
+                    <div class="premium-card-title"><i class="fa-solid fa-user-check"></i> CORRECT CASE OWNER</div>
+                    <div class="premium-card-value" id="premiumDetailCorrectOwner"></div>
+                </div>
+
+                <div class="premium-card full">
+                    <div class="premium-card-title"><i class="fa-solid fa-circle-info"></i> Additional Information Required When Moving</div>
+                    <div class="premium-card-value" id="premiumDetailAdditional"></div>
+                </div>
+
+                <div class="premium-card">
+                    <div class="premium-card-title"><i class="fa-solid fa-layer-group"></i> TYPE</div>
+                    <div class="premium-card-value" id="premiumDetailType"></div>
+                </div>
+
+                <div class="premium-card">
+                    <div class="premium-card-title"><i class="fa-solid fa-tags"></i> SUB TYPE</div>
+                    <div class="premium-card-value" id="premiumDetailSubType"></div>
+                </div>
+
+                <div class="premium-card">
+                    <div class="premium-card-title"><i class="fa-solid fa-list"></i> CATEGORY</div>
+                    <div class="premium-card-value" id="premiumDetailCategory"></div>
+                </div>
+
+                <div class="premium-card full">
+                    <div class="premium-card-title"><i class="fa-solid fa-align-left"></i> Description</div>
+                    <div class="premium-card-value" id="premiumDetailDescription"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
