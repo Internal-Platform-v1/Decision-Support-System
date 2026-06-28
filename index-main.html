@@ -3957,32 +3957,18 @@ document.addEventListener('click', function(e) {
 function updateHistoryPanel() {
   const history = getHistory();
   const recent = getMostRecentGuide(history);
-  const mostUsed = getMostUsedGuide(history);
 
   const recentLabel = document.getElementById('recent-guide-label');
-  const mostUsedLabel = document.getElementById('mostused-guide-label');
   const recentItem = document.getElementById('recent-item');
-  const mostUsedItem = document.getElementById('mostused-item');
   const historyItem = document.getElementById('history-item');
 
-  if (recent) {
-    recentLabel.textContent = recent.title;
-    recentItem.style.cursor = 'pointer';
-    recentItem.onclick = () => window.location.href = recent.url;
-  } else {
-    recentLabel.textContent = 'No history yet';
-    recentItem.style.cursor = 'default';
-    recentItem.onclick = null;
+  if (recentLabel) {
+    recentLabel.textContent = recent ? recent.title : 'No history yet';
   }
 
-  if (mostUsed) {
-    mostUsedLabel.textContent = mostUsed.title;
-    mostUsedItem.style.cursor = 'pointer';
-    mostUsedItem.onclick = () => window.location.href = mostUsed.url;
-  } else {
-    mostUsedLabel.textContent = 'No history yet';
-    mostUsedItem.style.cursor = 'default';
-    mostUsedItem.onclick = null;
+  if (recentItem) {
+    recentItem.style.cursor = recent ? 'pointer' : 'default';
+    recentItem.onclick = recent ? () => window.location.href = recent.url : null;
   }
 
   if (historyItem) {
