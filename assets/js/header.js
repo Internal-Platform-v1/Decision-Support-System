@@ -558,12 +558,32 @@ function setupUserMenuDropdown() {
   });
 }
 
-// Set active state for the dropdown links based on current page
+// ===== Case Directory Dropdown Toggle =====
+function toggleCaseDropdown(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('caseDirDropdown');
+  dropdown.classList.toggle('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  const dropdown = document.getElementById('caseDirDropdown');
+  if (!dropdown) return;
+  const target = event.target;
+  // If click is outside the dropdown (not on the toggle or the menu)
+  if (!dropdown.contains(target)) {
+    dropdown.classList.remove('show');
+  }
+});
+
+// ---- Set active state on page load ----
 document.addEventListener('DOMContentLoaded', function() {
   const currentPath = window.location.pathname;
   const dropdown = document.getElementById('caseDirDropdown');
   const legacyLink = document.getElementById('legacyDirLink');
   const shineLink = document.getElementById('shineDirLink');
+
+  if (!dropdown || !legacyLink || !shineLink) return;
 
   if (currentPath.includes('case-directory.html') && !currentPath.includes('shine')) {
     legacyLink.classList.add('active');
