@@ -577,6 +577,7 @@ document.addEventListener('click', function(event) {
 });
 
 // ---- Set active state on page load ----
+// ===== SET ACTIVE DROPDOWN ITEM FOR CASE DIRECTORY =====
 document.addEventListener('DOMContentLoaded', function() {
   const currentPath = window.location.pathname;
   const dropdown = document.getElementById('caseDirDropdown');
@@ -585,11 +586,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (!dropdown || !legacyLink || !shineLink) return;
 
-  if (currentPath.includes('case-directory.html') && !currentPath.includes('shine')) {
-    legacyLink.classList.add('active');
-    dropdown.classList.add('active');
-  } else if (currentPath.includes('shine-case-directory.html')) {
+  // Clear any existing active state
+  legacyLink.classList.remove('active');
+  shineLink.classList.remove('active');
+  dropdown.classList.remove('active');
+
+  // Activate the correct one
+  if (currentPath.includes('shine-case-directory.html')) {
     shineLink.classList.add('active');
+    dropdown.classList.add('active');
+  } else if (currentPath.includes('case-directory.html') && !currentPath.includes('shine')) {
+    legacyLink.classList.add('active');
     dropdown.classList.add('active');
   }
 });
