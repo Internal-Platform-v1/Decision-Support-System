@@ -608,22 +608,6 @@ document.addEventListener('headerLoaded', highlightCaseDirectory);
 // Also run it on DOM ready as a fallback (if header loads before this)
 document.addEventListener('DOMContentLoaded', highlightCaseDirectory);
 
-  // Make the Case Directory tab active on the Shine page
-  document.addEventListener('DOMContentLoaded', function() {
-    var dropdown = document.getElementById('caseDirDropdown');
-    if (dropdown) {
-      dropdown.classList.add('active');
-    }
-  });
-
-  // Also handle if header loads late
-  document.addEventListener('headerLoaded', function() {
-    var dropdown = document.getElementById('caseDirDropdown');
-    if (dropdown) {
-      dropdown.classList.add('active');
-    }
-  });
-
 
 function logoutUser() {
   if (!window.firebase || !firebase.auth) {
