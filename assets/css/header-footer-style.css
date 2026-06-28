@@ -2328,6 +2328,7 @@ body.theme-simple .footer-right{
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  user-select: none;
 }
 
 .nav-tabs .tab-dropdown > .tab i.fa-chevron-down {
@@ -2335,12 +2336,12 @@ body.theme-simple .footer-right{
   transition: transform .2s ease;
 }
 
-.nav-tabs .tab-dropdown:hover > .tab i.fa-chevron-down {
+.nav-tabs .tab-dropdown.active > .tab i.fa-chevron-down {
   transform: rotate(180deg);
 }
 
 .nav-tabs .dropdown-menu {
-  display: none;
+  display: none;  /* hidden by default */
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
@@ -2355,7 +2356,8 @@ body.theme-simple .footer-right{
   background: rgba(255, 255, 255, .96);
 }
 
-.nav-tabs .tab-dropdown:hover .dropdown-menu {
+/* show dropdown when parent has class "show" */
+.nav-tabs .tab-dropdown.show .dropdown-menu {
   display: block;
 }
 
@@ -2395,7 +2397,7 @@ body.theme-simple .footer-right{
   color: var(--muted);
 }
 
-/* highlight the dropdown itself when any of its children is active */
+/* highlight the dropdown itself when active (applied by JS) */
 .nav-tabs .tab-dropdown.active > .tab {
   color: var(--teal);
   border-bottom-color: var(--yellow);
