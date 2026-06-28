@@ -558,6 +558,22 @@ function setupUserMenuDropdown() {
   });
 }
 
+// Set active state for the dropdown links based on current page
+document.addEventListener('DOMContentLoaded', function() {
+  const currentPath = window.location.pathname;
+  const dropdown = document.getElementById('caseDirDropdown');
+  const legacyLink = document.getElementById('legacyDirLink');
+  const shineLink = document.getElementById('shineDirLink');
+
+  if (currentPath.includes('case-directory.html') && !currentPath.includes('shine')) {
+    legacyLink.classList.add('active');
+    dropdown.classList.add('active');
+  } else if (currentPath.includes('shine-case-directory.html')) {
+    shineLink.classList.add('active');
+    dropdown.classList.add('active');
+  }
+});
+
 function logoutUser() {
   if (!window.firebase || !firebase.auth) {
     console.error("Firebase auth is not available.");
