@@ -4033,8 +4033,11 @@ function getMostUsedGuides(history, limit = 5) {
   return uniqueItems.sort((a, b) => b.count - a.count);
 }
 
+
 function renderMostUsedDropdown() {
+  console.log('renderMostUsedDropdown called');
   const history = getHistory();
+  console.log('history:', history);
   const list = document.getElementById('mostused-dropdown-list');
   if (!list) return;
 
@@ -4145,6 +4148,23 @@ function initHistory() {
     });
   }
 }
+
+// Force attach the Most Used click handler after everything loads
+document.addEventListener('DOMContentLoaded', function() {
+  const mostUsedItem = document.getElementById('mostused-item');
+  if (mostUsedItem) {
+    mostUsedItem.style.cursor = 'pointer';
+    mostUsedItem.onclick = function(e) {
+      e.stopPropagation();
+      const dropdown = document.getElementById('mostused-dropdown');
+      if (!dropdown) return;
+      const isOpen = dropdown.classList.contains('is-open');
+      if (!isOpen) renderMostUsedDropdown();
+      dropdown.classList.toggle('is-open');
+    };
+    console.log('Most Used handler force-attached');
+  }
+});  
 
 // Run on load
 document.addEventListener('DOMContentLoaded', initHistory);
