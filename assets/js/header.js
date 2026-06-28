@@ -608,6 +608,24 @@ document.addEventListener('headerLoaded', highlightCaseDirectory);
 // Also run it on DOM ready as a fallback (if header loads before this)
 document.addEventListener('DOMContentLoaded', highlightCaseDirectory);
 
+function activateShineDirectory() {
+    var dropdown = document.getElementById('caseDirDropdown');
+    var shineLink = document.getElementById('shineDirLink');
+
+    if (dropdown && shineLink) {
+      dropdown.classList.add('active');
+      shineLink.classList.add('active');
+      return true;
+    }
+    return false;
+  }
+
+  // Try immediately, and if not ready, wait for headerLoaded
+  if (!activateShineDirectory()) {
+    document.addEventListener('headerLoaded', activateShineDirectory);
+  }
+
+
 function logoutUser() {
   if (!window.firebase || !firebase.auth) {
     console.error("Firebase auth is not available.");
