@@ -4019,7 +4019,7 @@ function toggleMostUsedDropdown(e) {
   }
   dropdown.classList.toggle('is-open');
 }
-
+  
 function repositionDropdown(dropdownId, triggerId) {
   const dropdown = document.getElementById(dropdownId);
   const trigger = document.getElementById(triggerId);
@@ -4237,14 +4237,17 @@ document.addEventListener('DOMContentLoaded', function() {
   const mostUsedItem = document.getElementById('mostused-item');
   if (mostUsedItem) {
     mostUsedItem.style.cursor = 'pointer';
-    mostUsedItem.onclick = function(e) {
-      e.stopPropagation();
-      const dropdown = document.getElementById('mostused-dropdown');
-      if (!dropdown) return;
-      const isOpen = dropdown.classList.contains('is-open');
-      if (!isOpen) renderMostUsedDropdown();
-      dropdown.classList.toggle('is-open');
-    };
+mostUsedItem.onclick = function(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('mostused-dropdown');
+  if (!dropdown) return;
+  const isOpen = dropdown.classList.contains('is-open');
+  if (!isOpen) {
+    renderMostUsedDropdown();
+    repositionDropdown('mostused-dropdown', 'mostused-item');
+  }
+  dropdown.classList.toggle('is-open');
+};
     console.log('Most Used handler force-attached');
   }
 });  
