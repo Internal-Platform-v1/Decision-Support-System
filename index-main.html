@@ -367,6 +367,8 @@
       background:rgba(255,255,255,.68);
       border:1px solid rgba(58,64,24,.08);
       transition:transform .22s var(--ease), background .22s var(--ease);
+      position:relative; /* for dropdown positioning */
+      cursor:pointer;
     }
 
     .quick-item:hover{
@@ -399,98 +401,254 @@
       line-height:1.45;
     }
 
-    /* --- Top 5 most used guides list inside quick-item --- */
+    /* ===== DROPDOWN FOR MOST USED (similar to history) ===== */
     #mostused-item {
-      flex-direction:column;
-      align-items:stretch;
-      gap:8px;
+      position: relative;
     }
-    #mostused-item .mostused-head {
-      display:flex;
-      align-items:center;
-      gap:12px;
+    #mostused-dropdown {
+      display: block;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 10px 6px;
+      border-radius: var(--radius-xl, 24px);
+      background: var(--soft-card, rgba(255,255,255,.82));
+      border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
+      box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 200;
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      transform-origin: top left;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    #mostused-item .mostused-head .quick-icon {
-      flex-shrink:0;
+    #mostused-dropdown.is-open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
     }
-    #mostused-item .mostused-head .mostused-title {
-      flex:1;
-      min-width:0;
+    #mostused-dropdown::-webkit-scrollbar {
+      width: 5px;
     }
-    #mostused-item .mostused-head .mostused-title strong {
-      display:block;
-      font-size:14px;
-      color:var(--ink);
-      margin-bottom:2px;
+    #mostused-dropdown::-webkit-scrollbar-track {
+      background: transparent;
     }
-    #mostused-item .mostused-head .mostused-title .badge-sys {
-      font-size:10px;
-      font-weight:700;
-      color:var(--muted);
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      background:rgba(148,163,184,.12);
-      padding:2px 10px;
-      border-radius:999px;
-      display:inline-block;
-    }
-
-    .top-guides-list {
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      margin-top:4px;
-    }
-    .top-guide-item {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:6px 12px;
-      border-radius:12px;
-      cursor:pointer;
-      background:rgba(255,255,255,.45);
-      border:1px solid transparent;
-      transition:background .2s ease, border-color .2s ease, transform .15s ease;
-      font-size:13px;
-      color:var(--ink);
-      gap:12px;
-    }
-    .top-guide-item:hover {
-      background:rgba(255,255,255,.85);
-      border-color:var(--line);
-      transform:translateX(4px);
-    }
-    .top-guide-item .tgi-title {
-      font-weight:700;
-      letter-spacing:-.01em;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      flex:1;
-      min-width:0;
-    }
-    .top-guide-item .tgi-count {
-      font-size:11px;
-      font-weight:700;
-      color:var(--muted);
-      background:var(--cream-2);
-      padding:2px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      flex-shrink:0;
-      white-space:nowrap;
-    }
-    .top-guide-empty {
-      padding:8px 12px;
-      color:var(--muted);
-      font-size:13px;
-      font-weight:600;
-      text-align:center;
-      background:rgba(255,255,255,.3);
-      border-radius:12px;
-      border:1px dashed var(--line);
+    #mostused-dropdown::-webkit-scrollbar-thumb {
+      background: var(--line, rgba(148,163,184,.3));
+      border-radius: 999px;
     }
 
+    .mostused-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      margin: 4px 4px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.2s ease;
+      color: var(--ink, #0f172a);
+      font-weight: 600;
+      font-size: 14px;
+      background: transparent;
+      border: 1px solid transparent;
+    }
+    .mostused-item:hover {
+      background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
+      border-color: var(--line, rgba(148,163,184,.12));
+      transform: translateX(6px) scale(1.01);
+      box-shadow: 0 8px 24px rgba(2,6,23,.06);
+    }
+    .mostused-item .mui-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .mostused-item .mui-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
+      color: var(--teal, #4d148c);
+      font-size: 14px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .mostused-item:hover .mui-icon {
+      background: var(--teal, #4d148c);
+      color: #fff;
+      transform: scale(1.05) rotate(-4deg);
+    }
+    .mostused-item .mui-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--ink, #0f172a);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .mostused-item .mui-count {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted, #475569);
+      background: var(--cream, #eef4fb);
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line, rgba(148,163,184,.12));
+    }
+    .mostused-empty {
+      padding: 20px 16px;
+      text-align: center;
+      color: var(--muted, #475569);
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .mostused-empty i {
+      font-size: 28px;
+      color: var(--line, rgba(148,163,184,.4));
+    }
+
+    /* ===== HISTORY DROPDOWN (unchanged) ===== */
+    #history-item {
+      position: relative;
+    }
+    #history-dropdown {
+      display: block;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 10px 6px;
+      border-radius: var(--radius-xl, 24px);
+      background: var(--soft-card, rgba(255,255,255,.82));
+      border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
+      box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 200;
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      transform-origin: top left;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #history-dropdown.is-open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+    #history-dropdown::-webkit-scrollbar {
+      width: 5px;
+    }
+    #history-dropdown::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #history-dropdown::-webkit-scrollbar-thumb {
+      background: var(--line, rgba(148,163,184,.3));
+      border-radius: 999px;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      margin: 4px 4px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.2s ease;
+      color: var(--ink, #0f172a);
+      font-weight: 600;
+      font-size: 14px;
+      background: transparent;
+      border: 1px solid transparent;
+    }
+    .history-item:hover {
+      background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
+      border-color: var(--line, rgba(148,163,184,.12));
+      transform: translateX(6px) scale(1.01);
+      box-shadow: 0 8px 24px rgba(2,6,23,.06);
+    }
+    .history-item .history-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .history-item .history-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
+      color: var(--teal, #4d148c);
+      font-size: 14px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .history-item:hover .history-icon {
+      background: var(--teal, #4d148c);
+      color: #fff;
+      transform: scale(1.05) rotate(-4deg);
+    }
+    .history-item .history-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--ink, #0f172a);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .history-item .history-time {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted, #475569);
+      background: var(--cream, #eef4fb);
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line, rgba(148,163,184,.12));
+    }
+    .history-empty {
+      padding: 20px 16px;
+      text-align: center;
+      color: var(--muted, #475569);
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .history-empty i {
+      font-size: 28px;
+      color: var(--line, rgba(148,163,184,.4));
+    }
+
+    /* =========================================================
+       SEARCH & GRID (unchanged)
+    ========================================================= */
     .search-section{
       padding:18px 0 22px;
     }
@@ -1875,8 +2033,6 @@
 
     /* =========================================================
        MAIN INDEX ALIGNMENT FIX
-       Uses the same theme language as EBS / FBC / Links.
-       Removes leftover FedEx orange/radiant mixing from non-FedEx themes.
        ========================================================= */
 
     body.theme-fedex .search-panel,
@@ -1928,7 +2084,6 @@
       color:var(--muted) !important;
     }
 
-    /* Keep the library heading readable on darker themes, like the current premium pages */
     body.theme-fedex #guideLibrarySection .section-title,
     body.theme-basic #guideLibrarySection .section-title{
       color:#ffffff !important;
@@ -2000,7 +2155,6 @@
       color:var(--teal) !important;
     }
 
-    /* Only FedEx keeps the orange icon in this small badge */
     body.theme-fedex #guideLibrarySection .section-kicker i{
       color:#ff8a33 !important;
     }
@@ -2104,11 +2258,7 @@
     #timeSettingsModal #saveTimeSettings{margin-top:16px !important}
     #timeCalendarPopup #openTimeSettings{margin-top:14px !important}
 
-    /* =========================================================
-       DARK FOCUS CARD LABEL FIX
-       Fixes faded labels like DIRECTORY READY / SYSTEM READY
-       ========================================================= */
-
+    /* Dark focus card label fix */
     body.theme-fedex .focus-card.dark .card-label span,
     body.theme-fedex .focus-card.dark .card-label span i{
       color:#ff8a33 !important;
@@ -2132,11 +2282,6 @@
       color:#60a5fa !important;
       text-shadow:none !important;
     }
-
-    /* =========================================================
-       MAIN INDEX GUIDE WORKSPACE PILL THEME FIX
-       Removes purple guide workspace pill from non-FedEx themes
-       ========================================================= */
 
     body.theme-fedex #guideLibrarySection .section-kicker{
       color:#f6e9ff !important;
@@ -2189,13 +2334,7 @@
       border:none !important;
     }
 
-
-
-    /* =========================================================
-       GROUP PAGE ALIGNMENT WITH MAIN INDEX
-       Applies the same main-index button/card behavior to group cards.
-       ========================================================= */
-
+    /* ===== GROUP PAGE ALIGNMENT ===== */
     body.theme-fedex .guide-grid,
     body.theme-atlas .guide-grid,
     body.theme-basic .guide-grid,
@@ -2436,12 +2575,7 @@
       body.theme-simple .guide-grid{grid-template-columns:1fr !important;}
     }
 
-    /* =========================================================
-       GROUP PAGE LIBRARY HEADING READABILITY FIX
-       Corrects the Guide Library title colors per selected theme.
-       The group page uses #guideLibrary, not #guideLibrarySection.
-       ========================================================= */
-
+    /* ===== GROUP PAGE LIBRARY HEADING READABILITY ===== */
     body.theme-fedex #guideLibrary .section-title{
       color:#ffffff !important;
       text-shadow:0 16px 38px rgba(2,6,23,.42) !important;
@@ -2510,11 +2644,7 @@
       color:#2563eb !important;
     }
 
-    /* =========================================================
-       GROUP PAGE SEARCH PLACEHOLDER COLOR FIX
-       Makes search placeholder readable for all themes
-       ========================================================= */
-
+    /* ===== SEARCH PLACEHOLDER ===== */
     body.theme-fedex #guideSearch::placeholder{
       color:#94a3b8 !important;
       opacity:1 !important;
@@ -2534,12 +2664,8 @@
       color:#64748b !important;
       opacity:1 !important;
     }
-    /* =========================================================
-       GROUP PAGE FOOTER FIX
-       Prevents old page-level footer styles from creating
-       the large extra background bar behind the shared footer.
-       ========================================================= */
 
+    /* ===== FOOTER ===== */
     footer.site-footer{
       width:min(calc(100% - 32px), 1440px) !important;
       margin:34px auto 22px !important;
@@ -2566,33 +2692,28 @@
       box-shadow:0 18px 48px rgba(2,6,23,.14) !important;
     }
 
-    /* FedEx */
     body.theme-fedex footer.site-footer .footer-inner{
       background:
         radial-gradient(circle at 8% 20%, rgba(255,102,0,.14), transparent 28%),
         linear-gradient(135deg, rgba(77,20,140,.94), rgba(59,15,115,.90) 48%, rgba(7,17,31,.96)) !important;
     }
 
-    /* Atlas */
     body.theme-atlas footer.site-footer .footer-inner{
       background:
         radial-gradient(circle at 8% 20%, rgba(225,223,106,.14), transparent 28%),
         linear-gradient(135deg, rgba(14,83,97,.96), rgba(8,63,75,.94) 48%, rgba(58,64,24,.96)) !important;
     }
 
-    /* Basic */
     body.theme-basic footer.site-footer .footer-inner{
       background:linear-gradient(135deg, rgba(31,41,55,.96), rgba(17,24,39,.96) 55%, rgba(3,7,18,.96)) !important;
     }
 
-    /* Simple */
     body.theme-simple footer.site-footer .footer-inner{
       background:rgba(255,255,255,.88) !important;
       border-color:rgba(226,232,240,.95) !important;
       box-shadow:0 16px 42px rgba(15,23,42,.08) !important;
     }
 
-    /* Footer text and icon */
     footer.site-footer .footer-brand-line{
       display:flex !important;
       align-items:center !important;
@@ -2673,7 +2794,6 @@
       text-align:right !important;
     }
 
-    /* Mobile */
     @media (max-width:760px){
       footer.site-footer{
         width:min(calc(100% - 20px), 1440px) !important;
@@ -2691,178 +2811,6 @@
         text-align:left !important;
         max-width:100% !important;
       }
-    }
-
-    /* ===== PREMIUM HISTORY DROPDOWN ===== */
-    #history-item {
-      position: relative;
-    }
-
-    #history-dropdown {
-      display: block;
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      width: 100%;
-      max-height: 280px;
-      overflow-y: auto;
-      padding: 10px 6px;
-      border-radius: var(--radius-xl, 24px);
-      background: var(--soft-card, rgba(255,255,255,.82));
-      border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
-      box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      z-index: 200;
-      opacity: 0;
-      transform: scale(0.95) translateY(-10px);
-      transform-origin: top left;
-      pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-        transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    #history-dropdown.is-open {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
-    }
-
-    /* Scrollbar styling */
-    #history-dropdown::-webkit-scrollbar {
-      width: 5px;
-    }
-    #history-dropdown::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    #history-dropdown::-webkit-scrollbar-thumb {
-      background: var(--line, rgba(148,163,184,.3));
-      border-radius: 999px;
-    }
-
-    .history-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      margin: 4px 4px;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-        box-shadow 0.2s ease;
-      color: var(--ink, #0f172a);
-      font-weight: 600;
-      font-size: 14px;
-      background: transparent;
-      border: 1px solid transparent;
-    }
-
-    .history-item:hover {
-      background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
-      border-color: var(--line, rgba(148,163,184,.12));
-      transform: translateX(6px) scale(1.01);
-      box-shadow: 0 8px 24px rgba(2,6,23,.06);
-    }
-
-    .history-item .history-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .history-item .history-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
-      color: var(--teal, #4d148c);
-      font-size: 14px;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .history-item:hover .history-icon {
-      background: var(--teal, #4d148c);
-      color: #fff;
-      transform: scale(1.05) rotate(-4deg);
-    }
-
-    .history-item .history-title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--ink, #0f172a);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .history-item .history-time {
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted, #475569);
-      background: var(--cream, #eef4fb);
-      padding: 4px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line, rgba(148,163,184,.12));
-    }
-
-    .history-empty {
-      padding: 20px 16px;
-      text-align: center;
-      color: var(--muted, #475569);
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .history-empty i {
-      font-size: 28px;
-      color: var(--line, rgba(148,163,184,.4));
-    }
-
-    /* ===== TOP 5 MOST USED GUIDES — HOVER FIX ===== */
-    .top-guide-item .tgi-count {
-      background: var(--cream-2, #f5f8fc) !important;
-      border: 1px solid var(--line, rgba(148,163,184,.18)) !important;
-    }
-    .top-guide-item:hover .tgi-count {
-      background: #ffffff !important;
-    }
-
-    /* ensure empty state is visible */
-    .top-guide-empty {
-      background: rgba(255,255,255,.3) !important;
-      border: 1px dashed var(--line, rgba(148,163,184,.3)) !important;
-    }
-
-    /* fix for dark focus card label icon color on FedEx theme */
-    body.theme-fedex .focus-card.dark .card-label span i {
-      color: #ff8a33 !important;
-    }
-    body.theme-atlas .focus-card.dark .card-label span i {
-      color: #e1df6a !important;
-    }
-    body.theme-basic .focus-card.dark .card-label span i {
-      color: #d1d5db !important;
-    }
-    body.theme-simple .focus-card.dark .card-label span i {
-      color: #60a5fa !important;
-    }
-
-    /* avoid horizontal overflow in top guides list */
-    .top-guide-item .tgi-title {
-      max-width: 100%;
-    }
-    #mostused-item {
-      overflow: visible;
     }
   </style>
 </head>
@@ -2916,33 +2864,34 @@
               <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
 
               <ul class="quick-list">
+                <!-- History dropdown -->
                 <li class="quick-item" id="history-item">
                   <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                   <div>
                     <strong>HISTORY</strong>
                     <span>Click to open history ▼</span>
                   </div>
-                  <!-- Premium Dropdown -->
                   <div id="history-dropdown">
                     <div id="history-dropdown-list"></div>
                   </div>
                 </li>
+
+                <!-- Recent guide -->
                 <li class="quick-item" id="recent-item">
                   <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
                   <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
                 </li>
 
-                <!-- ===== TOP 5 MOST USED GUIDES (system-wide) ===== -->
+                <!-- Most used guide (dropdown) -->
                 <li class="quick-item" id="mostused-item">
-                  <div class="mostused-head">
-                    <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
-                    <div class="mostused-title">
-                      <strong>Top 5 Most used guides</strong>
-                      <span class="badge-sys"><i class="fa-solid fa-globe"></i> system-wide</span>
-                    </div>
+                  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+                  <div>
+                    <strong>Most used guide</strong>
+                    <span id="mostused-guide-label">Loading…</span>
                   </div>
-                  <div id="top-guides-list" class="top-guides-list">
-                    <div class="top-guide-empty">Loading usage data…</div>
+                  <!-- Dropdown container -->
+                  <div id="mostused-dropdown">
+                    <div id="mostused-dropdown-list"></div>
                   </div>
                 </li>
 
@@ -3483,7 +3432,7 @@
 
 <script>
   // =========================================================
-  // FIREBASE CONFIG & AUTH GUARD (same as original)
+  // FIREBASE CONFIG & AUTH GUARD
   // =========================================================
   const firebaseConfig = {
     apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
@@ -3633,7 +3582,7 @@
   }
 
   // =========================================================
-  // FILTERS, MOTION, FEEDBACK (from Billing page)
+  // FILTERS, MOTION, FEEDBACK
   // =========================================================
   function setupGuideFilters() {
     const searchInput = document.getElementById("guideSearch");
@@ -3790,19 +3739,6 @@
     return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
   }
 
-  function getMostUsedGuide(history) {
-    if (!history.length) return null;
-    const counts = {};
-    history.forEach(item => { counts[item.url] = (counts[item.url] || 0) + 1; });
-    let maxCount = 0,
-      mostUsedUrl = history[0].url;
-    for (const [url, count] of Object.entries(counts)) {
-      if (count > maxCount) { maxCount = count;
-        mostUsedUrl = url; }
-    }
-    return history.find(item => item.url === mostUsedUrl);
-  }
-
   function renderHistoryDropdown() {
     const history = getHistory();
     const list = document.getElementById('history-dropdown-list');
@@ -3851,78 +3787,14 @@
     dropdown.classList.toggle('is-open');
   }
 
-  document.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('history-dropdown');
-    const historyItem = document.getElementById('history-item');
-    if (dropdown && historyItem && !historyItem.contains(e.target)) {
-      dropdown.classList.remove('is-open');
-    }
-  });
-
-  function updateHistoryPanel() {
-    const history = getHistory();
-    const recent = getMostRecentGuide(history);
-    const mostUsed = getMostUsedGuide(history);
-
-    const recentLabel = document.getElementById('recent-guide-label');
-    const mostUsedLabel = document.getElementById('mostused-guide-label');
-    const recentItem = document.getElementById('recent-item');
-    const mostUsedItem = document.getElementById('mostused-item');
-    const historyItem = document.getElementById('history-item');
-
-    if (recent) {
-      recentLabel.textContent = recent.title;
-      recentItem.style.cursor = 'pointer';
-      recentItem.onclick = () => window.location.href = recent.url;
-    } else {
-      recentLabel.textContent = 'No history yet';
-      recentItem.style.cursor = 'default';
-      recentItem.onclick = null;
-    }
-
-    // The old "Most used guide" label is now replaced by the top-5 list.
-    // Keep the reference for backward compatibility but we won't use it.
-    if (mostUsedLabel) {
-      // We don't set it because we now have the top-5 list.
-    }
-
-    if (historyItem) {
-      historyItem.style.cursor = 'pointer';
-      historyItem.onclick = toggleHistoryDropdown;
-    }
-  }
-
-  function attachHistoryTracking() {
-    document.querySelectorAll('.guide-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        const card = this.closest('.guide-card');
-        if (!card) return;
-        const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
-        const url = this.getAttribute('href');
-        if (url) {
-          addGuideToHistory(title, url);
-          // Also track system-wide usage
-          trackGuideUsage(url, title);
-        }
-      });
-    });
-  }
-
   // =========================================================
   // SYSTEM-WIDE TOP 5 MOST USED GUIDES (Firestore)
   // =========================================================
   const GUIDE_STATS_COLLECTION = 'guide_stats';
 
-  /**
-   * Track a guide usage in Firestore (system-wide)
-   * @param {string} url - The guide URL (e.g., "billing-dispute-guides.html")
-   * @param {string} title - The guide title
-   */
   async function trackGuideUsage(url, title) {
     if (!url) return;
-    // Extract guideId from URL: remove .html and any query params
     let guideId = url.replace(/\.html$/, '').replace(/\?.*$/, '');
-    // Fallback: use the full URL if it's a relative path
     if (!guideId || guideId === '') guideId = url.replace(/\.html$/, '').replace(/[^a-zA-Z0-9\-_]/g, '-');
 
     try {
@@ -3939,11 +3811,6 @@
     }
   }
 
-  /**
-   * Fetch the top N most used guides system-wide
-   * @param {number} limit - Number of guides to fetch (default 5)
-   * @returns {Promise<Array>} Array of guide stat objects
-   */
   async function fetchTopGuides(limit = 5) {
     try {
       const snapshot = await db.collection(GUIDE_STATS_COLLECTION)
@@ -3965,11 +3832,10 @@
     }
   }
 
-  /**
-   * Render the top 5 most used guides into the UI
-   */
-  async function renderTopGuides() {
-    const container = document.getElementById('top-guides-list');
+  // Render the top 5 into the mostused dropdown
+  async function renderMostUsedDropdown() {
+    const container = document.getElementById('mostused-dropdown-list');
+    const label = document.getElementById('mostused-guide-label');
     if (!container) return;
 
     try {
@@ -3977,12 +3843,18 @@
 
       if (!topGuides || topGuides.length === 0) {
         container.innerHTML = `
-          <div class="top-guide-empty">
-            <i class="fa-solid fa-chart-simple" style="margin-right:6px;"></i>
-            No usage data yet. Start using guides to build the top 5!
+          <div class="mostused-empty">
+            <i class="fa-solid fa-chart-simple"></i>
+            <span>No usage data yet. Start using guides to build the top 5!</span>
           </div>
         `;
+        if (label) label.textContent = 'No data yet';
         return;
+      }
+
+      // Update the label with the top guide name
+      if (label) {
+        label.textContent = topGuides[0].guideTitle || topGuides[0].guideId || 'Top guide';
       }
 
       let html = '';
@@ -3993,61 +3865,119 @@
         const icon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}.`;
 
         html += `
-          <div class="top-guide-item" data-url="${url}" title="${title}">
-            <span class="tgi-title">${icon} ${title}</span>
-            <span class="tgi-count">${count} use${count === 1 ? '' : 's'}</span>
+          <div class="mostused-item" data-url="${url}">
+            <div class="mui-left">
+              <div class="mui-icon"><i class="fa-solid fa-route"></i></div>
+              <span class="mui-title">${icon} ${title}</span>
+            </div>
+            <span class="mui-count">${count} use${count === 1 ? '' : 's'}</span>
           </div>
         `;
       });
 
       container.innerHTML = html;
 
-      // Attach click handlers to navigate to the guide
-      container.querySelectorAll('.top-guide-item').forEach(el => {
+      container.querySelectorAll('.mostused-item').forEach(el => {
         el.addEventListener('click', function(e) {
           const url = this.dataset.url;
           if (url && url !== '#') {
-            // Also track this click as a usage (for consistency)
-            const title = this.querySelector('.tgi-title')?.textContent?.replace(/^[\d🥇🥈🥉]+\.\s*/, '') || 'Untitled';
+            const title = this.querySelector('.mui-title')?.textContent?.replace(/^[\d🥇🥈🥉]+\.\s*/, '') || 'Untitled';
             trackGuideUsage(url, title);
             window.location.href = url;
           }
         });
-        // Hover effect already handled by CSS
       });
 
     } catch (err) {
-      console.warn('Failed to render top guides:', err);
+      console.warn('Failed to render most used dropdown:', err);
       container.innerHTML = `
-        <div class="top-guide-empty" style="color:#ef4444;">
+        <div class="mostused-empty" style="color:#ef4444;">
           <i class="fa-solid fa-triangle-exclamation"></i> Could not load usage data.
         </div>
       `;
+      if (label) label.textContent = 'Error loading';
     }
   }
 
+  function toggleMostUsedDropdown(e) {
+    e.stopPropagation();
+    const dropdown = document.getElementById('mostused-dropdown');
+    if (!dropdown) return;
+    const isOpen = dropdown.classList.contains('is-open');
+    if (!isOpen) {
+      renderMostUsedDropdown(); // refresh on open
+    }
+    dropdown.classList.toggle('is-open');
+  }
+
   // =========================================================
-  // INIT HISTORY & TOP GUIDES
+  // INIT HISTORY & MOST USED
   // =========================================================
   function initHistoryAndTopGuides() {
-    updateHistoryPanel();
-    attachHistoryTracking();
-    // Render top 5 guides (system-wide)
-    renderTopGuides();
+    // History
+    const historyItem = document.getElementById('history-item');
+    if (historyItem) {
+      historyItem.style.cursor = 'pointer';
+      historyItem.onclick = toggleHistoryDropdown;
+    }
+    // Update recent guide label
+    const history = getHistory();
+    const recent = getMostRecentGuide(history);
+    const recentLabel = document.getElementById('recent-guide-label');
+    const recentItem = document.getElementById('recent-item');
+    if (recent) {
+      recentLabel.textContent = recent.title;
+      recentItem.style.cursor = 'pointer';
+      recentItem.onclick = () => window.location.href = recent.url;
+    } else {
+      recentLabel.textContent = 'No history yet';
+      recentItem.style.cursor = 'default';
+      recentItem.onclick = null;
+    }
 
-    // Ensure dropdown is closed initially
-    const dropdown = document.getElementById('history-dropdown');
-    if (dropdown) dropdown.classList.remove('is-open');
+    // Most used dropdown trigger
+    const mostUsedItem = document.getElementById('mostused-item');
+    if (mostUsedItem) {
+      mostUsedItem.style.cursor = 'pointer';
+      mostUsedItem.onclick = toggleMostUsedDropdown;
+    }
 
-    // Also re-run on header load (for any late DOM changes)
-    document.addEventListener('headerLoaded', () => {
-      updateHistoryPanel();
-      renderTopGuides();
+    // Initial load of dropdown content (will be loaded on first open)
+    // But we can preload the label with a placeholder
+    const label = document.getElementById('mostused-guide-label');
+    if (label) label.textContent = 'Loading…';
+
+    // Also attach tracking to guide links
+    document.querySelectorAll('.guide-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const card = this.closest('.guide-card');
+        if (!card) return;
+        const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
+        const url = this.getAttribute('href');
+        if (url) {
+          addGuideToHistory(title, url);
+          trackGuideUsage(url, title);
+        }
+      });
+    });
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function(e) {
+      const histDropdown = document.getElementById('history-dropdown');
+      const histItem = document.getElementById('history-item');
+      if (histDropdown && histItem && !histItem.contains(e.target)) {
+        histDropdown.classList.remove('is-open');
+      }
+      const mostDropdown = document.getElementById('mostused-dropdown');
+      const mostItem = document.getElementById('mostused-item');
+      if (mostDropdown && mostItem && !mostItem.contains(e.target)) {
+        mostDropdown.classList.remove('is-open');
+      }
     });
   }
 
   // =========================================================
-  // FEEDBACK MODALS (from original)
+  // FEEDBACK MODALS (unchanged)
   // =========================================================
   let selectedRating = 0;
   let ratingStars = [];
@@ -4253,7 +4183,6 @@
       initRevealMotion();
       initCardMotion();
       initRatingStars();
-      // Initialize history and top guides after auth guard
       initHistoryAndTopGuides();
     }).catch(err => {
       console.error("Init error:", err);
@@ -4264,11 +4193,9 @@
     setupGuideFilters();
     initCardMotion();
     initRatingStars();
-    // Re-run history and top guides in case the header changed the DOM
     initHistoryAndTopGuides();
   });
 
-  // Fallback
   setTimeout(() => {
     initRatingStars();
     initHistoryAndTopGuides();
