@@ -2801,189 +2801,6 @@
 .history-delete:hover {
   background: color-mix(in srgb, #ef4444 12%, transparent);
   color: #ef4444;
-} 
-
-/* ===== TOP 5 MOST USED DROPDOWN ===== */
-#mostused-dropdown {
-  display: block;
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  width: 100%;
-  max-height: 280px;
-  overflow-y: auto;
-  padding: 10px 6px;
-  border-radius: var(--radius-xl, 24px);
-  background: var(--soft-card, rgba(255,255,255,.82));
-  border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
-  box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  z-index: 200;
-  opacity: 0;
-  transform: scale(0.95) translateY(-10px);
-  transform-origin: top left;
-  pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-#mostused-dropdown.is-open {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-  pointer-events: auto;
-}
-
-/* Reuse the same scrollbar and item styles */
-#mostused-dropdown::-webkit-scrollbar {
-  width: 5px;
-}
-#mostused-dropdown::-webkit-scrollbar-track {
-  background: transparent;
-}
-#mostused-dropdown::-webkit-scrollbar-thumb {
-  background: var(--line, rgba(148,163,184,.3));
-  border-radius: 999px;
-}
-
-.mostused-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  margin: 4px 4px;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.2s ease;
-  color: var(--ink, #0f172a);
-  font-weight: 600;
-  font-size: 14px;
-  background: transparent;
-  border: 1px solid transparent;
-}
-
-.mostused-item:hover {
-  background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
-  border-color: var(--line, rgba(148,163,184,.12));
-  transform: translateX(6px) scale(1.01);
-  box-shadow: 0 8px 24px rgba(2,6,23,.06);
-}
-
-.mostused-item .mostused-rank {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  background: var(--teal, #4d148c);
-  color: #fff;
-  font-weight: 800;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-.mostused-item .mostused-title {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 700;
-  color: var(--ink, #0f172a);
-}
-
-.mostused-item .mostused-count {
-  flex-shrink: 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted, #475569);
-  background: var(--cream, #eef4fb);
-  padding: 4px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line, rgba(148,163,184,.12));
-}
-
-.mostused-empty {
-  padding: 20px 16px;
-  text-align: center;
-  color: var(--muted, #475569);
-  font-weight: 600;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.mostused-empty i {
-  font-size: 28px;
-  color: var(--line, rgba(148,163,184,.4));
-}    
-
-/* ===== DROPDOWN VISIBILITY FIX – Override clipping ===== */
-.focus-card {
-  overflow: visible !important;
-}
-
-.quick-item {
-  position: relative;
-  z-index: 10;
-}
-
-#history-dropdown {
-  z-index: 9999 !important;
-  position: absolute;
-}
-
-#mostused-dropdown {
-  z-index: 9998 !important;
-  position: absolute;
-}
-
-/* Ensure the side stack doesn't clip anything */
-.side-stack {
-  overflow: visible !important;
-}
-
-/* Force dropdown visibility – override all clipping */
-.focus-card,
-.side-stack,
-.quick-list,
-.quick-item,
-#history-item,
-#mostused-item {
-  overflow: visible !important;
-  clip: auto !important;
-  clip-path: none !important;
-}
-
-.quick-item {
-  position: relative !important;
-  z-index: 100 !important;
-}
-
-#history-dropdown,
-#mostused-dropdown {
-  position: absolute !important;
-  top: calc(100% + 8px) !important;
-  left: 0 !important;
-  width: 100% !important;
-  min-width: 240px !important;
-  z-index: 999999 !important;
-  display: block !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transition: opacity 0.3s, transform 0.3s !important;
-}
-
-#history-dropdown.is-open,
-#mostused-dropdown.is-open {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  transform: scale(1) translateY(0) !important;
-}
-
-.focus-card {
-  transform: none !important;
 }    
     
   </style>
@@ -3057,17 +2874,10 @@
         <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
         <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
       </li>
-<li class="quick-item" id="mostused-item" style="position:relative;">
-  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
-  <div>
-    <strong>Most used guides</strong>
-    <span id="mostused-summary">Click to see your top 5 ▼</span>
-  </div>
-  <!-- Top 5 Dropdown -->
-  <div id="mostused-dropdown">
-    <div id="mostused-dropdown-list"></div>
-  </div>
-</li>
+      <li class="quick-item" id="mostused-item">
+        <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+        <div><strong>Most used guide</strong><span id="mostused-guide-label">Loading…</span></div>
+      </li>
       <li class="quick-item" id="other-item">
         <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
         <div><strong>Other</strong><span>Bookmarks &amp; favorites (coming soon)</span></div>
@@ -4007,16 +3817,10 @@ function toggleHistoryDropdown(e) {
 
 // ---- Close dropdown on outside click ----
 document.addEventListener('click', function(e) {
-  const historyDropdown = document.getElementById('history-dropdown');
+  const dropdown = document.getElementById('history-dropdown');
   const historyItem = document.getElementById('history-item');
-  if (historyDropdown && historyItem && !historyItem.contains(e.target)) {
-    historyDropdown.classList.remove('is-open');
-  }
-
-  const mostUsedDropdown = document.getElementById('mostused-dropdown');
-  const mostUsedItem = document.getElementById('mostused-item');
-  if (mostUsedDropdown && mostUsedItem && !mostUsedItem.contains(e.target)) {
-    mostUsedDropdown.classList.remove('is-open');
+  if (dropdown && historyItem && !historyItem.contains(e.target)) {
+    dropdown.classList.remove('is-open');
   }
 });
 
@@ -4024,18 +3828,32 @@ document.addEventListener('click', function(e) {
 function updateHistoryPanel() {
   const history = getHistory();
   const recent = getMostRecentGuide(history);
+  const mostUsed = getMostUsedGuide(history);
 
   const recentLabel = document.getElementById('recent-guide-label');
+  const mostUsedLabel = document.getElementById('mostused-guide-label');
   const recentItem = document.getElementById('recent-item');
+  const mostUsedItem = document.getElementById('mostused-item');
   const historyItem = document.getElementById('history-item');
 
-  if (recentLabel) {
-    recentLabel.textContent = recent ? recent.title : 'No history yet';
+  if (recent) {
+    recentLabel.textContent = recent.title;
+    recentItem.style.cursor = 'pointer';
+    recentItem.onclick = () => window.location.href = recent.url;
+  } else {
+    recentLabel.textContent = 'No history yet';
+    recentItem.style.cursor = 'default';
+    recentItem.onclick = null;
   }
 
-  if (recentItem) {
-    recentItem.style.cursor = recent ? 'pointer' : 'default';
-    recentItem.onclick = recent ? () => window.location.href = recent.url : null;
+  if (mostUsed) {
+    mostUsedLabel.textContent = mostUsed.title;
+    mostUsedItem.style.cursor = 'pointer';
+    mostUsedItem.onclick = () => window.location.href = mostUsed.url;
+  } else {
+    mostUsedLabel.textContent = 'No history yet';
+    mostUsedItem.style.cursor = 'default';
+    mostUsedItem.onclick = null;
   }
 
   if (historyItem) {
@@ -4057,142 +3875,14 @@ function attachHistoryTracking() {
   });
 }
 
-// =========================================================
-// TOP 5 MOST USED GUIDES
-// =========================================================
-
-function getMostUsedGuides(history, limit = 5) {
-  if (!history.length) return [];
-  const counts = {};
-  history.forEach(item => {
-    counts[item.url] = (counts[item.url] || 0) + 1;
-  });
-  // Sort by count descending, then by most recent timestamp for ties
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  const topUrls = sorted.slice(0, limit).map(entry => entry[0]);
-  // Get the full item (title, url) for each top url (use the most recent entry for that url)
-  const uniqueItems = [];
-  const addedUrls = new Set();
-  // iterate history from newest to oldest to get the latest title for each url
-  const reversed = [...history].reverse();
-  for (const item of reversed) {
-    if (!addedUrls.has(item.url) && topUrls.includes(item.url)) {
-      uniqueItems.push({ ...item, count: counts[item.url] });
-      addedUrls.add(item.url);
-    }
-    if (uniqueItems.length === topUrls.length) break;
-  }
-  // Sort by count descending again to keep rank order
-  return uniqueItems.sort((a, b) => b.count - a.count);
-}
-
-
-function renderMostUsedDropdown() {
-  console.log('renderMostUsedDropdown called');
-  const history = getHistory();
-  console.log('history:', history);
-  const list = document.getElementById('mostused-dropdown-list');
-  if (!list) return;
-
-  if (!history.length) {
-    list.innerHTML = `
-      <div class="mostused-empty">
-        <i class="fa-solid fa-inbox"></i>
-        <span>No history yet</span>
-      </div>
-    `;
-    return;
-  }
-
-  const top5 = getMostUsedGuides(history, 5);
-  if (!top5.length) {
-    list.innerHTML = `
-      <div class="mostused-empty">
-        <i class="fa-solid fa-inbox"></i>
-        <span>No history yet</span>
-      </div>
-    `;
-    return;
-  }
-
-  let html = '';
-  top5.forEach((item, index) => {
-    const safeTitle = item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    html += `
-      <div class="mostused-item" data-url="${item.url}">
-        <span class="mostused-rank">#${index + 1}</span>
-        <span class="mostused-title">${safeTitle}</span>
-        <span class="mostused-count">${item.count}x</span>
-      </div>
-    `;
-  });
-  list.innerHTML = html;
-
-  list.querySelectorAll('.mostused-item').forEach(el => {
-    el.addEventListener('click', function(e) {
-      const url = this.dataset.url;
-      if (url) window.location.href = url;
-    });
-  });
-}
-
-function toggleMostUsedDropdown(e) {
-  e.stopPropagation();
-  const dropdown = document.getElementById('mostused-dropdown');
-  if (!dropdown) return;
-  const isOpen = dropdown.classList.contains('is-open');
-  if (!isOpen) renderMostUsedDropdown();
-  dropdown.classList.toggle('is-open');
-}
-
-// Update the summary text and attach toggle
-function updateMostUsedSummary() {
-  const history = getHistory();
-  const top5 = getMostUsedGuides(history, 5);
-  const summarySpan = document.getElementById('mostused-summary');
-  const parentItem = document.getElementById('mostused-item');
-
-  if (parentItem) {
-    parentItem.style.cursor = 'pointer';
-    parentItem.onclick = toggleMostUsedDropdown;
-  }
-
-  if (!summarySpan) return;
-
-  if (!top5.length) {
-    summarySpan.textContent = 'No history yet';
-    return;
-  }
-
-  const top = top5[0];
-  const rest = top5.length - 1;
-  if (rest === 0) {
-    summarySpan.textContent = `#1 ${top.title}`;
-  } else {
-    summarySpan.textContent = `#1 ${top.title} + ${rest} more`;
-  }
-}
-
-// Close most-used dropdown on outside click – add to the existing outside-click listener
-// We'll append to the existing document click listener.
-// Wrap this in a check so we don't duplicate the listener.
-// Instead, we'll modify the existing listener inside the original code.
-// Since we're providing a clean snippet, we'll override or extend.
-// I'll provide the updated combined listener below.  
-
 // ---- Initialise ----
 function initHistory() {
-  updateHistoryPanel();       // updates Recent Guide label
-  updateMostUsedSummary();    // updates the Most Used summary text
-  attachHistoryTracking();    // tracks guide clicks
+  updateHistoryPanel();
+  attachHistoryTracking();
+  const dropdown = document.getElementById('history-dropdown');
+  if (dropdown) dropdown.classList.remove('is-open');
 
-  const historyDropdown = document.getElementById('history-dropdown');
-  if (historyDropdown) historyDropdown.classList.remove('is-open');
-
-  const mostUsedDropdown = document.getElementById('mostused-dropdown');
-  if (mostUsedDropdown) mostUsedDropdown.classList.remove('is-open');
-
-  // Clear all button (if you added it)
+  // Clear all button
   const clearAllBtn = document.getElementById('clearAllHistoryBtn');
   if (clearAllBtn) {
     clearAllBtn.addEventListener('click', function(e) {
@@ -4201,23 +3891,6 @@ function initHistory() {
     });
   }
 }
-
-// Force attach the Most Used click handler after everything loads
-document.addEventListener('DOMContentLoaded', function() {
-  const mostUsedItem = document.getElementById('mostused-item');
-  if (mostUsedItem) {
-    mostUsedItem.style.cursor = 'pointer';
-    mostUsedItem.onclick = function(e) {
-      e.stopPropagation();
-      const dropdown = document.getElementById('mostused-dropdown');
-      if (!dropdown) return;
-      const isOpen = dropdown.classList.contains('is-open');
-      if (!isOpen) renderMostUsedDropdown();
-      dropdown.classList.toggle('is-open');
-    };
-    console.log('Most Used handler force-attached');
-  }
-});  
 
 // Run on load
 document.addEventListener('DOMContentLoaded', initHistory);
