@@ -578,28 +578,35 @@ document.addEventListener('click', function(event) {
 
 // ---- Set active state on page load ----
 // ===== SET ACTIVE DROPDOWN ITEM FOR CASE DIRECTORY =====
-document.addEventListener('DOMContentLoaded', function() {
-  const currentPath = window.location.pathname;
-  const dropdown = document.getElementById('caseDirDropdown');
-  const legacyLink = document.getElementById('legacyDirLink');
-  const shineLink = document.getElementById('shineDirLink');
+// ===== HIGHLIGHT THE CORRECT CASE DIRECTORY LINK =====
+function highlightCaseDirectory() {
+  var path = window.location.pathname;
+  var dropdown = document.getElementById('caseDirDropdown');
+  var legacyLink = document.getElementById('legacyDirLink');
+  var shineLink = document.getElementById('shineDirLink');
 
+  // If the dropdown elements aren't in the DOM yet, bail out
   if (!dropdown || !legacyLink || !shineLink) return;
 
-  // Clear any existing active state
+  // Remove any existing active states
   legacyLink.classList.remove('active');
   shineLink.classList.remove('active');
   dropdown.classList.remove('active');
 
-  // Activate the correct one
-  if (currentPath.includes('shine-case-directory.html')) {
+  // Add active to the matching link and the parent dropdown
+  if (path.includes('shine-case-directory.html')) {
     shineLink.classList.add('active');
     dropdown.classList.add('active');
-  } else if (currentPath.includes('case-directory.html') && !currentPath.includes('shine')) {
+  } else if (path.includes('case-directory.html')) {
     legacyLink.classList.add('active');
     dropdown.classList.add('active');
   }
-});
+}
+
+// Run it after the header is fully loaded
+document.addEventListener('headerLoaded', highlightCaseDirectory);
+// Also run it on DOM ready as a fallback (if header loads before this)
+document.addEventListener('DOMContentLoaded', highlightCaseDirectory);
 
 function logoutUser() {
   if (!window.firebase || !firebase.auth) {
