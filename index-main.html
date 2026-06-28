@@ -4001,9 +4001,39 @@ function toggleHistoryDropdown(e) {
   const dropdown = document.getElementById('history-dropdown');
   if (!dropdown) return;
   const isOpen = dropdown.classList.contains('is-open');
-  if (!isOpen) renderHistoryDropdown();
+  if (!isOpen) {
+    renderHistoryDropdown();
+    repositionDropdown('history-dropdown', 'history-item');
+  }
   dropdown.classList.toggle('is-open');
 }
+
+function toggleMostUsedDropdown(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('mostused-dropdown');
+  if (!dropdown) return;
+  const isOpen = dropdown.classList.contains('is-open');
+  if (!isOpen) {
+    renderMostUsedDropdown();
+    repositionDropdown('mostused-dropdown', 'mostused-item');
+  }
+  dropdown.classList.toggle('is-open');
+}
+
+function repositionDropdown(dropdownId, triggerId) {
+  const dropdown = document.getElementById(dropdownId);
+  const trigger = document.getElementById(triggerId);
+  if (!dropdown || !trigger) return;
+
+  const rect = trigger.getBoundingClientRect();
+  dropdown.style.position = 'fixed';
+  dropdown.style.top = (rect.bottom + 8) + 'px';
+  dropdown.style.left = rect.left + 'px';
+  dropdown.style.width = rect.width + 'px';
+  dropdown.style.zIndex = '999999';
+  dropdown.style.maxHeight = '280px';
+  dropdown.style.overflowY = 'auto';
+}  
 
 // ---- Close dropdown on outside click ----
 document.addEventListener('click', function(e) {
