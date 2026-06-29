@@ -221,29 +221,28 @@ function renderHeaderCalendar() {
 function setHeaderActiveTab() {
   const currentPage = document.body.dataset.page || "";
 
-  const caseDirDropdown = document.getElementById("caseDirDropdown");
   const caseDirToggle = document.getElementById("caseDirToggle");
   const legacyLink = document.getElementById("legacyDirLink");
   const shineLink = document.getElementById("shineDirLink");
 
-  // Reset
+  // Reset top tabs
   document.querySelectorAll(".nav-tabs .tab").forEach(tab => {
     tab.classList.remove("active");
   });
 
+  // Reset dropdown links
   legacyLink?.classList.remove("active");
   shineLink?.classList.remove("active");
-  caseDirDropdown?.classList.remove("active");
 
   // Case Directory pages
   if (
     currentPage === "case-directory" ||
     currentPage === "shine-case-directory"
   ) {
-    // Highlight ONLY the Case Directory tab
+
+    // THIS is the important line
     caseDirToggle?.classList.add("active");
 
-    // Highlight selected child
     if (currentPage === "case-directory") {
       legacyLink?.classList.add("active");
     }
@@ -255,7 +254,7 @@ function setHeaderActiveTab() {
     return;
   }
 
-  // Other pages
+  // Normal tabs
   document.querySelectorAll(".nav-tabs .tab").forEach(tab => {
     if (tab.dataset.page === currentPage) {
       tab.classList.add("active");
