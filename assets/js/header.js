@@ -224,39 +224,37 @@ function setHeaderActiveTab() {
   const legacyLink = document.getElementById('legacyDirLink');
   const shineLink = document.getElementById('shineDirLink');
 
-  // Remove active from all tabs (including the dropdown's inner tab)
+  // Remove active from all tabs (including dropdown's inner tab)
   document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
     tab.classList.remove("active");
   });
 
-  // Remove active from the dropdown container and menu links
+  // Remove active from dropdown container and menu links
   if (dropdown) dropdown.classList.remove('active');
   if (legacyLink) legacyLink.classList.remove('active');
   if (shineLink) shineLink.classList.remove('active');
 
-  // Activate the matching tab if any
-  let matched = false;
-  document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
-    if (tab.dataset.page === currentPage) {
-      tab.classList.add("active");
-      matched = true;
+  // Check if we're on a directory page
+  const isDirectory = currentPage === "case-directory" || currentPage === "shine-case-directory";
+
+  // Activate the dropdown if we're on a directory page
+  if (isDirectory && dropdown) {
+    dropdown.classList.add("active");
+    // Highlight the correct sub-link
+    if (currentPage === "case-directory" && legacyLink) {
+      legacyLink.classList.add("active");
+    } else if (currentPage === "shine-case-directory" && shineLink) {
+      shineLink.classList.add("active");
     }
-  });
-
-  // If we're on a directory page, activate the dropdown and highlight the correct link
-  if (currentPage === "case-directory" || currentPage === "shine-case-directory") {
-    if (dropdown) dropdown.classList.add("active");
-
-    if (legacyLink && shineLink) {
-      if (currentPage === "case-directory") {
-        legacyLink.classList.add('active');
-      } else if (currentPage === "shine-case-directory") {
-        shineLink.classList.add('active');
+  } else {
+    // Otherwise, activate regular tabs by data-page
+    document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
+      if (tab.dataset.page === currentPage) {
+        tab.classList.add("active");
       }
-    }
+    });
   }
 }
-
 /* =========================
    PREMIUM PAGE REVEAL SYSTEM
 ========================= */
