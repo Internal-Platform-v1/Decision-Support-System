@@ -220,12 +220,41 @@ function renderHeaderCalendar() {
 
 function setHeaderActiveTab() {
   const currentPage = document.body.dataset.page || "";
+  const dropdown = document.getElementById('caseDirDropdown');
+  const legacyLink = document.getElementById('legacyDirLink');
+  const shineLink = document.getElementById('shineDirLink');
+
+  // Remove active from all tabs (including the dropdown's inner tab)
   document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
     tab.classList.remove("active");
+  });
+
+  // Remove active from the dropdown container and menu links
+  if (dropdown) dropdown.classList.remove('active');
+  if (legacyLink) legacyLink.classList.remove('active');
+  if (shineLink) shineLink.classList.remove('active');
+
+  // Activate the matching tab if any
+  let matched = false;
+  document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
     if (tab.dataset.page === currentPage) {
       tab.classList.add("active");
+      matched = true;
     }
   });
+
+  // If we're on a directory page, activate the dropdown and highlight the correct link
+  if (currentPage === "case-directory" || currentPage === "shine-case-directory") {
+    if (dropdown) dropdown.classList.add("active");
+
+    if (legacyLink && shineLink) {
+      if (currentPage === "case-directory") {
+        legacyLink.classList.add('active');
+      } else if (currentPage === "shine-case-directory") {
+        shineLink.classList.add('active');
+      }
+    }
+  }
 }
 
 /* =========================
@@ -576,37 +605,6 @@ document.addEventListener('click', function(event) {
   }
 });
 
-// ---- Set active state on page load ----
-// ===== SET ACTIVE DROPDOWN ITEM FOR CASE DIRECTORY =====
-// ===== HIGHLIGHT THE CORRECT CASE DIRECTORY LINK =====
-function highlightCaseDirectory() {
-  var path = window.location.pathname;
-  var dropdown = document.getElementById('caseDirDropdown');
-  var legacyLink = document.getElementById('legacyDirLink');
-  var shineLink = document.getElementById('shineDirLink');
-
-  // If the dropdown elements aren't in the DOM yet, bail out
-  if (!dropdown || !legacyLink || !shineLink) return;
-
-  // Remove any existing active states
-  legacyLink.classList.remove('active');
-  shineLink.classList.remove('active');
-  dropdown.classList.remove('active');
-
-  // Add active to the matching link and the parent dropdown
-  if (path.includes('shine-case-directory.html')) {
-    shineLink.classList.add('active');
-    dropdown.classList.add('active');
-  } else if (path.includes('case-directory.html')) {
-    legacyLink.classList.add('active');
-    dropdown.classList.add('active');
-  }
-}
-
-// Run it after the header is fully loaded
-document.addEventListener('headerLoaded', highlightCaseDirectory);
-// Also run it on DOM ready as a fallback (if header loads before this)
-document.addEventListener('DOMContentLoaded', highlightCaseDirectory);
 
 
 function logoutUser() {
