@@ -4329,5 +4329,24 @@ body.theme-simple .focus-card.dark{
     </div>
   </div>
 
+  <script>
+  // Ensure the "Case Directory" tab is highlighted on the Shine page
+  function activateCaseDirectoryTab() {
+    const dropdown = document.getElementById('caseDirDropdown');
+    if (dropdown) {
+      dropdown.classList.add('active');
+      return true;
+    }
+    return false;
+  }
+
+  // Try immediately; if header hasn't loaded, wait for the event.
+  if (!activateCaseDirectoryTab()) {
+    document.addEventListener('headerLoaded', activateCaseDirectoryTab);
+    // Also fallback to DOMContentLoaded if headerLoaded doesn't fire
+    document.addEventListener('DOMContentLoaded', activateCaseDirectoryTab);
+  }
+</script>
+
 </body>
 </html>
