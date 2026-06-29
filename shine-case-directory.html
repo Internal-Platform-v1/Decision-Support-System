@@ -4328,6 +4328,28 @@ body.theme-simple .focus-card.dark{
 
     </div>
   </div>
+<script>
+  // Force the Case Directory tab active on Shine page
+  (function() {
+    // Try immediately
+    var dropdown = document.getElementById('caseDirDropdown');
+    if (dropdown) {
+      dropdown.classList.add('active');
+      return;
+    }
 
+    // If not found, wait for header to load
+    document.addEventListener('headerLoaded', function() {
+      var d = document.getElementById('caseDirDropdown');
+      if (d) d.classList.add('active');
+    });
+
+    // Also try again after a tiny delay as a final fallback
+    setTimeout(function() {
+      var d = document.getElementById('caseDirDropdown');
+      if (d) d.classList.add('active');
+    }, 500);
+  })();
+</script>
 </body>
 </html>
