@@ -219,42 +219,47 @@ function renderHeaderCalendar() {
 }
 
 function setHeaderActiveTab() {
-  var currentPage = document.body.dataset.page || "";
-  var dropdown = document.getElementById('caseDirDropdown');
-  var legacyLink = document.getElementById('legacyDirLink');
-  var shineLink = document.getElementById('shineDirLink');
+  const currentPage = document.body.dataset.page || "";
 
-  // Remove active from all tabs
-  document.querySelectorAll(".nav-tabs .tab").forEach(function(tab) {
+  const caseDirToggle = document.getElementById("caseDirToggle");
+  const legacyLink = document.getElementById("legacyDirLink");
+  const shineLink = document.getElementById("shineDirLink");
+
+  // Remove active state from all top tabs
+  document.querySelectorAll(".nav-tabs .tab").forEach(tab => {
     tab.classList.remove("active");
   });
 
-  // Remove active from dropdown and menu links
-  if (dropdown) dropdown.classList.remove('active');
-  if (legacyLink) legacyLink.classList.remove('active');
-  if (shineLink) shineLink.classList.remove('active');
+  // Remove active state from dropdown items
+  legacyLink?.classList.remove("active");
+  shineLink?.classList.remove("active");
 
-  // Check if we're on EITHER directory page
-  if (currentPage === "case-directory" || currentPage === "shine-case-directory") {
-    // Activate the dropdown (the Case Directory tab)
-    if (dropdown) {
-      dropdown.classList.add('active');
+  // Case Directory pages
+  if (
+    currentPage === "case-directory" ||
+    currentPage === "shine-case-directory"
+  ) {
+    // Keep parent Case Directory tab highlighted
+    caseDirToggle?.classList.add("active");
+
+    // Highlight selected child page
+    if (currentPage === "case-directory") {
+      legacyLink?.classList.add("active");
     }
 
-    // Highlight the correct sub-link inside the dropdown
-    if (currentPage === "case-directory" && legacyLink) {
-      legacyLink.classList.add('active');
-    } else if (currentPage === "shine-case-directory" && shineLink) {
-      shineLink.classList.add('active');
+    if (currentPage === "shine-case-directory") {
+      shineLink?.classList.add("active");
     }
-  } else {
-    // Normal tab activation for other pages
-    document.querySelectorAll(".nav-tabs .tab").forEach(function(tab) {
-      if (tab.dataset.page === currentPage) {
-        tab.classList.add("active");
-      }
-    });
+
+    return;
   }
+
+  // Normal tabs
+  document.querySelectorAll(".nav-tabs .tab").forEach(tab => {
+    if (tab.dataset.page === currentPage) {
+      tab.classList.add("active");
+    }
+  });
 }
 /* =========================
    PREMIUM PAGE REVEAL SYSTEM
