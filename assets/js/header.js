@@ -219,36 +219,37 @@ function renderHeaderCalendar() {
 }
 
 function setHeaderActiveTab() {
-  const currentPage = document.body.dataset.page || "";
-  const dropdown = document.getElementById('caseDirDropdown');
-  const legacyLink = document.getElementById('legacyDirLink');
-  const shineLink = document.getElementById('shineDirLink');
+  var currentPage = document.body.dataset.page || "";
+  var dropdown = document.getElementById('caseDirDropdown');
+  var legacyLink = document.getElementById('legacyDirLink');
+  var shineLink = document.getElementById('shineDirLink');
 
-  // Remove active from all tabs (including dropdown's inner tab)
-  document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
+  // Remove active from all tabs
+  document.querySelectorAll(".nav-tabs .tab").forEach(function(tab) {
     tab.classList.remove("active");
   });
 
-  // Remove active from dropdown container and menu links
+  // Remove active from dropdown and menu links
   if (dropdown) dropdown.classList.remove('active');
   if (legacyLink) legacyLink.classList.remove('active');
   if (shineLink) shineLink.classList.remove('active');
 
-  // Check if we're on a directory page
-  const isDirectory = currentPage === "case-directory" || currentPage === "shine-case-directory";
+  // Check if we're on EITHER directory page
+  if (currentPage === "case-directory" || currentPage === "shine-case-directory") {
+    // Activate the dropdown (the Case Directory tab)
+    if (dropdown) {
+      dropdown.classList.add('active');
+    }
 
-  // Activate the dropdown if we're on a directory page
-  if (isDirectory && dropdown) {
-    dropdown.classList.add("active");
-    // Highlight the correct sub-link
+    // Highlight the correct sub-link inside the dropdown
     if (currentPage === "case-directory" && legacyLink) {
-      legacyLink.classList.add("active");
+      legacyLink.classList.add('active');
     } else if (currentPage === "shine-case-directory" && shineLink) {
-      shineLink.classList.add("active");
+      shineLink.classList.add('active');
     }
   } else {
-    // Otherwise, activate regular tabs by data-page
-    document.querySelectorAll(".nav-tabs .tab").forEach((tab) => {
+    // Normal tab activation for other pages
+    document.querySelectorAll(".nav-tabs .tab").forEach(function(tab) {
       if (tab.dataset.page === currentPage) {
         tab.classList.add("active");
       }
