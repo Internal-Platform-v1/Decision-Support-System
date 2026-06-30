@@ -626,46 +626,66 @@
       }
     }
 
-    async function continueAfterSecurityChecks(user) {
-      if (!user) {
-        showMessage("Unable to sign in right now.");
-        return;
-      }
+async function continueAfterSecurityChecks(user) {
+  if (!user) {
+    showMessage("Unable to sign in right now.");
+    return;
+  }
 
-      const email = normalizeEmail(user.email);
+  const email = normalizeEmail(user.email);
 
-      if (!isAllowedFedExEmail(email)) {
-        await auth.signOut();
-        showMessage("Please use your FedEx Freight email address.");
-        return;
-      }
+  if (!isAllowedFedExEmail(email)) {
+    await auth.signOut();
+    showMessage("Please use your FedEx Freight email address.");
+    return;
+  }
 
-      if (!user.emailVerified) {
-        await user.sendEmailVerification();
-        await auth.signOut();
-        showMessage(
-          "Your email is not verified yet. A verification email has been sent to your FedEx Freight inbox. Please verify your email first, then sign in again.",
-          "success"
-        );
-        return;
-      }
+  if (!user.emailVerified) {
+    await user.sendEmailVerification();
+    await auth.signOut();
+    showMessage(
+      "Your email is not verified yet. A verification email has been sent...",
+      "success"
+    );
+    return;
+  }
 
-      const approvalCheck = await checkApprovedUser(email);
+  const approvalCheck = await checkApprovedUser(email);
 
-      if (!approvalCheck.allowed) {
-        await auth.signOut();
-        showMessage(approvalCheck.reason || "You are not authorized to access this system.");
-        return;
-      }
+  if (!approvalCheck.allowed) {
+    await auth.signOut();
+    showMessage(approvalCheck.reason || "You are not authorized to access this system.");
+    return;
+  }
 
-      if (approvalCheck.data.forcePasswordChange === true) {
-        window.location.href = CHANGE_PASSWORD_PAGE;
-        return;
-      }
+  // ================== 🆕 NEW CODE STARTS HERE ==================
+  // 🔥 Automatically detect first login and force password change
+  const creationTime = new Date(user.metadata.creationTime).getTime();
+  const lastSignInTime = new Date(user.metadata.lastSignInTime).getTime();
 
-      setLoadingState(true, "redirect");
-      window.location.href = REDIRECT_AFTER_LOGIN;
-    }
+  if (creationTime === lastSignInTime) {
+    // This is the user's very first successful sign-in.
+    // Update Firestore to set the flag (so future logins also redirect, just in case).
+    await db.collection(APPROVED_USERS_COLLECTION).doc(email).set({
+      forcePasswordChange: true
+    }, { merge: true });
+
+    // Redirect immediately to the change password page.
+    window.location.href = CHANGE_PASSWORD_PAGE;
+    return;
+  }
+  // ================== 🆕 NEW CODE ENDS HERE ==================
+
+  // Existing force password change check (keeps manual overrides working)
+  if (approvalCheck.data.forcePasswordChange === true) {
+    window.location.href = CHANGE_PASSWORD_PAGE;
+    return;
+  }
+
+  // If all checks pass, redirect to main page
+  setLoadingState(true, "redirect");
+  window.location.href = REDIRECT_AFTER_LOGIN;
+}
 
     togglePasswordBtn.addEventListener("click", () => {
       const isHidden = passwordEl.type === "password";
