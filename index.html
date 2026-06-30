@@ -626,67 +626,78 @@
       }
     }
 
-async function continueAfterSecurityChecks(user) {
-  if (!user) {
-    showMessage("Unable to sign in right now.");
-    return;
-  }
+    // ─── HELPER: Detect first login and create Firestore doc ───
+    async function handleFirstLoginIfNeeded(user) {
+      const creationTime = new Date(user.metadata.creationTime).getTime();
+      const lastSignInTime = new Date(user.metadata.lastSignInTime).getTime();
 
-  const email = normalizeEmail(user.email);
+      if (creationTime === lastSignInTime) {
+        // This is the user's very first successful sign-in.
+        // Automatically create their Firestore document.
+        const email = normalizeEmail(user.email);
+        await db.collection(APPROVED_USERS_COLLECTION).doc(email).set({
+          active: true,
+          forcePasswordChange: true
+        }, { merge: true });
 
-  if (!isAllowedFedExEmail(email)) {
-    await auth.signOut();
-    showMessage("Please use your FedEx Freight email address.");
-    return;
-  }
+        // Redirect to change password page
+        window.location.replace(CHANGE_PASSWORD_PAGE);
+        return true; // indicates we handled it
+      }
+      return false; // not a first login
+    }
 
-  if (!user.emailVerified) {
-    await user.sendEmailVerification();
-    await auth.signOut();
-    showMessage(
-      "Your email is not verified yet. A verification email has been sent...",
-      "success"
-    );
-    return;
-  }
+    // ─── LOGIN FLOW ────────────────────────────────────────────
+    async function continueAfterSecurityChecks(user) {
+      if (!user) {
+        showMessage("Unable to sign in right now.");
+        return;
+      }
 
-  const approvalCheck = await checkApprovedUser(email);
+      const email = normalizeEmail(user.email);
 
-  if (!approvalCheck.allowed) {
-    await auth.signOut();
-    showMessage(approvalCheck.reason || "You are not authorized to access this system.");
-    return;
-  }
+      // 1. Domain check
+      if (!isAllowedFedExEmail(email)) {
+        await auth.signOut();
+        showMessage("Please use your FedEx Freight email address.");
+        return;
+      }
 
-  // ================== 🆕 NEW CODE STARTS HERE ==================
-  // 🔥 Automatically detect first login and force password change
-  const creationTime = new Date(user.metadata.creationTime).getTime();
-  const lastSignInTime = new Date(user.metadata.lastSignInTime).getTime();
+      // 2. Email verification
+      if (!user.emailVerified) {
+        await user.sendEmailVerification();
+        await auth.signOut();
+        showMessage(
+          "Your email is not verified yet. A verification email has been sent to your FedEx Freight inbox. Please verify your email first, then sign in again.",
+          "success"
+        );
+        return;
+      }
 
-  if (creationTime === lastSignInTime) {
-    // This is the user's very first successful sign-in.
-    // Update Firestore to set the flag (so future logins also redirect, just in case).
-    await db.collection(APPROVED_USERS_COLLECTION).doc(email).set({
-      forcePasswordChange: true
-    }, { merge: true });
+      // 3. FIRST LOGIN DETECTION (runs BEFORE Firestore approval)
+      const isFirst = await handleFirstLoginIfNeeded(user);
+      if (isFirst) return; // redirect already happened
 
-    // Redirect immediately to the change password page.
-    window.location.href = CHANGE_PASSWORD_PAGE;
-    return;
-  }
-  // ================== 🆕 NEW CODE ENDS HERE ==================
+      // 4. Firestore approval check (for returning users)
+      const approvalCheck = await checkApprovedUser(email);
+      if (!approvalCheck.allowed) {
+        await auth.signOut();
+        showMessage(approvalCheck.reason || "You are not authorized to access this system.");
+        return;
+      }
 
-  // Existing force password change check (keeps manual overrides working)
-  if (approvalCheck.data.forcePasswordChange === true) {
-    window.location.href = CHANGE_PASSWORD_PAGE;
-    return;
-  }
+      // 5. Force password change (manual override)
+      if (approvalCheck.data.forcePasswordChange === true) {
+        window.location.href = CHANGE_PASSWORD_PAGE;
+        return;
+      }
 
-  // If all checks pass, redirect to main page
-  setLoadingState(true, "redirect");
-  window.location.href = REDIRECT_AFTER_LOGIN;
-}
+      // ✅ All checks passed – redirect to main page
+      setLoadingState(true, "redirect");
+      window.location.href = REDIRECT_AFTER_LOGIN;
+    }
 
+    // ─── UI EVENT BINDINGS ─────────────────────────────────────
     togglePasswordBtn.addEventListener("click", () => {
       const isHidden = passwordEl.type === "password";
       passwordEl.type = isHidden ? "text" : "password";
@@ -745,8 +756,9 @@ async function continueAfterSecurityChecks(user) {
         setLoadingState(false);
         isProcessingLogin = false;
       } finally {
-        // setLoadingState already called in catch, but we ensure flag reset if needed
-        if (!window.location.href.includes("index-main.html")) {
+        // Ensure we reset if not redirected
+        if (!window.location.href.includes("index-main.html") &&
+            !window.location.href.includes("change-password.html")) {
           setLoadingState(false);
           isProcessingLogin = false;
         }
@@ -787,27 +799,32 @@ async function continueAfterSecurityChecks(user) {
       }
     });
 
+    // ─── AUTH STATE MONITOR (handles page reloads / direct navigation) ───
     auth.onAuthStateChanged(async (user) => {
       if (isProcessingLogin) return;
       if (!user) return;
 
       const email = normalizeEmail(user.email);
 
-      // 1. Domain check – sign out if not allowed
+      // 1. Domain check
       if (!isAllowedFedExEmail(email)) {
         await auth.signOut();
         showMessage("Only @fedexfreight.com email addresses are allowed to use this page.");
         return;
       }
 
-      // 2. Email verification check – sign out if not verified
+      // 2. Email verification
       if (!user.emailVerified) {
         await auth.signOut();
         showMessage("Please verify your email before using the system.");
         return;
       }
 
-      // 3. Approved user check – sign out if not approved or disabled
+      // 3. FIRST LOGIN DETECTION (runs BEFORE Firestore approval)
+      const isFirst = await handleFirstLoginIfNeeded(user);
+      if (isFirst) return; // redirect already happened
+
+      // 4. Firestore approval check
       try {
         const approvalCheck = await checkApprovedUser(email);
         if (!approvalCheck.allowed) {
@@ -816,7 +833,7 @@ async function continueAfterSecurityChecks(user) {
           return;
         }
 
-        // 4. Force password change check
+        // 5. Force password change (manual override)
         if (approvalCheck.data.forcePasswordChange === true) {
           window.location.replace(CHANGE_PASSWORD_PAGE);
           return;
