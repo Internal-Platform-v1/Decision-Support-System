@@ -3727,10 +3727,182 @@
   <div class="page">
     <div id="site-header"></div>
 
-    <main>
-      <!-- Hero section and other HTML remain exactly the same -->
-      <!-- ... (keep all your HTML) ... -->
-    </main>
+        <main>
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-shell">
+                        <div class="hero-card reveal delay-1">
+                            <div class="hero-content">
+                                <div class="pill"><i class="fa-solid fa-folder-tree"></i> Premium routing workspace</div>
+                                <h1 class="case-hero-title">Find the right queue faster and move the case with confidence.</h1>
+                                <p>
+                                    Search the case directory by queue, concern, action, email, or assignment to quickly identify the correct destination for each request.
+                                </p>
+
+                                <div class="hero-actions">
+                                    <button class="hero-main-btn" type="button" onclick="scrollToDirectory()">Explore Case Directory <i class="fa-solid fa-arrow-down"></i></button>
+                                    <button class="hero-ghost-btn" type="button" onclick="focusDirectorySearch()">Search now <i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+
+                                <div class="hero-metrics">
+                                    <div class="metric">
+                                        <strong id="heroCaseCount">—</strong>
+                                        <span>Directory rows currently available in the case routing list.</span>
+                                    </div>
+                                    <div class="metric">
+                                        <strong id="heroQueueCount">—</strong>
+                                        <span>Unique queues and requests available in the current workbook.</span>
+                                    </div>
+                                    <div class="metric">
+                                        <strong id="heroMatchCount">—</strong>
+                                        <span>Search results shown for the current keyword.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <aside class="side-stack">
+                            <div class="focus-card reveal delay-2">
+                                <div class="card-label">
+                                    <span><i class="fa-solid fa-compass"></i> How to use</span>
+                                    <i class="fa-solid fa-route"></i>
+                                </div>
+                                <h2>Search first, then confirm the routing details.</h2>
+                                <p>Use the directory to narrow the request, review the action, and confirm the correct destination before moving the case.</p>
+
+                                <div class="mini-list">
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <div><strong>Search the request</strong><span>Use queue, concern, action, email, or assignment keywords.</span></div>
+                                    </div>
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-list-check"></i>
+                                        <div><strong>Review the row details</strong><span>Compare concern, action, and case assignment before routing.</span></div>
+                                    </div>
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-circle-nodes"></i>
+                                        <div><strong>Confirm the destination</strong><span>Make sure the queue and assignment match the requested handling path.</span></div>
+                                    </div>
+                                    <div class="mini-item">
+                                        <i class="fa-solid fa-share"></i>
+                                        <div><strong>Move the case correctly</strong><span>Use the result to route the case cleanly and avoid rework.</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="focus-card dark reveal delay-3">
+                                <div class="card-label">
+                                    <span><i class="fa-solid fa-shield-halved"></i> Directory ready</span>
+                                    <i class="fa-solid fa-truck-fast"></i>
+                                </div>
+                                <h2>Everything you need is ready in one place.</h2>
+                                <p>Use the search, routing table, and quick snapshot to confirm the right destination. If something does not match, use Get Help or ask your team lead before moving the case.</p>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+
+            <section id="directoryWorkspace" class="case-dashboard reveal delay-2">
+                <div class="container">
+                    <div class="directory-frame">
+                        <section class="directory-main">
+                            <div class="directory-top">
+                                <div class="directory-title-block">
+                                    <div class="section-kicker"><i class="fa-solid fa-table"></i> Routing table</div>
+                                    <h2>Case Directory</h2>
+                                    <p>Search the routing directory below to identify the correct queue, concern handling, email, and case assignment path.</p>
+                                </div>
+
+                                <div class="status-pill" id="statusPill">
+                                    <i class="fa-solid fa-database"></i> Waiting for Data
+                                </div>
+                            </div>
+
+                            <div class="directory-search-row">
+                                <div class="search-input-wrap">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input id="directorySearch" type="text" placeholder="Search queue, concern, action, email, or assignment.">
+                                    <button id="clearSearchBtn" type="button" onclick="clearDirectorySearch()">×</button>
+                                </div>
+
+                                <button class="directory-search-btn" type="button" onclick="focusDirectorySearch()">
+                                    Focus search
+                                </button>
+                            </div>
+
+                            <div class="routing-card">
+                                <div class="routing-head">
+                                    <div>
+                                        <div class="routing-kicker"><i class="fa-solid fa-folder-open"></i> Live directory</div>
+                                        <h3 class="routing-title">Search and review the correct destination</h3>
+                                        <p class="routing-lead">Use the live directory below to check where a case should move before routing it.</p>
+                                    </div>
+                                    <div class="routing-icon"><i class="fa-solid fa-folder-open"></i></div>
+                                </div>
+
+                                <div class="table-wrap" id="tableWrap">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Queue / Request</th>
+                                                <th>Concern</th>
+                                                <th>Action</th>
+                                                <th>Email Address</th>
+                                                <th>Case Assignment / Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rows"></tbody>
+                                    </table>
+                                </div>
+
+                                <div id="emptyState" class="empty-state" style="display:none;">
+                                    <i class="fa-solid fa-circle-exclamation" style="font-size:28px; margin-bottom:10px; color:#94a3b8;"></i>
+                                    <div>No matching results found for the current search.</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <aside class="directory-side">
+                            <div class="directory-side-card">
+                                <div class="side-card-head"><i class="fa-solid fa-chart-simple"></i> Quick Snapshot</div>
+                                <div class="section-note">Live context while reviewing the directory.</div>
+
+                                <div class="quick-stat">
+                                    <span class="quick-label">Total Rows</span>
+                                    <span class="quick-value" id="totalRowsValue">—</span>
+                                </div>
+
+                                <div class="quick-stat">
+                                    <span class="quick-label">Unique Queues</span>
+                                    <span class="quick-value" id="uniqueQueuesValue">—</span>
+                                </div>
+
+                                <div class="quick-stat">
+                                    <span class="quick-label">Visible Results</span>
+                                    <span class="quick-value" id="visibleResultsValue">—</span>
+                                </div>
+                            </div>
+
+                            <div class="directory-side-card reminder">
+                                <div class="side-card-head"><i class="fa-solid fa-triangle-exclamation"></i> Reminder</div>
+                                <div class="helper-text">Before routing the case, confirm the queue name, action, and case assignment together to avoid moving the case to the wrong team.</div>
+                            </div>
+
+                            <div class="directory-side-card">
+                                <div class="side-card-head"><i class="fa-solid fa-lightbulb"></i> Search Tips</div>
+                                <ul class="helper-list">
+                                    <li>Search by exact queue name first when possible.</li>
+                                    <li>Try concern or action keywords if the queue is unknown.</li>
+                                    <li>Use email or assignment fields to confirm the final destination.</li>
+                                    <li>Review highlighted text before moving the case.</li>
+                                </ul>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+        </main>
 
     <div id="site-footer"></div>
   </div>
