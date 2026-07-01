@@ -540,7 +540,7 @@ async function loadHeaderUserProfile(user) {
       const db = firebase.firestore();
       const email = (user.email || "").toLowerCase();
 
-      const snap = await db.collection("users")
+      const snap = await db.collection("approved_users")
         .where("email", "==", email)
         .limit(1)
         .get();
