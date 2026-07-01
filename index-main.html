@@ -262,16 +262,17 @@
       gap:18px;
     }
 
-    .focus-card{
-      border-radius:var(--radius-2xl);
-      padding:24px;
-      background:rgba(255,255,255,.74);
-      border:1px solid rgba(255,255,255,.92);
-      box-shadow:var(--shadow-lg);
-      backdrop-filter:blur(18px);
-      overflow:hidden;
-      position:relative;
-    }
+.focus-card{
+  border-radius: var(--radius-2xl);
+  padding: 24px;
+  background: rgba(255,255,255,.74);
+  border: 1px solid rgba(255,255,255,.92);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(18px);
+  overflow: visible; /* FIX */
+  position: relative;
+  z-index: 1;
+}
 
     .focus-card.dark{
       color:#fff;
@@ -543,7 +544,7 @@
       box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      z-index: 200;
+      z-index: 9999;
       opacity: 0;
       transform: scale(0.95) translateY(-10px);
       transform-origin: top left;
@@ -3854,7 +3855,7 @@
 
       // Update the label with the top guide name
       if (label) {
-        label.textContent = topGuides[0].guideTitle || topGuides[0].guideId || 'Top guide';
+        label.textContent = `Top ${topGuides.length} guides available ▼`;
       }
 
       let html = '';
