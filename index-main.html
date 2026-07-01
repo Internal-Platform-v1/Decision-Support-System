@@ -2897,17 +2897,13 @@
                 </li>
 
                 <!-- Most used guide (dropdown) -->
-                <li class="quick-item" id="mostused-item">
-                  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
-                  <div>
-                    <strong>Most used guide</strong>
-                    <span id="mostused-guide-label">Loading…</span>
-                  </div>
-                  <!-- Dropdown container -->
-                  <div id="mostused-dropdown">
-                    <div id="mostused-dropdown-list"></div>
-                  </div>
-                </li>
+<li class="quick-item" id="mostused-item">
+  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+  <div>
+    <strong>Most used guides</strong>
+    <span id="mostused-guide-label">Loading…</span>
+  </div>
+</li>
 
                 <li class="quick-item" id="other-item">
                   <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
@@ -3867,9 +3863,12 @@
       }
 
       // Update the label with the top guide name
-      if (label) {
-        label.textContent = `Top ${topGuides.length} guides available ▼`;
-      }
+     if (label) {
+    label.innerHTML = topGuides
+        .slice(0, 5)
+        .map((g, i) => `${i + 1}. ${g.guideTitle || g.guideId}`)
+        .join(' • ');
+}
 
       let html = '';
       topGuides.forEach((guide, index) => {
