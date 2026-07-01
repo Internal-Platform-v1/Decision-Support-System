@@ -503,22 +503,14 @@ function getInitials(name, email) {
   return "US";
 }
 
-function cleanDisplayName(name) {
-  if (!name) return name;
-  return name.replace(/^Vndr\s*/i, '').trim();
-}
-
 function formatDisplayName(user) {
-  if (user?.displayName && user.displayName.trim()) {
-    return cleanDisplayName(user.displayName.trim());
-  }
+  if (user?.displayName && user.displayName.trim()) return user.displayName.trim();
 
   if (user?.email) {
     const local = user.email.split("@")[0];
-    const name = local
+    return local
       .replace(/[._-]+/g, " ")
       .replace(/\b\w/g, c => c.toUpperCase());
-    return cleanDisplayName(name);
   }
 
   return "User";
@@ -562,9 +554,6 @@ async function loadHeaderUserProfile(user) {
   } catch (error) {
     console.error("Unable to load user profile from Firestore:", error);
   }
-
-  // 👇 **FIX: remove "Vndr" from the display name**
-  displayName = cleanDisplayName(displayName);
 
   const initials = getInitials(displayName, user.email);
 
