@@ -547,7 +547,11 @@ async function loadHeaderUserProfile(user) {
 
       if (!snap.empty) {
         const data = snap.docs[0].data();
-        if (data.name) displayName = data.name;
+        if (data.name) {
+  displayName = data.name
+    .replace(/\s+vndr$/i, "")   // removes "VNDR" or "Vndr" at the end
+    .trim();
+}
         if (data.role) role = data.role;
       }
     }
