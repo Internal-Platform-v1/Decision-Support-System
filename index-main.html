@@ -2826,6 +2826,20 @@
         max-width:100% !important;
       }
     }
+
+    #history-item{
+  position: relative;
+  z-index: 1;
+}
+
+#history-item.dropdown-active{
+  z-index: 99999 !important;
+}
+
+#history-dropdown{
+  position: absolute;
+  z-index: 99999 !important;
+}
   </style>
 </head>
 
@@ -3820,14 +3834,30 @@
     });
   }
 
-  function toggleHistoryDropdown(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('history-dropdown');
-    if (!dropdown) return;
-    const isOpen = dropdown.classList.contains('is-open');
-    if (!isOpen) renderHistoryDropdown();
-    dropdown.classList.toggle('is-open');
+function toggleHistoryDropdown(e) {
+  e.stopPropagation();
+
+  const dropdown = document.getElementById('history-dropdown');
+  const historyItem = document.getElementById('history-item');
+
+  if (!dropdown || !historyItem) return;
+
+  const isOpen = dropdown.classList.contains('is-open');
+
+  // reset
+  historyItem.classList.remove('dropdown-active');
+
+  if (!isOpen) {
+    renderHistoryDropdown();
+    historyItem.classList.add('dropdown-active');
   }
+
+  dropdown.classList.toggle('is-open');
+
+  if (isOpen) {
+    historyItem.classList.remove('dropdown-active');
+  }
+}
 
   // =========================================================
   // SYSTEM-WIDE TOP 5 MOST USED GUIDES (Firestore)
@@ -3958,18 +3988,15 @@ renderMostUsedDropdown();
     });
 
     // Close dropdowns on outside click
-    document.addEventListener('click', function(e) {
-      const histDropdown = document.getElementById('history-dropdown');
-      const histItem = document.getElementById('history-item');
-      if (histDropdown && histItem && !histItem.contains(e.target)) {
-        histDropdown.classList.remove('is-open');
-      }
-      const mostDropdown = document.getElementById('mostused-dropdown');
-      const mostItem = document.getElementById('mostused-item');
-      if (mostDropdown && mostItem && !mostItem.contains(e.target)) {
-        mostDropdown.classList.remove('is-open');
-      }
-    });
+document.addEventListener('click', function(e) {
+  const histDropdown = document.getElementById('history-dropdown');
+  const histItem = document.getElementById('history-item');
+
+  if (histDropdown && histItem && !histItem.contains(e.target)) {
+    histDropdown.classList.remove('is-open');
+    histItem.classList.remove('dropdown-active');
+  }
+});
   }
 
   // =========================================================
