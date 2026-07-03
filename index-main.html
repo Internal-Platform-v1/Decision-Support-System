@@ -3875,74 +3875,28 @@
   }
 
   // Render the top 5 into the mostused dropdown
-  async function renderMostUsedDropdown() {
-    const container = document.getElementById('mostused-dropdown-list');
+async function renderMostUsedDropdown() {
     const label = document.getElementById('mostused-guide-label');
-    if (!container) return;
+    if (!label) return;
 
     try {
-      const topGuides = await fetchTopGuides(5);
+        const topGuides = await fetchTopGuides(5);
 
-      if (!topGuides || topGuides.length === 0) {
-        container.innerHTML = `
-          <div class="mostused-empty">
-            <i class="fa-solid fa-chart-simple"></i>
-            <span>No usage data yet. Start using guides to build the top 5!</span>
-          </div>
-        `;
-        if (label) label.textContent = 'No data yet';
-        return;
-      }
+        if (!topGuides || topGuides.length === 0) {
+            label.textContent = 'No usage data';
+            return;
+        }
 
-      // Update the label with the top guide name
-     if (label) {
-    label.innerHTML = topGuides
-        .slice(0, 5)
-        .map((g, i) => `${i + 1}. ${g.guideTitle || g.guideId}`)
-        .join(' • ');
-}
+        label.textContent = topGuides
+            .slice(0, 5)
+            .map(g => g.guideTitle || g.guideId)
+            .join(' • ');
 
-      let html = '';
-      topGuides.forEach((guide, index) => {
-        const count = guide.usageCount || 0;
-        const title = guide.guideTitle || guide.guideId || 'Untitled';
-        const url = guide.guideUrl || '#';
-        const icon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}.`;
-
-        html += `
-          <div class="mostused-item" data-url="${url}">
-            <div class="mui-left">
-              <div class="mui-icon"><i class="fa-solid fa-route"></i></div>
-              <span class="mui-title">${icon} ${title}</span>
-            </div>
-            <span class="mui-count">${count} use${count === 1 ? '' : 's'}</span>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-
-      container.querySelectorAll('.mostused-item').forEach(el => {
-        el.addEventListener('click', function(e) {
-          const url = this.dataset.url;
-          if (url && url !== '#') {
-            const title = this.querySelector('.mui-title')?.textContent?.replace(/^[\d🥇🥈🥉]+\.\s*/, '') || 'Untitled';
-            trackGuideUsage(url, title);
-            window.location.href = url;
-          }
-        });
-      });
-
-    } catch (err) {
-      console.warn('Failed to render most used dropdown:', err);
-      container.innerHTML = `
-        <div class="mostused-empty" style="color:#ef4444;">
-          <i class="fa-solid fa-triangle-exclamation"></i> Could not load usage data.
-        </div>
-      `;
-      if (label) label.textContent = 'Error loading';
+    } catch (error) {
+        console.error('Failed to load top guides:', error);
+        label.textContent = 'Unable to load guides';
     }
-  }
+}
 
   function toggleMostUsedDropdown(e) {
     e.stopPropagation();
@@ -3980,17 +3934,14 @@
       recentItem.onclick = null;
     }
 
-    // Most used dropdown trigger
-    const mostUsedItem = document.getElementById('mostused-item');
-    if (mostUsedItem) {
-      mostUsedItem.style.cursor = 'pointer';
-      mostUsedItem.onclick = toggleMostUsedDropdown;
-    }
-
     // Initial load of dropdown content (will be loaded on first open)
     // But we can preload the label with a placeholder
-    const label = document.getElementById('mostused-guide-label');
-    if (label) label.textContent = 'Loading…';
+const label = document.getElementById('mostused-guide-label');
+if (label) {
+    label.innerHTML = 'Loading...';
+}
+
+renderMostUsedDropdown();
 
     // Also attach tracking to guide links
     document.querySelectorAll('.guide-link').forEach(link => {
