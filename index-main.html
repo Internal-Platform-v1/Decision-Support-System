@@ -542,34 +542,22 @@
     #history-item {
       position: relative;
     }
-    #history-dropdown {
-      display: block;
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      width: 100%;
-      max-height: 280px;
-      overflow-y: auto;
-      padding: 10px 6px;
-      border-radius: var(--radius-xl, 24px);
-      background: var(--soft-card, rgba(255,255,255,.82));
-      border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
-      box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      z-index: 9999;
-      opacity: 0;
-      transform: scale(0.95) translateY(-10px);
-      transform-origin: top left;
-      pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-                  transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    #history-dropdown.is-open {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
-    }
+#history-dropdown {
+  display: block;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+}
+#history-dropdown.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
     #history-dropdown::-webkit-scrollbar {
       width: 5px;
     }
@@ -2827,29 +2815,6 @@
       }
     }
 
-    #history-item{
-  position: relative;
-  z-index: 1;
-}
-
-#history-item.dropdown-active{
-  z-index: 99999 !important;
-}
-
-#history-dropdown{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 420px;
-    max-height: 500px;
-    overflow-y: auto;
-    z-index: 999999;
-    display: none;
-}
-
-#history-dropdown.is-open{
-    display:block;
-}
   </style>
 </head>
 
@@ -3845,28 +3810,17 @@
   }
 
 function toggleHistoryDropdown(e) {
-    e.stopPropagation();
+  e.stopPropagation();
 
-    const dropdown = document.getElementById('history-dropdown');
-    const historyItem = document.getElementById('history-item');
+  const dropdown = document.getElementById('history-dropdown');
 
-    if (!dropdown || !historyItem) return;
+  if (!dropdown) return;
 
-    const isOpen = dropdown.classList.contains('is-open');
-
-    if (isOpen) {
-        dropdown.classList.remove('is-open');
-        return;
-    }
-
+  if (!dropdown.classList.contains('is-open')) {
     renderHistoryDropdown();
+  }
 
-    const rect = historyItem.getBoundingClientRect();
-
-    dropdown.style.top = `${rect.bottom + 8}px`;
-    dropdown.style.left = `${rect.left}px`;
-
-    dropdown.classList.add('is-open');
+  dropdown.classList.toggle('is-open');
 }
 
   // =========================================================
@@ -3999,12 +3953,11 @@ renderMostUsedDropdown();
 
     // Close dropdowns on outside click
 document.addEventListener('click', function(e) {
-  const histDropdown = document.getElementById('history-dropdown');
-  const histItem = document.getElementById('history-item');
+  const dropdown = document.getElementById('history-dropdown');
+  const historyItem = document.getElementById('history-item');
 
-  if (histDropdown && histItem && !histItem.contains(e.target)) {
-    histDropdown.classList.remove('is-open');
-    histItem.classList.remove('dropdown-active');
+  if (dropdown && historyItem && !historyItem.contains(e.target)) {
+    dropdown.classList.remove('is-open');
   }
 });
   }
