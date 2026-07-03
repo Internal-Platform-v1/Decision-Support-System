@@ -393,8 +393,20 @@ const NODES = {
 
   // ===== VALIDITY / NEED MORE INFO =====
   storage_validity: {
-    text: "Advise the customer regarding the storage fee in accordance with the FXF Rules Tariff. See sample response below:\n\nHello,\nMy name is [######], and I am here to assist you with your dispute.\n\nThe storage fee on Invoice [##########] has been reviewed and deemed valid based on the supporting documents on file. Additionally, when freight is held in FedEx's possession due to the act or omission of the shipper, consignee, or owner, or for customs clearance or inspection, such freight will be considered stored, and charges per shipment will apply.\n\nFor more information on storage fees, please refer to our FXF 100-W Rules Tariff, Item 910.\n\nThank you for choosing FedEx, and we hope you have a great day.\nFedEx Freight, Inc. – Invoicing Solutions",
+    text: "Advise the customer regarding the storage fee in accordance with the FXF Rules Tariff. See sample response below:",
     help: "Provide the sample response template to the customer explaining the storage fee policy.",
+    note: `<div style="margin-top:12px; padding:14px; border-radius:12px; background:#f8fafc; border:1px solid #e2e8f0; white-space:pre-wrap;"><strong>Sample response template:</strong>
+
+Hello,
+
+My name is [######], and I am here to assist you with your dispute.
+
+The storage fee on Invoice [##########] has been reviewed and deemed valid based on the supporting documents on file. Additionally, when freight is held in FedEx's possession due to the act or omission of the shipper, consignee, or owner, or for customs clearance or inspection, such freight will be considered stored, and charges per shipment will apply.
+
+For more information on storage fees, please refer to our FXF 100-W Rules Tariff, Item 910.
+
+Thank you for choosing FedEx, and we hope you have a great day.
+FedEx Freight, Inc. – Invoicing Solutions</div>`,
     choices: []
   },
 
@@ -405,20 +417,20 @@ const NODES = {
     note: `<div style="margin-top:12px; padding:14px; border-radius:12px; background:#f8fafc; border:1px solid #e2e8f0; white-space:pre-wrap;"><strong>Sample PRO: 8487660392</strong>
 
 Weight is 1,500LBS
-Per Cargo Care, On Hand notice was sent on 1/30/2026 (FRI) 
+Per Cargo Care, On Hand notice was sent on 1/30/2026 (FRI)
 Delivery date: 02/09/2026
 Length of time the freight was stored: 5 days
- a. Storage fees start at 12:01 the first business day after the notice is sent.  
- b. Storage is not charged for the day the freight is delivered.  
- c. Storage is not charged on non-business days.
+  a. Storage fees start at 12:01 the first business day after the notice is sent.
+  b. Storage is not charged for the day the freight is delivered.
+  c. Storage is not charged on non-business days.
 
-$6.03 per cwt. per each 24 hours, subject to the following minimum and maximum charges: a. Minimum charge, LTL, $59.00 per shipment per each 24 hours, but not less than $210.00 per shipment -> 2026 rate per FXF Rules Tariff
+$6.03 per cwt. per each 24 hours, subject to the following minimum and maximum charges:
+a. Minimum charge, LTL, $59.00 per shipment per each 24 hours, but not less than $210.00 per shipment -> 2026 rate per FXF Rules Tariff
 
 Calculation:
 1,500 (weight) / 100 = 15 CWT
 15 x $6.03 = $90.45
 $90.45 x 5 days = $452.25 STORAGE FEE</div>`,
-
     choices: [
       {
         label: "Continue",
@@ -505,22 +517,48 @@ $90.45 x 5 days = $452.25 STORAGE FEE</div>`,
     choices: []
   },
 
-  // ===== NO FLOW =====
+  // ===== NO FLOW (CORRECTED) =====
   storage_no_documents: {
-    text: "Advise the customer regarding the storage fee in accordance with the FXF Rules Tariff. See sample response below:",
-    help: "Provide the sample response template to the customer explaining the storage fee policy.",
-    note: `<div style="margin-top:12px; padding:14px; border-radius:12px; background:#f8fafc; border:1px solid #e2e8f0; white-space:pre-wrap;"><strong>Sample response template:</strong>
+    text: "Reach out to the destination center first to verify the storage fee and request the backup documents to support the validity of the storage fee.",
+    help: "Contact the destination center to obtain supporting documents.",
+    choices: [
+      {
+        label: "Continue",
+        next: "storage_no_documents_check",
+        icon: "fa-solid fa-arrow-right",
+        desc: "Check if center provided documents."
+      }
+    ]
+  },
 
-Hello,
+  storage_no_documents_check: {
+    text: "Has the center provided any supporting documents?",
+    help: "Verify if the center has supplied supporting documentation.",
+    choices: [
+      {
+        label: "YES – Documents provided",
+        next: "storage_no_documents_yes",
+        icon: "fa-solid fa-check-circle",
+        desc: "Fee is valid; advise customer."
+      },
+      {
+        label: "NO – No documents provided",
+        next: "storage_no_documents_no",
+        icon: "fa-solid fa-circle-xmark",
+        desc: "Remove the Storage fee."
+      }
+    ]
+  },
 
-My name is [######], and I am here to assist you with your dispute.
+  storage_no_documents_yes: {
+    text: "Storage fee is valid. Advise the customer accordingly.",
+    help: "Inform the customer that the storage fee is valid based on the supporting documents.",
+    choices: []
+  },
 
-The storage fee on Invoice [##########] has been reviewed and deemed valid based on the supporting documents on file. Additionally, when freight is held in FedEx's possession due to the act or omission of the shipper, consignee, or owner, or for customs clearance or inspection, such freight will be considered stored, and charges per shipment will apply.
-
-For more information on storage fees, please refer to our FXF 100-W Rules Tariff, Item 910.
-
-Thank you for choosing FedEx, and we hope you have a great day.
-FedEx Freight, Inc. – Invoicing Solutions</div>`,
+  storage_no_documents_no: {
+    text: "Remove the Storage fee.",
+    help: "No supporting documentation exists to justify the storage fee. Remove the fee from the invoice.",
     choices: []
   }
 };
