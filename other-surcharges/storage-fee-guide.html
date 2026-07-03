@@ -352,7 +352,7 @@ const NODES = {
     choices: [
       {
         label: "YES – Documents exist",
-        next: "storage_grade",
+        next: "storage_dispute_type",
         icon: "fa-solid fa-check-circle",
         desc: "Documents support the storage fee."
       },
@@ -365,38 +365,17 @@ const NODES = {
     ]
   },
 
-  // ==================== GRADE ====================
-  storage_grade: {
-    text: "GRADE",
-    help: "Determine if the storage fee is valid or if more information is needed.",
-    choices: [
-      {
-        label: "VALIDITY",
-        next: "storage_validity",
-        icon: "fa-solid fa-check-circle",
-        desc: "Fee is valid; advise customer."
-      },
-      {
-        label: "NEED MORE INFO",
-        next: "storage_dispute_type",
-        icon: "fa-solid fa-circle-question",
-        desc: "Need more info; investigate dispute."
-      }
-    ]
-  },
-
-  // ===== VALIDITY =====
-  storage_validity: {
-    text: "Advise the customer regarding the storage fee in accordance with the FXF Rules Tariff. See sample response below:\n\nHello,\nMy name is [####], and I am here to assist you with your dispute.\nThe storage fee on Invoice [####] has been reviewed and deemed valid based on the supporting documents on file. Additionally, when freight is held in FedEx's possession due to the act or omission of the shipper, consignee, or owner, or for customs clearance or inspection, such freight will be considered stored, and charges per shipment will apply.\nFor more information on storage fees, please refer to our FXF 100-W Rules Tariff, Item 910.\nThank you for choosing FedEx, and we hope you have a great day.\nFedEx Freight, Inc. – Invoicing Solutions",
-    help: "Provide the sample response template to the customer explaining the storage fee policy.",
-    choices: []
-  },
-
   // ===== DISPUTE TYPE =====
   storage_dispute_type: {
     text: "What is the customer's dispute regarding the storage fee?",
     help: "Identify the type of dispute to follow the correct resolution path.",
     choices: [
+      {
+        label: "VALIDITY / NEED MORE INFO",
+        next: "storage_validity",
+        icon: "fa-solid fa-circle-question",
+        desc: "Fee is valid; advise customer."
+      },
       {
         label: "CALCULATION",
         next: "storage_calculation",
@@ -412,9 +391,16 @@ const NODES = {
     ]
   },
 
+  // ===== VALIDITY / NEED MORE INFO =====
+  storage_validity: {
+    text: "Advise the customer regarding the storage fee in accordance with the FXF Rules Tariff. See sample response below:\n\nHello,\nMy name is [######], and I am here to assist you with your dispute.\n\nThe storage fee on Invoice [##########] has been reviewed and deemed valid based on the supporting documents on file. Additionally, when freight is held in FedEx's possession due to the act or omission of the shipper, consignee, or owner, or for customs clearance or inspection, such freight will be considered stored, and charges per shipment will apply.\n\nFor more information on storage fees, please refer to our FXF 100-W Rules Tariff, Item 910.\n\nThank you for choosing FedEx, and we hope you have a great day.\nFedEx Freight, Inc. – Invoicing Solutions",
+    help: "Provide the sample response template to the customer explaining the storage fee policy.",
+    choices: []
+  },
+
   // ===== CALCULATION FLOW =====
   storage_calculation: {
-    text: "Sample PRO: 8487660392\n\nWeight is 1,500 LBS\nPer Cargo Care, On Hand notice was sent on 1/30/2026 (FRI)\nDelivery date: 02/09/2026\nLength of time the freight was stored: 5 days\n\nStorage fees start at 12:01 the first business day after the notice is sent.\nStorage is not charged for the day the freight is delivered.\nStorage is not charged on non-business days.\n\n$6.03 per cwt. per each 24 hours, subject to the following minimum and maximum charges:\nMinimum charge, LTL, $59.00 per shipment per each 24 hours, but not less than $210.00 per shipment – 2026 rate per FXF Rules Tariff\n\nCalculation:\n1,500 (weight) / 100 = 15 CWT\n15 × $6.03 = $90.45\n$90.45 × 5 days = $452.25 STORAGE FEE",
+    text: "Sample PRO: 8487660392\n\nWeight is 1,500LBS\nPer Cargo Care, On Hand notice was sent on 1/30/2026 (FRI)\nDelivery date: 02/09/2026\nLength of time the freight was stored: 5 days\n  a. Storage fees start at 12:01 the first business day after the notice is sent.\n  b. Storage is not charged for the day the freight is delivered.\n  c. Storage is not charged on non-business days.\n\n$6.03 per cwt. per each 24 hours, subject to the following minimum and maximum charges:\na. Minimum charge, LTL, $59.00 per shipment per each 24 hours, but not less than $210.00 per shipment -> 2026 rate per FXF Rules Tariff\n\nCalculation:\n1,500 (weight) / 100 = 15 CWT\n15 x $6.03 = $90.45\n$90.45 x 5 days = $452.25 STORAGE FEE",
     help: "Review the sample calculation and compare with the PRO.",
     choices: [
       {
@@ -479,75 +465,36 @@ const NODES = {
         label: "YES – FedEx fault confirmed",
         next: "storage_fedex_fault_yes",
         icon: "fa-solid fa-check-circle",
-        desc: "Advise customer fee is valid."
+        desc: "Reach out to TL for write-off approval."
       },
       {
         label: "NO – Not FedEx's fault",
         next: "storage_fedex_fault_no",
         icon: "fa-solid fa-circle-xmark",
-        desc: "Reach out to center for documents."
+        desc: "Advise customer fee is valid."
       }
     ]
   },
 
   storage_fedex_fault_yes: {
-    text: "Advise the customer that the Storage fee is valid and provide the response of the center.",
-    help: "Inform the customer that the storage fee is valid and share the center's response.",
+    text: "Reach out to your TL for write-off approval.",
+    help: "Contact your team lead to approve the write-off for the storage fee.",
     choices: []
   },
 
   storage_fedex_fault_no: {
-    text: "Reach out to the destination center to verify the storage fee and request the backup documents to support the validity of the storage fee.",
-    help: "Contact the center to obtain supporting documents.",
-    choices: [
-      {
-        label: "Continue",
-        next: "storage_fedex_fault_documents",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Check if center provided documents."
-      }
-    ]
-  },
-
-  storage_fedex_fault_documents: {
-    text: "Has the center provided any supporting documents?",
-    help: "Verify if the center has supplied supporting documentation.",
-    choices: [
-      {
-        label: "YES – Documents provided",
-        next: "storage_fedex_fault_docs_yes",
-        icon: "fa-solid fa-check-circle",
-        desc: "Fee is valid; advise customer."
-      },
-      {
-        label: "NO – No documents provided",
-        next: "storage_fedex_fault_docs_no",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove the Storage fee."
-      }
-    ]
-  },
-
-  storage_fedex_fault_docs_yes: {
-    text: "Storage fee is valid. Advise the customer accordingly.",
-    help: "Inform the customer that the storage fee is valid based on the supporting documents.",
+    text: "Advise the customer that the Storage fee is valid and provide the response of the center.",
+    help: "Inform the customer that the storage fee is valid based on the center's confirmation.",
     choices: []
   },
 
-  storage_fedex_fault_docs_no: {
-    text: "Remove the Storage fee.",
-    help: "No supporting documentation exists to justify the storage fee. Remove the fee from the invoice.",
-    choices: []
-  },
-
-  // ==================== NO FLOW ====================
+  // ===== NO FLOW =====
   storage_no_documents: {
-    text: "Advise the customer regarding the storage fee in accordance with the FXF Rules Tariff. See sample response below:\n\nHello,\nMy name is [####], and I am here to assist you with your dispute.\nThe storage fee on Invoice [####] has been reviewed and deemed valid based on the supporting documents on file. Additionally, when freight is held in FedEx's possession due to the act or omission of the shipper, consignee, or owner, or for customs clearance or inspection, such freight will be considered stored, and charges per shipment will apply.\nFor more information on storage fees, please refer to our FXF 100-W Rules Tariff, Item 910.\nThank you for choosing FedEx, and we hope you have a great day.\nFedEx Freight, Inc. – Invoicing Solutions",
+    text: "Advise the customer regarding the storage fee in accordance with the FXF Rules Tariff. See sample response below:\n\nHello,\nMy name is [######], and I am here to assist you with your dispute.\n\nThe storage fee on Invoice [##########] has been reviewed and deemed valid based on the supporting documents on file. Additionally, when freight is held in FedEx's possession due to the act or omission of the shipper, consignee, or owner, or for customs clearance or inspection, such freight will be considered stored, and charges per shipment will apply.\n\nFor more information on storage fees, please refer to our FXF 100-W Rules Tariff, Item 910.\n\nThank you for choosing FedEx, and we hope you have a great day.\nFedEx Freight, Inc. – Invoicing Solutions",
     help: "Provide the sample response template to the customer explaining the storage fee policy.",
     choices: []
   }
 };
-
       function escapeHtml(v){ return String(v??"").replace(/[&<>]/g,function(m){ if(m==="&") return "&amp;"; if(m==="<") return "&lt;"; if(m===">") return "&gt;"; return m; }); }
       function normalizeId(str){ return String(str||"").toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,""); }
       function getDocId(rec,type){ return `${type}__${normalizeId(rec)}`; }
