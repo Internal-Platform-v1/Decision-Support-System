@@ -2837,8 +2837,18 @@
 }
 
 #history-dropdown{
-  position: absolute;
-  z-index: 99999 !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 420px;
+    max-height: 500px;
+    overflow-y: auto;
+    z-index: 999999;
+    display: none;
+}
+
+#history-dropdown.is-open{
+    display:block;
 }
   </style>
 </head>
@@ -3835,28 +3845,28 @@
   }
 
 function toggleHistoryDropdown(e) {
-  e.stopPropagation();
+    e.stopPropagation();
 
-  const dropdown = document.getElementById('history-dropdown');
-  const historyItem = document.getElementById('history-item');
+    const dropdown = document.getElementById('history-dropdown');
+    const historyItem = document.getElementById('history-item');
 
-  if (!dropdown || !historyItem) return;
+    if (!dropdown || !historyItem) return;
 
-  const isOpen = dropdown.classList.contains('is-open');
+    const isOpen = dropdown.classList.contains('is-open');
 
-  // reset
-  historyItem.classList.remove('dropdown-active');
+    if (isOpen) {
+        dropdown.classList.remove('is-open');
+        return;
+    }
 
-  if (!isOpen) {
     renderHistoryDropdown();
-    historyItem.classList.add('dropdown-active');
-  }
 
-  dropdown.classList.toggle('is-open');
+    const rect = historyItem.getBoundingClientRect();
 
-  if (isOpen) {
-    historyItem.classList.remove('dropdown-active');
-  }
+    dropdown.style.top = `${rect.bottom + 8}px`;
+    dropdown.style.left = `${rect.left}px`;
+
+    dropdown.classList.add('is-open');
 }
 
   // =========================================================
