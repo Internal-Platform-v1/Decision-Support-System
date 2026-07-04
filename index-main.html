@@ -262,31 +262,33 @@
       gap:18px;
     }
 
-.focus-card{
-  border-radius: var(--radius-2xl);
-  padding: 24px;
-  background: rgba(255,255,255,.74);
-  border: 1px solid rgba(255,255,255,.92);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(18px);
-  overflow: visible; /* FIX */
-  position: relative;
-  z-index: 1;
-}
-.side-stack{
-    position: relative;
-    z-index: 1;
-}
+    .focus-card{
+      border-radius: var(--radius-2xl);
+      padding: 24px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(255,255,255,.92);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(18px);
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+    }
+    .side-stack{
+        position: relative;
+        z-index: 1;
+    }
 
-.focus-card{
-    position: relative;
-    z-index: 1;
-}
+    .focus-card{
+        position: relative;
+        z-index: 1;
+    }
 
-.focus-card:has(#history-dropdown.is-open),
-.focus-card:has(#mostused-dropdown.is-open){
-    z-index: 9999;
-}
+    /* Raise the entire card when any dropdown inside is open */
+    .focus-card:has(#history-dropdown.is-open),
+    .focus-card:has(#mostused-dropdown.is-open){
+        z-index: 10000;
+    }
+
     .focus-card.dark{
       color:#fff;
       background:linear-gradient(135deg, var(--dark), var(--dark-2));
@@ -381,7 +383,7 @@
       background:rgba(255,255,255,.68);
       border:1px solid rgba(58,64,24,.08);
       transition:transform .22s var(--ease), background .22s var(--ease);
-      position:relative; /* for dropdown positioning */
+      position:relative;
       cursor:pointer;
     }
 
@@ -434,7 +436,7 @@
       box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      z-index: 9999;
+      z-index: 10001; /* above everything */
       opacity: 0;
       transform: scale(0.95) translateY(-10px);
       transform-origin: top left;
@@ -538,7 +540,7 @@
       color: var(--line, rgba(148,163,184,.4));
     }
 
-    /* ===== HISTORY DROPDOWN (fixed with proper styling) ===== */
+    /* ===== HISTORY DROPDOWN (fixed) ===== */
     #history-item {
       position: relative;
     }
@@ -557,7 +559,7 @@
       box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      z-index: 9999;
+      z-index: 10001;
       opacity: 0;
       transform: scale(0.95) translateY(-10px);
       transform-origin: top left;
@@ -2880,7 +2882,7 @@
               <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
 
               <ul class="quick-list">
-                <!-- History dropdown (fixed) -->
+                <!-- History dropdown -->
                 <li class="quick-item" id="history-item">
                   <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                   <div>
@@ -2898,7 +2900,7 @@
                   <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
                 </li>
 
-                <!-- Most used guides (dropdown fixed — now has the dropdown element) -->
+                <!-- Most used guides (dropdown) -->
                 <li class="quick-item" id="mostused-item">
                   <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
                   <div>
