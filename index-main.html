@@ -415,7 +415,7 @@
       line-height:1.45;
     }
 
-    /* ===== DROPDOWN FOR MOST USED (similar to history) ===== */
+    /* ===== DROPDOWN FOR MOST USED (fixed) ===== */
     #mostused-item {
       position: relative;
     }
@@ -434,7 +434,7 @@
       box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      z-index: 200;
+      z-index: 9999;
       opacity: 0;
       transform: scale(0.95) translateY(-10px);
       transform-origin: top left;
@@ -538,26 +538,38 @@
       color: var(--line, rgba(148,163,184,.4));
     }
 
-    /* ===== HISTORY DROPDOWN (unchanged) ===== */
+    /* ===== HISTORY DROPDOWN (fixed with proper styling) ===== */
     #history-item {
       position: relative;
     }
-#history-dropdown {
-  display: block;
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  width: 100%;
-  max-height: 280px;
-  overflow-y: auto;
-  z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
-}
-#history-dropdown.is-open {
-  opacity: 1;
-  pointer-events: auto;
-}
+    #history-dropdown {
+      display: block;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 10px 6px;
+      border-radius: var(--radius-xl, 24px);
+      background: var(--soft-card, rgba(255,255,255,.82));
+      border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
+      box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 9999;
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      transform-origin: top left;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #history-dropdown.is-open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
     #history-dropdown::-webkit-scrollbar {
       width: 5px;
     }
@@ -568,6 +580,7 @@
       background: var(--line, rgba(148,163,184,.3));
       border-radius: 999px;
     }
+
     .history-item {
       display: flex;
       align-items: center;
@@ -2867,7 +2880,7 @@
               <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
 
               <ul class="quick-list">
-                <!-- History dropdown -->
+                <!-- History dropdown (fixed) -->
                 <li class="quick-item" id="history-item">
                   <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                   <div>
@@ -2885,14 +2898,17 @@
                   <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
                 </li>
 
-                <!-- Most used guide (dropdown) -->
-<li class="quick-item" id="mostused-item">
-  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
-  <div>
-    <strong>Most used guides</strong>
-    <span id="mostused-guide-label">Loading…</span>
-  </div>
-</li>
+                <!-- Most used guides (dropdown fixed — now has the dropdown element) -->
+                <li class="quick-item" id="mostused-item">
+                  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+                  <div>
+                    <strong>Most used guides</strong>
+                    <span id="mostused-guide-label">Loading…</span>
+                  </div>
+                  <div id="mostused-dropdown">
+                    <div id="mostused-dropdown-list"></div>
+                  </div>
+                </li>
 
                 <li class="quick-item" id="other-item">
                   <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
@@ -3748,7 +3764,7 @@
   }
 
   // =========================================================
-  // PREMIUM HISTORY TRACKING & DROPDOWN (personal)
+  // PREMIUM HISTORY TRACKING & DROPDOWN (fixed)
   // =========================================================
   const HISTORY_KEY = 'guideHistory';
 
@@ -3809,19 +3825,19 @@
     });
   }
 
-function toggleHistoryDropdown(e) {
-  e.stopPropagation();
+  function toggleHistoryDropdown(e) {
+    e.stopPropagation();
 
-  const dropdown = document.getElementById('history-dropdown');
+    const dropdown = document.getElementById('history-dropdown');
 
-  if (!dropdown) return;
+    if (!dropdown) return;
 
-  if (!dropdown.classList.contains('is-open')) {
-    renderHistoryDropdown();
+    if (!dropdown.classList.contains('is-open')) {
+      renderHistoryDropdown();
+    }
+
+    dropdown.classList.toggle('is-open');
   }
-
-  dropdown.classList.toggle('is-open');
-}
 
   // =========================================================
   // SYSTEM-WIDE TOP 5 MOST USED GUIDES (Firestore)
@@ -3868,29 +3884,72 @@ function toggleHistoryDropdown(e) {
     }
   }
 
-  // Render the top 5 into the mostused dropdown
-async function renderMostUsedDropdown() {
+  // Render the top 5 into the mostused dropdown and update the label
+  async function renderMostUsedDropdown() {
     const label = document.getElementById('mostused-guide-label');
+    const list = document.getElementById('mostused-dropdown-list');
     if (!label) return;
 
     try {
-        const topGuides = await fetchTopGuides(5);
+      const topGuides = await fetchTopGuides(5);
 
-        if (!topGuides || topGuides.length === 0) {
-            label.textContent = 'No usage data';
-            return;
+      if (!topGuides || topGuides.length === 0) {
+        label.textContent = 'No usage data';
+        if (list) {
+          list.innerHTML = `
+            <div class="mostused-empty">
+              <i class="fa-solid fa-inbox"></i>
+              <span>No usage data yet</span>
+            </div>
+          `;
         }
+        return;
+      }
 
-        label.textContent = topGuides
-            .slice(0, 5)
-            .map(g => g.guideTitle || g.guideId)
-            .join(' • ');
+      // Update the label (simple version)
+      label.textContent = topGuides
+        .slice(0, 5)
+        .map(g => g.guideTitle || g.guideId)
+        .join(' • ');
+
+      // Populate the dropdown
+      if (list) {
+        let html = '';
+        topGuides.forEach((item) => {
+          const count = item.usageCount || 0;
+          html += `
+            <div class="mostused-item" data-url="${item.guideUrl || '#'}">
+              <div class="mui-left">
+                <div class="mui-icon"><i class="fa-solid fa-route"></i></div>
+                <span class="mui-title">${item.guideTitle || item.guideId}</span>
+              </div>
+              <span class="mui-count">${count}×</span>
+            </div>
+          `;
+        });
+        list.innerHTML = html;
+
+        list.querySelectorAll('.mostused-item').forEach(el => {
+          el.addEventListener('click', function(e) {
+            const url = this.dataset.url;
+            if (url && url !== '#') window.location.href = url;
+          });
+        });
+      }
 
     } catch (error) {
-        console.error('Failed to load top guides:', error);
-        label.textContent = 'Unable to load guides';
+      console.error('Failed to load top guides:', error);
+      label.textContent = 'Unable to load guides';
+      if (list) {
+        list.innerHTML = `
+          <div class="mostused-empty">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Failed to load guides</span>
+          </div>
+        `;
+      }
     }
-}
+  }
 
   function toggleMostUsedDropdown(e) {
     e.stopPropagation();
@@ -3928,14 +3987,19 @@ async function renderMostUsedDropdown() {
       recentItem.onclick = null;
     }
 
-    // Initial load of dropdown content (will be loaded on first open)
-    // But we can preload the label with a placeholder
-const label = document.getElementById('mostused-guide-label');
-if (label) {
-    label.innerHTML = 'Loading...';
-}
+    // Most used
+    const mostusedItem = document.getElementById('mostused-item');
+    if (mostusedItem) {
+      mostusedItem.style.cursor = 'pointer';
+      mostusedItem.onclick = toggleMostUsedDropdown;
+    }
 
-renderMostUsedDropdown();
+    // Initial load of most used label
+    const label = document.getElementById('mostused-guide-label');
+    if (label) {
+      label.innerHTML = 'Loading…';
+    }
+    renderMostUsedDropdown();
 
     // Also attach tracking to guide links
     document.querySelectorAll('.guide-link').forEach(link => {
@@ -3952,14 +4016,19 @@ renderMostUsedDropdown();
     });
 
     // Close dropdowns on outside click
-document.addEventListener('click', function(e) {
-  const dropdown = document.getElementById('history-dropdown');
-  const historyItem = document.getElementById('history-item');
+    document.addEventListener('click', function(e) {
+      const historyDropdown = document.getElementById('history-dropdown');
+      const historyItemEl = document.getElementById('history-item');
+      if (historyDropdown && historyItemEl && !historyItemEl.contains(e.target)) {
+        historyDropdown.classList.remove('is-open');
+      }
 
-  if (dropdown && historyItem && !historyItem.contains(e.target)) {
-    dropdown.classList.remove('is-open');
-  }
-});
+      const mostusedDropdown = document.getElementById('mostused-dropdown');
+      const mostusedItemEl = document.getElementById('mostused-item');
+      if (mostusedDropdown && mostusedItemEl && !mostusedItemEl.contains(e.target)) {
+        mostusedDropdown.classList.remove('is-open');
+      }
+    });
   }
 
   // =========================================================
