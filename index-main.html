@@ -283,9 +283,8 @@
         z-index: 1;
     }
 
-    /* Raise the entire card when any dropdown inside is open */
-    .focus-card:has(#history-dropdown.is-open),
-    .focus-card:has(#mostused-dropdown.is-open){
+    /* When any dropdown inside is open, raise the entire card above the next card */
+    .focus-card.dropdown-open {
         z-index: 10000;
     }
 
@@ -417,7 +416,7 @@
       line-height:1.45;
     }
 
-    /* ===== DROPDOWN FOR MOST USED (fixed) ===== */
+    /* ===== DROPDOWN FOR MOST USED ===== */
     #mostused-item {
       position: relative;
     }
@@ -540,7 +539,7 @@
       color: var(--line, rgba(148,163,184,.4));
     }
 
-    /* ===== HISTORY DROPDOWN (fixed) ===== */
+    /* ===== HISTORY DROPDOWN ===== */
     #history-item {
       position: relative;
     }
@@ -2873,7 +2872,7 @@
           </div>
 
           <aside class="side-stack">
-            <div class="focus-card reveal delay-2">
+            <div class="focus-card reveal delay-2" id="historyFocusCard">
               <div class="card-label">
                 <span><i class="fa-solid fa-compass"></i> HISTORY</span>
                 <i class="fa-solid fa-clock-rotate-left"></i>
@@ -3827,11 +3826,23 @@
     });
   }
 
+  // Helper to manage the dropdown-open class on the focus-card
+  function updateFocusCardDropdownState() {
+    const focusCard = document.getElementById('historyFocusCard');
+    if (!focusCard) return;
+    const historyOpen = document.getElementById('history-dropdown')?.classList.contains('is-open');
+    const mostusedOpen = document.getElementById('mostused-dropdown')?.classList.contains('is-open');
+    if (historyOpen || mostusedOpen) {
+      focusCard.classList.add('dropdown-open');
+    } else {
+      focusCard.classList.remove('dropdown-open');
+    }
+  }
+
   function toggleHistoryDropdown(e) {
     e.stopPropagation();
 
     const dropdown = document.getElementById('history-dropdown');
-
     if (!dropdown) return;
 
     if (!dropdown.classList.contains('is-open')) {
@@ -3839,6 +3850,7 @@
     }
 
     dropdown.classList.toggle('is-open');
+    updateFocusCardDropdownState();
   }
 
   // =========================================================
@@ -3962,6 +3974,7 @@
       renderMostUsedDropdown(); // refresh on open
     }
     dropdown.classList.toggle('is-open');
+    updateFocusCardDropdownState();
   }
 
   // =========================================================
@@ -4017,18 +4030,24 @@
       });
     });
 
-    // Close dropdowns on outside click
+    // Close dropdowns on outside click and update class
     document.addEventListener('click', function(e) {
       const historyDropdown = document.getElementById('history-dropdown');
       const historyItemEl = document.getElementById('history-item');
       if (historyDropdown && historyItemEl && !historyItemEl.contains(e.target)) {
-        historyDropdown.classList.remove('is-open');
+        if (historyDropdown.classList.contains('is-open')) {
+          historyDropdown.classList.remove('is-open');
+          updateFocusCardDropdownState();
+        }
       }
 
       const mostusedDropdown = document.getElementById('mostused-dropdown');
       const mostusedItemEl = document.getElementById('mostused-item');
       if (mostusedDropdown && mostusedItemEl && !mostusedItemEl.contains(e.target)) {
-        mostusedDropdown.classList.remove('is-open');
+        if (mostusedDropdown.classList.contains('is-open')) {
+          mostusedDropdown.classList.remove('is-open');
+          updateFocusCardDropdownState();
+        }
       }
     });
   }
