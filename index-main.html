@@ -263,20 +263,14 @@
     }
 
     .focus-card{
-      border-radius: var(--radius-2xl);
-      padding: 24px;
-      background: rgba(255,255,255,.74);
-      border: 1px solid rgba(255,255,255,.92);
-      box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(18px);
-      overflow: visible;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Raise card when dropdown is open */
-    .focus-card.dropdown-open {
-      z-index: 10000 !important;
+      border-radius:var(--radius-2xl);
+      padding:24px;
+      background:rgba(255,255,255,.74);
+      border:1px solid rgba(255,255,255,.92);
+      box-shadow:var(--shadow-lg);
+      backdrop-filter:blur(18px);
+      overflow:hidden;
+      position:relative;
     }
 
     .focus-card.dark{
@@ -373,8 +367,6 @@
       background:rgba(255,255,255,.68);
       border:1px solid rgba(58,64,24,.08);
       transition:transform .22s var(--ease), background .22s var(--ease);
-      position:relative;
-      cursor:pointer;
     }
 
     .quick-item:hover{
@@ -407,328 +399,6 @@
       line-height:1.45;
     }
 
-    /* ===== DROPDOWN FOR MOST USED (matches history style) ===== */
-    #mostused-item {
-      position: relative;
-    }
-    #mostused-dropdown {
-      display: block;
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      width: 100%;
-      max-height: 280px;
-      overflow-y: auto;
-      padding: 10px 6px;
-      border-radius: var(--radius-xl, 24px);
-      background: var(--soft-card, rgba(255,255,255,.82));
-      border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
-      box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      z-index: 10001;
-      opacity: 0;
-      transform: scale(0.95) translateY(-10px);
-      transform-origin: top left;
-      pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-                  transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    #mostused-dropdown.is-open {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
-    }
-    #mostused-dropdown::-webkit-scrollbar {
-      width: 5px;
-    }
-    #mostused-dropdown::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    #mostused-dropdown::-webkit-scrollbar-thumb {
-      background: var(--line, rgba(148,163,184,.3));
-      border-radius: 999px;
-    }
-
-    .mostused-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      margin: 4px 4px;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.2s ease;
-      color: var(--ink, #0f172a);
-      font-weight: 600;
-      font-size: 14px;
-      background: transparent;
-      border: 1px solid transparent;
-    }
-    .mostused-item:hover {
-      background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
-      border-color: var(--line, rgba(148,163,184,.12));
-      transform: translateX(6px) scale(1.01);
-      box-shadow: 0 8px 24px rgba(2,6,23,.06);
-    }
-    .mostused-item .mui-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-    .mostused-item .mui-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
-      color: var(--teal, #4d148c);
-      font-size: 14px;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-    .mostused-item:hover .mui-icon {
-      background: var(--teal, #4d148c);
-      color: #fff;
-      transform: scale(1.05) rotate(-4deg);
-    }
-    .mostused-item .mui-title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--ink, #0f172a);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-    .mostused-item .mui-count {
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted, #475569);
-      background: var(--cream, #eef4fb);
-      padding: 4px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line, rgba(148,163,184,.12));
-    }
-    .mostused-empty {
-      padding: 20px 16px;
-      text-align: center;
-      color: var(--muted, #475569);
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .mostused-empty i {
-      font-size: 28px;
-      color: var(--line, rgba(148,163,184,.4));
-    }
-
-    /* ===== HISTORY DROPDOWN (exactly like billing dispute page) ===== */
-    #history-item {
-      position: relative;
-    }
-
-    #history-dropdown {
-      display: block;
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      width: 100%;
-      max-height: 280px;
-      overflow-y: auto;
-      padding: 10px 6px;
-      border-radius: var(--radius-xl, 24px);
-      background: var(--soft-card, rgba(255,255,255,.82));
-      border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
-      box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      z-index: 10001;
-      opacity: 0;
-      transform: scale(0.95) translateY(-10px);
-      transform-origin: top left;
-      pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-                  transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    #history-dropdown.is-open {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
-    }
-
-    #history-dropdown::-webkit-scrollbar {
-      width: 5px;
-    }
-    #history-dropdown::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    #history-dropdown::-webkit-scrollbar-thumb {
-      background: var(--line, rgba(148,163,184,.3));
-      border-radius: 999px;
-    }
-
-    #history-dropdown-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 16px 6px 16px;
-      border-bottom: 1px solid var(--line, rgba(148,163,184,.12));
-      margin-bottom: 4px;
-    }
-
-    #history-dropdown-header span {
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--muted, #475569);
-    }
-
-    .history-clear-all {
-      background: transparent;
-      border: none;
-      color: var(--muted, #475569);
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 4px 12px;
-      border-radius: 999px;
-      transition: background 0.2s ease, color 0.2s ease;
-      border: 1px solid transparent;
-    }
-
-    .history-clear-all:hover {
-      background: color-mix(in srgb, var(--teal, #4d148c) 8%, var(--cream-2, #f5f8fc));
-      color: var(--teal, #4d148c);
-      border-color: var(--line, rgba(148,163,184,.12));
-    }
-
-    .history-clear-all:active {
-      transform: scale(0.96);
-    }
-
-    .history-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 16px;
-      margin: 4px 4px;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.2s ease;
-      color: var(--ink, #0f172a);
-      font-weight: 600;
-      font-size: 14px;
-      background: transparent;
-      border: 1px solid transparent;
-    }
-
-    .history-item:hover {
-      background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
-      border-color: var(--line, rgba(148,163,184,.12));
-      transform: translateX(6px) scale(1.01);
-      box-shadow: 0 8px 24px rgba(2,6,23,.06);
-    }
-
-    .history-item .history-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .history-item .history-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
-      color: var(--teal, #4d148c);
-      font-size: 14px;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .history-item:hover .history-icon {
-      background: var(--teal, #4d148c);
-      color: #fff;
-      transform: scale(1.05) rotate(-4deg);
-    }
-
-    .history-item .history-title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: var(--ink, #0f172a);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .history-item .history-time {
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted, #475569);
-      background: var(--cream, #eef4fb);
-      padding: 4px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line, rgba(148,163,184,.12));
-    }
-
-    .history-delete {
-      background: transparent;
-      border: none;
-      color: var(--muted, #475569);
-      font-size: 14px;
-      cursor: pointer;
-      padding: 4px 6px;
-      border-radius: 8px;
-      transition: background 0.2s ease, color 0.2s ease;
-      line-height: 1;
-      opacity: 0.4;
-    }
-
-    .history-item:hover .history-delete {
-      opacity: 1;
-    }
-
-    .history-delete:hover {
-      background: color-mix(in srgb, #ef4444 12%, transparent);
-      color: #ef4444;
-    }
-
-    .history-empty {
-      padding: 20px 16px;
-      text-align: center;
-      color: var(--muted, #475569);
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .history-empty i {
-      font-size: 28px;
-      color: var(--line, rgba(148,163,184,.4));
-    }
-
-    /* =========================================================
-       SEARCH & GRID (unchanged)
-    ========================================================= */
     .search-section{
       padding:18px 0 22px;
     }
@@ -2113,6 +1783,8 @@
 
     /* =========================================================
        MAIN INDEX ALIGNMENT FIX
+       Uses the same theme language as EBS / FBC / Links.
+       Removes leftover FedEx orange/radiant mixing from non-FedEx themes.
        ========================================================= */
 
     body.theme-fedex .search-panel,
@@ -2164,6 +1836,7 @@
       color:var(--muted) !important;
     }
 
+    /* Keep the library heading readable on darker themes, like the current premium pages */
     body.theme-fedex #guideLibrarySection .section-title,
     body.theme-basic #guideLibrarySection .section-title{
       color:#ffffff !important;
@@ -2235,6 +1908,7 @@
       color:var(--teal) !important;
     }
 
+    /* Only FedEx keeps the orange icon in this small badge */
     body.theme-fedex #guideLibrarySection .section-kicker i{
       color:#ff8a33 !important;
     }
@@ -2338,7 +2012,11 @@
     #timeSettingsModal #saveTimeSettings{margin-top:16px !important}
     #timeCalendarPopup #openTimeSettings{margin-top:14px !important}
 
-    /* Dark focus card label fix */
+    /* =========================================================
+       DARK FOCUS CARD LABEL FIX
+       Fixes faded labels like DIRECTORY READY / SYSTEM READY
+       ========================================================= */
+
     body.theme-fedex .focus-card.dark .card-label span,
     body.theme-fedex .focus-card.dark .card-label span i{
       color:#ff8a33 !important;
@@ -2362,6 +2040,11 @@
       color:#60a5fa !important;
       text-shadow:none !important;
     }
+
+    /* =========================================================
+       MAIN INDEX GUIDE WORKSPACE PILL THEME FIX
+       Removes purple guide workspace pill from non-FedEx themes
+       ========================================================= */
 
     body.theme-fedex #guideLibrarySection .section-kicker{
       color:#f6e9ff !important;
@@ -2405,16 +2088,22 @@
 
     body.theme-simple #guideLibrarySection .section-kicker i{
       color:#2563eb !important;
-    }
+    } 
 
     body.theme-fedex .focus-card.dark,
     body.theme-atlas .focus-card.dark,
     body.theme-basic .focus-card.dark,
     body.theme-simple .focus-card.dark{
       border:none !important;
-    }
+    }    
+  
 
-    /* ===== GROUP PAGE ALIGNMENT ===== */
+
+    /* =========================================================
+       GROUP PAGE ALIGNMENT WITH MAIN INDEX
+       Applies the same main-index button/card behavior to group cards.
+       ========================================================= */
+
     body.theme-fedex .guide-grid,
     body.theme-atlas .guide-grid,
     body.theme-basic .guide-grid,
@@ -2655,7 +2344,12 @@
       body.theme-simple .guide-grid{grid-template-columns:1fr !important;}
     }
 
-    /* ===== GROUP PAGE LIBRARY HEADING READABILITY ===== */
+    /* =========================================================
+       GROUP PAGE LIBRARY HEADING READABILITY FIX
+       Corrects the Guide Library title colors per selected theme.
+       The group page uses #guideLibrary, not #guideLibrarySection.
+       ========================================================= */
+
     body.theme-fedex #guideLibrary .section-title{
       color:#ffffff !important;
       text-shadow:0 16px 38px rgba(2,6,23,.42) !important;
@@ -2724,7 +2418,11 @@
       color:#2563eb !important;
     }
 
-    /* ===== SEARCH PLACEHOLDER ===== */
+    /* =========================================================
+       GROUP PAGE SEARCH PLACEHOLDER COLOR FIX
+       Makes search placeholder readable for all themes
+       ========================================================= */
+
     body.theme-fedex #guideSearch::placeholder{
       color:#94a3b8 !important;
       opacity:1 !important;
@@ -2743,9 +2441,13 @@
     body.theme-simple #guideSearch::placeholder{
       color:#64748b !important;
       opacity:1 !important;
-    }
+    }  
+    /* =========================================================
+       GROUP PAGE FOOTER FIX
+       Prevents old page-level footer styles from creating
+       the large extra background bar behind the shared footer.
+       ========================================================= */
 
-    /* ===== FOOTER ===== */
     footer.site-footer{
       width:min(calc(100% - 32px), 1440px) !important;
       margin:34px auto 22px !important;
@@ -2772,28 +2474,33 @@
       box-shadow:0 18px 48px rgba(2,6,23,.14) !important;
     }
 
+    /* FedEx */
     body.theme-fedex footer.site-footer .footer-inner{
       background:
         radial-gradient(circle at 8% 20%, rgba(255,102,0,.14), transparent 28%),
         linear-gradient(135deg, rgba(77,20,140,.94), rgba(59,15,115,.90) 48%, rgba(7,17,31,.96)) !important;
     }
 
+    /* Atlas */
     body.theme-atlas footer.site-footer .footer-inner{
       background:
         radial-gradient(circle at 8% 20%, rgba(225,223,106,.14), transparent 28%),
         linear-gradient(135deg, rgba(14,83,97,.96), rgba(8,63,75,.94) 48%, rgba(58,64,24,.96)) !important;
     }
 
+    /* Basic */
     body.theme-basic footer.site-footer .footer-inner{
       background:linear-gradient(135deg, rgba(31,41,55,.96), rgba(17,24,39,.96) 55%, rgba(3,7,18,.96)) !important;
     }
 
+    /* Simple */
     body.theme-simple footer.site-footer .footer-inner{
       background:rgba(255,255,255,.88) !important;
       border-color:rgba(226,232,240,.95) !important;
       box-shadow:0 16px 42px rgba(15,23,42,.08) !important;
     }
 
+    /* Footer text and icon */
     footer.site-footer .footer-brand-line{
       display:flex !important;
       align-items:center !important;
@@ -2874,6 +2581,7 @@
       text-align:right !important;
     }
 
+    /* Mobile */
     @media (max-width:760px){
       footer.site-footer{
         width:min(calc(100% - 20px), 1440px) !important;
@@ -2893,6 +2601,141 @@
       }
     }
 
+/* ===== PREMIUM HISTORY DROPDOWN ===== */
+#history-item {
+  position: relative;
+}
+
+#history-dropdown {
+  display: block;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 10px 6px;
+  border-radius: var(--radius-xl, 24px);
+  background: var(--soft-card, rgba(255,255,255,.82));
+  border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
+  box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 200;
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+  transform-origin: top left;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#history-dropdown.is-open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+
+/* Scrollbar styling */
+#history-dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+#history-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+#history-dropdown::-webkit-scrollbar-thumb {
+  background: var(--line, rgba(148,163,184,.3));
+  border-radius: 999px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 4px 4px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease;
+  color: var(--ink, #0f172a);
+  font-weight: 600;
+  font-size: 14px;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.history-item:hover {
+  background: color-mix(in srgb, var(--teal, #4d148c) 10%, var(--cream-2, #f5f8fc));
+  border-color: var(--line, rgba(148,163,184,.12));
+  transform: translateX(6px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(2,6,23,.06);
+}
+
+.history-item .history-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.history-item .history-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--teal, #4d148c) 14%, var(--cream-2, #f5f8fc));
+  color: var(--teal, #4d148c);
+  font-size: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.history-item:hover .history-icon {
+  background: var(--teal, #4d148c);
+  color: #fff;
+  transform: scale(1.05) rotate(-4deg);
+}
+
+.history-item .history-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink, #0f172a);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.history-item .history-time {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted, #475569);
+  background: var(--cream, #eef4fb);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line, rgba(148,163,184,.12));
+}
+
+.history-empty {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--muted, #475569);
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-empty i {
+  font-size: 28px;
+  color: var(--line, rgba(148,163,184,.4));
+}
+    
   </style>
 </head>
 
@@ -2935,56 +2778,41 @@
             </div>
           </div>
 
-          <aside class="side-stack">
-            <div class="focus-card reveal delay-2" id="historyFocusCard">
-              <div class="card-label">
-                <span><i class="fa-solid fa-compass"></i> HISTORY</span>
-                <i class="fa-solid fa-clock-rotate-left"></i>
-              </div>
-              <h2>Pick up where you left off</h2>
-              <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
+<aside class="side-stack">
+  <div class="focus-card reveal delay-2">
+    <div class="card-label">
+      <span><i class="fa-solid fa-compass"></i> HISTORY</span>
+      <i class="fa-solid fa-clock-rotate-left"></i>
+    </div>
+    <h2>Pick up where you left off</h2>
+    <p>Quickly access your history, recent guides, most-used guides, and bookmarks to stay on track.</p>
 
-              <ul class="quick-list">
-                <!-- History dropdown -->
-                <li class="quick-item" id="history-item">
-                  <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                  <div>
-                    <strong>HISTORY</strong>
-                    <span>Click to open history ▼</span>
-                  </div>
-                  <div id="history-dropdown">
-                    <div id="history-dropdown-header">
-                      <span><i class="fa-regular fa-clock"></i> History</span>
-                      <button class="history-clear-all" id="clearAllHistoryBtn">Clear all</button>
-                    </div>
-                    <div id="history-dropdown-list"></div>
-                  </div>
-                </li>
-
-                <!-- Recent guide -->
-                <li class="quick-item" id="recent-item">
-                  <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
-                  <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
-                </li>
-
-                <!-- Most used guides (dropdown) -->
-                <li class="quick-item" id="mostused-item">
-                  <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
-                  <div>
-                    <strong>Most used guides</strong>
-                    <span id="mostused-guide-label">Loading…</span>
-                  </div>
-                  <div id="mostused-dropdown">
-                    <div id="mostused-dropdown-list"></div>
-                  </div>
-                </li>
-
-                <li class="quick-item" id="other-item">
-                  <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
-                  <div><strong>Other</strong><span>Bookmarks &amp; favorites (coming soon)</span></div>
-                </li>
-              </ul>
-            </div>
+    <ul class="quick-list">
+      <li class="quick-item" id="history-item">
+        <div class="quick-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div>
+          <strong>HISTORY</strong>
+          <span>Click to open history ▼</span>
+        </div>
+        <!-- Premium Dropdown -->
+        <div id="history-dropdown">
+          <div id="history-dropdown-list"></div>
+        </div>
+      </li>
+      <li class="quick-item" id="recent-item">
+        <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
+        <div><strong>Recent Guide</strong><span id="recent-guide-label">Loading…</span></div>
+      </li>
+      <li class="quick-item" id="mostused-item">
+        <div class="quick-icon"><i class="fa-solid fa-route"></i></div>
+        <div><strong>Most used guide</strong><span id="mostused-guide-label">Loading…</span></div>
+      </li>
+      <li class="quick-item" id="other-item">
+        <div class="quick-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div><strong>Other</strong><span>Bookmarks &amp; favorites (coming soon)</span></div>
+      </li>
+    </ul>
+  </div>
 
             <div class="focus-card dark reveal delay-3">
               <div class="card-label">
@@ -3485,7 +3313,7 @@
             <p class="small">Best for mass account updates, bill‑to corrections, shipper/consignee changes, and rebilling up to 500 PROs at once.</p>
           </article>
 
-          <!-- ===== 28. Allshorts ==== -->
+               <!-- ===== 28. Allshorts ==== -->  
           <article class="guide-card reveal delay-4" data-category="billing" data-keywords="all short partial short dispute claim loa shipment history weight piece pallet">
             <div class="guide-card-top">
               <span class="guide-meta"><i class="fa-solid fa-boxes"></i> Dispute</span>
@@ -3500,39 +3328,7 @@
             <a class="guide-link" href="all-shorts-guide.html">Open All Shorts Guide <i class="fa-solid fa-arrow-right"></i></a>
             <p class="small">Best for All Short and Partial Short disputes, claim status verification, LOA handling, Sales Representative escalation, and weight/piece count corrections.</p>
           </article>
-
-                    <!-- ===== Invalid Credit Taken Guide ===== -->
-          <article class="guide-card reveal delay-5" data-category="billing" data-keywords="invalid credit taken a0 invoice credit applied incorrectly remit reference gl detail payment detail arcoa">
-            <div class="guide-card-top">
-              <span class="guide-meta"><i class="fa-solid fa-file-invoice"></i> Credit</span>
-              <div class="guide-icon"><i class="fa-solid fa-file-invoice"></i></div>
-            </div>
-            <h3>Invalid Credit Taken Guide</h3>
-            <p class="lead">Verify invalid credit taken disputes by reviewing the A0 invoice, pulling up the original PRO from the REMIT REFERENCE, checking GL Detail and Payment Detail screens, and educating the customer about the charge.</p>
-            <div class="card-meta">
-              <span class="meta-pill"><i class="fa-solid fa-layer-group"></i> Billing</span>
-              <span class="meta-pill"><i class="fa-solid fa-credit-card"></i> Credit</span>
-            </div>
-            <a class="guide-link" href="invalid-credit-taken-guide.html">Open Invalid Credit Taken Guide <i class="fa-solid fa-arrow-right"></i></a>
-            <p class="small">Best for invalid credit taken disputes, A0 invoice verification, GL Detail review, Payment Detail confirmation, and customer education.</p>
-          </article>
-
-                    <!-- ===== Blind Shipment Guide ===== -->
-          <article class="guide-card reveal delay-6" data-category="billing" data-keywords="blind shipment shipper consignee hidden prepaid loa 2nd bol blind fee debtor update blnd">
-            <div class="guide-card-top">
-              <span class="guide-meta"><i class="fa-solid fa-eye-slash"></i> Blind Shipment</span>
-              <div class="guide-icon"><i class="fa-solid fa-eye-slash"></i></div>
-            </div>
-            <h3>Blind Shipment Guide</h3>
-            <p class="lead">Validate Blind Shipment fee disputes by verifying the Blind Shipment LOA, and handle shipper/debtor updates using the 2nd BOL and LOA documents under Cargo Care.</p>
-            <div class="card-meta">
-              <span class="meta-pill"><i class="fa-solid fa-layer-group"></i> Billing</span>
-              <span class="meta-pill"><i class="fa-solid fa-eye-slash"></i> Blind</span>
-            </div>
-            <a class="guide-link" href="blind-shipment-guide.html">Open Blind Shipment Guide <i class="fa-solid fa-arrow-right"></i></a>
-            <p class="small">Best for Blind Shipment fee disputes, LOA verification, shipper/debtor updates, 2nd BOL review, and BLND keyword handling.</p>
-          </article>
-
+          
         </div>
       </div>
     </section>
@@ -3548,7 +3344,7 @@
 
 <script>
   // =========================================================
-  // FIREBASE CONFIG & AUTH GUARD
+  // FIREBASE CONFIG & AUTH GUARD (same as original)
   // =========================================================
   const firebaseConfig = {
     apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
@@ -3698,7 +3494,7 @@
   }
 
   // =========================================================
-  // FILTERS, MOTION, FEEDBACK
+  // FILTERS, MOTION, FEEDBACK (from Billing page)
   // =========================================================
   function setupGuideFilters() {
     const searchInput = document.getElementById("guideSearch");
@@ -3832,373 +3628,164 @@
     });
   }
 
-  // =========================================================
-  // PREMIUM HISTORY & MOST-USED (exactly like billing dispute page)
-  // =========================================================
-  const HISTORY_KEY = 'guideHistory';
+// =========================================================
+// PREMIUM HISTORY TRACKING & DROPDOWN
+// =========================================================
+const HISTORY_KEY = 'guideHistory';
 
-  function getHistory() {
-    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+}
+function saveHistory(history) { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
+
+function addGuideToHistory(title, url) {
+  const history = getHistory();
+  const filtered = history.filter(item => item.url !== url);
+  filtered.push({ title, url, timestamp: Date.now() });
+  saveHistory(filtered);
+}
+
+function getMostRecentGuide(history) {
+  if (!history.length) return null;
+  return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
+}
+
+function getMostUsedGuide(history) {
+  if (!history.length) return null;
+  const counts = {};
+  history.forEach(item => { counts[item.url] = (counts[item.url] || 0) + 1; });
+  let maxCount = 0, mostUsedUrl = history[0].url;
+  for (const [url, count] of Object.entries(counts)) {
+    if (count > maxCount) { maxCount = count; mostUsedUrl = url; }
+  }
+  return history.find(item => item.url === mostUsedUrl);
+}
+
+// Render dropdown with clean HTML classes
+function renderHistoryDropdown() {
+  const history = getHistory();
+  const list = document.getElementById('history-dropdown-list');
+  if (!list) return;
+
+  if (!history.length) {
+    list.innerHTML = `
+      <div class="history-empty">
+        <i class="fa-solid fa-inbox"></i>
+        <span>No history yet</span>
+      </div>
+    `;
+    return;
   }
 
-  function saveHistory(history) { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
-
-  function addGuideToHistory(title, url) {
-    const history = getHistory();
-    const filtered = history.filter(item => item.url !== url);
-    filtered.push({ title, url, timestamp: Date.now() });
-    saveHistory(filtered);
-  }
-
-  function getMostRecentGuide(history) {
-    if (!history.length) return null;
-    return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
-  }
-
-  function getMostUsedGuide(history) {
-    if (!history.length) return null;
-    const counts = {};
-    history.forEach(item => { counts[item.url] = (counts[item.url] || 0) + 1; });
-    let maxCount = 0, mostUsedUrl = history[0].url;
-    for (const [url, count] of Object.entries(counts)) {
-      if (count > maxCount) { maxCount = count; mostUsedUrl = url; }
-    }
-    return history.find(item => item.url === mostUsedUrl);
-  }
-
-  // ---- Clear functions ----
-  function removeHistoryItem(url) {
-    let history = getHistory();
-    history = history.filter(item => item.url !== url);
-    saveHistory(history);
-    updateHistoryPanel();
-    renderHistoryDropdown();
-  }
-
-  function clearAllHistory() {
-    if (getHistory().length === 0) return;
-    if (confirm('Delete all history entries?')) {
-      saveHistory([]);
-      updateHistoryPanel();
-      renderHistoryDropdown();
-    }
-  }
-
-  // ---- Render dropdown ----
-  function renderHistoryDropdown() {
-    const history = getHistory();
-    const list = document.getElementById('history-dropdown-list');
-    if (!list) return;
-
-    if (!history.length) {
-      list.innerHTML = `
-        <div class="history-empty">
-          <i class="fa-solid fa-inbox"></i>
-          <span>No history yet</span>
+  const sorted = history.slice().reverse(); // newest first
+  let html = '';
+  sorted.forEach((item) => {
+    const time = new Date(item.timestamp).toLocaleString();
+    html += `
+      <div class="history-item" data-url="${item.url}">
+        <div class="history-left">
+          <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
+          <span class="history-title">${item.title}</span>
         </div>
-      `;
-      return;
-    }
-
-    const sorted = history.slice().reverse();
-    let html = '';
-    sorted.forEach((item) => {
-      const time = new Date(item.timestamp).toLocaleString();
-      const safeTitle = item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      html += `
-        <div class="history-item" data-url="${item.url}">
-          <div class="history-left">
-            <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
-            <span class="history-title">${safeTitle}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="history-time">${time}</span>
-            <button class="history-delete" data-url="${item.url}" title="Remove from history"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-        </div>
-      `;
-    });
-    list.innerHTML = html;
-
-    // Click on item (except delete button) opens guide
-    list.querySelectorAll('.history-item').forEach(item => {
-      item.addEventListener('click', function(e) {
-        if (e.target.closest('.history-delete')) return;
-        const url = this.dataset.url;
-        if (url) window.location.href = url;
-      });
-    });
-
-    // Delete button events
-    list.querySelectorAll('.history-delete').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const url = this.dataset.url;
-        if (url) removeHistoryItem(url);
-      });
-    });
-  }
-
-  // ---- Toggle dropdown ----
-  function toggleHistoryDropdown(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('history-dropdown');
-    if (!dropdown) return;
-    const isOpen = dropdown.classList.contains('is-open');
-    if (!isOpen) renderHistoryDropdown();
-    dropdown.classList.toggle('is-open');
-    updateFocusCardDropdownState();
-  }
-
-  // ---- Close dropdown on outside click ----
-  document.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('history-dropdown');
-    const historyItem = document.getElementById('history-item');
-    if (dropdown && historyItem && !historyItem.contains(e.target)) {
-      if (dropdown.classList.contains('is-open')) {
-        dropdown.classList.remove('is-open');
-        updateFocusCardDropdownState();
-      }
-    }
-
-    const mostusedDropdown = document.getElementById('mostused-dropdown');
-    const mostusedItem = document.getElementById('mostused-item');
-    if (mostusedDropdown && mostusedItem && !mostusedItem.contains(e.target)) {
-      if (mostusedDropdown.classList.contains('is-open')) {
-        mostusedDropdown.classList.remove('is-open');
-        updateFocusCardDropdownState();
-      }
-    }
+        <span class="history-time">${time}</span>
+      </div>
+    `;
   });
+  list.innerHTML = html;
 
-  // ---- Update panel labels ----
-  function updateHistoryPanel() {
-    const history = getHistory();
-    const recent = getMostRecentGuide(history);
-    const mostUsed = getMostUsedGuide(history);
-
-    const recentLabel = document.getElementById('recent-guide-label');
-    const mostUsedLabel = document.getElementById('mostused-guide-label');
-    const recentItem = document.getElementById('recent-item');
-    const mostUsedItem = document.getElementById('mostused-item');
-
-    if (recent) {
-      recentLabel.textContent = recent.title;
-      recentItem.style.cursor = 'pointer';
-      recentItem.onclick = () => window.location.href = recent.url;
-    } else {
-      recentLabel.textContent = 'No history yet';
-      recentItem.style.cursor = 'default';
-      recentItem.onclick = null;
-    }
-
-    if (mostUsed) {
-      mostUsedLabel.textContent = mostUsed.title;
-      mostUsedItem.style.cursor = 'pointer';
-      mostUsedItem.onclick = () => window.location.href = mostUsed.url;
-    } else {
-      mostUsedLabel.textContent = 'No history yet';
-      mostUsedItem.style.cursor = 'default';
-      mostUsedItem.onclick = null;
-    }
-  }
-
-  // ---- Track guide opens ----
-  function attachHistoryTracking() {
-    document.querySelectorAll('.guide-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        const card = this.closest('.guide-card');
-        if (!card) return;
-        const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
-        const url = this.getAttribute('href');
-        if (url) addGuideToHistory(title, url);
-      });
+  // Attach click events
+  list.querySelectorAll('.history-item').forEach(el => {
+    el.addEventListener('click', function(e) {
+      const url = this.dataset.url;
+      if (url) window.location.href = url;
     });
+  });
+}
+
+// Toggle dropdown with CSS class
+function toggleHistoryDropdown(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('history-dropdown');
+  if (!dropdown) return;
+  const isOpen = dropdown.classList.contains('is-open');
+  if (!isOpen) renderHistoryDropdown(); // refresh content
+  dropdown.classList.toggle('is-open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('history-dropdown');
+  const historyItem = document.getElementById('history-item');
+  if (dropdown && historyItem && !historyItem.contains(e.target)) {
+    dropdown.classList.remove('is-open');
+  }
+});
+
+// Update panel labels
+function updateHistoryPanel() {
+  const history = getHistory();
+  const recent = getMostRecentGuide(history);
+  const mostUsed = getMostUsedGuide(history);
+
+  const recentLabel = document.getElementById('recent-guide-label');
+  const mostUsedLabel = document.getElementById('mostused-guide-label');
+  const recentItem = document.getElementById('recent-item');
+  const mostUsedItem = document.getElementById('mostused-item');
+  const historyItem = document.getElementById('history-item');
+
+  if (recent) {
+    recentLabel.textContent = recent.title;
+    recentItem.style.cursor = 'pointer';
+    recentItem.onclick = () => window.location.href = recent.url;
+  } else {
+    recentLabel.textContent = 'No history yet';
+    recentItem.style.cursor = 'default';
+    recentItem.onclick = null;
   }
 
-  // ---- Manage focus card z-index ----
-  function updateFocusCardDropdownState() {
-    const focusCard = document.getElementById('historyFocusCard');
-    if (!focusCard) return;
-    const historyOpen = document.getElementById('history-dropdown')?.classList.contains('is-open');
-    const mostusedOpen = document.getElementById('mostused-dropdown')?.classList.contains('is-open');
-    if (historyOpen || mostusedOpen) {
-      focusCard.classList.add('dropdown-open');
-    } else {
-      focusCard.classList.remove('dropdown-open');
-    }
+  if (mostUsed) {
+    mostUsedLabel.textContent = mostUsed.title;
+    mostUsedItem.style.cursor = 'pointer';
+    mostUsedItem.onclick = () => window.location.href = mostUsed.url;
+  } else {
+    mostUsedLabel.textContent = 'No history yet';
+    mostUsedItem.style.cursor = 'default';
+    mostUsedItem.onclick = null;
   }
 
-  // ---- Initialise history ----
-  function initHistory() {
-    updateHistoryPanel();
-    attachHistoryTracking();
-    const dropdown = document.getElementById('history-dropdown');
-    if (dropdown) dropdown.classList.remove('is-open');
-
-    // Clear all button
-    const clearAllBtn = document.getElementById('clearAllHistoryBtn');
-    if (clearAllBtn) {
-      clearAllBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        clearAllHistory();
-      });
-    }
-
-    // Set up toggle for history item
-    const historyItem = document.getElementById('history-item');
-    if (historyItem) {
-      historyItem.style.cursor = 'pointer';
-      historyItem.onclick = toggleHistoryDropdown;
-    }
-
-    // Most-used dropdown toggle
-    const mostusedItem = document.getElementById('mostused-item');
-    if (mostusedItem) {
-      mostusedItem.style.cursor = 'pointer';
-      mostusedItem.onclick = toggleMostUsedDropdown;
-    }
+  if (historyItem) {
+    historyItem.style.cursor = 'pointer';
+    historyItem.onclick = toggleHistoryDropdown;
   }
+}
 
-  // =========================================================
-  // MOST-USED DROPDOWN (Firestore top 5)
-  // =========================================================
-  const GUIDE_STATS_COLLECTION = 'guide_stats';
-
-  async function trackGuideUsage(url, title) {
-    if (!url) return;
-    let guideId = url.replace(/\.html$/, '').replace(/\?.*$/, '');
-    if (!guideId || guideId === '') guideId = url.replace(/\.html$/, '').replace(/[^a-zA-Z0-9\-_]/g, '-');
-
-    try {
-      const docRef = db.collection(GUIDE_STATS_COLLECTION).doc(guideId);
-      await docRef.set({
-        guideId,
-        guideTitle: title || guideId,
-        guideUrl: url,
-        usageCount: firebase.firestore.FieldValue.increment(1),
-        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
-    } catch (err) {
-      console.warn('Failed to track guide usage:', err);
-    }
-  }
-
-  async function fetchTopGuides(limit = 5) {
-    try {
-      const snapshot = await db.collection(GUIDE_STATS_COLLECTION)
-        .orderBy('usageCount', 'desc')
-        .limit(limit)
-        .get();
-
-      const results = [];
-      snapshot.forEach(doc => {
-        results.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
-      return results;
-    } catch (err) {
-      console.warn('Failed to fetch top guides:', err);
-      return [];
-    }
-  }
-
-  async function renderMostUsedDropdown() {
-    const label = document.getElementById('mostused-guide-label');
-    const list = document.getElementById('mostused-dropdown-list');
-    if (!label) return;
-
-    try {
-      const topGuides = await fetchTopGuides(5);
-
-      if (!topGuides || topGuides.length === 0) {
-        label.textContent = 'No usage data';
-        if (list) {
-          list.innerHTML = `
-            <div class="mostused-empty">
-              <i class="fa-solid fa-inbox"></i>
-              <span>No usage data yet</span>
-            </div>
-          `;
-        }
-        return;
-      }
-
-      // Update the label (simple version: comma-separated titles)
-      label.textContent = topGuides
-        .slice(0, 5)
-        .map(g => g.guideTitle || g.guideId)
-        .join(' • ');
-
-      // Populate the dropdown
-      if (list) {
-        let html = '';
-        topGuides.forEach((item) => {
-          const count = item.usageCount || 0;
-          html += `
-            <div class="mostused-item" data-url="${item.guideUrl || '#'}">
-              <div class="mui-left">
-                <div class="mui-icon"><i class="fa-solid fa-route"></i></div>
-                <span class="mui-title">${item.guideTitle || item.guideId}</span>
-              </div>
-              <span class="mui-count">${count}×</span>
-            </div>
-          `;
-        });
-        list.innerHTML = html;
-
-        list.querySelectorAll('.mostused-item').forEach(el => {
-          el.addEventListener('click', function(e) {
-            const url = this.dataset.url;
-            if (url && url !== '#') window.location.href = url;
-          });
-        });
-      }
-
-    } catch (error) {
-      console.error('Failed to load top guides:', error);
-      label.textContent = 'Unable to load guides';
-      if (list) {
-        list.innerHTML = `
-          <div class="mostused-empty">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-            <span>Failed to load guides</span>
-          </div>
-        `;
-      }
-    }
-  }
-
-  function toggleMostUsedDropdown(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('mostused-dropdown');
-    if (!dropdown) return;
-    const isOpen = dropdown.classList.contains('is-open');
-    if (!isOpen) renderMostUsedDropdown();
-    dropdown.classList.toggle('is-open');
-    updateFocusCardDropdownState();
-  }
-
-  // ---- Update most-used label on page load ----
-  function initMostUsed() {
-    renderMostUsedDropdown();
-    // Also attach tracking to guide links for Firestore
-    document.querySelectorAll('.guide-link').forEach(link => {
-      link.addEventListener('click', function(e) {
-        const card = this.closest('.guide-card');
-        if (!card) return;
-        const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
-        const url = this.getAttribute('href');
-        if (url) trackGuideUsage(url, title);
-      });
+// Track guide opens
+function attachHistoryTracking() {
+  document.querySelectorAll('.guide-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const card = this.closest('.guide-card');
+      if (!card) return;
+      const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
+      const url = this.getAttribute('href');
+      if (url) addGuideToHistory(title, url);
     });
-  }
+  });
+}
 
-  // =========================================================
-  // FEEDBACK MODALS (unchanged)
-  // =========================================================
+function initHistory() {
+  updateHistoryPanel();
+  attachHistoryTracking();
+  // Ensure dropdown is closed initially
+  const dropdown = document.getElementById('history-dropdown');
+  if (dropdown) dropdown.classList.remove('is-open');
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', initHistory);
+document.addEventListener('headerLoaded', initHistory);
+setTimeout(initHistory, 1000);
+  
+  // (The functions openComment, closeComment, sendComment, showAllComments, etc. are included below)
   let selectedRating = 0;
   let ratingStars = [];
   let commentsUnsubscribe = null;
@@ -4398,13 +3985,13 @@
   // PAGE INIT
   // =========================================================
   document.addEventListener("DOMContentLoaded", () => {
+    // Run auth guard first
     guardProtectedPage().then(() => {
+      // Then set up UI
       setupGuideFilters();
       initRevealMotion();
       initCardMotion();
       initRatingStars();
-      initHistory();
-      initMostUsed();
     }).catch(err => {
       console.error("Init error:", err);
     });
@@ -4412,17 +3999,14 @@
 
   document.addEventListener("headerLoaded", () => {
     setupGuideFilters();
-    initCardMotion();
+    initCardMotion(); // re-run for any new cards
     initRatingStars();
-    initHistory();
-    initMostUsed();
   });
 
+  // Fallback
   setTimeout(() => {
     initRatingStars();
-    initHistory();
-    initMostUsed();
-  }, 800);
+  }, 500);
 </script>
 
 <script src="assets/js/header-loader.js"></script>
