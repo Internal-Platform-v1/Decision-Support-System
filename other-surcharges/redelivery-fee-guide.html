@@ -252,7 +252,7 @@
         <main class="main">
           <div class="main-topbar">
 <div class="page-title-block">
-  <h1>Redelivery Handling</h1>
+  <h1>Redelivery Fee</h1>
   <p class="page-subtitle">Validate redelivery fee disputes by reviewing second delivery attempts, appointment requirements, receiving conditions (No Dockspace, Special Equipment, Receiving Closed, Rear Load), customer refusal reasons (Damage, No Packing Slip, Wrong Product, Bad PO#, Salvage), and carrier failures (Billing Error, Reconsignment, Specific Date, Missing Times, State of Emergency, Weather) to determine if the fee should be kept or removed.</p>
 </div>
             <div class="main-status"><div class="pill primary" id="statusPill"><i class="fa-solid fa-bolt"></i> Ready</div></div>
@@ -1851,49 +1851,62 @@ redelivery_refused_not_order_valid: {
   help: "Final Recommendation",
   choices: []
 },
+
   // ==================== CARRIER RELATED FAILURE ====================
   redelivery_carrier_failure: {
-    text: "Select the specific carrier related failure scenario:",
-    help: "Choose the specific carrier failure scenario for the redelivery.",
-    choices: [
-      {
-        label: "Billing Error",
-        next: "redelivery_carrier_billing_error",
-        icon: "fa-solid fa-file-invoice",
-        desc: "Billing error related to redelivery fee."
-      },
-      {
-        label: "Reconsignment / Return to Sender",
-        next: "redelivery_carrier_reconsignment",
-        icon: "fa-solid fa-truck-arrow-right",
-        desc: "Reconsignment or return to sender."
-      },
-      {
-        label: "Delivery Attempted/Completed on Specific Date",
-        next: "redelivery_carrier_specific_date",
-        icon: "fa-solid fa-calendar-day",
-        desc: "Delivery attempted on a specific date."
-      },
-      {
-        label: "Arrival/Departure Time Missing",
-        next: "redelivery_carrier_arrival_departure_missing",
-        icon: "fa-solid fa-clock",
-        desc: "Arrival/departure time missing."
-      },
-      {
-        label: "State of Emergency",
-        next: "redelivery_carrier_state_emergency",
-        icon: "fa-solid fa-triangle-exclamation",
-        desc: "State of emergency related failure."
-      },
-      {
-        label: "Carrier Failure or Weather",
-        next: "redelivery_carrier_weather_failure",
-        icon: "fa-solid fa-cloud-sun-rain",
-        desc: "Carrier failure or weather related."
-      }
-    ]
-  },
+  text: "Select the specific carrier related failure scenario:",
+  help: "Choose the specific carrier failure scenario for the redelivery.",
+  choices: [
+    {
+      label: "Billing Error",
+      next: "redelivery_carrier_billing_error",
+      icon: "fa-solid fa-file-invoice",
+      desc: "Billing error related to redelivery fee."
+    },
+    {
+      label: "Reconsignment / Return to Sender",
+      next: "redelivery_carrier_reconsignment",
+      icon: "fa-solid fa-truck-arrow-right",
+      desc: "Reconsignment or return to sender."
+    },
+    {
+      label: "Delivery Attempted/Completed on Specific Date",
+      next: "redelivery_carrier_specific_date",
+      icon: "fa-solid fa-calendar-day",
+      desc: "Delivery attempted on a specific date."
+    },
+    {
+      label: "Arrival/Departure Time Missing",
+      next: "redelivery_arrival_departure_missing",
+      icon: "fa-solid fa-clock",
+      desc: "Arrival/departure time missing."
+    },
+    {
+      label: "State of Emergency",
+      next: "redelivery_soe_failure_reason",
+      icon: "fa-solid fa-triangle-exclamation",
+      desc: "State of emergency related failure."
+    },
+    {
+      label: "Carrier Failure or Weather",
+      next: "redelivery_failure_reason_root",
+      icon: "fa-solid fa-cloud-sun-rain",
+      desc: "Carrier failure or weather related."
+    },
+    {
+      label: "Freight Status on Trailer/Truck",
+      next: "redelivery_freight_on_trailer_check",
+      icon: "fa-solid fa-trailer",
+      desc: "Check if freight was on the trailer during delivery attempt."
+    },
+    {
+      label: "No Reason Noted",
+      next: "redelivery_no_reason_noted_init",
+      icon: "fa-solid fa-comment-slash",
+      desc: "Scenario where no specific reason is noted on documentation."
+    }
+  ]
+},
 
   // ===== Billing Error =====
   redelivery_carrier_billing_error: {
@@ -1937,20 +1950,7 @@ redelivery_refused_not_order_valid: {
   redelivery_carrier_billing_error_no_docs: {
     text: "Confirm first to the Service Center if there is really no documents to support the fee, before removing it.",
     help: "Contact the Service Center to verify if there are any supporting documents.",
-    choices: [
-      {
-        label: "SC confirmed no documents",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee."
-      },
-      {
-        label: "SC confirmed documents exist",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Redelivery Fee is valid."
-      }
-    ]
+    choices: []
   },
 
   // ===== Reconsignment / Return to Sender =====
@@ -2058,418 +2058,767 @@ redelivery_refused_not_order_valid: {
   redelivery_carrier_reconsignment_no_docs: {
     text: "REMOVE Redelivery fee if no documents to support the fee or Reach out to Service Center for additional details regarding Redelivery Fee.",
     help: "Remove the fee or contact the Service Center for more information.",
-    choices: [
-      {
-        label: "Remove fee (no docs)",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee."
-      },
-      {
-        label: "Reach out to SC",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-phone",
-        desc: "Contact SC for additional details."
-      }
-    ]
-  },
-
-  // ===== Delivery Attempted/Completed on Specific Date =====
-  redelivery_carrier_specific_date: {
-    text: "Was delivery attempted or completed on a specific date?",
-    help: "Check if the delivery was attempted on a specific date.",
-    choices: [
-      {
-        label: "YES – Attempted on specific date",
-        next: "redelivery_carrier_specific_date_bol",
-        icon: "fa-solid fa-check-circle",
-        desc: "Check BOL for instructions."
-      },
-      {
-        label: "NO – No specific date",
-        next: "redelivery_remove_fee_fedex",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee (FedEx Failure)."
-      }
-    ]
-  },
-
-  redelivery_carrier_specific_date_bol: {
-    text: "Did the BOL indicate or provide an instruction on that specific date store/receiving area is closed?",
-    help: "Check if the BOL has instructions about closure on that date.",
-    choices: [
-      {
-        label: "YES – BOL indicates closed",
-        next: "redelivery_remove_fee_fedex",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Redelivery fee is Not Valid."
-      },
-      {
-        label: "NO – No closure instruction",
-        next: "redelivery_carrier_specific_date_calls",
-        icon: "fa-solid fa-check-circle",
-        desc: "Check if required calls were made."
-      }
-    ]
-  },
-
-  redelivery_carrier_specific_date_calls: {
-    text: "Were required calls made? (48 hrs prior OR 15 mins prior)",
-    help: "Check if the driver made the required calls prior to delivery.",
-    choices: [
-      {
-        label: "YES – Calls were made",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Valid Redelivery Fee."
-      },
-      {
-        label: "NO – Calls were not made",
-        next: "redelivery_carrier_specific_date_email_sc",
-        icon: "fa-solid fa-envelope",
-        desc: "Email destination service center to confirm."
-      }
-    ]
-  },
-
-  redelivery_carrier_specific_date_email_sc: {
-    text: "Email destination service center to confirm.",
-    help: "Contact the Service Center to verify if calls were made.",
-    choices: [
-      {
-        label: "Confirmed NO CALLS",
-        next: "redelivery_remove_fee_fedex",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "REMOVE REDELIVERY FEE (carrier missed requirement)."
-      },
-      {
-        label: "Calls WERE made",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "VALID REDELIVERY FEE."
-      }
-    ]
-  },
-
-  // ===== Arrival/Departure Time Missing =====
-  redelivery_carrier_arrival_departure_missing: {
-    text: "Is Arrival/Departure time missing?",
-    help: "Check if the arrival/departure times are missing from the records.",
-    choices: [
-      {
-        label: "NO – Times are present",
-        next: "redelivery_carrier_arrival_departure_review",
-        icon: "fa-solid fa-check-circle",
-        desc: "Review further why there is Redelivery Fee."
-      },
-      {
-        label: "YES – Times are missing",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee (No proof of attempt)."
-      }
-    ]
-  },
-
-  redelivery_carrier_arrival_departure_review: {
-    text: "Review further why there is Redeliver Fee billed on PRO. Do NOT remove fee immediately.\n\nCheck required sources (ALL 3):\n1. Delivery Receipt (DR)\n2. EDM Images (Cargo Care - Freight Returned Form)\n3. Shipment Inquiry (History & Comments)",
-    help: "Review all three sources before making a decision.",
-    choices: [
-      {
-        label: "Continue",
-        next: "redelivery_carrier_arrival_departure_check",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Check if details were found."
-      }
-    ]
-  },
-
-  redelivery_carrier_arrival_departure_check: {
-    text: "Were delivery attempt details found in ANY of these sources?",
-    help: "Check if any of the sources contain delivery attempt details.",
-    choices: [
-      {
-        label: "YES – Details found",
-        next: "redelivery_carrier_arrival_departure_proof",
-        icon: "fa-solid fa-check-circle",
-        desc: "Check if there is proof of first attempt."
-      },
-      {
-        label: "NO – No details found",
-        next: "redelivery_carrier_arrival_departure_sc",
-        icon: "fa-solid fa-phone",
-        desc: "Reach out to Service Center."
-      }
-    ]
-  },
-
-  redelivery_carrier_arrival_departure_proof: {
-    text: "Is there proof of first delivery attempt (date/time/activity)?",
-    help: "Verify if there is documented proof of the first delivery attempt.",
-    choices: [
-      {
-        label: "YES – Proof exists",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Redelivery Fee is VALID."
-      },
-      {
-        label: "NO – No proof",
-        next: "redelivery_carrier_arrival_departure_sc",
-        icon: "fa-solid fa-phone",
-        desc: "Reach out to Service Center."
-      }
-    ]
-  },
-
-  redelivery_carrier_arrival_departure_sc: {
-    text: "Reach out to service center for further information regarding 1st redelivery attempt.",
-    help: "Contact the Service Center for additional details.",
-    choices: [
-      {
-        label: "SC confirmed valid attempt",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Redelivery Fee is VALID."
-      },
-      {
-        label: "SC confirmed no valid attempt",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee."
-      }
-    ]
-  },
-
-  // ===== State of Emergency =====
-  redelivery_carrier_state_emergency: {
-    text: "Closed Today (Fee initially applied)\n\nWhat was the reason for failure in 2nd attempt?",
-    help: "Review the state of emergency reason for the redelivery.",
-    choices: [
-      {
-        label: "Continue",
-        next: "redelivery_carrier_state_emergency_bol",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Check BOL for delivery restrictions."
-      }
-    ]
-  },
-
-  redelivery_carrier_state_emergency_bol: {
-    text: "Does BOL state delivery restrictions?",
-    help: "Check if the BOL has any delivery restrictions noted.",
-    choices: [
-      {
-        label: "YES – Restrictions exist",
-        next: "redelivery_carrier_state_emergency_restricted_day",
-        icon: "fa-solid fa-check-circle",
-        desc: "End of Week Deliveries are not permitted."
-      },
-      {
-        label: "NO – No restrictions",
-        next: "redelivery_carrier_state_emergency_freight",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Check if freight was on the trailer."
-      }
-    ]
-  },
-
-  redelivery_carrier_state_emergency_restricted_day: {
-    text: "Was the delivery attempted on a restricted day?",
-    help: "Check if the delivery was attempted on a day that is restricted.",
-    choices: [
-      {
-        label: "YES – Attempted on restricted day",
-        next: "redelivery_remove_fee_fedex",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Redelivery fee is Not Valid."
-      },
-      {
-        label: "NO – Not a restricted day",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Valid Redelivery Fee."
-      }
-    ]
-  },
-
-  redelivery_carrier_state_emergency_freight: {
-    text: "Was freight actually on the trailer/truck during delivery attempt?",
-    help: "Verify if the freight was physically on the truck during the delivery attempt.",
-    choices: [
-      {
-        label: "NO – Freight not on trailer",
-        next: "redelivery_carrier_state_emergency_no_freight",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Confirm if FedEx fault."
-      },
-      {
-        label: "YES – Freight on trailer",
-        next: "redelivery_carrier_state_emergency_docs",
-        icon: "fa-solid fa-check-circle",
-        desc: "Check documentation."
-      }
-    ]
-  },
-
-  redelivery_carrier_state_emergency_no_freight: {
-    text: "Confirm to the Service center if no freight on the trailer is FedEx Fault.",
-    help: "Contact the Service Center to verify if the missing freight was FedEx's fault.",
-    choices: [
-      {
-        label: "SC confirmed FedEx fault",
-        next: "redelivery_remove_fee_fedex",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee."
-      },
-      {
-        label: "SC confirmed not FedEx fault",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Redelivery Fee is valid."
-      }
-    ]
-  },
-
-  redelivery_carrier_state_emergency_docs: {
-    text: "Check documentation:\n1. Cargo Care (CC) / EDM Images\n2. Return Documents\n3. Shipment History / Comments\n\nWas there no reason noted on those documents?",
-    help: "Review all documents for any noted reason.",
-    choices: [
-      {
-        label: "YES – No reason noted",
-        next: "redelivery_carrier_state_emergency_no_reason",
-        icon: "fa-solid fa-circle-question",
-        desc: "Reach out to SC to confirm validity."
-      },
-      {
-        label: "NO – Reason noted",
-        next: "redelivery_carrier_state_emergency_reason_noted",
-        icon: "fa-solid fa-check-circle",
-        desc: "Verify the provided reason."
-      }
-    ]
-  },
-
-  redelivery_carrier_state_emergency_no_reason: {
-    text: "Reach out to the Service Center and confirm whether the REDL is still considered valid even though the CC was not completed in full, provided that other supporting documentation, such as the email thread, is available, before removing the redelivery fee.",
-    help: "Contact the Service Center to confirm validity based on other documentation.",
-    choices: [
-      {
-        label: "SC confirmed valid",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Redelivery Fee is valid."
-      },
-      {
-        label: "SC confirmed not valid",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee."
-      }
-    ]
-  },
-
-  redelivery_carrier_state_emergency_reason_noted: {
-    text: "Verify whether the provided reason is valid. If it is confirmed to be valid, then redelivery fee is valid.",
-    help: "Check if the noted reason justifies the redelivery fee.",
-    choices: [
-      {
-        label: "Reason is valid",
-        next: "redelivery_fee_valid",
-        icon: "fa-solid fa-check-circle",
-        desc: "Redelivery Fee is valid."
-      },
-      {
-        label: "Reason is not valid",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove Redelivery Fee."
-      }
-    ]
-  },
-
-  // ===== Carrier Failure or Weather =====
-  redelivery_carrier_weather_failure: {
-    text: "Was failure reason 'Carrier Related Failure' or 'Weather'?",
-    help: "Determine if the failure was due to carrier error or weather.",
-    choices: [
-      {
-        label: "YES – Carrier Failure or Weather",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Removed the Redelivery Fee."
-      },
-      {
-        label: "NO – Not Carrier/Weather",
-        next: "redelivery_carrier_weather_holiday",
-        icon: "fa-solid fa-arrow-right",
-        desc: "Check if attempt was made on a US Official Holiday."
-      }
-    ]
-  },
-
-  redelivery_carrier_weather_holiday: {
-    text: "Was attempt made on a US Official Holiday?",
-    help: "Check if the delivery attempt was made on a US Official Holiday.",
-    choices: [
-      {
-        label: "YES – Attempt on holiday",
-        next: "redelivery_carrier_weather_holiday_same_day",
-        icon: "fa-solid fa-check-circle",
-        desc: "Check if delivery was completed on same date."
-      },
-      {
-        label: "NO – Not on holiday",
-        next: "redelivery_carrier_weather_government",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Check if consignee is Government Facility."
-      }
-    ]
-  },
-
-  redelivery_carrier_weather_holiday_same_day: {
-    text: "Was delivery completed on SAME holiday date?",
-    help: "Check if the delivery was completed on the same holiday date.",
-    choices: [
-      {
-        label: "YES – Completed same day",
-        next: "redelivery_carrier_weather_holiday_same_yes",
-        icon: "fa-solid fa-check-circle",
-        desc: "Decline removal (customer should notify closure)."
-      },
-      {
-        label: "NO – Not completed same day",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove redelivery fee."
-      }
-    ]
-  },
-
-  redelivery_carrier_weather_holiday_same_yes: {
-    text: "Decline removal (customer should notify closure).",
-    help: "The customer should have notified the closure. Fee remains valid.",
     choices: []
   },
 
-  redelivery_carrier_weather_government: {
-    text: "Is consignee a Government Facility? (School / Bank / Military Base / Prison)",
-    help: "Check if the consignee is a government facility.",
-    choices: [
-      {
-        label: "YES – Government Facility",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove redelivery fee."
-      },
-      {
-        label: "NO – Non-Government",
-        next: "redelivery_remove_fee",
-        icon: "fa-solid fa-circle-xmark",
-        desc: "Remove redelivery fee."
-      }
-    ]
-  },
+// =========================================================================
+// REDELIVERY DECISION TREE NODES (Complete Flow Including Endpoints)
+// =========================================================================
+
+// 1. Root Question
+redelivery_carrier_specific_date: {
+  text: "Was delivery attempted or completed on a specific date?",
+  help: "Check if the carrier attempted or completed delivery on a specific date.",
+  choices: [
+    {
+      label: "YES",
+      next: "redelivery_bol_closure_check",
+      icon: "fa-solid fa-check-circle",
+      desc: "Proceed to check the BOL for instructions."
+    },
+    {
+      label: "NO",
+      next: "redelivery_appointment_set_check",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Proceed to verify if the appointment was set properly."
+    }
+  ]
+},
+
+// 2. BOL Closure Check (Branch from Root YES)
+redelivery_bol_closure_check: {
+  text: "Did the BOL indicate or provide an instruction on that specific date store/receiving area is closed?",
+  help: "Review the BOL notes for any closure details on the specified date.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_fee_not_valid",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Redelivery fee is Not Valid."
+    },
+    {
+      label: "NO",
+      next: "endpoint_fee_valid",
+      icon: "fa-solid fa-check-circle",
+      desc: "Valid Redelivery Fee."
+    }
+  ]
+},
+
+// 3. Appointment Check (Branch from Root NO)
+redelivery_appointment_set_check: {
+  text: "Was appointment set properly?",
+  help: "Confirm if the delivery appointment scheduling met all necessary criteria.",
+  choices: [
+    {
+      label: "NO",
+      next: "endpoint_remove_fee_fedex",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Remove Redelivery Fee (FedEx Failure)."
+    },
+    {
+      label: "YES",
+      next: "redelivery_required_calls_check",
+      icon: "fa-solid fa-check-circle",
+      desc: "Proceed to check if required calls were made."
+    }
+  ]
+},
+
+// 4. Required Calls Check (Branch from Appointment YES)
+redelivery_required_calls_check: {
+  text: "Were required calls made? (48 hrs prior OR 15 mins prior)",
+  help: "Check driver logs to see if the 48-hour or 15-minute advance calls were executed.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_fee_valid",
+      icon: "fa-solid fa-check-circle",
+      desc: "Valid Redelivery Fee."
+    },
+    {
+      label: "NO",
+      next: "redelivery_email_service_center",
+      icon: "fa-solid fa-envelope",
+      desc: "Email destination service center to confirm."
+    }
+  ]
+},
+
+// 5. Service Center Email Check (Branch from Required Calls NO)
+redelivery_email_service_center: {
+  text: "Email destination service center to confirm.",
+  help: "Reach out to the service center to verify call logs directly.",
+  choices: [
+    {
+      label: "Confirmed NO CALLS",
+      next: "endpoint_remove_fee_carrier_missed",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "REMOVE REDELIVERY FEE (carrier missed requirement)."
+    },
+    {
+      label: "Calls WERE made",
+      next: "endpoint_fee_valid",
+      icon: "fa-solid fa-check-circle",
+      desc: "VALID REDELIVERY FEE."
+    }
+  ]
+},
+
+// =========================================================================
+// FINAL ENDPOINTS (The final destinations with no further choices)
+// =========================================================================
+
+endpoint_fee_not_valid: {
+  text: "Redelivery fee is Not Valid",
+  help: "Process complete. The fee cannot be applied based on BOL closure terms.",
+  choices: [] // No further options, this is a dead-end results screen
+},
+
+endpoint_fee_valid: {
+  text: "Valid Redelivery Fee",
+  help: "Process complete. The redelivery fee stands and is valid to charge.",
+  choices: []
+},
+
+endpoint_remove_fee_fedex: {
+  text: "Remove Redelivery Fee (FedEx Failure)",
+  help: "Process complete. Waive the fee due to scheduling/appointment failures on FedEx's end.",
+  choices: []
+},
+
+endpoint_remove_fee_carrier_missed: {
+  text: "REMOVE REDELIVERY FEE (carrier missed requirement)",
+  help: "Process complete. Waive the fee because the carrier failed to fulfill required pre-calls.",
+  choices: []
+},
+
+// =========================================================================
+// REDELIVERY DECISION TREE NODES: ARRIVAL/DEPARTURE TIME MISSING FLOW
+// =========================================================================
+
+// 1. Root Question
+redelivery_arrival_departure_missing: {
+  text: "Is Arrival/Departure time missing?",
+  help: "Check if the arrival or departure timestamps are missing from the delivery records.",
+  choices: [
+    {
+      label: "NO",
+      next: "endpoint_review_further_pro",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Review further why there is Redeliver Fee billed on PRO."
+    },
+    {
+      label: "YES",
+      next: "redelivery_check_required_sources",
+      icon: "fa-solid fa-check-circle",
+      desc: "Do NOT remove fee immediately. Proceed to check required sources."
+    }
+  ]
+},
+
+// 2. Information Step / Source Check Instruction
+redelivery_check_required_sources: {
+  text: "Were delivery attempt details found in ANY of these sources?",
+  note: "Check required sources (ALL 3):<br></br>1. Delivery Receipt (DR)<br></br>2. EDM Images (Cargo Care - Freight Returned Form)<br></br>3. Shipment Inquiry (History & Comments)\n\nWere delivery attempt details found in ANY of these sources?",
+  help: "Thoroughly review the DR, EDM Images, and Shipment Inquiry logs for any attempt records.",
+  choices: [
+    {
+      label: "YES",
+      next: "redelivery_proof_of_first_attempt",
+      icon: "fa-solid fa-check-circle",
+      desc: "Details found. Proceed to verify proof of first delivery attempt."
+    },
+    {
+      label: "NO",
+      next: "endpoint_reach_out_service_center",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "No details found. Reach out to service center for further information."
+    }
+  ]
+},
+
+// 3. Proof of First Attempt Check (Branch from Sources YES)
+redelivery_proof_of_first_attempt: {
+  text: "Is there proof of first delivery attempt (date/time/activity)?",
+  help: "Confirm if specific details regarding the first attempt's date, time, and activity are present.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_fee_is_valid",
+      icon: "fa-solid fa-check-circle",
+      desc: "Redelivery Fee is VALID."
+    },
+    {
+      label: "NO",
+      next: "endpoint_reach_out_service_center",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "No valid proof. Reach out to service center for further information."
+    }
+  ]
+},
+
+// =========================================================================
+// FINAL ENDPOINTS (Terminal states with no further choices)
+// =========================================================================
+
+endpoint_review_further_pro: {
+  text: "Review further why there is Redeliver Fee billed on PRO",
+  help: "Process complete. Timestamps are present; investigate alternative reasons for the billed fee.",
+  choices: []
+},
+
+endpoint_reach_out_service_center: {
+  text: "Reach out to service center for further information regarding 1st redelivery attempt.",
+  help: "Process complete. Insufficient documentation found internally; contact the service center to verify the attempt details.",
+  choices: []
+},
+
+endpoint_fee_is_valid: {
+  text: "Redelivery Fee is VALID",
+  help: "Process complete. Valid proof of the first delivery attempt has been confirmed.",
+  choices: []
+},
+  
+// =========================================================================
+// REDELIVERY DECISION TREE NODES: STATE OF EMERGENCY FLOW
+// =========================================================================
+
+// 1. Root Question / Step Context
+redelivery_soe_failure_reason: {
+  text: "State of Emergency\n\nWhat was the reason for failure in 2nd attempt?",
+  help: "Identify the logged reason for the second delivery failure during a State of Emergency.",
+  choices: [
+    {
+      label: "Closed Today (Fee initially applied)",
+      next: "redelivery_soe_bol_restrictions",
+      icon: "fa-solid fa-circle-exmark",
+      desc: "Reason is 'Closed Today'. Proceed to check BOL restrictions."
+    }
+  ]
+},
+
+// 2. BOL Restrictions Check
+redelivery_soe_bol_restrictions: {
+  text: "Does BOL state delivery restrictions?",
+  help: "Check the Bill of Lading documentation for any specific delivery limitations or schedule limits.",
+  choices: [
+    {
+      label: "NO",
+      next: "endpoint_soe_fee_valid",
+      icon: "fa-solid fa-check-circle",
+      desc: "Valid Redelivery Fee."
+    },
+    {
+      label: "YES",
+      next: "redelivery_soe_restricted_day_check",
+      icon: "fa-solid fa-arrow-down",
+      desc: "End of Week Deliveries are not permitted. Check the attempt day."
+    }
+  ]
+},
+
+// 3. Restricted Day Verification (Branch from BOL Restrictions YES)
+redelivery_soe_restricted_day_check: {
+  text: "End of Week Deliveries are not permitted.\n\nWas the delivery attempted on a restricted day?",
+  help: "Cross-reference the actual second delivery attempt date against the restrictions noted on the BOL.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_soe_fee_not_valid",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Redelivery fee is Not Valid."
+    },
+    {
+      label: "NO",
+      next: "endpoint_soe_fee_valid",
+      icon: "fa-solid fa-check-circle",
+      desc: "Valid Redelivery Fee."
+    }
+  ]
+},
+
+// =========================================================================
+// FINAL ENDPOINTS (Terminal states with no further choices)
+// =========================================================================
+
+endpoint_soe_fee_valid: {
+  text: "Valid Redelivery Fee",
+  help: "Process complete. The redelivery fee stands and is valid to charge because restrictions were either absent or followed properly.",
+  choices: []
+},
+
+endpoint_soe_fee_not_valid: {
+  text: "Redelivery fee is Not Valid",
+  help: "Process complete. The fee cannot be applied because the delivery attempt violated the BOL's schedule restrictions.",
+  choices: []
+},
+
+// =========================================================================
+// MASTER REDELIVERY DECISION TREE: CARRIER FAILURE / WEATHER / HOLIDAYS FLOW
+// =========================================================================
+
+// 1. Root Question
+redelivery_failure_reason_root: {
+  text: "Was failure reason 'Carrier Related Failure' or 'Weather'?",
+  help: "Select the primary high-level failure reason logged for this shipment.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_removed_the_redelivery_fee",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Removed the Redelivery Fee."
+    },
+    {
+      label: "NO",
+      next: "redelivery_us_official_holiday_check",
+      icon: "fa-solid fa-arrow-right",
+      desc: "Proceed to check for US Official Holidays."
+    },
+    {
+      label: "NO, but weather may have impacted the shipment.",
+      next: "redelivery_active_weather_disruption_check",
+      icon: "fa-solid fa-cloud-sun-rain",
+      desc: "Proceed to the weather impact verification branch."
+    }
+  ]
+},
+
+// =========================================================================
+// HOLIDAY BRANCHES
+// =========================================================================
+
+redelivery_us_official_holiday_check: {
+  text: "Was attempt made on a US Official Holiday?",
+  help: "Verify if the delivery attempt fell on a major recognized US federal holiday.",
+  choices: [
+    {
+      label: "YES",
+      next: "redelivery_same_holiday_date_check",
+      icon: "fa-solid fa-calendar-day",
+      desc: "Check if delivery was completed on the same holiday date."
+    },
+    {
+      label: "NO",
+      next: "redelivery_other_holidays_check",
+      icon: "fa-solid fa-calendar-minus",
+      desc: "Check for secondary or regional holidays."
+    }
+  ]
+},
+
+redelivery_same_holiday_date_check: {
+  text: "Was delivery completed on SAME holiday date?",
+  help: "Check if the carrier managed to fulfill the shipment despite the holiday.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_remove_redelivery_fee",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Remove redelivery fee."
+    },
+    {
+      label: "NO",
+      next: "endpoint_decline_removal_closure",
+      icon: "fa-solid fa-ban",
+      desc: "Decline removal (customer should notify closure)."
+    }
+  ]
+},
+
+redelivery_other_holidays_check: {
+  text: "Is reason related to OTHER holidays (MLK-Martin Luther King, Jr, Washington's, Juneteenth, Columbus, Veterans)?",
+  help: "Check if the delivery date matches these specific non-peak public holidays.",
+  choices: [
+    {
+      label: "YES",
+      next: "redelivery_government_facility_check",
+      icon: "fa-solid fa-building-columns",
+      desc: "Check if target is a government facility."
+    },
+    {
+      label: "NO",
+      next: "redelivery_original_consignee_address_check",
+      icon: "fa-solid fa-arrow-down",
+      desc: "Proceed to check original consignee address alignment."
+    }
+  ]
+},
+
+redelivery_government_facility_check: {
+  text: "Is consignee a Government Facility? (School / Bank / Military Base / Prison)",
+  help: "Identify if the delivery point is a state or federal entity affected by holiday closures.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_remove_redelivery_fee",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Remove redelivery fee."
+    },
+    {
+      label: "NO",
+      next: "redelivery_review_further_cc_bl_dr1",
+      icon: "fa-solid fa-magnifying-glass",
+      desc: "Proceed to review documents imaged under CC/BL/DR."
+    }
+  ]
+},
+
+redelivery_review_further_cc_bl_dr: {
+  text: "Check supporting documents:<br></br> • Weekly Calendar <br></br>• Appointment (APPT) Comments<br></br> • BOL / Customer Profile",
+  help: "Look up imaged documents under CC, BL, or DR for this account.",
+  choices: [
+    {
+      label: "CONTINUE",
+      next: "redelivery_justification_check",
+      icon: "fa-solid fa-arrow-down",
+      desc: "Proceed to check if there is a valid justification."
+    }
+  ]
+},
+
+redelivery_review_further_cc_bl_dr1: {
+  text: "Review further check documents imaged under CC/BL/DR",
+  help: "Look up imaged documents under CC, BL, or DR for this account.",
+  choices: []
+},
+
+// =========================================================================
+// CONSIGNEE ADDRESS MATCHING & VERIFICATION BRANCH
+// =========================================================================
+
+redelivery_original_consignee_address_check: {
+  text: "Was shipment delivered to original consignee address?",
+  help: "Validate if the package location matched the intended original shipment target.",
+  choices: [
+    {
+      label: "YES",
+      next: "redelivery_check_supporting_docs",
+      icon: "fa-solid fa-check-circle",
+      desc: "Proceed to check supporting calendar and profile documents."
+    },
+    {
+      label: "NO",
+      next: "redelivery_consignee_responsible_check",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Review if it is a Reconsigned, Returned to shipper, or Incorrect BOL situation."
+    }
+  ]
+},
+
+redelivery_check_supporting_docs: {
+  text: "Check supporting documents:\n• Weekly Calendar\n• Appointment (APPT) Comments\n• BOL / Customer Profile",
+  help: "Review the schedule, appointment logs, and customer baseline profile.",
+  choices: [
+    {
+      label: "CONTINUE",
+      next: "redelivery_justification_check",
+      icon: "fa-solid fa-arrow-down",
+      desc: "Proceed to check if there is a valid justification."
+    }
+  ]
+},
+
+redelivery_justification_check: {
+  text: "Is it a valid justification for redelivery?",
+  help: "Determine if the evidence from the documents justifies a valid charge.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_fee_valid_advise_customer",
+      icon: "fa-solid fa-check-circle",
+      desc: "Redelivery fee VALID, advise the customer accordingly."
+    },
+    {
+      label: "NO",
+      next: "redelivery_picked_up_at_dock_check",
+      icon: "fa-solid fa-boxes-stacked",
+      desc: "Check if the cargo was picked up at the dock instead."
+    }
+  ]
+},
+
+redelivery_picked_up_at_dock_check: {
+  text: "Was shipment picked up at Dock (DPU)?",
+  help: "Verify if the customer retrieved the payload on-site via Dock Pickup.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_remove_fee_add_dpu_keyword",
+      icon: "fa-solid fa-keyboard",
+      desc: "Remove fee + Add 'DPU' keyword."
+    },
+    {
+      label: "NO",
+      next: "endpoint_fee_not_valid",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Redelivery fee NOT valid."
+    }
+  ]
+},
+
+redelivery_consignee_responsible_check: {
+  text: "Review if it is a:\n• Reconsigned?\n• Returned to shipper?\n• Incorrect BOL?\n\nIs the consignee responsible for the Redelivery Fee?",
+  help: "Determine assigning liability metrics based on address deviations.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_no_fee_will_apply",
+      icon: "fa-solid fa-circle-minus",
+      desc: "No redelivery fee will apply."
+    },
+    {
+      label: "NO",
+      next: "endpoint_fee_may_apply",
+      icon: "fa-solid fa-circle-exclamation",
+      desc: "Redelivery fee may apply."
+    }
+  ]
+},
+
+// =========================================================================
+// WEATHER BRANCH
+// =========================================================================
+
+redelivery_active_weather_disruption_check: {
+  text: "Is there an active weather disruption? (e.g., storm, snow, hurricane alert)",
+  help: "Check global/regional climate disruptions active on the date of attempt.",
+  choices: [
+    {
+      label: "YES",
+      next: "redelivery_attempt_impacted_by_weather_check",
+      icon: "fa-solid fa-bolt",
+      desc: "Proceed to verify specific weather impacts on the delivery."
+    },
+    {
+      label: "NO",
+      next: "endpoint_fee_valid_advise_customer",
+      icon: "fa-solid fa-check-circle",
+      desc: "Redelivery fee VALID, advise the customer accordingly."
+    }
+  ]
+},
+
+redelivery_attempt_impacted_by_weather_check: {
+  text: "Was the delivery attempt impacted or failed due to weather?",
+  help: "Confirm if transit was physically stopped by weather conditions.",
+  choices: [
+    {
+      label: "NO",
+      next: "endpoint_fee_valid_advise_customer",
+      icon: "fa-solid fa-check-circle",
+      desc: "Redelivery fee VALID, advise the customer accordingly."
+    },
+    {
+      label: "YES",
+      next: "redelivery_official_weather_confirmation_check",
+      icon: "fa-solid fa-triangle-exclamation",
+      desc: "Check for official emergency notifications."
+    }
+  ]
+},
+
+redelivery_official_weather_confirmation_check: {
+  text: "Is there official confirmation? (e.g., carrier update, local advisory, internal alert (Wireless Emergency Alerts))",
+  help: "Look for localized warning logs confirming regional hazardous traffic or operation limits.",
+  choices: [
+    {
+      label: "YES",
+      next: "redelivery_customer_notified_weather_check",
+      icon: "fa-solid fa-comment-dots",
+      desc: "Verify customer notification status."
+    },
+    {
+      label: "NO",
+      next: "endpoint_fee_valid_advise_customer",
+      icon: "fa-solid fa-check-circle",
+      desc: "Redelivery fee VALID, advise the customer accordingly."
+    }
+  ]
+},
+
+redelivery_customer_notified_weather_check: {
+  text: "Was the customer notified of the delay?",
+  help: "Check communications to verify out-bound automated or manual advisory updates.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_removed_redelivery_fee_weather",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Removed redelivery fee."
+    },
+    {
+      label: "NO",
+      next: "redelivery_policy_notification_required_check",
+      icon: "fa-solid fa-shield-halved",
+      desc: "Verify if policy mandate requires notification."
+    }
+  ]
+},
+
+redelivery_policy_notification_required_check: {
+  text: "Is notification required per policy?",
+  help: "Cross-reference account terms to see if failing to notify waives the exception loop.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_waived_redelivery_fee",
+      icon: "fa-solid fa-handshake-angle",
+      desc: "Waived redelivery fee."
+    },
+    {
+      label: "NO",
+      next: "endpoint_remove_fee_weather_exception",
+      icon: "fa-solid fa-cloud",
+      desc: "Removed redelivery fee (Weather Exemption)."
+    }
+  ]
+},
+
+// =========================================================================
+// TERMINAL ENDPOINTS (The final destinations with no choices)
+// =========================================================================
+
+endpoint_removed_the_redelivery_fee: {
+  text: "Removed the Redelivery Fee",
+  help: "Process complete. Billed amount removed directly under early carrier/weather guidelines.",
+  choices: []
+},
+
+endpoint_remove_redelivery_fee: {
+  text: "Remove redelivery fee",
+  help: "Process complete. Waived due to holiday conditions or government location exceptions.",
+  choices: []
+},
+
+endpoint_decline_removal_closure: {
+  text: "Decline removal (customer should notify closure)",
+  help: "Process complete. Request rejected. Customer bears ownership to update closure indicators.",
+  choices: []
+},
+
+endpoint_fee_valid_advise_customer: {
+  text: "Redelivery fee VALID, advise the customer accordingly.",
+  help: "Process complete. Standard fee validation sustained. Inform the primary account holder.",
+  choices: []
+},
+
+endpoint_remove_fee_add_dpu_keyword: {
+  text: "Remove fee + Add 'DPU' keyword",
+  help: "Process complete. Waive standard billing metrics and note 'DPU' inside profile lines.",
+  choices: []
+},
+
+endpoint_fee_not_valid: {
+  text: "Redelivery fee NOT valid",
+  help: "Process complete. The assessment criteria marked this charge invalid.",
+  choices: []
+},
+
+endpoint_no_fee_will_apply: {
+  text: "No redelivery fee will apply.",
+  help: "Process complete. Balance adjusted; no active fee structural dependencies remains.",
+  choices: []
+},
+
+endpoint_fee_may_apply: {
+  text: "Redelivery fee may apply.",
+  help: "Process complete. Forward to secondary verification; charges remain outstanding.",
+  choices: []
+},
+
+endpoint_removed_redelivery_fee_weather: {
+  text: "Removed redelivery fee",
+  help: "Process complete. Waived due to documented weather factors paired with functional alerts.",
+  choices: []
+},
+
+endpoint_waived_redelivery_fee: {
+  text: "Waived redelivery fee",
+  help: "Process complete. System policy terms force non-billing due to missing alert metrics.",
+  choices: []
+},
+
+endpoint_remove_fee_weather_exception: {
+  text: "Removed redelivery fee (Weather Exemption)",
+  help: "Process complete. Standard weather baseline application applied successfully.",
+  choices: []
+},	
+
+// =========================================================================
+// NEW BRANCH A: FREIGHT ON TRAILER STATUS FLOW
+// =========================================================================
+
+redelivery_freight_on_trailer_check: {
+  text: "Was freight actually on the trailer/truck during delivery attempt?",
+  help: "Verify truck capacity and physical shipment presence at the time of the attempt.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_freight_remove_fee_fedex_fault",
+      icon: "fa-solid fa-check-circle",
+      desc: "Confirm to the Service center if no Freight on the trailer is FedEx Fault."
+    },
+    {
+      label: "NO",
+      next: "endpoint_freight_evaluate_other_scenario",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Evaluate other scenario / process on why Redelivery fee is added to the Invoice."
+    }
+  ]
+},
+
+// =========================================================================
+// NEW BRANCH B: NO REASON NOTED FLOW
+// =========================================================================
+
+redelivery_no_reason_noted_init: {
+  text: "Was there no reason noted on those documents?",
+  note: "Check documentation:<br></br>1. Cargo Care (CC) / EDM Images<br></br>2. Return Documents<br></br>3. Shipment History / Comments\n\n",
+  help: "Cross-reference all 3 core trace sources to look for any missing log notations.",
+  choices: [
+    {
+      label: "YES",
+      next: "endpoint_nrn_reach_out_service_center",
+      icon: "fa-solid fa-check-circle",
+      desc: "Confirm validity requirements with the Service Center before proceeding."
+    },
+    {
+      label: "NO",
+      next: "endpoint_nrn_verify_reason_validity",
+      icon: "fa-solid fa-circle-xmark",
+      desc: "Verify whether the provided reason is valid."
+    }
+  ]
+},
+
+// =========================================================================
+// FINAL ENDPOINTS FOR BOTH NEW FLOWS
+// =========================================================================
+
+endpoint_freight_remove_fee_fedex_fault: {
+  text: "Confirm to the Service center if no Freight on the trailer is FedEx Fault. Remove Redelivery Fee",
+  help: "Process complete. Confirm to the Service Center that no freight on the trailer constitutes a FedEx Fault, then remove the fee.",
+  choices: []
+},
+
+endpoint_freight_evaluate_other_scenario: {
+  text: "Evaluate other scenario / process on why Redelivery fee is added to the Invoice.",
+  help: "Process complete. Route out of this flow to investigate alternate invoice billing reasons.",
+  choices: []
+},
+
+endpoint_nrn_reach_out_service_center: {
+  text: "Reach out to the Service Center and confirm whether the REDL is still considered valid even though the CC was not completed in full, provided that other supporting documentation, such as the email thread, is available, before removing the redelivery fee.",
+  help: "Process complete. Perform manual verification via SC communications before clearing or approving balance adjustments.",
+  choices: []
+},
+
+endpoint_nrn_verify_reason_validity: {
+  text: "Verify whether the provided reason is valid; if it is confirmed to be valid, then redelivery fee is valid.",
+  help: "Process complete. A reason was found. If it meets compliance rules, sustain the fee structure.",
+  choices: []
+},
 
   // ==================== TERMINAL NODES ====================
   redelivery_fee_valid: {
