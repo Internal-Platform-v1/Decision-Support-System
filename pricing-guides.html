@@ -2872,6 +2872,42 @@ footer.site-footer .footer-right{
 .history-delete:hover {
   background: color-mix(in srgb, #ef4444 12%, transparent);
   color: #ef4444;
+} 
+
+.most-used-chip{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:8px 14px;
+
+    margin:4px;
+
+    border-radius:999px;
+
+    background:#fff;
+
+    color:var(--olive-2);
+
+    font-size:12px;
+
+    font-weight:700;
+
+    text-decoration:none;
+
+    border:1px solid rgba(0,0,0,.08);
+
+    transition:.2s;
+
+}
+
+.most-used-chip:hover{
+
+    background:var(--teal);
+
+    color:#fff;
+
 }  
   
 </style>
@@ -3299,9 +3335,19 @@ function saveHistory(history) { localStorage.setItem(HISTORY_KEY, JSON.stringify
 
 function addGuideToHistory(title, url) {
   const history = getHistory();
-  const filtered = history.filter(item => item.url !== url);
-  filtered.push({ title, url, timestamp: Date.now() });
-  saveHistory(filtered);
+
+  history.push({
+    title,
+    url,
+    timestamp: Date.now()
+  });
+
+  // keep only the latest 100 opens
+  if (history.length > 100) {
+    history.shift();
+  }
+
+  saveHistory(history);
 }
 
 function getMostRecentGuide(history) {
@@ -3309,15 +3355,28 @@ function getMostRecentGuide(history) {
   return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
 }
 
-function getMostUsedGuide(history) {
-  if (!history.length) return null;
+function getTopFiveGuides(history) {
+
   const counts = {};
-  history.forEach(item => { counts[item.url] = (counts[item.url] || 0) + 1; });
-  let maxCount = 0, mostUsedUrl = history[0].url;
-  for (const [url, count] of Object.entries(counts)) {
-    if (count > maxCount) { maxCount = count; mostUsedUrl = url; }
-  }
-  return history.find(item => item.url === mostUsedUrl);
+
+  history.forEach(item => {
+
+    if (!counts[item.url]) {
+      counts[item.url] = {
+        title: item.title,
+        url: item.url,
+        count: 0
+      };
+    }
+
+    counts[item.url].count++;
+
+  });
+
+  return Object.values(counts)
+    .sort((a,b)=>b.count-a.count)
+    .slice(0,5);
+
 }
 
 // ---- Clear functions ----
@@ -3416,7 +3475,7 @@ document.addEventListener('click', function(e) {
 function updateHistoryPanel() {
   const history = getHistory();
   const recent = getMostRecentGuide(history);
-  const mostUsed = getMostUsedGuide(history);
+  const mostUsed = getTopFiveGuides(history);
 
   const recentLabel = document.getElementById('recent-guide-label');
   const mostUsedLabel = document.getElementById('mostused-guide-label');
@@ -3434,15 +3493,32 @@ function updateHistoryPanel() {
     recentItem.onclick = null;
   }
 
-  if (mostUsed) {
-    mostUsedLabel.textContent = mostUsed.title;
-    mostUsedItem.style.cursor = 'pointer';
-    mostUsedItem.onclick = () => window.location.href = mostUsed.url;
-  } else {
-    mostUsedLabel.textContent = 'No history yet';
-    mostUsedItem.style.cursor = 'default';
+if (mostUsed.length) {
+
+    mostUsedLabel.innerHTML = "";
+
+    mostUsed.forEach(guide => {
+
+        const chip = document.createElement("a");
+
+        chip.className = "most-used-chip";
+
+        chip.href = guide.url;
+
+        chip.textContent = guide.title;
+
+        mostUsedLabel.appendChild(chip);
+
+    });
+
+    mostUsedItem.style.cursor = "default";
     mostUsedItem.onclick = null;
-  }
+
+} else {
+
+    mostUsedLabel.textContent = "No history yet";
+
+}  
 
   if (historyItem) {
     historyItem.style.cursor = 'pointer';
