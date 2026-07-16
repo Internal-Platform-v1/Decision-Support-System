@@ -2735,43 +2735,66 @@
   font-size: 28px;
   color: var(--line, rgba(148,163,184,.4));
 }
-
     .most-used-chip{
-
     display:inline-flex;
-
     align-items:center;
-
     padding:8px 14px;
-
     margin:4px;
-
     border-radius:999px;
-
     background:#fff;
-
     color:var(--olive-2);
-
     font-size:12px;
-
     font-weight:700;
-
     text-decoration:none;
-
     border:1px solid rgba(0,0,0,.08);
-
     transition:.2s;
-
 }
 
 .most-used-chip:hover{
-
     background:var(--teal);
-
     color:#fff;
-
 }
-    
+
+.history-dropdown-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 14px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+.history-dropdown-header span{
+    font-weight:700;
+    font-size:13px;
+}
+
+.history-clear-all{
+    border:none;
+    background:none;
+    color:#ff6b6b;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+}
+.history-clear-all:hover{
+    color:#ff2b2b;
+}  
+
+.history-toolbar{display:flex;justify-content:flex-end;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.08);}
+.history-date-divider{padding:12px 12px 6px;font-size:12px;font-weight:700;opacity:.7;border-bottom:1px solid rgba(255,255,255,.08);}
+.history-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;}
+.history-link{flex:1;display:flex;flex-direction:column;text-decoration:none;color:inherit;}
+.history-time{font-size:11px;opacity:.6;}
+.history-title{font-size:13px;font-weight:600;}
+.history-delete{border:none;background:none;cursor:pointer;color:#999;width:28px;height:28px;border-radius:50%;transition:.2s;}
+.history-delete:hover{background:#dc3545;color:#fff;}
+.history-clear-all{border:none;background:none;color:#dc3545;cursor:pointer;font-size:12px;font-weight:700;}
+.history-clear-all:hover{color:#ff0000;}
+.history-empty{padding:20px;text-align:center;opacity:.7;}    
   </style>
 </head>
 
@@ -2832,8 +2855,21 @@
         </div>
         <!-- Premium Dropdown -->
         <div id="history-dropdown">
-          <div id="history-dropdown-list"></div>
-        </div>
+
+    <div class="history-dropdown-header">
+
+        <span>History</span>
+
+        <button id="clearAllHistoryBtn" class="history-clear-all">
+            <i class="fa-solid fa-trash"></i>
+            Clear All
+        </button>
+
+    </div>
+
+    <div id="history-dropdown-list"></div>
+
+</div>
       </li>
       <li class="quick-item" id="recent-item">
         <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
@@ -3721,44 +3757,135 @@ function getTopFiveGuides(history) {
 }
 // Render dropdown with clean HTML classes
 function renderHistoryDropdown() {
-  const history = getHistory();
-  const list = document.getElementById('history-dropdown-list');
-  if (!list) return;
 
-  if (!history.length) {
-    list.innerHTML = `
-      <div class="history-empty">
-        <i class="fa-solid fa-inbox"></i>
-        <span>No history yet</span>
-      </div>
-    `;
-    return;
-  }
+    const dropdown = document.getElementById("history-dropdown-list");
+    if (!dropdown) return;
 
-  const sorted = history.slice().reverse(); // newest first
-  let html = '';
-  sorted.forEach((item) => {
-    const time = new Date(item.timestamp).toLocaleString();
-    html += `
-      <div class="history-item" data-url="${item.url}">
-        <div class="history-left">
-          <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
-          <span class="history-title">${item.title}</span>
+    const history = [...getHistory()].sort((a, b) => b.timestamp - a.timestamp);
+
+    if (!history.length) {
+        dropdown.innerHTML = `
+            <div class="history-empty">
+                No history yet.
+            </div>
+        `;
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    let html = `
+        <div class="history-toolbar">
+            <button class="history-clear-all" onclick="clearAllHistory()">
+                <i class="fa-solid fa-trash"></i> Clear All
+            </button>
         </div>
-        <span class="history-time">${time}</span>
-      </div>
     `;
-  });
-  list.innerHTML = html;
 
-  // Attach click events
-  list.querySelectorAll('.history-item').forEach(el => {
-    el.addEventListener('click', function(e) {
-      const url = this.dataset.url;
-      if (url) window.location.href = url;
+    let currentHeading = "";
+
+    history.forEach(item => {
+
+        const d = new Date(item.timestamp);
+
+        const itemDay = new Date(d);
+        itemDay.setHours(0,0,0,0);
+
+        let heading;
+
+        if (itemDay.getTime() === today.getTime()) {
+
+            heading = "Today — " + d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        } else if (itemDay.getTime() === yesterday.getTime()) {
+
+            heading = "Yesterday — " + d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        } else {
+
+            heading = d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        }
+
+        if (heading !== currentHeading) {
+
+            currentHeading = heading;
+
+            html += `
+                <div class="history-date-divider">
+                    ${heading}
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="history-row">
+
+                <a href="${item.url}" class="history-link">
+
+                    <span class="history-time">
+                        ${d.toLocaleTimeString([],{
+                            hour:"numeric",
+                            minute:"2-digit"
+                        })}
+                    </span>
+
+                    <span class="history-title">
+                        ${item.title}
+                    </span>
+
+                </a>
+
+                <button
+                    class="history-delete"
+                    title="Remove"
+                    onclick="removeHistoryItem(${item.timestamp})">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+        `;
+
     });
-  });
+
+    dropdown.innerHTML = html;
+
 }
+  
+function removeHistoryItem(timestamp){
+saveHistory(getHistory().filter(item=>item.timestamp!==timestamp));
+updateHistoryPanel();
+renderHistoryDropdown();
+}
+
+function clearAllHistory(){
+if(!confirm("Clear all history?"))return;
+localStorage.removeItem(HISTORY_KEY);
+updateHistoryPanel();
+renderHistoryDropdown();
+}
+  
 
 // Toggle dropdown with CSS class
 function toggleHistoryDropdown(e) {
@@ -3873,6 +4000,16 @@ function initHistory() {
 // Run on load
 document.addEventListener('DOMContentLoaded', initHistory);
 document.addEventListener('headerLoaded', initHistory);
+
+  document.getElementById("clearAllHistoryBtn").onclick = () => {
+
+    if (!confirm("Clear all history?")) return;
+
+    localStorage.removeItem(HISTORY_KEY);
+
+    updateHistoryPanel();
+
+};
   
   // (The functions openComment, closeComment, sendComment, showAllComments, etc. are included below)
   let selectedRating = 0;
