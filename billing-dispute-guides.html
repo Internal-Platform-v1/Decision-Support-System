@@ -3641,23 +3641,24 @@ if(url)addGuideToHistory(title,url);
 function initHistory() {
   updateHistoryPanel();
   attachHistoryTracking();
+  // Ensure dropdown is closed initially
   const dropdown = document.getElementById('history-dropdown');
   if (dropdown) dropdown.classList.remove('is-open');
-
-  // Clear all button
-  const clearAllBtn = document.getElementById('clearAllHistoryBtn');
-  if (clearAllBtn) {
-    clearAllBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      clearAllHistory();
-    });
-  }
 }
 
 // Run on load
 document.addEventListener('DOMContentLoaded', initHistory);
 document.addEventListener('headerLoaded', initHistory);
-setTimeout(initHistory, 1000);
+
+  document.getElementById("clearAllHistoryBtn").onclick = () => {
+
+    if (!confirm("Clear all history?")) return;
+
+    localStorage.removeItem(HISTORY_KEY);
+
+    updateHistoryPanel();
+
+};
 
 
 /* FEEDBACK + HELP FOR HEADER MODALS */
