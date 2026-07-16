@@ -2790,11 +2790,37 @@
 .history-link{flex:1;display:flex;flex-direction:column;text-decoration:none;color:inherit;}
 .history-time{font-size:11px;opacity:.6;}
 .history-title{font-size:13px;font-weight:600;}
-.history-delete{border:none;background:none;cursor:pointer;color:#999;width:28px;height:28px;border-radius:50%;transition:.2s;}
-.history-delete:hover{background:#dc3545;color:#fff;}
-.history-clear-all{border:none;background:none;color:#dc3545;cursor:pointer;font-size:12px;font-weight:700;}
-.history-clear-all:hover{color:#ff0000;}
 .history-empty{padding:20px;text-align:center;opacity:.7;}    
+
+.history-delete{
+    border:none;
+    background:none;
+    cursor:pointer;
+    color:var(--text-muted);
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    transition:.2s;
+}
+
+.history-delete:hover{
+    background:var(--teal);
+    color:#fff;
+}
+
+.history-clear-all{
+    border:none;
+    background:none;
+    color:var(--teal);
+    cursor:pointer;
+    font-size:12px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.history-clear-all:hover{
+    color:var(--dark);
+}    
   </style>
 </head>
 
@@ -3868,9 +3894,13 @@ function renderHistoryDropdown() {
 }
   
 function removeHistoryItem(timestamp){
-saveHistory(getHistory().filter(item=>item.timestamp!==timestamp));
-updateHistoryPanel();
-renderHistoryDropdown();
+    saveHistory(getHistory().filter(item=>item.timestamp!==timestamp));
+    renderHistoryDropdown();
+    updateHistoryPanel();
+    const dropdown=document.getElementById("history-dropdown");
+    if(dropdown){
+        dropdown.classList.add("show");
+    }
 }
 
 function clearAllHistory(){
