@@ -3641,38 +3641,23 @@ if(url)addGuideToHistory(title,url);
 function initHistory() {
   updateHistoryPanel();
   attachHistoryTracking();
-  // Ensure dropdown is closed initially
   const dropdown = document.getElementById('history-dropdown');
   if (dropdown) dropdown.classList.remove('is-open');
+
+  // Clear all button
+const clearAllBtn=document.getElementById('clearAllHistoryBtn');
+if(clearAllBtn&&!clearAllBtn.dataset.bound){
+    clearAllBtn.dataset.bound="true";
+    clearAllBtn.addEventListener("click",function(e){
+        e.stopPropagation();
+        clearAllHistory();
+    });
 }
 
 // Run on load
 document.addEventListener('DOMContentLoaded', initHistory);
 document.addEventListener('headerLoaded', initHistory);
-
-  document.getElementById("clearAllHistoryBtn").onclick = () => {
-
-    if (!confirm("Clear all history?")) return;
-
-    localStorage.removeItem(HISTORY_KEY);
-
-    updateHistoryPanel();
-
-};
-  
-  // (The functions openComment, closeComment, sendComment, showAllComments, etc. are included below)
-  let selectedRating = 0;
-  let ratingStars = [];
-  let commentsUnsubscribe = null;
-
-  function openAnimatedModal(modal) {
-    if (!modal) return;
-    modal.style.display = "flex";
-    modal.classList.remove("is-closing");
-    requestAnimationFrame(() => {
-      modal.classList.add("is-open");
-    });
-  }
+setTimeout(initHistory, 1000);
 
 
 /* FEEDBACK + HELP FOR HEADER MODALS */
