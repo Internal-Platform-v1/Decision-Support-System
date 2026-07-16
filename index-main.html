@@ -3836,17 +3836,32 @@ if (mostUsed.length) {
 
 // Track guide opens
 function attachHistoryTracking() {
+
   document.querySelectorAll('.guide-link').forEach(link => {
-    link.addEventListener('click', function(e) {
+
+    // Prevent attaching the event multiple times
+    if (link.dataset.historyAttached === "true") return;
+
+    link.dataset.historyAttached = "true";
+
+    link.addEventListener('click', function() {
+
       const card = this.closest('.guide-card');
       if (!card) return;
+
       const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
       const url = this.getAttribute('href');
-      if (url) addGuideToHistory(title, url);
-    });
-  });
-}
 
+      if (url) {
+        addGuideToHistory(title, url);
+      }
+
+    });
+
+  });
+
+}
+  
 function initHistory() {
   updateHistoryPanel();
   attachHistoryTracking();
@@ -3858,7 +3873,6 @@ function initHistory() {
 // Run on load
 document.addEventListener('DOMContentLoaded', initHistory);
 document.addEventListener('headerLoaded', initHistory);
-setTimeout(initHistory, 1000);
   
   // (The functions openComment, closeComment, sendComment, showAllComments, etc. are included below)
   let selectedRating = 0;
