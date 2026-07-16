@@ -2854,6 +2854,7 @@ footer.site-footer .footer-right{
   color: #ef4444;
 }  
 
+  
 .most-used-chip{
 
     display:inline-flex;
@@ -2888,7 +2889,74 @@ footer.site-footer .footer-right{
 
     color:#fff;
 
+}
+
+.history-dropdown-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 14px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+.history-dropdown-header span{
+    font-weight:700;
+    font-size:13px;
+}
+
+.history-clear-all{
+    border:none;
+    background:none;
+    color:#ff6b6b;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+}
+.history-clear-all:hover{
+    color:#ff2b2b;
 }  
+
+.history-toolbar{display:flex;justify-content:flex-end;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.08);}
+.history-date-divider{padding:12px 12px 6px;font-size:12px;font-weight:700;opacity:.7;border-bottom:1px solid rgba(255,255,255,.08);}
+.history-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;}
+.history-link{flex:1;display:flex;flex-direction:column;text-decoration:none;color:inherit;}
+.history-time{font-size:11px;opacity:.6;}
+.history-title{font-size:13px;font-weight:600;}
+.history-empty{padding:20px;text-align:center;opacity:.7;}    
+
+.history-delete{
+    border:none;
+    background:none;
+    cursor:pointer;
+    color:var(--text-muted);
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    transition:.2s;
+}
+
+.history-delete:hover{
+    background:var(--teal);
+    color:#fff;
+}
+
+.history-clear-all{
+    border:none;
+    background:none;
+    color:var(--teal);
+    cursor:pointer;
+    font-size:12px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.history-clear-all:hover{
+    color:var(--dark);
+}      
 </style>
 </head>
 
@@ -2948,13 +3016,22 @@ footer.site-footer .footer-right{
           <span>Click to open history ▼</span>
         </div>
         <!-- Premium Dropdown -->
-       <div id="history-dropdown">
-        <div id="history-dropdown-header">
-          <span><i class="fa-regular fa-clock"></i> History</span>
-          <button class="history-clear-all" id="clearAllHistoryBtn">Clear all</button>
-          </div>
-        <div id="history-dropdown-list"></div>
-      </div>
+<div id="history-dropdown">
+
+    <div class="history-dropdown-header">
+
+        <span>History</span>
+
+        <button id="clearAllHistoryBtn" class="history-clear-all">
+            <i class="fa-solid fa-trash"></i>
+            Clear All
+        </button>
+
+    </div>
+
+    <div id="history-dropdown-list"></div>
+
+</div>
       </li>
       <li class="quick-item" id="recent-item">
         <div class="quick-icon"><i class="fa-solid fa-folder-open"></i></div>
@@ -3334,76 +3411,131 @@ function getTopFiveGuides(history) {
 }
 
 // ---- Clear functions ----
-function removeHistoryItem(url) {
-  let history = getHistory();
-  history = history.filter(item => item.url !== url);
-  saveHistory(history);
-  updateHistoryPanel();
-  renderHistoryDropdown();
+function removeHistoryItem(timestamp){
+saveHistory(getHistory().filter(item=>item.timestamp!==timestamp));
+renderHistoryDropdown();
+updateHistoryPanel();
+const dropdown=document.getElementById("history-dropdown");
+if(dropdown)dropdown.classList.add("is-open");
 }
 
-function clearAllHistory() {
-  if (getHistory().length === 0) return;
-  if (confirm('Delete all history entries?')) {
-    saveHistory([]);
-    updateHistoryPanel();
-    renderHistoryDropdown();
-  }
+function clearAllHistory(){
+if(!confirm("Clear all history?"))return;
+localStorage.removeItem(HISTORY_KEY);
+updateHistoryPanel();
+renderHistoryDropdown();
 }
 
 // ---- Render dropdown ----
 function renderHistoryDropdown() {
-  const history = getHistory();
-  const list = document.getElementById('history-dropdown-list');
-  if (!list) return;
 
-  if (!history.length) {
-    list.innerHTML = `
-      <div class="history-empty">
-        <i class="fa-solid fa-inbox"></i>
-        <span>No history yet</span>
-      </div>
-    `;
-    return;
-  }
+    const dropdown = document.getElementById("history-dropdown-list");
+    if (!dropdown) return;
 
-  const sorted = history.slice().reverse();
-  let html = '';
-  sorted.forEach((item) => {
-    const time = new Date(item.timestamp).toLocaleString();
-    const safeTitle = item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    html += `
-      <div class="history-item" data-url="${item.url}">
-        <div class="history-left">
-          <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
-          <span class="history-title">${safeTitle}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="history-time">${time}</span>
-          <button class="history-delete" data-url="${item.url}" title="Remove from history"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      </div>
-    `;
-  });
-  list.innerHTML = html;
+    const history = [...getHistory()].sort((a, b) => b.timestamp - a.timestamp);
 
-  // Click on item (except delete button) opens guide
-  list.querySelectorAll('.history-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-      if (e.target.closest('.history-delete')) return;
-      const url = this.dataset.url;
-      if (url) window.location.href = url;
+    if (!history.length) {
+        dropdown.innerHTML = `
+            <div class="history-empty">
+                No history yet.
+            </div>
+        `;
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+ let html="";
+
+    let currentHeading = "";
+
+    history.forEach(item => {
+
+        const d = new Date(item.timestamp);
+
+        const itemDay = new Date(d);
+        itemDay.setHours(0,0,0,0);
+
+        let heading;
+
+        if (itemDay.getTime() === today.getTime()) {
+
+            heading = "Today — " + d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        } else if (itemDay.getTime() === yesterday.getTime()) {
+
+            heading = "Yesterday — " + d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        } else {
+
+            heading = d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        }
+
+        if (heading !== currentHeading) {
+
+            currentHeading = heading;
+
+            html += `
+                <div class="history-date-divider">
+                    ${heading}
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="history-row">
+
+                <a href="${item.url}" class="history-link">
+
+                    <span class="history-time">
+                        ${d.toLocaleTimeString([],{
+                            hour:"numeric",
+                            minute:"2-digit"
+                        })}
+                    </span>
+
+                    <span class="history-title">
+                        ${item.title}
+                    </span>
+
+                </a>
+
+                <button
+                    class="history-delete"
+                    title="Remove"
+                    onclick="removeHistoryItem(${item.timestamp})">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+        `;
+
     });
-  });
 
-  // Delete button events
-  list.querySelectorAll('.history-delete').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const url = this.dataset.url;
-      if (url) removeHistoryItem(url);
-    });
-  });
+    dropdown.innerHTML = html;
+
 }
 
 // ---- Toggle dropdown ----
@@ -3481,16 +3613,28 @@ if (mostUsed.length) {
 }
 
 // ---- Track guide opens ----
-function attachHistoryTracking() {
-  document.querySelectorAll('.guide-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-      const card = this.closest('.guide-card');
-      if (!card) return;
-      const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
-      const url = this.getAttribute('href');
-      if (url) addGuideToHistory(title, url);
-    });
-  });
+function attachHistoryTracking(){
+
+document.querySelectorAll(".guide-link").forEach(link=>{
+
+if(link.dataset.historyAttached==="true")return;
+
+link.dataset.historyAttached="true";
+
+link.addEventListener("click",function(){
+
+const card=this.closest(".guide-card");
+if(!card)return;
+
+const title=card.querySelector("h3")?.textContent||"Untitled Guide";
+const url=this.getAttribute("href");
+
+if(url)addGuideToHistory(title,url);
+
+});
+
+});
+
 }
 
 // ---- Initialise ----
