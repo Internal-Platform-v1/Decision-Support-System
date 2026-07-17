@@ -3378,7 +3378,117 @@ function getTopFiveGuides(history) {
     .slice(0,5);
 
 }
+// Render dropdown with clean HTML classes
+function renderHistoryDropdown() {
 
+    const dropdown = document.getElementById("history-dropdown-list");
+    if (!dropdown) return;
+
+    const history = [...getHistory()].sort((a, b) => b.timestamp - a.timestamp);
+
+    if (!history.length) {
+        dropdown.innerHTML = `
+            <div class="history-empty">
+                No history yet.
+            </div>
+        `;
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+ let html="";
+
+    let currentHeading = "";
+
+    history.forEach(item => {
+
+        const d = new Date(item.timestamp);
+
+        const itemDay = new Date(d);
+        itemDay.setHours(0,0,0,0);
+
+        let heading;
+
+        if (itemDay.getTime() === today.getTime()) {
+
+            heading = "Today — " + d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        } else if (itemDay.getTime() === yesterday.getTime()) {
+
+            heading = "Yesterday — " + d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        } else {
+
+            heading = d.toLocaleDateString(undefined,{
+                weekday:"long",
+                month:"long",
+                day:"numeric",
+                year:"numeric"
+            });
+
+        }
+
+        if (heading !== currentHeading) {
+
+            currentHeading = heading;
+
+            html += `
+                <div class="history-date-divider">
+                    ${heading}
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="history-row">
+
+                <a href="${item.url}" class="history-link">
+
+                    <span class="history-time">
+                        ${d.toLocaleTimeString([],{
+                            hour:"numeric",
+                            minute:"2-digit"
+                        })}
+                    </span>
+
+                    <span class="history-title">
+                        ${item.title}
+                    </span>
+
+                </a>
+
+                <button
+                    class="history-delete"
+                    title="Remove"
+                    onclick="removeHistoryItem(${item.timestamp})">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+        `;
+
+    });
+
+    dropdown.innerHTML = html;
+
+}
 // ---- Clear functions ----
 function removeHistoryItem(url) {
   let history = getHistory();
