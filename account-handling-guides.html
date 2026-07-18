@@ -3277,10 +3277,14 @@ function initCardMotion(){
 }
 
 // =========================================================
-// PREMIUM HISTORY – TRACKING, DROPDOWN, CLEAR
+// PREMIUM HISTORY & MOST‑USED (OVERALL USAGE)
 // =========================================================
 const HISTORY_KEY = 'guideHistory';
+const GUIDE_USAGE_KEY = 'guideUsageCounts';   // stays even when history is cleared
 
+let historyTrackingAttached = false;
+
+/* ---------- History storage ---------- */
 function getHistory() {
   try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
 }
@@ -3288,61 +3292,52 @@ function saveHistory(history) { localStorage.setItem(HISTORY_KEY, JSON.stringify
 
 function addGuideToHistory(title, url) {
   const history = getHistory();
-
-  history.push({
-    title,
-    url,
-    timestamp: Date.now()
-  });
-
-  // keep only the latest 100 opens
-  if (history.length > 100) {
-    history.shift();
-  }
-
+  history.push({ title, url, timestamp: Date.now() });
+  if (history.length > 100) history.shift();
   saveHistory(history);
+  updateHistoryPanel();
 }
 
+/* ---------- Guide usage counter (independent of history) ---------- */
+function getGuideUsage() {
+  try { return JSON.parse(localStorage.getItem(GUIDE_USAGE_KEY)) || {}; } catch { return {}; }
+}
+function saveGuideUsage(usage) { localStorage.setItem(GUIDE_USAGE_KEY, JSON.stringify(usage)); }
+
+function addGuideUsage(title, url) {
+  const usage = getGuideUsage();
+  if (!usage[url]) {
+    usage[url] = { title, count: 0 };
+  } else {
+    usage[url].title = title;   // keep title up‑to‑date
+  }
+  usage[url].count += 1;
+  saveGuideUsage(usage);
+}
+
+/* ---------- Helpers for sidebar ---------- */
 function getMostRecentGuide(history) {
   if (!history.length) return null;
   return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
 }
 
-function getTopFiveGuides(history) {
-
-  const counts = {};
-
-  history.forEach(item => {
-
-    if (!counts[item.url]) {
-      counts[item.url] = {
-        title: item.title,
-        url: item.url,
-        count: 0
-      };
-    }
-
-    counts[item.url].count++;
-
-  });
-
-  return Object.values(counts)
-    .sort((a,b)=>b.count-a.count)
-    .slice(0,5);
-
+function getTopFiveMostUsedGuides() {
+  const usage = getGuideUsage();
+  return Object.values(usage)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
 }
 
-// ---- Clear functions ----
+/* ---------- History dropdown ---------- */
 function removeHistoryItem(url) {
-  let history = getHistory();
-  history = history.filter(item => item.url !== url);
+  let history = getHistory().filter(item => item.url !== url);
   saveHistory(history);
   updateHistoryPanel();
   renderHistoryDropdown();
 }
 
 function clearAllHistory() {
-  if (getHistory().length === 0) return;
+  if (!getHistory().length) return;
   if (confirm('Delete all history entries?')) {
     saveHistory([]);
     updateHistoryPanel();
@@ -3350,43 +3345,32 @@ function clearAllHistory() {
   }
 }
 
-// ---- Render dropdown ----
 function renderHistoryDropdown() {
-  const history = getHistory();
   const list = document.getElementById('history-dropdown-list');
   if (!list) return;
-
+  const history = getHistory();
   if (!history.length) {
-    list.innerHTML = `
-      <div class="history-empty">
-        <i class="fa-solid fa-inbox"></i>
-        <span>No history yet</span>
-      </div>
-    `;
+    list.innerHTML = `<div class="history-empty"><i class="fa-solid fa-inbox"></i><span>No history yet</span></div>`;
     return;
   }
-
   const sorted = history.slice().reverse();
   let html = '';
-  sorted.forEach((item) => {
+  sorted.forEach(item => {
     const time = new Date(item.timestamp).toLocaleString();
-    const safeTitle = item.title.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     html += `
       <div class="history-item" data-url="${item.url}">
         <div class="history-left">
           <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
-          <span class="history-title">${safeTitle}</span>
+          <span class="history-title">${item.title.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
           <span class="history-time">${time}</span>
-          <button class="history-delete" data-url="${item.url}" title="Remove from history"><i class="fa-solid fa-xmark"></i></button>
+          <button class="history-delete" data-url="${item.url}" title="Remove"><i class="fa-solid fa-xmark"></i></button>
         </div>
-      </div>
-    `;
+      </div>`;
   });
   list.innerHTML = html;
 
-  // Click on item (except delete button) opens guide
   list.querySelectorAll('.history-item').forEach(item => {
     item.addEventListener('click', function(e) {
       if (e.target.closest('.history-delete')) return;
@@ -3395,27 +3379,22 @@ function renderHistoryDropdown() {
     });
   });
 
-  // Delete button events
   list.querySelectorAll('.history-delete').forEach(btn => {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      const url = this.dataset.url;
-      if (url) removeHistoryItem(url);
+      removeHistoryItem(this.dataset.url);
     });
   });
 }
 
-// ---- Toggle dropdown ----
 function toggleHistoryDropdown(e) {
   e.stopPropagation();
   const dropdown = document.getElementById('history-dropdown');
   if (!dropdown) return;
-  const isOpen = dropdown.classList.contains('is-open');
-  if (!isOpen) renderHistoryDropdown();
+  if (!dropdown.classList.contains('is-open')) renderHistoryDropdown();
   dropdown.classList.toggle('is-open');
 }
 
-// ---- Close dropdown on outside click ----
 document.addEventListener('click', function(e) {
   const dropdown = document.getElementById('history-dropdown');
   const historyItem = document.getElementById('history-item');
@@ -3424,11 +3403,11 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ---- Update panel labels ----
+/* ---------- Update sidebar labels ---------- */
 function updateHistoryPanel() {
   const history = getHistory();
   const recent = getMostRecentGuide(history);
-  const mostUsed = getTopFiveGuides(history);
+  const mostUsed = getTopFiveMostUsedGuides();   // ← from usage counter, not history
 
   const recentLabel = document.getElementById('recent-guide-label');
   const mostUsedLabel = document.getElementById('mostused-guide-label');
@@ -3446,32 +3425,20 @@ function updateHistoryPanel() {
     recentItem.onclick = null;
   }
 
-if (mostUsed.length) {
-
-    mostUsedLabel.innerHTML = "";
-
+  if (mostUsed.length) {
+    mostUsedLabel.innerHTML = '';
     mostUsed.forEach(guide => {
-
-        const chip = document.createElement("a");
-
-        chip.className = "most-used-chip";
-
-        chip.href = guide.url;
-
-        chip.textContent = guide.title;
-
-        mostUsedLabel.appendChild(chip);
-
+      const chip = document.createElement('a');
+      chip.className = 'most-used-chip';
+      chip.href = guide.url;
+      chip.textContent = guide.title;
+      mostUsedLabel.appendChild(chip);
     });
-
-    mostUsedItem.style.cursor = "default";
+    mostUsedItem.style.cursor = 'default';
     mostUsedItem.onclick = null;
-
-} else {
-
-    mostUsedLabel.textContent = "No history yet";
-
-}
+  } else {
+    mostUsedLabel.textContent = 'No usage yet';
+  }
 
   if (historyItem) {
     historyItem.style.cursor = 'pointer';
@@ -3479,16 +3446,22 @@ if (mostUsed.length) {
   }
 }
 
-// ---- Track guide opens ----
+// ---- Delegated history + usage tracking (fires once per click) ----
 function attachHistoryTracking() {
-  document.querySelectorAll('.guide-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-      const card = this.closest('.guide-card');
-      if (!card) return;
-      const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
-      const url = this.getAttribute('href');
-      if (url) addGuideToHistory(title, url);
-    });
+  if (historyTrackingAttached) return;
+  historyTrackingAttached = true;
+
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('.guide-link');
+    if (!link) return;
+    const card = link.closest('.guide-card');
+    if (!card) return;
+    const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
+    const url = link.getAttribute('href');
+    if (url) {
+      addGuideToHistory(title, url);   // history log
+      addGuideUsage(title, url);       // overall usage counter
+    }
   });
 }
 
@@ -3499,7 +3472,6 @@ function initHistory() {
   const dropdown = document.getElementById('history-dropdown');
   if (dropdown) dropdown.classList.remove('is-open');
 
-  // Clear all button
   const clearAllBtn = document.getElementById('clearAllHistoryBtn');
   if (clearAllBtn) {
     clearAllBtn.addEventListener('click', function(e) {
@@ -3509,11 +3481,9 @@ function initHistory() {
   }
 }
 
-// Run on load
+// Run once after DOM is ready
 document.addEventListener('DOMContentLoaded', initHistory);
 document.addEventListener('headerLoaded', initHistory);
-setTimeout(initHistory, 1000);  
-
 /* FEEDBACK + HELP FOR HEADER MODALS */
 let selectedRating = 0;
 let ratingStars = [];
