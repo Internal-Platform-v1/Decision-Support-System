@@ -3573,7 +3573,7 @@ async function guardProtectedPage() {
 }
 
 // =========================================================
-// FILTERS, MOTION, FEEDBACK (unchanged)
+// FILTERS, MOTION, FEEDBACK
 // =========================================================
 function setupGuideFilters() {
   const search = document.getElementById("guideSearch"), clearBtn = document.getElementById("clearSearchBtn");
@@ -3820,71 +3820,119 @@ window.addEventListener("click", (e) => {
 });
 
 // =========================================================
-// ANNOUNCEMENT BULLETIN – Firestore fetch & display
+// ANNOUNCEMENT BULLETIN – FIXED VERSION
 // =========================================================
 let announcementShownThisSession = false;
 
+// STATIC FALLBACK ANNOUNCEMENTS – remove this array once Firestore works
+const STATIC_ANNOUNCEMENTS = [
+  {
+    title: "🎉 Welcome to the new Bulletin!",
+    content: "This is your new announcement board. You'll see updates, reminders, and important notices here. To add your own announcements, create documents in the 'announcements' Firestore collection with title, content, priority (high/medium/low), and createdAt fields.",
+    priority: "high",
+    date: new Date(),
+    link: null
+  },
+  {
+    title: "📋 Tip: Add announcements via Firestore",
+    content: "Go to your Firebase Console → Firestore → create a collection named 'announcements'. Add documents with fields: title (string), content (string), priority (string: high/medium/low), createdAt (timestamp), and an optional link (string).",
+    priority: "medium",
+    date: new Date(Date.now() - 86400000),
+    link: null
+  }
+];
+
 async function fetchAnnouncements() {
   try {
+    // Try Firestore first – simpler query (no composite index needed)
     const snap = await db.collection('announcements')
-      .orderBy('priority', 'desc')
       .orderBy('createdAt', 'desc')
       .limit(10)
       .get();
-    if (snap.empty) return [];
-    const items = [];
-    snap.forEach(doc => {
-      const d = doc.data();
-      items.push({
-        id: doc.id,
-        title: d.title || 'Untitled',
-        content: d.content || '',
-        priority: d.priority || 'low',
-        date: d.createdAt?.toDate?.() || new Date(),
-        link: d.link || null,
+
+    if (!snap.empty) {
+      const items = [];
+      snap.forEach(doc => {
+        const d = doc.data();
+        items.push({
+          id: doc.id,
+          title: d.title || 'Untitled',
+          content: d.content || '',
+          priority: d.priority || 'low',
+          date: d.createdAt?.toDate?.() || new Date(),
+          link: d.link || null,
+        });
       });
-    });
-    return items;
-  } catch (e) { console.warn('Fetch announcements error:', e); return []; }
+      console.log('✅ Announcements loaded from Firestore:', items.length);
+      return items;
+    }
+
+    // If Firestore is empty, use static fallback
+    console.log('📢 No Firestore announcements found, using static fallback.');
+    return STATIC_ANNOUNCEMENTS;
+
+  } catch (err) {
+    console.warn('⚠️ Firestore announcement fetch failed, using static fallback:', err.message);
+    return STATIC_ANNOUNCEMENTS;
+  }
 }
 
 function renderAnnouncements(items) {
   const list = document.getElementById('announcementList');
   const ts = document.getElementById('announcementTimestamp');
   if (!list) return;
-  if (!items.length) {
+
+  if (!items || !items.length) {
     list.innerHTML = `<div class="announcement-item" style="text-align:center;color:var(--muted);"><p>No new announcements at this time.</p></div>`;
     if (ts) ts.textContent = new Date().toLocaleString();
     return;
   }
+
   const priorityLabels = { high: '🔴 High', medium: '🟡 Medium', low: '🟢 Low' };
   const priorityColors = { high: '#ef4444', medium: '#eab308', low: '#22c55e' };
+
   let html = '';
   items.forEach(item => {
     const dateStr = item.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-    const content = item.content.replace(/\n/g, '<br>');
+    const content = (item.content || '').replace(/\n/g, '<br>');
     const link = item.link ? `<a href="${item.link}" target="_blank">Learn more →</a>` : '';
     html += `<div class="announcement-item">
-      <div class="item-title"><span>${escapeHtml(item.title)}</span><span class="priority" style="background:${priorityColors[item.priority] || '#6b7280'}">${priorityLabels[item.priority] || item.priority}</span></div>
+      <div class="item-title">
+        <span>${escapeHtml(item.title)}</span>
+        <span class="priority" style="background:${priorityColors[item.priority] || '#6b7280'}">${priorityLabels[item.priority] || item.priority}</span>
+      </div>
       <div class="item-date">${dateStr}</div>
       <div class="item-content">${content} ${link}</div>
     </div>`;
   });
+
   list.innerHTML = html;
   if (ts) ts.textContent = new Date().toLocaleString();
 }
 
 async function showAnnouncementModalIfNeeded() {
-  if (announcementShownThisSession) return;
+  if (announcementShownThisSession) {
+    console.log('ℹ️ Announcements already shown this session.');
+    return;
+  }
+
   const items = await fetchAnnouncements();
-  if (!items.length) { announcementShownThisSession = true; return; }
+  if (!items || !items.length) {
+    announcementShownThisSession = true;
+    console.log('ℹ️ No announcements to show.');
+    return;
+  }
+
   renderAnnouncements(items);
   const modal = document.getElementById('announcementModal');
   if (modal) {
     modal.style.display = 'flex';
-    void modal.offsetWidth;
+    void modal.offsetWidth; // force reflow
     modal.classList.add('is-open');
     announcementShownThisSession = true;
+    console.log('✅ Announcement modal shown.');
+  } else {
+    console.warn('⚠️ Announcement modal element not found in DOM.');
   }
 }
 
@@ -3909,13 +3957,14 @@ document.addEventListener("DOMContentLoaded", () => {
     initRevealMotion();
     initCardMotion();
     initRatingStars();
-    showAnnouncementModalIfNeeded();   // <-- ADDED
+    // Show announcements after a short delay to ensure DOM is ready
+    setTimeout(showAnnouncementModalIfNeeded, 400);
   }).catch(err => console.error("Init error:", err));
 });
 document.addEventListener("headerLoaded", () => { setupGuideFilters(); initCardMotion(); initRatingStars(); });
 setTimeout(() => { initRatingStars(); }, 500);
 </script>
-
+  
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
