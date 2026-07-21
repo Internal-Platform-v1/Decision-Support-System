@@ -562,13 +562,8 @@ async function loadHeaderUserProfile(user) {
 const operationsConsoleContainer = document.getElementById("operationsConsoleContainer");
 
 if (operationsConsoleContainer) {
-
-    const isAdmin =
-        data.role &&
-        data.role.toLowerCase() === "administrator";
-
     operationsConsoleContainer.style.display =
-        isAdmin ? "block" : "none";
+        data.operationsConsole === true ? "block" : "none";
 }
       }
     }
