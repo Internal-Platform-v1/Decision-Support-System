@@ -554,7 +554,7 @@ async function loadHeaderUserProfile(user) {
     .trim();
 }
         if (data.role) role = data.role;
-
+        updateOperationsConsole(role);
         // ===========================================
 // Operations Console Permission
 // ===========================================
@@ -659,5 +659,32 @@ document.addEventListener("headerLoaded", () => {
     });
   }
 });
+
+// ======================================
+// Operations Console
+// ======================================
+
+function updateOperationsConsole(role) {
+
+    const container = document.getElementById("operationsConsoleContainer");
+    const button = document.getElementById("operationsConsoleBtn");
+
+    if (!container || !button) return;
+
+const isAdministrator =
+    (role || "").toLowerCase() === "administrator";
+
+console.log("Role:", role);
+console.log("Is Admin:", isAdministrator);
+
+    container.style.display = isAdministrator ? "block" : "none";
+
+    if (isAdministrator) {
+        button.onclick = () => {
+            window.location.href =
+                (window.SITE_BASE || "") + "operations-console.html";
+        };
+    }
+}
 
 
