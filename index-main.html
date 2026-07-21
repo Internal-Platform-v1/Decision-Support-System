@@ -2826,40 +2826,94 @@ footer.site-footer .footer-right{
 } 
 
 .most-used-chip{
-
     display:inline-flex;
-
     align-items:center;
-
     padding:8px 14px;
-
     margin:4px;
-
     border-radius:999px;
-
     background:#fff;
-
     color:var(--olive-2);
-
     font-size:12px;
-
     font-weight:700;
-
     text-decoration:none;
-
     border:1px solid rgba(0,0,0,.08);
-
     transition:.2s;
-
 }
-
 .most-used-chip:hover{
-
     background:var(--teal);
-
     color:#fff;
+} 
 
-}  
+  /* ===== ANNOUNCEMENT BULLETIN MODAL ===== */
+.announcement-modal {
+  position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center;
+  padding: 20px; animation: announcementFadeIn 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.announcement-modal.is-open { display: flex; }
+.announcement-overlay {
+  position: absolute; inset: 0; background: rgba(2,6,23,0.65); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.announcement-panel {
+  position: relative; max-width: 640px; width: 100%; max-height: 85vh;
+  background: var(--soft-card, rgba(255,255,255,.92));
+  border: 1px solid var(--soft-card-border, rgba(255,255,255,.9));
+  border-radius: var(--radius-2xl, 36px);
+  box-shadow: var(--shadow-xl, 0 34px 90px rgba(2,6,23,.28));
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  padding: 32px 32px 24px; overflow-y: auto;
+  transform: scale(0.96) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
+  opacity: 0; pointer-events: none;
+}
+.announcement-modal.is-open .announcement-panel {
+  transform: scale(1) translateY(0); opacity: 1; pointer-events: auto;
+}
+.announcement-close {
+  position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border: none;
+  border-radius: 999px; background: rgba(0,0,0,0.06); color: var(--muted, #475569);
+  font-size: 22px; cursor: pointer; transition: background 0.2s, transform 0.2s;
+  display: grid; place-items: center;
+}
+.announcement-close:hover { background: rgba(0,0,0,0.12); transform: rotate(90deg); }
+.announcement-header { margin-bottom: 22px; }
+.announcement-badge {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px;
+  border-radius: 999px; background: color-mix(in srgb, var(--yellow) 20%, #ffffff);
+  color: var(--olive-2, #4d148c); font-weight: 800; font-size: 13px;
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 12px;
+}
+.announcement-header h2 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.04em; color: var(--ink, #0f172a); }
+.announcement-header p { margin: 0; color: var(--muted, #475569); font-size: 15px; line-height: 1.6; }
+.announcement-body { display: flex; flex-direction: column; gap: 18px; margin: 6px 0 18px; }
+.announcement-item {
+  padding: 18px 20px; border-radius: 22px; background: rgba(255,255,255,0.5);
+  border: 1px solid var(--line, rgba(148,163,184,.18));
+  transition: background 0.2s, transform 0.2s;
+}
+.announcement-item:hover { background: #ffffff; transform: translateX(4px); }
+.announcement-item .item-title {
+  font-weight: 800; font-size: 17px; color: var(--ink, #0f172a);
+  display: flex; align-items: center; gap: 10px;
+}
+.announcement-item .item-title .priority {
+  font-size: 12px; font-weight: 700; padding: 2px 12px; border-radius: 999px;
+  background: var(--yellow, #ff6600); color: #fff;
+}
+.announcement-item .item-date { font-size: 12px; font-weight: 600; color: var(--muted, #475569); margin: 4px 0 8px; }
+.announcement-item .item-content { color: var(--muted, #475569); line-height: 1.7; font-size: 14px; white-space: pre-wrap; }
+.announcement-item .item-content a { color: var(--teal, #4d148c); text-decoration: underline; }
+.announcement-footer {
+  border-top: 1px solid var(--line, rgba(148,163,184,.18)); padding-top: 16px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  font-size: 13px; color: var(--muted, #475569);
+}
+@keyframes announcementFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 600px) {
+  .announcement-panel { padding: 24px 18px; }
+  .announcement-header h2 { font-size: 22px; }
+  .announcement-item { padding: 14px 16px; }
+}
   
 </style>
 </head>
@@ -3448,412 +3502,418 @@ footer.site-footer .footer-right{
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
 <script>
-  // =========================================================
-  // FIREBASE CONFIG & AUTH GUARD (unchanged)
-  // =========================================================
-  const firebaseConfig = {
-    apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
-    authDomain: "bdgg-database.firebaseapp.com",
-    projectId: "bdgg-database",
-    storageBucket: "bdgg-database.appspot.com",
-    messagingSenderId: "43574975434",
-    appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
-  };
+// =========================================================
+// FIREBASE CONFIG & AUTH GUARD
+// =========================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDjaMdeh0Cgx00hzDyZOi54fDkR81wnxJU",
+  authDomain: "bdgg-database.firebaseapp.com",
+  projectId: "bdgg-database",
+  storageBucket: "bdgg-database.appspot.com",
+  messagingSenderId: "43574975434",
+  appId: "1:43574975434:web:4c79e581267fdfcc6ccd33"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const ALLOWED_DOMAIN = "@fedexfreight.com";
+const APPROVED_USERS_COLLECTION = "approved_users";
+const LOGIN_PAGE = "index.html";
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const ALLOWED_DOMAIN = "@fedexfreight.com";
-  const APPROVED_USERS_COLLECTION = "approved_users";
-  const LOGIN_PAGE = "index.html";
-
-  function normalizeEmail(email) { return String(email || "").trim().toLowerCase(); }
-  function isAllowedFedExEmail(email) { return normalizeEmail(email).endsWith(ALLOWED_DOMAIN); }
-
-  async function checkApprovedUser(email) {
-    const emailKey = normalizeEmail(email);
-    const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(emailKey);
-    const docSnap = await docRef.get();
-    if (!docSnap.exists) return { allowed: false, reason: "Your account is not authorized to access this system." };
-    const data = docSnap.data() || {};
-    if (data.active === false) return { allowed: false, reason: "Your account has been disabled. Please contact your administrator." };
-    return { allowed: true, data };
-  }
-
-  async function denyAccessAndRedirect() {
-    try { await auth.signOut(); } catch (error) { console.error("Sign out failed:", error); }
-    window.location.replace(LOGIN_PAGE);
-  }
-
-  function getDeviceId() {
-    let deviceId = localStorage.getItem("deviceId");
-    if (!deviceId) { deviceId = crypto.randomUUID(); localStorage.setItem("deviceId", deviceId); }
-    return deviceId;
-  }
-
-  async function handleDeviceCheck(user, userData) {
-    const deviceId = getDeviceId();
-    const email = normalizeEmail(user.email);
-    const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(email);
-    const devices = Array.isArray(userData.devices) ? userData.devices : [];
-    const existingDevice = devices.find(device => device && device.id === deviceId);
-    if (!existingDevice) {
-      devices.push({ id: deviceId, verified: true, addedAt: Date.now(), lastLoginAt: Date.now(), userAgent: navigator.userAgent || "Unknown browser" });
-      await docRef.update({ devices });
-      return true;
-    }
-    existingDevice.verified = true;
-    existingDevice.lastLoginAt = Date.now();
-    existingDevice.userAgent = navigator.userAgent || existingDevice.userAgent || "Unknown browser";
+function normalizeEmail(e) { return String(e || "").trim().toLowerCase(); }
+function isAllowedFedExEmail(e) { return normalizeEmail(e).endsWith(ALLOWED_DOMAIN); }
+async function checkApprovedUser(email) {
+  const docSnap = await db.collection(APPROVED_USERS_COLLECTION).doc(normalizeEmail(email)).get();
+  if (!docSnap.exists) return { allowed: false, reason: "Your account is not authorized." };
+  const data = docSnap.data() || {};
+  if (data.active === false) return { allowed: false, reason: "Your account has been disabled." };
+  return { allowed: true, data };
+}
+async function denyAccessAndRedirect() {
+  try { await auth.signOut(); } catch (e) { console.error(e); }
+  window.location.replace(LOGIN_PAGE);
+}
+function getDeviceId() {
+  let id = localStorage.getItem("deviceId");
+  if (!id) { id = crypto.randomUUID(); localStorage.setItem("deviceId", id); }
+  return id;
+}
+async function handleDeviceCheck(user, userData) {
+  const deviceId = getDeviceId();
+  const email = normalizeEmail(user.email);
+  const docRef = db.collection(APPROVED_USERS_COLLECTION).doc(email);
+  const devices = Array.isArray(userData.devices) ? userData.devices : [];
+  const existing = devices.find(d => d && d.id === deviceId);
+  if (!existing) {
+    devices.push({ id: deviceId, verified: true, addedAt: Date.now(), lastLoginAt: Date.now(), userAgent: navigator.userAgent || "Unknown" });
     await docRef.update({ devices });
-    return true;
+  } else {
+    existing.verified = true;
+    existing.lastLoginAt = Date.now();
+    existing.userAgent = navigator.userAgent || existing.userAgent || "Unknown";
+    await docRef.update({ devices });
   }
-
-  async function guardProtectedPage() {
-    return new Promise((resolve) => {
-      auth.onAuthStateChanged(async (user) => {
-        if (!user) { await denyAccessAndRedirect(); return; }
-        try {
-          if (!isAllowedFedExEmail(user.email)) { await denyAccessAndRedirect(); return; }
-          if (!user.emailVerified) { await denyAccessAndRedirect(); return; }
-          const approvalCheck = await checkApprovedUser(user.email);
-          if (!approvalCheck.allowed) { await denyAccessAndRedirect(); return; }
-          const userData = approvalCheck.data || {};
-          const deviceAllowed = await handleDeviceCheck(user, userData);
-          if (!deviceAllowed) { await denyAccessAndRedirect(); return; }
-          if (userData.forcePasswordChange === true) { window.location.replace("change-password.html"); return; }
-          document.documentElement.classList.remove("page-protected");
-          resolve(true);
-        } catch (error) { console.error("Page guard failed:", error); await denyAccessAndRedirect(); }
-      });
+  return true;
+}
+async function guardProtectedPage() {
+  return new Promise((resolve) => {
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) { await denyAccessAndRedirect(); return; }
+      try {
+        if (!isAllowedFedExEmail(user.email) || !user.emailVerified) { await denyAccessAndRedirect(); return; }
+        const approval = await checkApprovedUser(user.email);
+        if (!approval.allowed) { await denyAccessAndRedirect(); return; }
+        await handleDeviceCheck(user, approval.data);
+        if (approval.data.forcePasswordChange) { window.location.replace("change-password.html"); return; }
+        document.documentElement.classList.remove("page-protected");
+        resolve(true);
+      } catch (e) { console.error(e); await denyAccessAndRedirect(); }
     });
-  }
+  });
+}
 
-  // =========================================================
-  // FILTERS, MOTION, FEEDBACK (unchanged)
-  // =========================================================
-  function setupGuideFilters() {
-    const searchInput = document.getElementById("guideSearch");
-    const clearSearchBtn = document.getElementById("clearSearchBtn");
-    const filterButtons = Array.from(document.querySelectorAll(".filter-btn"));
-    const cards = Array.from(document.querySelectorAll("#guideGrid .guide-card"));
-    const resultsLine = document.getElementById("resultsLine");
-    if (!searchInput || !cards.length) return;
-    let activeFilter = "all";
-    function applyFilters() {
-      const term = searchInput.value.trim().toLowerCase();
-      if (clearSearchBtn) clearSearchBtn.style.display = term ? "block" : "none";
-      let visibleCount = 0;
-      cards.forEach(card => {
-        const category = (card.dataset.category || "").toLowerCase();
-        const keywords = (card.dataset.keywords || "").toLowerCase();
-        const title = (card.querySelector("h3")?.textContent || "").toLowerCase();
-        const desc = (card.querySelector(".lead")?.textContent || "").toLowerCase();
-        const small = (card.querySelector(".small")?.textContent || "").toLowerCase();
-        const matchesSearch = !term || category.includes(term) || keywords.includes(term) || title.includes(term) || desc.includes(term) || small.includes(term);
-        const matchesFilter = activeFilter === "all" || category === activeFilter;
-        const isVisible = matchesSearch && matchesFilter;
-        card.classList.toggle("is-hidden", !isVisible);
-        if (isVisible) visibleCount++;
-      });
-      if (resultsLine) {
-        resultsLine.style.display = (term || activeFilter !== "all") ? "block" : "none";
-        resultsLine.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${visibleCount} guide${visibleCount === 1 ? "" : "s"}</span>`;
-      }
-    }
-    searchInput.addEventListener("input", applyFilters);
-    searchInput.addEventListener("keyup", applyFilters);
-    searchInput.addEventListener("search", applyFilters);
-    if (clearSearchBtn) clearSearchBtn.addEventListener("click", () => { searchInput.value = ""; applyFilters(); searchInput.focus(); });
-    filterButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        filterButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeFilter = (btn.dataset.filter || "all").toLowerCase();
-        applyFilters();
-      });
+// =========================================================
+// FILTERS, MOTION, FEEDBACK (unchanged)
+// =========================================================
+function setupGuideFilters() {
+  const search = document.getElementById("guideSearch"), clearBtn = document.getElementById("clearSearchBtn");
+  const filterBtns = Array.from(document.querySelectorAll(".filter-btn"));
+  const cards = Array.from(document.querySelectorAll("#guideGrid .guide-card"));
+  const results = document.getElementById("resultsLine");
+  if (!search || !cards.length) return;
+  let activeFilter = "all";
+  function applyFilters() {
+    const term = search.value.trim().toLowerCase();
+    if (clearBtn) clearBtn.style.display = term ? "block" : "none";
+    let visible = 0;
+    cards.forEach(c => {
+      const cat = (c.dataset.category || "").toLowerCase();
+      const kw = (c.dataset.keywords || "").toLowerCase();
+      const title = (c.querySelector("h3")?.textContent || "").toLowerCase();
+      const desc = (c.querySelector(".lead")?.textContent || "").toLowerCase();
+      const small = (c.querySelector(".small")?.textContent || "").toLowerCase();
+      const matchSearch = !term || cat.includes(term) || kw.includes(term) || title.includes(term) || desc.includes(term) || small.includes(term);
+      const matchFilter = activeFilter === "all" || cat === activeFilter;
+      const show = matchSearch && matchFilter;
+      c.classList.toggle("is-hidden", !show);
+      if (show) visible++;
     });
-    applyFilters();
-  }
-
-  function focusGuideSearch() {
-    const input = document.getElementById("guideSearch");
-    if (!input) return;
-    const y = input.getBoundingClientRect().top + window.pageYOffset - 130;
-    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
-    setTimeout(() => { input.focus({ preventScroll: true }); input.setSelectionRange(input.value.length, input.value.length); }, 350);
-  }
-
-  function initRevealMotion() {
-    const revealItems = document.querySelectorAll(".reveal");
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add("in-view"); observer.unobserve(entry.target); } });
-      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-      revealItems.forEach(item => observer.observe(item));
-    } else revealItems.forEach(item => item.classList.add("in-view"));
-  }
-
-  function initCardMotion() {
-    document.querySelectorAll(".guide-card").forEach(card => {
-      if (card.dataset.motionReady === "true") return;
-      card.dataset.motionReady = "true";
-      card.addEventListener("pointermove", event => {
-        const rect = card.getBoundingClientRect();
-        const x = event.clientX - rect.left, y = event.clientY - rect.top;
-        const px = x / rect.width, py = y / rect.height;
-        card.style.setProperty("--mx", `${px * 100}%`);
-        card.style.setProperty("--my", `${py * 100}%`);
-        card.style.setProperty("--rx", `${(0.5 - py) * 4}deg`);
-        card.style.setProperty("--ry", `${(px - 0.5) * 5}deg`);
-      });
-      card.addEventListener("pointerleave", () => { card.style.setProperty("--rx", "0deg"); card.style.setProperty("--ry", "0deg"); });
-    });
-  }
-
-  // =========================================================
-  // *** NEW: PREMIUM HISTORY & MOST‑USED (OVERALL USAGE) ***
-  // =========================================================
-  const HISTORY_KEY = 'guideHistory';
-  const GUIDE_USAGE_KEY = 'guideUsageCounts';   // never cleared by history
-
-  let historyTrackingAttached = false;
-
-  function getHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; } }
-  function saveHistory(history) { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); }
-
-  function addGuideToHistory(title, url) {
-    const history = getHistory();
-    history.push({ title, url, timestamp: Date.now() });
-    if (history.length > 100) history.shift();
-    saveHistory(history);
-    updateHistoryPanel();
-  }
-
-  function getGuideUsage() { try { return JSON.parse(localStorage.getItem(GUIDE_USAGE_KEY)) || {}; } catch { return {}; } }
-  function saveGuideUsage(usage) { localStorage.setItem(GUIDE_USAGE_KEY, JSON.stringify(usage)); }
-
-  function addGuideUsage(title, url) {
-    const usage = getGuideUsage();
-    if (!usage[url]) usage[url] = { title, count: 0 };
-    else usage[url].title = title;
-    usage[url].count += 1;
-    saveGuideUsage(usage);
-  }
-
-  function getMostRecentGuide(history) {
-    if (!history.length) return null;
-    return history.reduce((a, b) => a.timestamp > b.timestamp ? a : b);
-  }
-
-  function getTopFiveMostUsedGuides() {
-    const usage = getGuideUsage();
-    return Object.values(usage).sort((a, b) => b.count - a.count).slice(0, 5);
-  }
-
-  function removeHistoryItem(url) {
-    let history = getHistory().filter(item => item.url !== url);
-    saveHistory(history);
-    updateHistoryPanel();
-    renderHistoryDropdown();
-  }
-
-  function clearAllHistory() {
-    if (!getHistory().length) return;
-    if (confirm('Delete all history entries?')) {
-      saveHistory([]);
-      updateHistoryPanel();
-      renderHistoryDropdown();
+    if (results) {
+      results.style.display = (term || activeFilter !== "all") ? "block" : "none";
+      results.innerHTML = `<span><i class="fa-solid fa-magnifying-glass"></i> Showing ${visible} guide${visible===1?"":"s"}</span>`;
     }
   }
-
-  function renderHistoryDropdown() {
-    const list = document.getElementById('history-dropdown-list');
-    if (!list) return;
-    const history = getHistory();
-    if (!history.length) {
-      list.innerHTML = `<div class="history-empty"><i class="fa-solid fa-inbox"></i><span>No history yet</span></div>`;
-      return;
-    }
-    const sorted = history.slice().reverse();
-    let html = '';
-    sorted.forEach(item => {
-      const time = new Date(item.timestamp).toLocaleString();
-      html += `
-        <div class="history-item" data-url="${item.url}">
-          <div class="history-left">
-            <div class="history-icon"><i class="fa-solid fa-file-lines"></i></div>
-            <span class="history-title">${item.title.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span class="history-time">${time}</span>
-            <button class="history-delete" data-url="${item.url}" title="Remove"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-        </div>`;
+  search.addEventListener("input", applyFilters);
+  search.addEventListener("keyup", applyFilters);
+  search.addEventListener("search", applyFilters);
+  if (clearBtn) clearBtn.addEventListener("click", () => { search.value = ""; applyFilters(); search.focus(); });
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeFilter = (btn.dataset.filter || "all").toLowerCase();
+      applyFilters();
     });
-    list.innerHTML = html;
-    list.querySelectorAll('.history-item').forEach(item => {
-      item.addEventListener('click', function(e) {
-        if (e.target.closest('.history-delete')) return;
-        const url = this.dataset.url;
-        if (url) window.location.href = url;
-      });
-    });
-    list.querySelectorAll('.history-delete').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        removeHistoryItem(this.dataset.url);
-      });
-    });
-  }
+  });
+  applyFilters();
+}
 
-  function toggleHistoryDropdown(e) {
-    e.stopPropagation();
-    const dropdown = document.getElementById('history-dropdown');
-    if (!dropdown) return;
-    if (!dropdown.classList.contains('is-open')) renderHistoryDropdown();
-    dropdown.classList.toggle('is-open');
-  }
+function focusGuideSearch() {
+  const input = document.getElementById("guideSearch");
+  if (!input) return;
+  const y = input.getBoundingClientRect().top + window.pageYOffset - 130;
+  window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+  setTimeout(() => { input.focus({ preventScroll: true }); input.setSelectionRange(input.value.length, input.value.length); }, 350);
+}
 
+function initRevealMotion() {
+  const items = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window) {
+    const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in-view"); obs.unobserve(e.target); } }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    items.forEach(i => obs.observe(i));
+  } else items.forEach(i => i.classList.add("in-view"));
+}
+
+function initCardMotion() {
+  document.querySelectorAll(".guide-card").forEach(card => {
+    if (card.dataset.motionReady === "true") return;
+    card.dataset.motionReady = "true";
+    card.addEventListener("pointermove", e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      const px = x / rect.width, py = y / rect.height;
+      card.style.setProperty("--mx", px * 100 + "%");
+      card.style.setProperty("--my", py * 100 + "%");
+      card.style.setProperty("--rx", (0.5 - py) * 4 + "deg");
+      card.style.setProperty("--ry", (px - 0.5) * 5 + "deg");
+    });
+    card.addEventListener("pointerleave", () => { card.style.setProperty("--rx", "0deg"); card.style.setProperty("--ry", "0deg"); });
+  });
+}
+
+// =========================================================
+// PREMIUM HISTORY & MOST-USED
+// =========================================================
+const HISTORY_KEY = 'guideHistory', GUIDE_USAGE_KEY = 'guideUsageCounts';
+let historyTrackingAttached = false;
+
+function getHistory() { try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; } }
+function saveHistory(h) { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); }
+function addGuideToHistory(title, url) {
+  const hist = getHistory();
+  hist.push({ title, url, timestamp: Date.now() });
+  if (hist.length > 100) hist.shift();
+  saveHistory(hist);
+  updateHistoryPanel();
+}
+function getGuideUsage() { try { return JSON.parse(localStorage.getItem(GUIDE_USAGE_KEY)) || {}; } catch { return {}; } }
+function saveGuideUsage(u) { localStorage.setItem(GUIDE_USAGE_KEY, JSON.stringify(u)); }
+function addGuideUsage(title, url) {
+  const usage = getGuideUsage();
+  if (!usage[url]) usage[url] = { title, count: 0 };
+  usage[url].title = title;
+  usage[url].count += 1;
+  saveGuideUsage(usage);
+}
+function getMostRecentGuide(history) { return history.length ? history.reduce((a,b)=>a.timestamp>b.timestamp?a:b) : null; }
+function getTopFiveMostUsedGuides() {
+  const usage = getGuideUsage();
+  return Object.values(usage).sort((a,b) => b.count - a.count).slice(0, 5);
+}
+function removeHistoryItem(url) {
+  let h = getHistory().filter(item => item.url !== url);
+  saveHistory(h);
+  updateHistoryPanel();
+  renderHistoryDropdown();
+}
+function clearAllHistory() {
+  if (!getHistory().length) return;
+  if (confirm('Delete all history entries?')) { saveHistory([]); updateHistoryPanel(); renderHistoryDropdown(); }
+}
+function renderHistoryDropdown() {
+  const list = document.getElementById('history-dropdown-list');
+  if (!list) return;
+  const history = getHistory();
+  if (!history.length) { list.innerHTML = `<div class="history-empty"><i class="fa-solid fa-inbox"></i><span>No history yet</span></div>`; return; }
+  const sorted = history.slice().reverse();
+  let html = '';
+  sorted.forEach(item => {
+    const time = new Date(item.timestamp).toLocaleString();
+    html += `<div class="history-item" data-url="${item.url}">
+      <div class="history-left"><div class="history-icon"><i class="fa-solid fa-file-lines"></i></div><span class="history-title">${item.title.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span class="history-time">${time}</span><button class="history-delete" data-url="${item.url}" title="Remove"><i class="fa-solid fa-xmark"></i></button></div>
+    </div>`;
+  });
+  list.innerHTML = html;
+  list.querySelectorAll('.history-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+      if (e.target.closest('.history-delete')) return;
+      if (this.dataset.url) window.location.href = this.dataset.url;
+    });
+  });
+  list.querySelectorAll('.history-delete').forEach(btn => {
+    btn.addEventListener('click', function(e) { e.stopPropagation(); removeHistoryItem(this.dataset.url); });
+  });
+}
+function toggleHistoryDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('history-dropdown');
+  if (!dd) return;
+  if (!dd.classList.contains('is-open')) renderHistoryDropdown();
+  dd.classList.toggle('is-open');
+}
+document.addEventListener('click', function(e) {
+  const dd = document.getElementById('history-dropdown'), hi = document.getElementById('history-item');
+  if (dd && hi && !hi.contains(e.target)) dd.classList.remove('is-open');
+});
+function updateHistoryPanel() {
+  const history = getHistory();
+  const recent = getMostRecentGuide(history);
+  const mostUsed = getTopFiveMostUsedGuides();
+  const recentLabel = document.getElementById('recent-guide-label');
+  const mostUsedLabel = document.getElementById('mostused-guide-label');
+  const recentItem = document.getElementById('recent-item');
+  const mostUsedItem = document.getElementById('mostused-item');
+  const historyItem = document.getElementById('history-item');
+  if (recent) { recentLabel.textContent = recent.title; recentItem.style.cursor = 'pointer'; recentItem.onclick = () => window.location.href = recent.url; }
+  else { recentLabel.textContent = 'No history yet'; recentItem.style.cursor = 'default'; recentItem.onclick = null; }
+  if (mostUsed.length) {
+    mostUsedLabel.innerHTML = '';
+    mostUsed.forEach(g => { const chip = document.createElement('a'); chip.className = 'most-used-chip'; chip.href = g.url; chip.textContent = g.title; mostUsedLabel.appendChild(chip); });
+    mostUsedItem.style.cursor = 'default'; mostUsedItem.onclick = null;
+  } else { mostUsedLabel.textContent = 'No usage yet'; }
+  if (historyItem) { historyItem.style.cursor = 'pointer'; historyItem.onclick = toggleHistoryDropdown; }
+}
+function attachHistoryTracking() {
+  if (historyTrackingAttached) return;
+  historyTrackingAttached = true;
   document.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('history-dropdown');
-    const historyItem = document.getElementById('history-item');
-    if (dropdown && historyItem && !historyItem.contains(e.target)) {
-      dropdown.classList.remove('is-open');
-    }
+    const link = e.target.closest('.guide-link');
+    if (!link) return;
+    const card = link.closest('.guide-card');
+    if (!card) return;
+    const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
+    const url = link.getAttribute('href');
+    if (url) { addGuideToHistory(title, url); addGuideUsage(title, url); }
   });
+}
+function initHistory() {
+  updateHistoryPanel();
+  attachHistoryTracking();
+  const dd = document.getElementById('history-dropdown');
+  if (dd) dd.classList.remove('is-open');
+  const clearBtn = document.getElementById('clearAllHistoryBtn');
+  if (clearBtn) clearBtn.addEventListener('click', function(e) { e.stopPropagation(); clearAllHistory(); });
+}
+document.addEventListener('DOMContentLoaded', initHistory);
+document.addEventListener('headerLoaded', initHistory);
 
-  function updateHistoryPanel() {
-    const history = getHistory();
-    const recent = getMostRecentGuide(history);
-    const mostUsed = getTopFiveMostUsedGuides();
+// =========================================================
+// FEEDBACK & HELP MODALS
+// =========================================================
+let selectedRating = 0, ratingStars = [], commentsUnsubscribe = null;
 
-    const recentLabel = document.getElementById('recent-guide-label');
-    const mostUsedLabel = document.getElementById('mostused-guide-label');
-    const recentItem = document.getElementById('recent-item');
-    const mostUsedItem = document.getElementById('mostused-item');
-    const historyItem = document.getElementById('history-item');
+function openAnimatedModal(m) { if (!m) return; m.style.display = "flex"; m.classList.remove("is-closing"); requestAnimationFrame(() => m.classList.add("is-open")); }
+function closeAnimatedModal(m, onClosed) { if (!m) return; m.classList.remove("is-open"); m.classList.add("is-closing"); setTimeout(() => { m.style.display = "none"; m.classList.remove("is-closing"); if (typeof onClosed === "function") onClosed(); }, 220); }
+function initRatingStars() { ratingStars = Array.from(document.querySelectorAll(".rating-star")); ratingStars.forEach(star => { star.addEventListener("click", () => { selectedRating = Number(star.dataset.value || 0); ratingStars.forEach(s => s.classList.toggle("selected", Number(s.dataset.value || 0) <= selectedRating)); }); }); }
+function openComment() { openAnimatedModal(document.getElementById("commentModal")); }
+function closeComment() { closeAnimatedModal(document.getElementById("commentModal")); }
+function openHelp() { openAnimatedModal(document.getElementById("helpModal")); }
+function closeHelp() { closeAnimatedModal(document.getElementById("helpModal")); }
+function closeAllComments() { closeAnimatedModal(document.getElementById("allCommentsModal"), () => { if (commentsUnsubscribe) { commentsUnsubscribe(); commentsUnsubscribe = null; } }); }
+function escapeHtml(value) { return String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;"); }
+async function sendComment() {
+  const name = document.getElementById("commentName")?.value.trim() || "";
+  const comment = document.getElementById("commentText")?.value.trim() || "";
+  const msg = document.getElementById("feedbackMessage");
+  if (!selectedRating) { if (msg) { msg.style.display = "block"; msg.style.color = "#ef4444"; msg.textContent = "Please select a rating first."; } return; }
+  try {
+    await db.collection("feedback").add({ rating: selectedRating, name: name || "Anonymous", comment, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    if (msg) { msg.style.display = "block"; msg.style.color = "#16a34a"; msg.textContent = "Feedback sent successfully."; }
+    document.getElementById("commentName").value = ""; document.getElementById("commentText").value = "";
+    selectedRating = 0; ratingStars.forEach(s => s.classList.remove("selected"));
+    setTimeout(() => { closeComment(); if (msg) { msg.style.display = "none"; msg.textContent = ""; } }, 900);
+  } catch (err) { console.error(err); if (msg) { msg.style.display = "block"; msg.style.color = "#ef4444"; msg.textContent = "Unable to send feedback right now."; } }
+}
+function showAllComments() {
+  const cm = document.getElementById("commentModal"), modal = document.getElementById("allCommentsModal"), list = document.getElementById("commentsList");
+  if (!modal || !list) return;
+  list.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>";
+  if (commentsUnsubscribe) commentsUnsubscribe();
+  const loadComments = () => {
+    openAnimatedModal(modal);
+    commentsUnsubscribe = db.collection("feedback").orderBy("createdAt", "desc").onSnapshot(snap => {
+      if (snap.empty) { list.innerHTML = "<p style='color:#64748b;'>No comments and ratings yet.</p>"; return; }
+      let html = "";
+      snap.forEach(doc => { const data = doc.data() || {}; const rating = Number(data.rating || 0); html += `<div class="comment-list-item"><span class="stars">${"★".repeat(Math.min(5, rating))}${"☆".repeat(5 - rating)}</span><strong style="display:block;color:#0f172a;margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong><div style="color:#475569;line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div></div>`; });
+      list.innerHTML = html;
+    }, err => { console.error(err); list.innerHTML = "<p style='color:#ef4444;'>Unable to load comments.</p>"; });
+  };
+  if (cm && cm.style.display === "flex") { closeAnimatedModal(cm, loadComments); } else { loadComments(); }
+}
+window.openComment = openComment; window.closeComment = closeComment; window.openHelp = openHelp; window.closeHelp = closeHelp; window.showAllComments = showAllComments; window.closeAllComments = closeAllComments; window.sendComment = sendComment; window.focusGuideSearch = focusGuideSearch;
+window.addEventListener("click", (e) => {
+  const cm = document.getElementById("commentModal"), acm = document.getElementById("allCommentsModal"), hm = document.getElementById("helpModal");
+  if (e.target === cm) closeComment();
+  if (e.target === acm) closeAllComments();
+  if (e.target === hm) closeHelp();
+});
 
-    if (recent) {
-      recentLabel.textContent = recent.title;
-      recentItem.style.cursor = 'pointer';
-      recentItem.onclick = () => window.location.href = recent.url;
-    } else {
-      recentLabel.textContent = 'No history yet';
-      recentItem.style.cursor = 'default';
-      recentItem.onclick = null;
-    }
+// =========================================================
+// ANNOUNCEMENT BULLETIN – Firestore fetch & display
+// =========================================================
+let announcementShownThisSession = false;
 
-    if (mostUsed.length) {
-      mostUsedLabel.innerHTML = '';
-      mostUsed.forEach(guide => {
-        const chip = document.createElement('a');
-        chip.className = 'most-used-chip';
-        chip.href = guide.url;
-        chip.textContent = guide.title;
-        mostUsedLabel.appendChild(chip);
+async function fetchAnnouncements() {
+  try {
+    const snap = await db.collection('announcements')
+      .orderBy('priority', 'desc')
+      .orderBy('createdAt', 'desc')
+      .limit(10)
+      .get();
+    if (snap.empty) return [];
+    const items = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      items.push({
+        id: doc.id,
+        title: d.title || 'Untitled',
+        content: d.content || '',
+        priority: d.priority || 'low',
+        date: d.createdAt?.toDate?.() || new Date(),
+        link: d.link || null,
       });
-      mostUsedItem.style.cursor = 'default';
-      mostUsedItem.onclick = null;
-    } else {
-      mostUsedLabel.textContent = 'No usage yet';
-    }
-
-    if (historyItem) {
-      historyItem.style.cursor = 'pointer';
-      historyItem.onclick = toggleHistoryDropdown;
-    }
-  }
-
-  function attachHistoryTracking() {
-    if (historyTrackingAttached) return;
-    historyTrackingAttached = true;
-    document.addEventListener('click', function(e) {
-      const link = e.target.closest('.guide-link');
-      if (!link) return;
-      const card = link.closest('.guide-card');
-      if (!card) return;
-      const title = card.querySelector('h3')?.textContent || 'Untitled Guide';
-      const url = link.getAttribute('href');
-      if (url) {
-        addGuideToHistory(title, url);
-        addGuideUsage(title, url);
-      }
     });
-  }
+    return items;
+  } catch (e) { console.warn('Fetch announcements error:', e); return []; }
+}
 
-  function initHistory() {
-    updateHistoryPanel();
-    attachHistoryTracking();
-    const dropdown = document.getElementById('history-dropdown');
-    if (dropdown) dropdown.classList.remove('is-open');
-    const clearAllBtn = document.getElementById('clearAllHistoryBtn');
-    if (clearAllBtn) {
-      clearAllBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        clearAllHistory();
-      });
+function renderAnnouncements(items) {
+  const list = document.getElementById('announcementList');
+  const ts = document.getElementById('announcementTimestamp');
+  if (!list) return;
+  if (!items.length) {
+    list.innerHTML = `<div class="announcement-item" style="text-align:center;color:var(--muted);"><p>No new announcements at this time.</p></div>`;
+    if (ts) ts.textContent = new Date().toLocaleString();
+    return;
+  }
+  const priorityLabels = { high: '🔴 High', medium: '🟡 Medium', low: '🟢 Low' };
+  const priorityColors = { high: '#ef4444', medium: '#eab308', low: '#22c55e' };
+  let html = '';
+  items.forEach(item => {
+    const dateStr = item.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    const content = item.content.replace(/\n/g, '<br>');
+    const link = item.link ? `<a href="${item.link}" target="_blank">Learn more →</a>` : '';
+    html += `<div class="announcement-item">
+      <div class="item-title"><span>${escapeHtml(item.title)}</span><span class="priority" style="background:${priorityColors[item.priority] || '#6b7280'}">${priorityLabels[item.priority] || item.priority}</span></div>
+      <div class="item-date">${dateStr}</div>
+      <div class="item-content">${content} ${link}</div>
+    </div>`;
+  });
+  list.innerHTML = html;
+  if (ts) ts.textContent = new Date().toLocaleString();
+}
+
+async function showAnnouncementModalIfNeeded() {
+  if (announcementShownThisSession) return;
+  const items = await fetchAnnouncements();
+  if (!items.length) { announcementShownThisSession = true; return; }
+  renderAnnouncements(items);
+  const modal = document.getElementById('announcementModal');
+  if (modal) {
+    modal.style.display = 'flex';
+    void modal.offsetWidth;
+    modal.classList.add('is-open');
+    announcementShownThisSession = true;
+  }
+}
+
+// Close handler for announcement modal
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('announcementModal');
+  const closeBtn = document.getElementById('closeAnnouncementBtn');
+  if (e.target === modal || e.target === closeBtn || e.target.closest('.announcement-overlay')) {
+    if (modal) {
+      modal.classList.remove('is-open');
+      setTimeout(() => { modal.style.display = 'none'; }, 400);
     }
   }
+});
 
-  document.addEventListener('DOMContentLoaded', initHistory);
-  document.addEventListener('headerLoaded', initHistory);
-
-  // =========================================================
-  // FEEDBACK & HELP MODALS (unchanged)
-  // =========================================================
-  let selectedRating = 0;
-  let ratingStars = [];
-  let commentsUnsubscribe = null;
-
-  function openAnimatedModal(modal) { if (!modal) return; modal.style.display = "flex"; modal.classList.remove("is-closing"); requestAnimationFrame(() => modal.classList.add("is-open")); }
-  function closeAnimatedModal(modal, onClosed) { if (!modal) return; modal.classList.remove("is-open"); modal.classList.add("is-closing"); setTimeout(() => { modal.style.display = "none"; modal.classList.remove("is-closing"); if (typeof onClosed === "function") onClosed(); }, 220); }
-  function initRatingStars() { ratingStars = Array.from(document.querySelectorAll(".rating-star")); ratingStars.forEach(star => { star.addEventListener("click", () => { selectedRating = Number(star.dataset.value || 0); ratingStars.forEach(s => s.classList.toggle("selected", Number(s.dataset.value || 0) <= selectedRating)); }); }); }
-  function openComment() { openAnimatedModal(document.getElementById("commentModal")); }
-  function closeComment() { closeAnimatedModal(document.getElementById("commentModal")); }
-  function openHelp() { openAnimatedModal(document.getElementById("helpModal")); }
-  function closeHelp() { closeAnimatedModal(document.getElementById("helpModal")); }
-  function closeAllComments() { closeAnimatedModal(document.getElementById("allCommentsModal"), () => { if (commentsUnsubscribe) { commentsUnsubscribe(); commentsUnsubscribe = null; } }); }
-  function escapeHtml(value) { return String(value ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;"); }
-  async function sendComment() {
-    const name = document.getElementById("commentName")?.value.trim() || "";
-    const comment = document.getElementById("commentText")?.value.trim() || "";
-    const feedbackMessage = document.getElementById("feedbackMessage");
-    if (!selectedRating) { if (feedbackMessage) { feedbackMessage.style.display = "block"; feedbackMessage.style.color = "#ef4444"; feedbackMessage.textContent = "Please select a rating first."; } return; }
-    try {
-      await db.collection("feedback").add({ rating: selectedRating, name: name || "Anonymous", comment, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      if (feedbackMessage) { feedbackMessage.style.display = "block"; feedbackMessage.style.color = "#16a34a"; feedbackMessage.textContent = "Feedback sent successfully."; }
-      const nameEl = document.getElementById("commentName"); const commentEl = document.getElementById("commentText"); if (nameEl) nameEl.value = ""; if (commentEl) commentEl.value = "";
-      selectedRating = 0; ratingStars.forEach(star => star.classList.remove("selected"));
-      setTimeout(() => { closeComment(); if (feedbackMessage) { feedbackMessage.style.display = "none"; feedbackMessage.textContent = ""; } }, 900);
-    } catch (err) { console.error(err); if (feedbackMessage) { feedbackMessage.style.display = "block"; feedbackMessage.style.color = "#ef4444"; feedbackMessage.textContent = "Unable to send feedback right now."; } }
-  }
-  function showAllComments() {
-    const commentModal = document.getElementById("commentModal"); const modal = document.getElementById("allCommentsModal"); const list = document.getElementById("commentsList");
-    if (!modal || !list) return; list.innerHTML = "<p style='color:#64748b;'>Loading comments...</p>"; if (commentsUnsubscribe) commentsUnsubscribe();
-    const loadComments = () => { openAnimatedModal(modal); commentsUnsubscribe = db.collection("feedback").orderBy("createdAt", "desc").onSnapshot(snapshot => { if (snapshot.empty) { list.innerHTML = "<p style='color:#64748b;'>No comments and ratings yet.</p>"; return; } let html = ""; snapshot.forEach(doc => { const data = doc.data() || {}; const rating = Number(data.rating || 0); html += `<div class="comment-list-item"><span class="stars">${"★".repeat(Math.min(5, rating))}${"☆".repeat(5 - rating)}</span><strong style="display:block;color:#0f172a;margin-bottom:4px;">${escapeHtml(data.name || "Anonymous")}</strong><div style="color:#475569;line-height:1.7;">${escapeHtml(data.comment || "No comment provided.")}</div></div>`; }); list.innerHTML = html; }, error => { console.error(error); list.innerHTML = "<p style='color:#ef4444;'>Unable to load comments right now.</p>"; }); };
-    if (commentModal && commentModal.style.display === "flex") { closeAnimatedModal(commentModal, loadComments); } else { loadComments(); }
-  }
-
-  window.openComment = openComment; window.closeComment = closeComment; window.openHelp = openHelp; window.closeHelp = closeHelp; window.showAllComments = showAllComments; window.closeAllComments = closeAllComments; window.sendComment = sendComment; window.focusGuideSearch = focusGuideSearch;
-  window.addEventListener("click", (e) => { const commentModal = document.getElementById("commentModal"); const allCommentsModal = document.getElementById("allCommentsModal"); const helpModal = document.getElementById("helpModal"); if (e.target === commentModal) closeComment(); if (e.target === allCommentsModal) closeAllComments(); if (e.target === helpModal) closeHelp(); });
-
-  // =========================================================
-  // PAGE INIT
-  // =========================================================
-  document.addEventListener("DOMContentLoaded", () => {
-    guardProtectedPage().then(() => {
-      setupGuideFilters();
-      initRevealMotion();
-      initCardMotion();
-      initRatingStars();
-    }).catch(err => console.error("Init error:", err));
-  });
-  document.addEventListener("headerLoaded", () => { setupGuideFilters(); initCardMotion(); initRatingStars(); });
-  setTimeout(() => { initRatingStars(); }, 500);
+// =========================================================
+// PAGE INIT
+// =========================================================
+document.addEventListener("DOMContentLoaded", () => {
+  guardProtectedPage().then(() => {
+    setupGuideFilters();
+    initRevealMotion();
+    initCardMotion();
+    initRatingStars();
+    showAnnouncementModalIfNeeded();   // <-- ADDED
+  }).catch(err => console.error("Init error:", err));
+});
+document.addEventListener("headerLoaded", () => { setupGuideFilters(); initCardMotion(); initRatingStars(); });
+setTimeout(() => { initRatingStars(); }, 500);
 </script>
 
 <script src="assets/js/header-loader.js"></script>
@@ -3862,5 +3922,23 @@ footer.site-footer .footer-right{
 <script src="assets/js/theme-loader.js"></script>
 <div id="ai-assistant-container"></div>
 <script src="ai-assistant/ai-assistant-loader.js"></script>
+  <!-- ===== ANNOUNCEMENT BULLETIN MODAL ===== -->
+<div id="announcementModal" class="announcement-modal" style="display:none;">
+  <div class="announcement-overlay"></div>
+  <div class="announcement-panel">
+    <button class="announcement-close" id="closeAnnouncementBtn" aria-label="Close announcements">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="announcement-header">
+      <span class="announcement-badge"><i class="fa-solid fa-bullhorn"></i> Bulletin</span>
+      <h2>📢 Announcements & Updates</h2>
+      <p>Stay informed about the latest changes, reminders, and important notices.</p>
+    </div>
+    <div class="announcement-body" id="announcementList"></div>
+    <div class="announcement-footer">
+      <span>Last updated: <span id="announcementTimestamp">—</span></span>
+    </div>
+  </div>
+</div>
 </body>
 </html>
