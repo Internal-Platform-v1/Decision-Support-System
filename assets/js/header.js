@@ -626,6 +626,9 @@ document.addEventListener('click', function(event) {
 });
 
 
+function openOperationsConsole() {
+    window.location.href = (window.SITE_BASE || "") + "operations-console.html";
+}
 
 function logoutUser() {
   if (!window.firebase || !firebase.auth) {
