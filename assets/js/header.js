@@ -546,13 +546,30 @@ async function loadHeaderUserProfile(user) {
         .get();
 
       if (!snap.empty) {
-        const data = snap.docs[0].data();
+        const doc = snap.docs[0];
+        const data = doc.data();
         if (data.name) {
   displayName = data.name
     .replace(/\s+vndr$/i, "")   // removes "VNDR" or "Vndr" at the end
     .trim();
 }
         if (data.role) role = data.role;
+
+        // ===========================================
+// Operations Console Permission
+// ===========================================
+
+const operationsConsoleContainer = document.getElementById("operationsConsoleContainer");
+
+if (operationsConsoleContainer) {
+
+    const isAdmin =
+        data.role &&
+        data.role.toLowerCase() === "administrator";
+
+    operationsConsoleContainer.style.display =
+        isAdmin ? "block" : "none";
+}
       }
     }
   } catch (error) {
@@ -642,3 +659,5 @@ document.addEventListener("headerLoaded", () => {
     });
   }
 });
+
+
