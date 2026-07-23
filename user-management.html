@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>User Management</title>
+
+    <link rel="icon" href="assets/images/fedex-logo.png">
+    <link rel="stylesheet" href="assets/css/header-footer-style.css">
+    <link rel="stylesheet" href="assets/css/user-management.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div id="header-container"></div>
+
+<div class="page">
+
+    <div class="hero">
+        <div>
+            <span class="badge">👥 User Management</span>
+            <h1>Manage Approved Users</h1>
+            <p>Manage employee accounts, Operations Console access and permissions.</p>
+        </div>
+
+        <div class="hero-actions">
+            <button id="refreshBtn">Refresh</button>
+            <button id="addUserBtn" class="primary">+ Add User</button>
+        </div>
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <span>Total Users</span>
+            <h2 id="totalUsers">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Active</span>
+            <h2 id="activeUsers">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Inactive</span>
+            <h2 id="inactiveUsers">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Operations Admin</span>
+            <h2 id="opsAdmins">0</h2>
+        </div>
+
+    </div>
+
+    <div class="toolbar">
+
+        <input id="searchUser" type="text" placeholder="Search employee...">
+
+        <select id="filterRole">
+            <option value="">All Roles</option>
+            <option>User</option>
+            <option>Manager</option>
+            <option>Administrator</option>
+        </select>
+
+        <select id="filterStatus">
+            <option value="">All Status</option>
+            <option>Active</option>
+            <option>Inactive</option>
+        </select>
+
+    </div>
+
+    <div class="table-card">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Operations</th>
+                    <th>Last Login</th>
+                    <th width="240">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="userTable">
+                <tr>
+                    <td colspan="7" class="loading">Loading users...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!--========== User Modal ==========-->
+
+<div class="modal" id="userModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>User Details</h2>
+            <button id="closeModal">✕</button>
+        </div>
+
+        <div class="modal-body">
+
+            <label>Name</label>
+            <input id="userName" type="text">
+
+            <label>Email</label>
+            <input id="userEmail" type="email">
+
+            <label>Role</label>
+            <select id="userRole">
+                <option>User</option>
+                <option>Manager</option>
+                <option>Administrator</option>
+            </select>
+
+            <div class="checks">
+                <label><input type="checkbox" id="userActive"> Active</label>
+                <label><input type="checkbox" id="operationsConsole"> Operations Console Access</label>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button id="cancelUser">Cancel</button>
+            <button id="saveUser" class="primary">Save</button>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="footer-container"></div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/user-management.js"></script>
+
+</body>
+</html>
