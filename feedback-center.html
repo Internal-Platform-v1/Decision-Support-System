@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Feedback Center</title>
+
+    <link rel="icon" href="assets/images/fedex-logo.png">
+    <link rel="stylesheet" href="assets/css/header-footer-style.css">
+    <link rel="stylesheet" href="assets/css/feedback-center.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div id="header-container"></div>
+
+<div class="page">
+
+    <div class="hero">
+
+        <div>
+            <span class="badge">💬 Feedback Center</span>
+            <h1>User Feedback & Feature Requests</h1>
+            <p>Review employee feedback, bug reports, enhancement requests and AI suggestions submitted from the Decision Support System.</p>
+        </div>
+
+        <div class="hero-actions">
+            <button id="refreshBtn">Refresh</button>
+            <button id="exportBtn" class="primary">Export</button>
+        </div>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <span>Total Feedback</span>
+            <h2 id="totalFeedback">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Open</span>
+            <h2 id="openFeedback">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>In Progress</span>
+            <h2 id="progressFeedback">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Resolved</span>
+            <h2 id="resolvedFeedback">0</h2>
+        </div>
+
+    </div>
+
+    <div class="toolbar">
+
+        <input id="searchFeedback" type="text" placeholder="Search feedback...">
+
+        <select id="statusFilter">
+            <option value="">All Status</option>
+            <option>Open</option>
+            <option>In Progress</option>
+            <option>Resolved</option>
+            <option>Closed</option>
+        </select>
+
+        <select id="typeFilter">
+            <option value="">All Types</option>
+            <option>Bug</option>
+            <option>Suggestion</option>
+            <option>Feature Request</option>
+            <option>AI Feedback</option>
+            <option>Other</option>
+        </select>
+
+    </div>
+
+    <div class="table-card">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th width="180">Submitted By</th>
+                    <th width="130">Type</th>
+                    <th>Subject</th>
+                    <th width="140">Priority</th>
+                    <th width="140">Status</th>
+                    <th width="180">Submitted</th>
+                    <th width="230">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="feedbackTable">
+                <tr>
+                    <td colspan="7" class="loading">Loading feedback...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!--========== Feedback Modal ==========-->
+
+<div class="modal" id="feedbackModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>Feedback Details</h2>
+            <button id="closeModal">✕</button>
+        </div>
+
+        <div class="modal-body">
+
+            <label>Submitted By</label>
+            <input id="feedbackUser" readonly>
+
+            <label>Type</label>
+            <input id="feedbackType" readonly>
+
+            <label>Priority</label>
+            <select id="feedbackPriority">
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+                <option>Critical</option>
+            </select>
+
+            <label>Status</label>
+            <select id="feedbackStatus">
+                <option>Open</option>
+                <option>In Progress</option>
+                <option>Resolved</option>
+                <option>Closed</option>
+            </select>
+
+            <label>Subject</label>
+            <input id="feedbackSubject" readonly>
+
+            <label>Feedback</label>
+            <textarea id="feedbackMessage" rows="10" readonly></textarea>
+
+            <label>Internal Notes</label>
+            <textarea id="feedbackNotes" rows="6"></textarea>
+
+        </div>
+
+        <div class="modal-footer">
+            <button id="cancelBtn">Cancel</button>
+            <button id="saveBtn" class="primary">Save Changes</button>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="footer-container"></div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/feedback-center.js"></script>
+
+</body>
+</html>
