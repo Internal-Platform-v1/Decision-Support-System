@@ -563,3 +563,621 @@ READY
 
 window.OPS=OPS;
 console.log("Operations Suite Loaded");
+
+/*=========================================================
+PART 3 — FIREBASE LIVE DATA
+Replace placeholder data with real Firestore
+=========================================================*/
+
+/*---------------------------------------------------------
+Collections
+---------------------------------------------------------*/
+
+const COLLECTIONS={
+USERS:"approved_users",
+GUIDES:"guide_registry",
+USAGE:"guide_usage",
+FEEDBACK:"feedback",
+TEMPLATES:"billing_dispute_general_template",
+BULLETINS:"bulletins",
+AI:"ai_logs",
+SYSTEM:"system_logs"
+};
+
+/*---------------------------------------------------------
+Load Dashboard
+---------------------------------------------------------*/
+
+async function loadDashboard(){
+
+await Promise.all([
+loadRealtimeStats(),
+loadRealtimeActivity(),
+loadRealtimeHealth(),
+loadRealtimeClock()
+]);
+
+}
+
+/*---------------------------------------------------------
+Realtime Stats
+---------------------------------------------------------*/
+
+async function loadRealtimeStats(){
+
+try{
+
+const[
+users,
+guides,
+templates,
+feedback
+]=await Promise.all([
+
+db.collection(COLLECTIONS.USERS).get(),
+db.collection(COLLECTIONS.GUIDES).get(),
+db.collection(COLLECTIONS.TEMPLATES).get(),
+db.collection(COLLECTIONS.FEEDBACK).get()
+
+]);
+
+animateCounter(EL.activeUsers,users.size);
+animateCounter(EL.guideCount,guides.size);
+animateCounter(EL.templateCount,templates.size);
+animateCounter(EL.feedbackCount,feedback.size);
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+/*---------------------------------------------------------
+Guide Usage Today
+---------------------------------------------------------*/
+
+db.collection(COLLECTIONS.USAGE)
+.orderBy("timestamp","desc")
+.limit(1)
+.onSnapshot(snap=>{
+
+let today=0;
+
+snap.forEach(()=>today++);
+
+animateCounter(EL.todayActions,today);
+
+});
+
+/*---------------------------------------------------------
+Realtime Activity Feed
+---------------------------------------------------------*/
+
+function loadRealtimeActivity(){
+
+const feed=$(".activity-feed");
+
+if(!feed)return;
+
+db.collection(COLLECTIONS.SYSTEM)
+.orderBy("timestamp","desc")
+.limit(15)
+.onSnapshot(snapshot=>{
+
+feed.innerHTML="";
+
+snapshot.forEach(doc=>{
+
+const d=doc.data();
+
+const row=document.createElement("div");
+
+row.className="feed-item";
+
+row.innerHTML=`
+<div class="feed-icon blue">
+<i class="fa-solid fa-circle"></i>
+</div>
+
+<div>
+
+<h4>${d.title||"Activity"}</h4>
+
+<p>${timeAgo(d.timestamp?.toDate?.()||new Date())}</p>
+
+</div>
+`;
+
+feed.appendChild(row);
+
+});
+
+});
+
+}
+
+/*---------------------------------------------------------
+Health
+---------------------------------------------------------*/
+
+function loadRealtimeHealth(){
+
+db.collection(COLLECTIONS.SYSTEM)
+.doc("status")
+.onSnapshot(doc=>{
+
+if(!doc.exists)return;
+
+const data=doc.data();
+
+updateHealth("#firebaseHealth",data.firebase);
+
+updateHealth("#aiHealth",data.ai);
+
+updateHealth("#guideHealth",data.guides);
+
+updateHealth("#cloudHealth",data.cloud);
+
+});
+
+}
+
+function updateHealth(id,status){
+
+const el=$(id);
+
+if(!el)return;
+
+el.className="health-pill "+status;
+
+el.textContent=status.toUpperCase();
+
+}
+
+/*---------------------------------------------------------
+Live Usage Counter
+---------------------------------------------------------*/
+
+db.collection(COLLECTIONS.USAGE)
+.onSnapshot(snapshot=>{
+
+animateCounter(EL.metricViews,snapshot.size);
+
+});
+
+/*---------------------------------------------------------
+Feedback Counter
+---------------------------------------------------------*/
+
+db.collection(COLLECTIONS.FEEDBACK)
+.where("status","==","new")
+.onSnapshot(snapshot=>{
+
+animateCounter(EL.feedbackCount,snapshot.size);
+
+});
+
+/*---------------------------------------------------------
+AI Requests
+---------------------------------------------------------*/
+
+db.collection(COLLECTIONS.AI)
+.onSnapshot(snapshot=>{
+
+animateCounter(EL.aiRequests,snapshot.size);
+
+});
+
+/*---------------------------------------------------------
+Searches
+---------------------------------------------------------*/
+
+db.collection(COLLECTIONS.USAGE)
+.where("type","==","search")
+.onSnapshot(snapshot=>{
+
+animateCounter(EL.metricSearches,snapshot.size);
+
+});
+
+/*---------------------------------------------------------
+Templates Used
+---------------------------------------------------------*/
+
+db.collection(COLLECTIONS.USAGE)
+.where("type","==","template")
+.onSnapshot(snapshot=>{
+
+animateCounter(EL.metricTemplates,snapshot.size);
+
+});
+
+/*---------------------------------------------------------
+Realtime Clock
+---------------------------------------------------------*/
+
+function loadRealtimeClock(){
+
+setInterval(()=>{
+
+const clock=$("#liveClock");
+
+if(clock){
+
+clock.textContent=new Date().toLocaleTimeString();
+
+}
+
+},1000);
+
+}
+
+/*---------------------------------------------------------
+Time Ago
+---------------------------------------------------------*/
+
+function timeAgo(date){
+
+const s=Math.floor((Date.now()-date.getTime())/1000);
+
+if(s<60)return s+" sec ago";
+
+if(s<3600)return Math.floor(s/60)+" min ago";
+
+if(s<86400)return Math.floor(s/3600)+" hr ago";
+
+return Math.floor(s/86400)+" day ago";
+
+}
+
+/*=========================================================
+PART 4 — ENTERPRISE ENGINE
+Notifications • Search • Session • Auto Refresh
+=========================================================*/
+
+const ENGINE={
+notifications:[],
+sessions:new Map(),
+guideIndex:[],
+refreshTimer:null
+};
+
+/*---------------------------------------------------------
+BOOT
+---------------------------------------------------------*/
+
+initializeEnterprise();
+
+function initializeEnterprise(){
+
+initializeGlobalSearch();
+
+initializeNotificationCenter();
+
+initializeSessionMonitor();
+
+initializeGuideHeatmap();
+
+initializeAutoRefresh();
+
+initializeAIEngine();
+
+initializeUsageLogger();
+
+}
+
+/*---------------------------------------------------------
+GLOBAL SEARCH
+---------------------------------------------------------*/
+
+async function initializeGlobalSearch(){
+
+try{
+
+const snap=await db.collection(COLLECTIONS.GUIDES).get();
+
+ENGINE.guideIndex=[];
+
+snap.forEach(doc=>{
+
+const d=doc.data();
+
+ENGINE.guideIndex.push({
+id:doc.id,
+title:d.title||"",
+keywords:d.keywords||[],
+category:d.category||"",
+url:d.url||"#"
+});
+
+});
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+function filterCommandResults(){
+
+const keyword=(EL.search?.value||"").trim().toLowerCase();
+
+const container=$(".command-results");
+
+if(!container)return;
+
+container.innerHTML="";
+
+ENGINE.guideIndex
+.filter(g=>
+
+g.title.toLowerCase().includes(keyword) ||
+
+g.category.toLowerCase().includes(keyword) ||
+
+g.keywords.join(" ").toLowerCase().includes(keyword)
+
+)
+.slice(0,12)
+
+.forEach(g=>{
+
+const btn=document.createElement("button");
+
+btn.innerHTML=`
+<i class="fa-solid fa-compass"></i>
+<div>
+<strong>${g.title}</strong>
+<small>${g.category}</small>
+</div>
+`;
+
+btn.onclick=()=>location.href=g.url;
+
+container.appendChild(btn);
+
+});
+
+}
+
+/*---------------------------------------------------------
+NOTIFICATIONS
+---------------------------------------------------------*/
+
+function initializeNotificationCenter(){
+
+db.collection(COLLECTIONS.SYSTEM)
+.orderBy("timestamp","desc")
+.limit(20)
+.onSnapshot(snapshot=>{
+
+ENGINE.notifications=[];
+
+snapshot.forEach(doc=>{
+
+ENGINE.notifications.push(doc.data());
+
+});
+
+updateNotificationBadge();
+
+});
+
+}
+
+function updateNotificationBadge(){
+
+const badge=$("#notificationBadge");
+
+if(!badge)return;
+
+badge.textContent=ENGINE.notifications.length;
+
+badge.style.display=
+ENGINE.notifications.length?"flex":"none";
+
+}
+
+/*---------------------------------------------------------
+SESSION MONITOR
+---------------------------------------------------------*/
+
+function initializeSessionMonitor(){
+
+db.collection(COLLECTIONS.USERS)
+.onSnapshot(snapshot=>{
+
+ENGINE.sessions.clear();
+
+snapshot.forEach(doc=>{
+
+const d=doc.data();
+
+if(d.online){
+
+ENGINE.sessions.set(doc.id,d);
+
+}
+
+});
+
+animateCounter(
+EL.activeUsers,
+ENGINE.sessions.size
+);
+
+});
+
+}
+
+/*---------------------------------------------------------
+GUIDE HEATMAP
+---------------------------------------------------------*/
+
+function initializeGuideHeatmap(){
+
+db.collection(COLLECTIONS.USAGE)
+.where("type","==","guide")
+.onSnapshot(snapshot=>{
+
+const counts={};
+
+snapshot.forEach(doc=>{
+
+const g=doc.data().guide;
+
+counts[g]=(counts[g]||0)+1;
+
+});
+
+renderHeatmap(counts);
+
+});
+
+}
+
+function renderHeatmap(data){
+
+$$("[data-guide]").forEach(card=>{
+
+const id=card.dataset.guide;
+
+const count=data[id]||0;
+
+card.style.setProperty("--usage",count);
+
+card.querySelector(".usage-count")?.textContent=count;
+
+});
+
+}
+
+/*---------------------------------------------------------
+AUTO REFRESH
+---------------------------------------------------------*/
+
+function initializeAutoRefresh(){
+
+ENGINE.refreshTimer=setInterval(()=>{
+
+loadRealtimeStats();
+
+},60000);
+
+}
+
+/*---------------------------------------------------------
+AI STATUS
+---------------------------------------------------------*/
+
+function initializeAIEngine(){
+
+db.collection(COLLECTIONS.AI)
+.orderBy("timestamp","desc")
+.limit(1)
+.onSnapshot(snapshot=>{
+
+snapshot.forEach(doc=>{
+
+const ai=doc.data();
+
+updateAIStatus(ai);
+
+});
+
+});
+
+}
+
+function updateAIStatus(ai){
+
+const status=$("#aiStatus");
+
+if(!status)return;
+
+status.textContent=ai.status||"ONLINE";
+
+status.className="status-chip success";
+
+const confidence=$("#aiConfidence");
+
+if(confidence){
+
+confidence.textContent=
+(ai.confidence||99)+"%";
+
+}
+
+}
+
+/*---------------------------------------------------------
+USAGE LOGGER
+---------------------------------------------------------*/
+
+function initializeUsageLogger(){
+
+document.addEventListener("click",async e=>{
+
+const target=e.target.closest("[data-track]");
+
+if(!target)return;
+
+try{
+
+await db.collection(COLLECTIONS.USAGE).add({
+
+type:target.dataset.track,
+
+label:target.dataset.label||target.innerText,
+
+user:OPS.user?.email||"unknown",
+
+timestamp:firebase.firestore.FieldValue.serverTimestamp()
+
+});
+
+}catch(err){
+
+console.error(err);
+
+}
+
+});
+
+}
+
+/*---------------------------------------------------------
+SYSTEM LOG
+---------------------------------------------------------*/
+
+async function writeSystemLog(title){
+
+try{
+
+await db.collection(COLLECTIONS.SYSTEM).add({
+
+title,
+
+user:OPS.user?.email,
+
+timestamp:firebase.firestore.FieldValue.serverTimestamp()
+
+});
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
+/*---------------------------------------------------------
+PAGE VISIT
+---------------------------------------------------------*/
+
+writeSystemLog("Operations Console Opened");
