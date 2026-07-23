@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Template Manager</title>
+
+    <link rel="icon" href="assets/images/fedex-logo.png">
+    <link rel="stylesheet" href="assets/css/header-footer-style.css">
+    <link rel="stylesheet" href="assets/css/template-manager.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div id="header-container"></div>
+
+<div class="page">
+
+    <div class="hero">
+
+        <div>
+            <span class="badge">📝 Template Manager</span>
+            <h1>Decision Guide Templates</h1>
+            <p>Manage Suggested Comments, CORR Codes and Email Templates used throughout the Decision Support System.</p>
+        </div>
+
+        <div class="hero-actions">
+            <button id="refreshBtn">Refresh</button>
+            <button id="newTemplateBtn" class="primary">+ New Template</button>
+        </div>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <span>Total Templates</span>
+            <h2 id="totalTemplates">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Comments</span>
+            <h2 id="commentTemplates">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>CORR Codes</span>
+            <h2 id="corrTemplates">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Email Templates</span>
+            <h2 id="emailTemplates">0</h2>
+        </div>
+
+    </div>
+
+    <div class="toolbar">
+
+        <input id="searchTemplate" type="text" placeholder="Search recommendation...">
+
+        <select id="filterGuide">
+            <option value="">All Guides</option>
+            <option>Billing Dispute</option>
+            <option>Pricing</option>
+            <option>Account Handling</option>
+            <option>PAUD</option>
+            <option>Fuel</option>
+        </select>
+
+        <select id="filterType">
+            <option value="">All Types</option>
+            <option>Comment</option>
+            <option>CORR</option>
+            <option>Email</option>
+        </select>
+
+    </div>
+
+    <div class="table-card">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th width="230">Recommendation</th>
+                    <th width="180">Guide</th>
+                    <th width="120">Type</th>
+                    <th>Preview</th>
+                    <th width="170">Updated By</th>
+                    <th width="170">Updated</th>
+                    <th width="220">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="templateTable">
+                <tr>
+                    <td colspan="7" class="loading">Loading templates...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!--========== Template Modal ==========-->
+
+<div class="modal" id="templateModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>Template Editor</h2>
+            <button id="closeModal">✕</button>
+        </div>
+
+        <div class="modal-body">
+
+            <label>Recommendation</label>
+            <input id="recommendation" type="text">
+
+            <label>Guide</label>
+            <select id="guide">
+                <option>Billing Dispute</option>
+                <option>Pricing</option>
+                <option>Account Handling</option>
+                <option>PAUD</option>
+                <option>Fuel</option>
+            </select>
+
+            <label>Template Type</label>
+            <select id="templateType">
+                <option>Comment</option>
+                <option>CORR</option>
+                <option>Email</option>
+            </select>
+
+            <label>Template</label>
+            <textarea id="templateContent" rows="14"></textarea>
+
+        </div>
+
+        <div class="modal-footer">
+            <button id="cancelTemplate">Cancel</button>
+            <button id="saveTemplate" class="primary">Save Template</button>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="footer-container"></div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/template-manager.js"></script>
+
+</body>
+</html>
