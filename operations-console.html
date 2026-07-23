@@ -1,366 +1,566 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
+<!DOCTYPE html><html lang="en" class="page-protected"><head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Operations Console</title>
-
-<link rel="icon" href="assets/images/fedex-logo.png">
-
-<link rel="stylesheet" href="assets/css/header-footer-style.css">
-<link rel="stylesheet" href="assets/css/operations-console.css">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Operations Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="assets/css/header-footer-style.css">
+<link rel="stylesheet" href="assets/css/guide-themes.css">
+<link rel="stylesheet" href="assets/css/operations-ui.css">
 </head>
-
-<body>
-
+<body class="theme-fedex">
 <div id="header-container"></div>
 
-<div class="console-page">
+<div class="ops-background">
+<div class="aurora aurora-one"></div>
+<div class="aurora aurora-two"></div>
+<div class="aurora aurora-three"></div>
+<div class="grid-overlay"></div>
+</div>
 
-<div class="hero">
+<main class="operations-shell">
+
+<section class="hero-command">
 
 <div class="hero-left">
 
-<div class="console-label">
-
-<span class="dot"></span>
-
-Operations Console
-
+<div class="hero-pill">
+<i class="fa-solid fa-satellite-dish"></i>
+<span>OPERATIONS COMMAND CENTER</span>
 </div>
 
-<h1>
+<h1>Decision Support System<span>Enterprise Administration</span></h1>
 
-Enterprise Administration Center
+<p>Manage guides, users, AI, templates, analytics and every enterprise operation from one premium command center.</p>
 
-</h1>
+<div class="hero-actions">
+<button class="primary-btn"><i class="fa-solid fa-rocket"></i>Launch Command Palette</button>
+<button class="secondary-btn"><i class="fa-solid fa-chart-line"></i>View Analytics</button>
+</div>
 
-<p>
-
-Manage every operational component of the Decision Support System from one place.
-
-</p>
+<div class="hero-status-row">
+<div class="status-chip online"><span class="pulse"></span>Firebase Connected</div>
+<div class="status-chip healthy"><span class="pulse"></span>AI Healthy</div>
+<div class="status-chip"><i class="fa-solid fa-shield"></i>99.98% Uptime</div>
+<div class="status-chip"><i class="fa-solid fa-cloud"></i>Cloud Synced</div>
+</div>
 
 </div>
 
 <div class="hero-right">
 
-<div class="status-card">
+<div class="hero-glass">
 
-<div class="status-header">
-
-System Status
-
+<div class="hero-glass-header">
+<div>
+<label>Today's Activity</label>
+<h3>Live Operations</h3>
+</div>
+<i class="fa-solid fa-wave-square"></i>
 </div>
 
-<div class="status-body">
-
-<div class="status-row">
-
-<span>Firebase</span>
-
-<span id="firebaseStatus" class="good">
-
-Connected
-
-</span>
-
+<div class="hero-chart">
+<div class="spark-bars">
+<span></span><span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span><span></span>
+</div>
 </div>
 
-<div class="status-row">
-
-<span>Authentication</span>
-
-<span id="authStatus" class="good">
-
-Verified
-
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span>Firestore</span>
-
-<span id="firestoreStatus" class="good">
-
-Ready
-
-</span>
-
-</div>
-
-<div class="status-row">
-
-<span>Current User</span>
-
-<span id="currentAdmin">
-
-Loading...
-
-</span>
-
+<div class="hero-stats">
+<div><h2 id="todayActions">0</h2><p>Operations Today</p></div>
+<div><h2 id="todayUsers">0</h2><p>Users Online</p></div>
 </div>
 
 </div>
 
 </div>
 
+</section>
+
+<section class="kpi-grid">
+
+<article class="kpi-card glass-card">
+<div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+<div class="kpi-content">
+<label>Active Users</label>
+<h2 id="activeUsers">0</h2>
+<p>Connected employees across all regions</p>
+</div>
+<div class="kpi-trend up">+18%</div>
+</article>
+
+<article class="kpi-card glass-card">
+<div class="kpi-icon purple"><i class="fa-solid fa-book-open"></i></div>
+<div class="kpi-content">
+<label>Decision Guides</label>
+<h2 id="guideCount">0</h2>
+<p>Published production guides</p>
+</div>
+<div class="kpi-trend up">+4</div>
+</article>
+
+<article class="kpi-card glass-card">
+<div class="kpi-icon orange"><i class="fa-solid fa-file-lines"></i></div>
+<div class="kpi-content">
+<label>Templates</label>
+<h2 id="templateCount">0</h2>
+<p>Comments, Emails & CORR</p>
+</div>
+<div class="kpi-trend">Live</div>
+</article>
+
+<article class="kpi-card glass-card">
+<div class="kpi-icon green"><i class="fa-solid fa-robot"></i></div>
+<div class="kpi-content">
+<label>AI Requests</label>
+<h2 id="aiRequests">0</h2>
+<p>Processed Today</p>
+</div>
+<div class="kpi-trend up">Realtime</div>
+</article>
+
+<article class="kpi-card glass-card">
+<div class="kpi-icon red"><i class="fa-solid fa-comment-dots"></i></div>
+<div class="kpi-content">
+<label>Feedback</label>
+<h2 id="feedbackCount">0</h2>
+<p>Awaiting Review</p>
+</div>
+<div class="kpi-trend">Open</div>
+</article>
+
+<article class="kpi-card glass-card">
+<div class="kpi-icon cyan"><i class="fa-solid fa-bolt"></i></div>
+<div class="kpi-content">
+<label>System Health</label>
+<h2>100%</h2>
+<p>All services operational</p>
+</div>
+<div class="kpi-trend up">Healthy</div>
+</article>
+
+</section>
+
+<section class="dashboard-grid">
+
+<div class="dashboard-left">
+
+<section class="panel glass-card">
+
+<div class="panel-header">
+<div>
+<label>Management Modules</label>
+<h2>Administrative Workspace</h2>
+</div>
+<button class="icon-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+</div>
+
+<div class="module-grid">
+
+<a href="bulletin-center.html" class="module-card">
+<div class="module-icon purple"><i class="fa-solid fa-bullhorn"></i></div>
+<div class="module-body">
+<h3>Bulletin Center</h3>
+<p>Publish announcements, alerts and employee communications.</p>
+</div>
+<div class="module-footer"><span>12 Active</span><i class="fa-solid fa-arrow-right"></i></div>
+</a>
+
+<a href="user-management.html" class="module-card">
+<div class="module-icon blue"><i class="fa-solid fa-users"></i></div>
+<div class="module-body">
+<h3>User Management</h3>
+<p>Manage employees, admins, permissions and approvals.</p>
+</div>
+<div class="module-footer"><span>138 Users</span><i class="fa-solid fa-arrow-right"></i></div>
+</a>
+
+<a href="template-manager.html" class="module-card">
+<div class="module-icon orange"><i class="fa-solid fa-file-lines"></i></div>
+<div class="module-body">
+<h3>Template Manager</h3>
+<p>Manage comments, CORR codes and response templates.</p>
+</div>
+<div class="module-footer"><span>382 Templates</span><i class="fa-solid fa-arrow-right"></i></div>
+</a>
+
+<a href="analytics.html" class="module-card">
+<div class="module-icon green"><i class="fa-solid fa-chart-line"></i></div>
+<div class="module-body">
+<h3>Analytics</h3>
+<p>Realtime usage, trends and enterprise insights.</p>
+</div>
+<div class="module-footer"><span>Live Dashboard</span><i class="fa-solid fa-arrow-right"></i></div>
+</a>
+
+<a href="feedback-center.html" class="module-card">
+<div class="module-icon red"><i class="fa-solid fa-comments"></i></div>
+<div class="module-body">
+<h3>Feedback Center</h3>
+<p>Review suggestions, bugs and feature requests.</p>
+</div>
+<div class="module-footer"><span>9 Pending</span><i class="fa-solid fa-arrow-right"></i></div>
+</a>
+
+<a href="ai-settings.html" class="module-card">
+<div class="module-icon cyan"><i class="fa-solid fa-robot"></i></div>
+<div class="module-body">
+<h3>AI Settings</h3>
+<p>Configure AI providers, prompts and knowledge sources.</p>
+</div>
+<div class="module-footer"><span>Healthy</span><i class="fa-solid fa-arrow-right"></i></div>
+</a>
+
+</div>
+
+</section>
+
+<section class="panel glass-card">
+
+<div class="panel-header">
+<div>
+<label>Today's Analytics</label>
+<h2>Realtime Usage Overview</h2>
+</div>
+</div>
+
+<div class="mini-chart-grid">
+
+<div class="mini-chart-card">
+<div class="mini-chart-head"><h3>Guide Usage</h3><span class="badge success">+18%</span></div>
+<div class="bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</div>
+
+<div class="mini-chart-card">
+<div class="mini-chart-head"><h3>AI Requests</h3><span class="badge info">LIVE</span></div>
+<div class="bars blue"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</div>
+
+<div class="mini-chart-card">
+<div class="mini-chart-head"><h3>Template Usage</h3><span class="badge">Today</span></div>
+<div class="bars orange"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 </div>
 
 </div>
 
-<div class="dashboard-grid">
-
-<div class="module-card bulletin">
-
-<div class="module-icon">
-
-📢
+</section>
 
 </div>
 
-<h2>
+<div class="dashboard-right">
+  <section class="side-panel glass-card">
+<div class="panel-header"><div><label>Artificial Intelligence</label><h2>AI Status</h2></div><div class="online-dot"></div></div>
 
-Bulletin Center
-
-</h2>
-
-<p>
-
-Announcements, updates, reminders, maintenance notices and login popups.
-
-</p>
-
-<button id="openBulletinCenter">
-
-Open
-
-</button>
-
+<div class="health-ring">
+<div class="ring">
+<div class="ring-center">
+<strong>100%</strong>
+<span>Healthy</span>
+</div>
+</div>
 </div>
 
-<div class="module-card templates">
+<div class="status-list">
+<div class="status-row"><span>Provider</span><strong>Groq</strong></div>
+<div class="status-row"><span>Model</span><strong>Llama 3.3 70B</strong></div>
+<div class="status-row"><span>Latency</span><strong>218 ms</strong></div>
+<div class="status-row"><span>Prompt Cache</span><strong>Enabled</strong></div>
+<div class="status-row"><span>Firebase</span><strong>Connected</strong></div>
+<div class="status-row"><span>Guide Registry</span><strong>Healthy</strong></div>
+<div class="status-row"><span>Last Sync</span><strong>Just Now</strong></div>
+</div>
+</section>
 
-<div class="module-icon">
+<section class="side-panel glass-card">
+<div class="panel-header"><div><label>Operations Feed</label><h2>Live Activity</h2></div></div>
 
-📝
+<div class="activity-feed">
 
+<div class="feed-item">
+<div class="feed-icon purple"><i class="fa-solid fa-file-lines"></i></div>
+<div><h4>Fuel Guide Updated</h4><p>2 minutes ago</p></div>
 </div>
 
-<h2>
-
-Template Manager
-
-</h2>
-
-<p>
-
-Manage Suggested Comments, Corr Codes and Email Templates.
-
-</p>
-
-<button>
-
-Coming Soon
-
-</button>
-
+<div class="feed-item">
+<div class="feed-icon blue"><i class="fa-solid fa-user-plus"></i></div>
+<div><h4>New User Approved</h4><p>5 minutes ago</p></div>
 </div>
 
-<div class="module-card users">
-
-<div class="module-icon">
-
-👥
-
+<div class="feed-item">
+<div class="feed-icon orange"><i class="fa-solid fa-robot"></i></div>
+<div><h4>AI Processed 186 Requests</h4><p>Realtime</p></div>
 </div>
 
-<h2>
-
-User Management
-
-</h2>
-
-<p>
-
-View approved users and control Operations Console access.
-
-</p>
-
-<button>
-
-Coming Soon
-
-</button>
-
+<div class="feed-item">
+<div class="feed-icon green"><i class="fa-solid fa-chart-line"></i></div>
+<div><h4>Analytics Refreshed</h4><p>Live</p></div>
 </div>
 
-<div class="module-card analytics">
-
-<div class="module-icon">
-
-📊
-
+<div class="feed-item">
+<div class="feed-icon red"><i class="fa-solid fa-bullhorn"></i></div>
+<div><h4>Bulletin Published</h4><p>12 minutes ago</p></div>
 </div>
 
-<h2>
-
-Analytics
-
-</h2>
-
-<p>
-
-Most Used Guides, Search Statistics and User Activity.
-
-</p>
-
-<button>
-
-Coming Soon
-
-</button>
-
+<div class="feed-item">
+<div class="feed-icon cyan"><i class="fa-solid fa-book-open"></i></div>
+<div><h4>BD General Guide Modified</h4><p>18 minutes ago</p></div>
 </div>
 
-<div class="module-card feedback">
-
-<div class="module-icon">
-
-💬
-
+<div class="feed-item">
+<div class="feed-icon blue"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+<div><h4>Cloud Sync Completed</h4><p>21 minutes ago</p></div>
 </div>
 
-<h2>
-
-Feedback Center
-
-</h2>
-
-<p>
-
-Review submitted feedback and enhancement requests.
-
-</p>
-
-<button>
-
-Coming Soon
-
-</button>
-
+<div class="feed-item">
+<div class="feed-icon orange"><i class="fa-solid fa-envelope"></i></div>
+<div><h4>Email Queue Cleared</h4><p>25 minutes ago</p></div>
 </div>
 
-<div class="module-card ai">
+</div>
+</section>
 
-<div class="module-icon">
+<section class="side-panel glass-card">
 
-🤖
-
+<div class="panel-header">
+<div><label>Infrastructure</label><h2>System Health</h2></div>
 </div>
 
-<h2>
+<div class="health-list">
 
-AI Assistant
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-database"></i><div><h4>Firestore</h4><p>Cloud Database</p></div></div>
+<span class="health-pill success">Operational</span>
+</div>
 
-</h2>
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-cloud"></i><div><h4>Hosting</h4><p>Production</p></div></div>
+<span class="health-pill success">Online</span>
+</div>
 
-<p>
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-lock"></i><div><h4>Authentication</h4><p>Firebase Auth</p></div></div>
+<span class="health-pill success">Secure</span>
+</div>
 
-Configure AI Assistant settings and prompts.
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-shield-halved"></i><div><h4>Security Rules</h4><p>Protected</p></div></div>
+<span class="health-pill success">Active</span>
+</div>
 
-</p>
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-robot"></i><div><h4>AI Engine</h4><p>Groq API</p></div></div>
+<span class="health-pill success">Healthy</span>
+</div>
 
-<button>
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-code-branch"></i><div><h4>Guide Registry</h4><p>GitHub</p></div></div>
+<span class="health-pill success">Synced</span>
+</div>
 
-Coming Soon
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-envelope"></i><div><h4>Email Service</h4><p>Notifications</p></div></div>
+<span class="health-pill warning">Monitoring</span>
+</div>
 
-</button>
-
+<div class="health-item">
+<div class="health-left"><i class="fa-solid fa-server"></i><div><h4>Storage</h4><p>Cloud Assets</p></div></div>
+<span class="health-pill success">Normal</span>
 </div>
 
 </div>
 
-<div class="quick-section">
+</section>
 
-<div class="section-title">
+<section class="side-panel glass-card">
 
-Quick Actions
-
+<div class="panel-header">
+<div><label>Enterprise Metrics</label><h2>Usage Snapshot</h2></div>
 </div>
 
-<div class="quick-grid">
+<div class="metric-stack">
 
-<button class="quick-action">
-
-Create Bulletin
-
-</button>
-
-<button class="quick-action">
-
-View Active Announcements
-
-</button>
-
-<button class="quick-action">
-
-Review Feedback
-
-</button>
-
-<button class="quick-action">
-
-Refresh Dashboard
-
-</button>
-
+<div class="metric-card">
+<label>Today's Searches</label>
+<h3 id="metricSearches">0</h3>
+<div class="progress"><span style="width:78%"></span></div>
 </div>
 
+<div class="metric-card">
+<label>Guide Views</label>
+<h3 id="metricViews">0</h3>
+<div class="progress"><span style="width:92%"></span></div>
 </div>
 
-<div class="recent-section">
-
-<div class="section-title">
-
-Recent Activity
-
+<div class="metric-card">
+<label>Templates Used</label>
+<h3 id="metricTemplates">0</h3>
+<div class="progress"><span style="width:63%"></span></div>
 </div>
 
-<div id="recentActivity">
-
-<div class="loading">
-
-Loading activity...
-
+<div class="metric-card">
+<label>Average Resolution</label>
+<h3>2m 18s</h3>
+<div class="progress"><span style="width:88%"></span></div>
 </div>
 
 </div>
 
+</section>
+<section class="side-panel glass-card">
+<div class="panel-header"><div><label>Quick Actions</label><h2>Workspace Shortcuts</h2></div></div>
+
+<div class="quick-actions">
+
+<button class="quick-btn"><i class="fa-solid fa-plus"></i><span>Create Guide</span></button>
+<button class="quick-btn"><i class="fa-solid fa-user-plus"></i><span>Add User</span></button>
+<button class="quick-btn"><i class="fa-solid fa-file-circle-plus"></i><span>New Template</span></button>
+<button class="quick-btn"><i class="fa-solid fa-bullhorn"></i><span>Publish Bulletin</span></button>
+<button class="quick-btn"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span></button>
+<button class="quick-btn"><i class="fa-solid fa-chart-simple"></i><span>Open Analytics</span></button>
+<button class="quick-btn"><i class="fa-solid fa-download"></i><span>Export Report</span></button>
+<button class="quick-btn"><i class="fa-solid fa-gear"></i><span>System Settings</span></button>
+
+</div>
+</section>
+
+<section class="side-panel glass-card">
+<div class="panel-header"><div><label>Recent Administrators</label><h2>Currently Active</h2></div></div>
+
+<div class="user-stack">
+
+<div class="user-row">
+<div class="avatar purple">JG</div>
+<div class="user-info"><strong>Julan Guinto</strong><span>System Administrator</span></div>
+<div class="user-status online"></div>
+</div>
+
+<div class="user-row">
+<div class="avatar blue">AI</div>
+<div class="user-info"><strong>AI Assistant</strong><span>Operations Engine</span></div>
+<div class="user-status online"></div>
+</div>
+
+<div class="user-row">
+<div class="avatar orange">FB</div>
+<div class="user-info"><strong>Firebase</strong><span>Cloud Services</span></div>
+<div class="user-status online"></div>
+</div>
+
+<div class="user-row">
+<div class="avatar green">GH</div>
+<div class="user-info"><strong>GitHub Registry</strong><span>Guide Repository</span></div>
+<div class="user-status online"></div>
 </div>
 
 </div>
+
+</section>
+
+</div>
+
+</section>
+
+</main>
 
 <div id="footer-container"></div>
 
-<script src="assets/js/header-loader.js"></script>
+<div id="commandOverlay" class="command-overlay">
 
+<div class="command-window">
+
+<div class="command-header">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input id="commandSearch" type="text" placeholder="Search guides, users, templates, commands..." autocomplete="off">
+
+<button id="closeCommand"><i class="fa-solid fa-xmark"></i></button>
+
+</div>
+
+<div class="command-results">
+
+<button><i class="fa-solid fa-users"></i>User Management</button>
+<button><i class="fa-solid fa-book-open"></i>Decision Guides</button>
+<button><i class="fa-solid fa-file-lines"></i>Template Manager</button>
+<button><i class="fa-solid fa-chart-line"></i>Analytics</button>
+<button><i class="fa-solid fa-comments"></i>Feedback Center</button>
+<button><i class="fa-solid fa-bullhorn"></i>Bulletin Center</button>
+<button><i class="fa-solid fa-robot"></i>AI Settings</button>
+<button><i class="fa-solid fa-cloud"></i>System Status</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="opsLoader">
+
+<div class="loader-logo">
+
+<div class="loader-ring"></div>
+
+<div class="loader-core"></div>
+
+</div>
+
+<h2>Loading Operations Suite...</h2>
+
+<p>Initializing Enterprise Workspace</p>
+
+</div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/footer-loader.js"></script>
+<script src="assets/js/theme-loader.js"></script>
 <script src="assets/js/operations-console.js"></script>
 
-</body>
+<script>
 
+document.addEventListener("DOMContentLoaded",()=>{
+
+const loader=document.getElementById("opsLoader");
+setTimeout(()=>{loader.classList.add("hide");setTimeout(()=>loader.remove(),500);},1200);
+
+const overlay=document.getElementById("commandOverlay");
+const open=document.querySelector(".primary-btn");
+const close=document.getElementById("closeCommand");
+const search=document.getElementById("commandSearch");
+
+open?.addEventListener("click",()=>{overlay.classList.add("show");search.focus();});
+close?.addEventListener("click",()=>overlay.classList.remove("show"));
+
+overlay.addEventListener("click",e=>{
+if(e.target===overlay)overlay.classList.remove("show");
+});
+
+document.addEventListener("keydown",e=>{
+if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()=="k"){
+e.preventDefault();
+overlay.classList.add("show");
+search.focus();
+}
+if(e.key==="Escape")overlay.classList.remove("show");
+});
+
+const counters=["activeUsers","guideCount","templateCount","aiRequests","feedbackCount","todayUsers","todayActions","metricSearches","metricViews","metricTemplates"];
+
+counters.forEach(id=>{
+const el=document.getElementById(id);
+if(!el)return;
+let v=0;
+const target=Math.floor(Math.random()*400)+50;
+const t=setInterval(()=>{
+v+=Math.ceil(target/40);
+if(v>=target){v=target;clearInterval(t);}
+el.textContent=v.toLocaleString();
+},25);
+});
+
+});
+  </script>
+</body>
 </html>
