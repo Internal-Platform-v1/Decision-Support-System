@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bulletin Center</title>
+
+    <link rel="icon" href="assets/images/fedex-logo.png">
+    <link rel="stylesheet" href="assets/css/header-footer-style.css">
+    <link rel="stylesheet" href="assets/css/bulletin-center.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div id="header-container"></div>
+
+<div class="page">
+
+    <div class="hero">
+        <div>
+            <span class="badge">📢 Bulletin Center</span>
+            <h1>Announcements & Updates</h1>
+            <p>Create, publish and manage system announcements shown to every user after login.</p>
+        </div>
+
+        <div class="hero-actions">
+            <button id="newBulletinBtn" class="primary">+ New Bulletin</button>
+            <button id="refreshBtn">Refresh</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <span>Total Bulletins</span>
+            <h2 id="totalBulletins">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Published</span>
+            <h2 id="publishedBulletins">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Drafts</span>
+            <h2 id="draftBulletins">0</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Archived</span>
+            <h2 id="archivedBulletins">0</h2>
+        </div>
+    </div>
+
+    <div class="toolbar">
+
+        <input type="text" id="searchBulletin" placeholder="Search bulletin...">
+
+        <select id="filterStatus">
+            <option value="">All Status</option>
+            <option>Published</option>
+            <option>Draft</option>
+            <option>Archived</option>
+        </select>
+
+        <select id="filterPriority">
+            <option value="">All Priority</option>
+            <option>Critical</option>
+            <option>High</option>
+            <option>Normal</option>
+            <option>Low</option>
+        </select>
+
+    </div>
+
+    <div class="table-card">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th width="70">Status</th>
+                    <th>Title</th>
+                    <th width="120">Priority</th>
+                    <th width="150">Created By</th>
+                    <th width="170">Created</th>
+                    <th width="120">Views</th>
+                    <th width="210">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="bulletinTable">
+                <tr>
+                    <td colspan="7" class="loading">Loading bulletins...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     Bulletin Modal
+========================= -->
+
+<div id="bulletinModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+            <h2>Create Bulletin</h2>
+            <button id="closeModal">✕</button>
+        </div>
+
+        <div class="modal-body">
+
+            <label>Title</label>
+            <input id="bulletinTitle" type="text">
+
+            <label>Priority</label>
+            <select id="bulletinPriority">
+                <option>Critical</option>
+                <option>High</option>
+                <option selected>Normal</option>
+                <option>Low</option>
+            </select>
+
+            <label>Status</label>
+            <select id="bulletinStatus">
+                <option selected>Published</option>
+                <option>Draft</option>
+                <option>Archived</option>
+            </select>
+
+            <label>Message</label>
+            <textarea id="bulletinMessage" rows="10"></textarea>
+
+            <div class="checks">
+                <label><input type="checkbox" id="popupAfterLogin"> Show after login</label>
+                <label><input type="checkbox" id="allowDismiss" checked> Allow dismissal</label>
+                <label><input type="checkbox" id="showOnce"> Don't show again until next bulletin</label>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button id="cancelBulletin">Cancel</button>
+            <button id="saveBulletin" class="primary">Save Bulletin</button>
+        </div>
+
+    </div>
+
+</div>
+
+<div id="footer-container"></div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/bulletin-center.js"></script>
+
+</body>
+</html>
