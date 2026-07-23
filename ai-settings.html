@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AI Settings</title>
+
+    <link rel="icon" href="assets/images/fedex-logo.png">
+    <link rel="stylesheet" href="assets/css/header-footer-style.css">
+    <link rel="stylesheet" href="assets/css/ai-settings.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div id="header-container"></div>
+
+<div class="page">
+
+    <div class="hero">
+
+        <div>
+            <span class="badge">🤖 AI Settings</span>
+            <h1>Decision Support AI Configuration</h1>
+            <p>Configure the AI Assistant, providers, models, prompts, retrieval behavior and security settings used throughout the Decision Support System.</p>
+        </div>
+
+        <div class="hero-actions">
+            <button id="reloadBtn">Reload</button>
+            <button id="saveBtn" class="primary">Save Settings</button>
+        </div>
+
+    </div>
+
+    <div class="settings-grid">
+
+        <div class="card">
+
+            <h2>AI Provider</h2>
+
+            <label>Provider</label>
+            <select id="provider">
+                <option value="groq">Groq</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="gemini">Google Gemini</option>
+                <option value="azure">Azure OpenAI</option>
+            </select>
+
+            <label>Model</label>
+            <input id="model" type="text" placeholder="llama-3.3-70b-versatile">
+
+            <label>API Key</label>
+            <input id="apiKey" type="password" placeholder="API Key">
+
+            <label>Temperature</label>
+            <input id="temperature" type="number" min="0" max="2" step="0.1">
+
+            <label>Maximum Tokens</label>
+            <input id="maxTokens" type="number">
+
+        </div>
+
+        <div class="card">
+
+            <h2>Knowledge Base</h2>
+
+            <label>Guide Registry</label>
+            <input id="guideRegistry" type="text">
+
+            <label>GitHub Repository</label>
+            <input id="githubRepo" type="text">
+
+            <label>Branch</label>
+            <input id="branch" type="text">
+
+            <label>Prompt Template</label>
+            <textarea id="systemPrompt" rows="10"></textarea>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Retrieval Settings</h2>
+
+            <label><input id="enableHistory" type="checkbox"> Include Conversation History</label>
+
+            <label><input id="enableTemplates" type="checkbox"> Search Template Collections</label>
+
+            <label><input id="enableGuides" type="checkbox"> Search Guide Registry</label>
+
+            <label><input id="enableComments" type="checkbox"> Include Suggested Comments</label>
+
+            <label><input id="enableEmails" type="checkbox"> Include Email Templates</label>
+
+            <label><input id="enableCorr" type="checkbox"> Include CORR Codes</label>
+
+            <label>Maximum Results</label>
+            <input id="topResults" type="number">
+
+        </div>
+
+        <div class="card">
+
+            <h2>Security</h2>
+
+            <label><input id="allowEmployees" type="checkbox"> Allow Employee AI Access</label>
+
+            <label><input id="allowManagers" type="checkbox"> Allow Manager AI Access</label>
+
+            <label><input id="allowAdmins" type="checkbox"> Allow Operations Console</label>
+
+            <label><input id="logPrompts" type="checkbox"> Save AI Prompt Logs</label>
+
+            <label><input id="enableRateLimit" type="checkbox"> Enable Rate Limiting</label>
+
+            <label><input id="enableCache" type="checkbox"> Enable Response Cache</label>
+
+        </div>
+
+    </div>
+
+    <div class="table-card">
+
+        <div class="section-title">
+            AI Activity Log
+        </div>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th width="180">Date</th>
+                    <th width="180">User</th>
+                    <th width="140">Provider</th>
+                    <th width="180">Model</th>
+                    <th>Prompt</th>
+                    <th width="120">Tokens</th>
+                </tr>
+            </thead>
+
+            <tbody id="activityTable">
+                <tr>
+                    <td colspan="6" class="loading">Loading AI activity...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div id="footer-container"></div>
+
+<script src="assets/js/header-loader.js"></script>
+<script src="assets/js/ai-settings.js"></script>
+
+</body>
+</html>
