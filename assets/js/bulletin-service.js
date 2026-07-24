@@ -1,3 +1,4 @@
+alert("bulletin-service loaded");
 // =====================================
 // Firebase Initialization
 // =====================================
