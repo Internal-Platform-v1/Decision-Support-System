@@ -3721,6 +3721,60 @@
         body.theme-simple .focus-card.dark strong {
             color: #ffffff !important;
         }
+
+  /* ===== Fullscreen Table Fix ===== */
+
+.directory-main:fullscreen,
+.directory-main:-webkit-full-screen{
+
+    width:100vw;
+    height:100vh;
+
+    margin:0;
+    padding:12px;
+
+    box-sizing:border-box;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+
+}
+#fullscreenBtn{
+    cursor:pointer;
+}
+.directory-main:fullscreen .routing-card,
+.directory-main:-webkit-full-screen .routing-card{
+
+    display:flex;
+    flex-direction:column;
+
+    flex:1;
+
+    min-height:0;
+
+}
+
+.directory-main:fullscreen .table-wrap,
+.directory-main:-webkit-full-screen .table-wrap{
+
+    flex:1;
+
+    overflow:auto;
+
+    max-height:none !important;
+
+    min-height:0;
+
+}
+
+.directory-main:fullscreen table,
+.directory-main:-webkit-full-screen table{
+
+    width:100%;
+
+}   
     </style>
 </head>
 <body data-page="case-directory" class="theme-fedex">
@@ -3838,7 +3892,9 @@
                                         <h3 class="routing-title">Search and review the correct destination</h3>
                                         <p class="routing-lead">Use the live directory below to check where a case should move before routing it.</p>
                                     </div>
-                                    <div class="routing-icon"><i class="fa-solid fa-folder-open"></i></div>
+                                    <button class="routing-icon" id="fullscreenBtn" title="View Full Screen">
+    <i class="fa-solid fa-expand"></i>
+</button>
                                 </div>
 
                                 <div class="table-wrap" id="tableWrap">
@@ -4463,6 +4519,60 @@
         initCaseDirectoryPage();
       }
     });
+
+    // ===== Full Screen Toggle =====
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const directoryCard = document.querySelector(".directory-main");
+const shineModal = document.getElementById("shineCaseDetailModal");
+
+if (fullscreenBtn && directoryCard) {
+
+    const icon = fullscreenBtn.querySelector("i");
+    const originalParent = shineModal.parentNode;
+
+    fullscreenBtn.addEventListener("click", async () => {
+
+        try {
+
+            if (!document.fullscreenElement) {
+
+                // Move modal inside fullscreen element
+                directoryCard.appendChild(shineModal);
+
+                await directoryCard.requestFullscreen();
+
+            } else {
+
+                await document.exitFullscreen();
+
+            }
+
+        } catch (err) {
+
+            console.error("Fullscreen error:", err);
+
+        }
+
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+
+        if (document.fullscreenElement) {
+
+            icon.className = "fa-solid fa-compress";
+
+        } else {
+
+            icon.className = "fa-solid fa-expand";
+
+            // Move modal back to its original location
+            originalParent.appendChild(shineModal);
+
+        }
+
+    });
+
+}
   </script>
 
   <!-- =========================================================
