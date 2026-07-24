@@ -18,9 +18,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             author: document.getElementById("bulletinAuthor").value,
 
-            audience: Array.from(
-                document.getElementById("bulletinAudience").selectedOptions
-            ).map(option => option.value),
+audience: [
+    document.getElementById("bulletinAudience").value.trim()
+],
 
             attachments: []
 
