@@ -1430,3 +1430,105 @@ window.BulletinCenter={
   }
 
 };
+
+/*==================================================
+BULLETIN CATEGORY ACCORDION
+==================================================*/
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+const sections=[...document.querySelectorAll(".bulletin-section")];
+
+sections.forEach((section,index)=>{
+
+const list=section.querySelector(".mini-list");
+const btn=section.querySelector(".view-all-btn");
+const header=section.querySelector(".section-head");
+
+if(index!==0){
+list.style.display="none";
+btn.style.display="none";
+}
+
+header.style.cursor="pointer";
+
+header.addEventListener("click",()=>{
+
+sections.forEach(s=>{
+
+const l=s.querySelector(".mini-list");
+const b=s.querySelector(".view-all-btn");
+
+if(s===section){
+
+const open=l.style.display!=="none";
+
+if(open){
+l.style.display="none";
+b.style.display="none";
+}else{
+l.style.display="flex";
+b.style.display="flex";
+}
+
+}else{
+
+l.style.display="none";
+b.style.display="none";
+
+}
+
+});
+
+});
+
+});
+
+});
+
+/*==================================================
+SELECT BULLETIN
+==================================================*/
+
+document.querySelectorAll(".mini-item").forEach(item=>{
+
+item.addEventListener("click",()=>{
+
+document.querySelectorAll(".mini-item")
+.forEach(i=>i.classList.remove("active"));
+
+item.classList.add("active");
+
+/*
+Future Firebase code
+
+loadBulletin(item.dataset.id);
+
+*/
+
+});
+
+});
+
+/*==================================================
+VIEW ALL
+==================================================*/
+
+document.querySelectorAll(".view-all-btn").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const category=btn.dataset.category;
+
+/*
+Future
+
+openCategory(category)
+
+*/
+
+console.log("Category:",category);
+
+});
+
+});
