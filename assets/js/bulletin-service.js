@@ -100,9 +100,37 @@ async function saveDraft(data) {
 
 }
 
+    // =====================================
+// Publish Bulletin
+// =====================================
+
+async function publish(data) {
+
+    const bulletin = createBulletin(data);
+
+    bulletin.status = "published";
+
+    bulletin.publishedBy = currentUser()?.email || "";
+
+    bulletin.publishedAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    bulletin.updatedAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    const docRef = await collection().add(bulletin);
+
     return {
-saveDraft
+        success: true,
+        id: docRef.id
     };
+
+}
+
+   return {
+    saveDraft,
+    publish
+};
 
 })();
 
