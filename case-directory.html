@@ -3965,6 +3965,77 @@
 
   <div id="toast">Copied!</div>
 
+
+
+<!-- =========================================================
+  CASE DETAIL MODAL (unchanged)
+  ========================================================= -->
+  <div id="caseDetailModal" class="modal detail-modal">
+    <div class="modal-content detail-modal-content" id="caseDetailModalContent" onclick="event.stopPropagation()">
+
+      <div class="modal-header detail-modal-header">
+        <span class="detail-modal-title">Case Directory Detail</span>
+
+        <div class="detail-modal-actions">
+          <button type="button" class="view-toggle-icon" id="viewToggleBtn" onclick="toggleView()" title="Switch to premium view">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </button>
+          <span class="modal-close" onclick="closeCaseDetail()">×</span>
+        </div>
+      </div>
+
+      <!-- Default view -->
+      <div class="detail-table">
+        <div class="detail-col">
+          <span class="detail-label">Queue / Request</span>
+          <div id="detailQueue"></div>
+        </div>
+        <div class="detail-col">
+          <span class="detail-label">Concern</span>
+          <div id="detailConcern"></div>
+        </div>
+        <div class="detail-col">
+          <span class="detail-label">Action</span>
+          <div id="detailAction"></div>
+        </div>
+        <div class="detail-col">
+          <span class="detail-label">Email Address</span>
+          <div id="detailEmail"></div>
+        </div>
+        <div class="detail-col">
+          <span class="detail-label">Case Assignment / Email</span>
+          <div id="detailAssignment"></div>
+        </div>
+      </div>
+
+      <!-- Premium view -->
+      <div class="premium-detail-view">
+        <div class="premium-card full">
+          <div class="premium-card-title"><i class="fa-solid fa-folder-open"></i> Queue / Request</div>
+          <div class="premium-card-value" id="premiumDetailQueue"></div>
+        </div>
+        <div class="premium-card">
+          <div class="premium-card-title"><i class="fa-solid fa-circle-question"></i> Concern</div>
+          <div class="premium-card-value" id="premiumDetailConcern"></div>
+        </div>
+        <div class="premium-card">
+          <div class="premium-card-title"><i class="fa-solid fa-list-check"></i> Action</div>
+          <div class="premium-card-value" id="premiumDetailAction"></div>
+        </div>
+        <div class="premium-card">
+          <div class="premium-card-title"><i class="fa-solid fa-envelope"></i> Email Address</div>
+          <div class="premium-card-value" id="premiumDetailEmail"></div>
+        </div>
+        <div class="premium-card full">
+          <div class="premium-card-title"><i class="fa-solid fa-share-nodes"></i> Case Assignment / Email</div>
+          <div class="premium-card-value" id="premiumDetailAssignment"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
+
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js">
   </script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js">
@@ -4530,6 +4601,7 @@ const fullscreenBtn = document.getElementById("fullscreenBtn");
 const directoryCard = document.querySelector(".directory-main");
 const caseModal = document.getElementById("caseDetailModal");
 
+
 if (fullscreenBtn && directoryCard && caseModal) {
 
     const icon = fullscreenBtn.querySelector("i");
@@ -4577,73 +4649,5 @@ if (fullscreenBtn && directoryCard && caseModal) {
 
 }
   </script>
-
-  <!-- =========================================================
-  CASE DETAIL MODAL (unchanged)
-  ========================================================= -->
-  <div id="caseDetailModal" class="modal detail-modal">
-    <div class="modal-content detail-modal-content" id="caseDetailModalContent" onclick="event.stopPropagation()">
-
-      <div class="modal-header detail-modal-header">
-        <span class="detail-modal-title">Case Directory Detail</span>
-
-        <div class="detail-modal-actions">
-          <button type="button" class="view-toggle-icon" id="viewToggleBtn" onclick="toggleView()" title="Switch to premium view">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-          </button>
-          <span class="modal-close" onclick="closeCaseDetail()">×</span>
-        </div>
-      </div>
-
-      <!-- Default view -->
-      <div class="detail-table">
-        <div class="detail-col">
-          <span class="detail-label">Queue / Request</span>
-          <div id="detailQueue"></div>
-        </div>
-        <div class="detail-col">
-          <span class="detail-label">Concern</span>
-          <div id="detailConcern"></div>
-        </div>
-        <div class="detail-col">
-          <span class="detail-label">Action</span>
-          <div id="detailAction"></div>
-        </div>
-        <div class="detail-col">
-          <span class="detail-label">Email Address</span>
-          <div id="detailEmail"></div>
-        </div>
-        <div class="detail-col">
-          <span class="detail-label">Case Assignment / Email</span>
-          <div id="detailAssignment"></div>
-        </div>
-      </div>
-
-      <!-- Premium view -->
-      <div class="premium-detail-view">
-        <div class="premium-card full">
-          <div class="premium-card-title"><i class="fa-solid fa-folder-open"></i> Queue / Request</div>
-          <div class="premium-card-value" id="premiumDetailQueue"></div>
-        </div>
-        <div class="premium-card">
-          <div class="premium-card-title"><i class="fa-solid fa-circle-question"></i> Concern</div>
-          <div class="premium-card-value" id="premiumDetailConcern"></div>
-        </div>
-        <div class="premium-card">
-          <div class="premium-card-title"><i class="fa-solid fa-list-check"></i> Action</div>
-          <div class="premium-card-value" id="premiumDetailAction"></div>
-        </div>
-        <div class="premium-card">
-          <div class="premium-card-title"><i class="fa-solid fa-envelope"></i> Email Address</div>
-          <div class="premium-card-value" id="premiumDetailEmail"></div>
-        </div>
-        <div class="premium-card full">
-          <div class="premium-card-title"><i class="fa-solid fa-share-nodes"></i> Case Assignment / Email</div>
-          <div class="premium-card-value" id="premiumDetailAssignment"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
 </body>
 </html>
