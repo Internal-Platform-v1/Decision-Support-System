@@ -127,9 +127,44 @@ async function publish(data) {
 
 }
 
+// =====================================
+// Listen for Published Bulletins
+// =====================================
+
+function listenPublished(callback) {
+
+    return collection()
+
+        .where("status", "==", "published")
+
+        .orderBy("publishedAt", "desc")
+
+        .onSnapshot(snapshot => {
+
+            const bulletins = [];
+
+            snapshot.forEach(doc => {
+
+                bulletins.push({
+
+                    id: doc.id,
+
+                    ...doc.data()
+
+                });
+
+            });
+
+            callback(bulletins);
+
+        });
+
+}    
+
    return {
     saveDraft,
-    publish
+    publish,
+    listenPublished
 };
 
 })();
