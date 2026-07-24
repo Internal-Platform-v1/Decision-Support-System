@@ -322,16 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
-                if (!data.author) {
-
-                    BulletinToast.show(
-                        "Please enter an author.",
-                        "error"
-                    );
-
-                    return;
-
-                }
 
                 const result =
                     await BulletinService.publish(data);
@@ -535,7 +525,7 @@ function showPreview(bulletin) {
         bulletin.title || "";
 
     document.getElementById("previewAuthor").textContent =
-        bulletin.author || "Administrator";
+    bulletin.author || "";
 
     document.getElementById("previewMessage").innerHTML =
         `<p>${(bulletin.message || "").replace(/\n/g, "<br>")}</p>`;
