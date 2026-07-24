@@ -3658,7 +3658,9 @@ body.directory-fullscreen{
     overflow:hidden;
 
 }
-
+#fullscreenBtn{
+    cursor:pointer;
+}
 .directory-main:fullscreen .routing-card,
 .directory-main:-webkit-full-screen .routing-card{
 
@@ -4491,19 +4493,24 @@ body.directory-fullscreen{
       initRatingStars();
     });
 
-    // ===== Full Screen Toggle =====
+// ===== Full Screen Toggle =====
 const fullscreenBtn = document.getElementById("fullscreenBtn");
 const directoryCard = document.querySelector(".directory-main");
+const shineModal = document.getElementById("shineCaseDetailModal");
 
 if (fullscreenBtn && directoryCard) {
 
     const icon = fullscreenBtn.querySelector("i");
+    const originalParent = shineModal.parentNode;
 
     fullscreenBtn.addEventListener("click", async () => {
 
         try {
 
             if (!document.fullscreenElement) {
+
+                // Move modal inside fullscreen element
+                directoryCard.appendChild(shineModal);
 
                 await directoryCard.requestFullscreen();
 
@@ -4530,6 +4537,9 @@ if (fullscreenBtn && directoryCard) {
         } else {
 
             icon.className = "fa-solid fa-expand";
+
+            // Move modal back to its original location
+            originalParent.appendChild(shineModal);
 
         }
 
