@@ -85,4 +85,46 @@ audience: [
 
         });
 
+    // =====================================
+// Publish Button
+// =====================================
+
+document
+    .getElementById("publishBulletinBtn")
+    .addEventListener("click", async () => {
+
+        try {
+
+            const data = getFormData();
+
+            // Required field validation
+            if (!data.title.trim()) {
+                BulletinToast.show("Please enter a bulletin title.", "error");
+                return;
+            }
+
+            if (!data.message.trim()) {
+                BulletinToast.show("Please enter the bulletin message.", "error");
+                return;
+            }
+
+            const result = await BulletinService.publish(data);
+
+            BulletinToast.show("Bulletin published successfully!");
+
+            console.log("Published ID:", result.id);
+
+        } catch (error) {
+
+            console.error(error);
+
+            BulletinToast.show(
+                "Unable to publish bulletin.",
+                "error"
+            );
+
+        }
+
+    });
+
 });
