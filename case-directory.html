@@ -4525,22 +4525,21 @@
     });
 
     // ===== Full Screen Toggle =====
+// ===== Full Screen Toggle =====
 const fullscreenBtn = document.getElementById("fullscreenBtn");
 const directoryCard = document.querySelector(".directory-main");
 const caseModal = document.getElementById("caseDetailModal");
 
-if (fullscreenBtn && directoryCard) {
+if (fullscreenBtn && directoryCard && caseModal) {
 
     const icon = fullscreenBtn.querySelector("i");
     const originalParent = caseModal.parentNode;
 
     fullscreenBtn.addEventListener("click", async () => {
-
         try {
-
             if (!document.fullscreenElement) {
 
-                // Move modal inside fullscreen element
+                // Move modal into fullscreen container
                 directoryCard.appendChild(caseModal);
 
                 await directoryCard.requestFullscreen();
@@ -4550,13 +4549,9 @@ if (fullscreenBtn && directoryCard) {
                 await document.exitFullscreen();
 
             }
-
         } catch (err) {
-
             console.error("Fullscreen error:", err);
-
         }
-
     });
 
     document.addEventListener("fullscreenchange", () => {
@@ -4564,14 +4559,18 @@ if (fullscreenBtn && directoryCard) {
         if (document.fullscreenElement) {
 
             icon.className = "fa-solid fa-compress";
+            fullscreenBtn.title = "Exit Full Screen";
 
         } else {
 
             icon.className = "fa-solid fa-expand";
+            fullscreenBtn.title = "View Full Screen";
 
-            // Move modal back to its original location
+            // Restore modal
             originalParent.appendChild(caseModal);
 
+            // Restore user's preferred view
+            setCaseDetailView(currentCaseDetailView);
         }
 
     });
