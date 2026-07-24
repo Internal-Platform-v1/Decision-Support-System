@@ -522,54 +522,8 @@
 
 </div>
 
-<script src="assets/js/header-loader.js"></script>
-<script src="assets/js/footer-loader.js"></script>
-<script src="assets/js/theme-loader.js"></script>
+
 <script src="assets/js/operations-console.js"></script>
 
-<script>
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-const loader=document.getElementById("opsLoader");
-setTimeout(()=>{loader.classList.add("hide");setTimeout(()=>loader.remove(),500);},1200);
-
-const overlay=document.getElementById("commandOverlay");
-const open=document.querySelector(".primary-btn");
-const close=document.getElementById("closeCommand");
-const search=document.getElementById("commandSearch");
-
-open?.addEventListener("click",()=>{overlay.classList.add("show");search.focus();});
-close?.addEventListener("click",()=>overlay.classList.remove("show"));
-
-overlay.addEventListener("click",e=>{
-if(e.target===overlay)overlay.classList.remove("show");
-});
-
-document.addEventListener("keydown",e=>{
-if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()=="k"){
-e.preventDefault();
-overlay.classList.add("show");
-search.focus();
-}
-if(e.key==="Escape")overlay.classList.remove("show");
-});
-
-const counters=["activeUsers","guideCount","templateCount","aiRequests","feedbackCount","todayUsers","todayActions","metricSearches","metricViews","metricTemplates"];
-
-counters.forEach(id=>{
-const el=document.getElementById(id);
-if(!el)return;
-let v=0;
-const target=Math.floor(Math.random()*400)+50;
-const t=setInterval(()=>{
-v+=Math.ceil(target/40);
-if(v>=target){v=target;clearInterval(t);}
-el.textContent=v.toLocaleString();
-},25);
-});
-
-});
-  </script>
 </body>
 </html>
