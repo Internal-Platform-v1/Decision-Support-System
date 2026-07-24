@@ -1181,3 +1181,18 @@ PAGE VISIT
 ---------------------------------------------------------*/
 
 writeSystemLog("Operations Console Opened");
+
+const themeSelector=document.getElementById("themeSelector");
+const savedTheme=localStorage.getItem("operations-theme")||"theme-dark";
+
+document.body.classList.remove("theme-dark","theme-light");
+document.body.classList.add(savedTheme);
+
+if(themeSelector)themeSelector.value=savedTheme;
+
+themeSelector?.addEventListener("change",e=>{
+const theme=e.target.value;
+document.body.classList.remove("theme-dark","theme-light");
+document.body.classList.add(theme);
+localStorage.setItem("operations-theme",theme);
+});
