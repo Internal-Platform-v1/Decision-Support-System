@@ -3610,7 +3610,34 @@ body.theme-simple .focus-card.dark strong{
       overflow: hidden;
     }
     
-    
+ .directory-main.fullscreen-mode{
+    position:fixed;
+    inset:20px;
+    width:auto;
+    height:auto;
+    z-index:999999;
+    margin:0;
+    border-radius:28px;
+    background:#fff;
+    display:flex;
+    flex-direction:column;
+}
+
+.directory-main.fullscreen-mode .table-wrap{
+    flex:1;
+    max-height:none;
+    height:auto;
+}   
+
+body.directory-fullscreen .hero,
+body.directory-fullscreen .directory-side,
+body.directory-fullscreen footer{
+    display:none;
+}
+
+body.directory-fullscreen{
+    overflow:hidden;
+}    
   </style>
 </head>
 
@@ -3691,7 +3718,10 @@ body.theme-simple .focus-card.dark strong{
                     <h3 class="routing-title">Search and review the correct destination</h3>
                     <p class="routing-lead">Use the live directory below to check where a case should go before routing it.</p>
                   </div>
-                  <div class="routing-icon"><i class="fa-solid fa-folder-open"></i></div>
+                  <div class="routing-icon"><i class="fa-solid fa-expand"></i></div>
+                  <button class="routing-icon" id="fullscreenBtn" title="View Full Screen">
+    <i class="fa-solid fa-expand"></i>
+</button>
                 </div>
 
                 <div class="table-wrap" id="tableWrap">
@@ -4409,6 +4439,52 @@ body.theme-simple .focus-card.dark strong{
       // Ensure rating stars are re-attached if header replaced them
       initRatingStars();
     });
+
+    // ===== Full Screen Toggle =====
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const directoryCard = document.querySelector(".directory-main");
+
+if (fullscreenBtn && directoryCard) {
+
+    const icon = fullscreenBtn.querySelector("i");
+
+    fullscreenBtn.addEventListener("click", async () => {
+
+        try {
+
+            if (!document.fullscreenElement) {
+
+                await directoryCard.requestFullscreen();
+
+            } else {
+
+                await document.exitFullscreen();
+
+            }
+
+        } catch (err) {
+
+            console.error("Fullscreen error:", err);
+
+        }
+
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+
+        if (document.fullscreenElement) {
+
+            icon.className = "fa-solid fa-compress";
+
+        } else {
+
+            icon.className = "fa-solid fa-expand";
+
+        }
+
+    });
+
+}
   </script>
 </body>
 </html>
