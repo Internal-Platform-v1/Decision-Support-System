@@ -1,275 +1,1432 @@
-/*========== Bulletin Center ==========*/
+/*==================================================
+ENTERPRISE BULLETIN CENTER
+==================================================*/
 
-let db,auth,currentUser,editingId=null;
-const $=id=>document.getElementById(id);
+const STATE={
+  bulletins:[],
+  filtered:[],
+  selected:null,
+  activeTab:"preview",
+  activeFilter:"All",
+  search:"",
+  composeOpen:false
+};
 
-document.addEventListener("DOMContentLoaded",async()=>{
-    initFirebase();
-    loadHeaderFooter();
-    await authenticate();
-    bindEvents();
-    loadBulletins();
+/*==================================================
+SAMPLE DATA
+==================================================*/
+
+STATE.bulletins=[
+
+{
+  id:1,
+  title:"Scheduled System Maintenance",
+  category:"Maintenance",
+  department:"IT Operations",
+  priority:"Critical",
+  status:"Published",
+  published:"2 hours ago",
+  views:482,
+  unread:31,
+  dismissed:18,
+  readRate:94,
+  attachments:2,
+  message:`The Enterprise Bulletin Center will undergo scheduled maintenance tonight from 11:00 PM until 1:00 AM. During this maintenance window employees may experience temporary interruptions while infrastructure upgrades are completed.`,
+  audience:["All Employees","IT Operations","Management"],
+  files:[
+    {name:"Maintenance Schedule.pdf",type:"pdf",size:"2.3 MB"},
+    {name:"Server Checklist.xlsx",type:"excel",size:"842 KB"}
+  ]
+},
+
+{
+  id:2,
+  title:"Fuel Guide Updated",
+  category:"Guide Update",
+  department:"Pricing",
+  priority:"Normal",
+  status:"Published",
+  published:"Yesterday",
+  views:185,
+  unread:8,
+  dismissed:4,
+  readRate:89,
+  attachments:0,
+  message:`The Pricing Team has released the latest Fuel Guide with updated surcharge calculations and processing examples.`,
+  audience:["Pricing","Customer Support"],
+  files:[]
+},
+
+{
+  id:3,
+  title:"New Operations SOP",
+  category:"Operations",
+  department:"Operations",
+  priority:"High",
+  status:"Draft",
+  published:"Today",
+  views:28,
+  unread:0,
+  dismissed:0,
+  readRate:0,
+  attachments:1,
+  message:`A revised Standard Operating Procedure has been prepared and is currently awaiting management approval before publication.`,
+  audience:["Operations"],
+  files:[
+    {name:"Operations SOP.pdf",type:"pdf",size:"1.2 MB"}
+  ]
+}
+
+];
+
+STATE.filtered=[...STATE.bulletins];
+STATE.selected=STATE.bulletins[0];
+
+/*==================================================
+ELEMENTS
+==================================================*/
+
+const $=selector=>document.querySelector(selector);
+const $$=selector=>document.querySelectorAll(selector);
+
+const feed=$("#feed");
+const searchInput=$(".search-box input");
+const filters=$$(".filter");
+const tabs=$$(".tab");
+const composeDrawer=$("#composeDrawer");
+const backdrop=$(".drawer-backdrop");
+const fab=$("#fabNewBulletin");
+const newBtn=$(".primary-btn");
+const closeDrawer=$(".drawer-close");
+
+/*==================================================
+START
+==================================================*/
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+  initialize();
+
 });
 
-/*========== Initialize ==========*/
+function initialize(){
 
-function initFirebase(){
-    if(typeof firebase==="undefined") return console.error("Firebase not loaded.");
-    auth=firebase.auth();
-    db=firebase.firestore();
+  bindEvents();
+
+  renderKPIs();
+
+  renderFeed();
+
+  renderPreview(STATE.selected);
+
 }
 
-function loadHeaderFooter(){
-    if(typeof loadHeader==="function") loadHeader();
-    if(typeof loadFooter==="function") loadFooter();
+/*==================================================
+HELPERS
+==================================================*/
+
+function numberFormat(value){
+  return new Intl.NumberFormat().format(value);
 }
 
-async function authenticate(){
-    return new Promise(resolve=>{
-        auth.onAuthStateChanged(async user=>{
-            if(!user) return location.href="index.html";
-            currentUser=user;
-            resolve();
-        });
-    });
+function percentage(value){
+  return `${value}%`;
 }
 
-/*========== Events ==========*/
+function badgeClass(priority){
+
+  switch(priority){
+
+    case "Critical":
+      return "critical";
+
+    case "High":
+      return "high";
+
+    default:
+      return "normal";
+
+  }
+
+}
+
+/*==================================================
+EVENTS
+==================================================*/
 
 function bindEvents(){
 
-    $("newBulletinBtn").onclick=()=>openModal();
+  /* Search */
 
-    $("closeModal").onclick=closeModal;
-    $("cancelBulletin").onclick=closeModal;
+  if(searchInput){
+    searchInput.addEventListener("input",e=>{
+      STATE.search=e.target.value.trim().toLowerCase();
+      applyFilters();
+    });
+  }
 
-    $("saveBulletin").onclick=saveBulletin;
-    $("refreshBtn").onclick=loadBulletins;
+  /* Filter Chips */
 
-    $("searchBulletin").addEventListener("input",filterTable);
-    $("filterStatus").addEventListener("change",filterTable);
-    $("filterPriority").addEventListener("change",filterTable);
+  filters.forEach(filter=>{
 
-    window.onclick=e=>{
-        if(e.target===$("bulletinModal")) closeModal();
-    };
+    filter.addEventListener("click",()=>{
 
-}
+      filters.forEach(btn=>btn.classList.remove("active"));
+      filter.classList.add("active");
 
-/*========== Load Bulletins ==========*/
+      STATE.activeFilter=filter.textContent.trim();
 
-async function loadBulletins(){
-
-    const body=$("bulletinTable");
-    body.innerHTML="<tr><td colspan='7' class='loading'>Loading...</td></tr>";
-
-    try{
-
-        const snap=await db.collection("bulletins").orderBy("createdAt","desc").get();
-
-        $("totalBulletins").textContent=snap.size;
-
-        let published=0,draft=0,archived=0;
-        let html="";
-
-        snap.forEach(doc=>{
-
-            const b=doc.data();
-
-            if(b.status==="Published") published++;
-            if(b.status==="Draft") draft++;
-            if(b.status==="Archived") archived++;
-
-            html+=`
-            <tr data-id="${doc.id}">
-                <td><span class="status ${b.status.toLowerCase()}">${b.status}</span></td>
-                <td>${escapeHtml(b.title)}</td>
-                <td>${b.priority}</td>
-                <td>${escapeHtml(b.createdBy||"-")}</td>
-                <td>${formatDate(b.createdAt)}</td>
-                <td>${b.views||0}</td>
-                <td>
-                    <div class="actions">
-                        <button class="btn-view" onclick="viewBulletin('${doc.id}')">View</button>
-                        <button class="btn-edit" onclick="editBulletin('${doc.id}')">Edit</button>
-                        <button class="btn-delete" onclick="deleteBulletin('${doc.id}')">Delete</button>
-                    </div>
-                </td>
-            </tr>`;
-        });
-
-        body.innerHTML=html||"<tr><td colspan='7' class='loading'>No bulletins found.</td></tr>";
-
-        $("publishedBulletins").textContent=published;
-        $("draftBulletins").textContent=draft;
-        $("archivedBulletins").textContent=archived;
-
-    }catch(err){
-        console.error(err);
-        body.innerHTML="<tr><td colspan='7' class='loading'>Unable to load bulletins.</td></tr>";
-    }
-
-}
-
-/*========== Save ==========*/
-
-async function saveBulletin(){
-
-    const data={
-        title:$("bulletinTitle").value.trim(),
-        message:$("bulletinMessage").value.trim(),
-        priority:$("bulletinPriority").value,
-        status:$("bulletinStatus").value,
-        popupAfterLogin:$("popupAfterLogin").checked,
-        allowDismiss:$("allowDismiss").checked,
-        showOnce:$("showOnce").checked,
-        createdBy:currentUser.email,
-        createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt:firebase.firestore.FieldValue.serverTimestamp(),
-        views:0
-    };
-
-    if(!data.title) return alert("Title is required.");
-    if(!data.message) return alert("Message is required.");
-
-    try{
-
-        if(editingId){
-            delete data.createdAt;
-            delete data.createdBy;
-            await db.collection("bulletins").doc(editingId).update(data);
-        }else{
-            await db.collection("bulletins").add(data);
-        }
-
-        closeModal();
-        loadBulletins();
-
-    }catch(err){
-        console.error(err);
-        alert("Unable to save bulletin.");
-    }
-
-}
-
-/*========== Edit ==========*/
-
-async function editBulletin(id){
-
-    try{
-
-        const doc=await db.collection("bulletins").doc(id).get();
-        if(!doc.exists) return;
-
-        const b=doc.data();
-
-        editingId=id;
-
-        $("bulletinTitle").value=b.title||"";
-        $("bulletinMessage").value=b.message||"";
-        $("bulletinPriority").value=b.priority||"Normal";
-        $("bulletinStatus").value=b.status||"Published";
-
-        $("popupAfterLogin").checked=!!b.popupAfterLogin;
-        $("allowDismiss").checked=!!b.allowDismiss;
-        $("showOnce").checked=!!b.showOnce;
-
-        openModal("Edit Bulletin");
-
-    }catch(err){
-        console.error(err);
-    }
-
-}
-
-/*========== Delete ==========*/
-
-async function deleteBulletin(id){
-
-    if(!confirm("Delete this bulletin?")) return;
-
-    try{
-        await db.collection("bulletins").doc(id).delete();
-        loadBulletins();
-    }catch(err){
-        console.error(err);
-    }
-
-}
-
-/*========== View ==========*/
-
-async function viewBulletin(id){
-
-    try{
-
-        const doc=await db.collection("bulletins").doc(id).get();
-        if(!doc.exists) return;
-
-        const b=doc.data();
-
-        alert(`${b.title}\n\n${b.message}`);
-
-    }catch(err){
-        console.error(err);
-    }
-
-}
-
-/*========== Search ==========*/
-
-function filterTable(){
-
-    const keyword=$("searchBulletin").value.toLowerCase();
-    const status=$("filterStatus").value;
-    const priority=$("filterPriority").value;
-
-    document.querySelectorAll("#bulletinTable tr").forEach(row=>{
-
-        const text=row.innerText.toLowerCase();
-
-        const showKeyword=text.includes(keyword);
-        const showStatus=!status||text.includes(status.toLowerCase());
-        const showPriority=!priority||text.includes(priority.toLowerCase());
-
-        row.style.display=showKeyword&&showStatus&&showPriority?"":"none";
+      applyFilters();
 
     });
 
+  });
+
+  /* Tabs */
+
+  tabs.forEach(tab=>{
+
+    tab.addEventListener("click",()=>{
+
+      tabs.forEach(btn=>btn.classList.remove("active"));
+      tab.classList.add("active");
+
+      STATE.activeTab=tab.textContent.trim().toLowerCase();
+
+    });
+
+  });
+
+  /* Compose Drawer */
+
+  if(fab) fab.addEventListener("click",openCompose);
+  if(newBtn) newBtn.addEventListener("click",openCompose);
+
+  if(closeDrawer){
+    closeDrawer.addEventListener("click",closeCompose);
+  }
+
+  if(backdrop){
+    backdrop.addEventListener("click",closeCompose);
+  }
+
 }
 
-/*========== Modal ==========*/
+/*==================================================
+FILTERING
+==================================================*/
 
-function openModal(title="Create Bulletin"){
-    editingId=editingId||null;
-    document.querySelector(".modal-header h2").textContent=title;
-    $("bulletinModal").classList.add("show");
+function applyFilters(){
+
+  const keyword=STATE.search;
+
+  STATE.filtered=STATE.bulletins.filter(item=>{
+
+    const searchMatch=
+      item.title.toLowerCase().includes(keyword) ||
+      item.department.toLowerCase().includes(keyword) ||
+      item.category.toLowerCase().includes(keyword);
+
+    let filterMatch=true;
+
+    switch(STATE.activeFilter){
+
+      case "Published":
+        filterMatch=item.status==="Published";
+        break;
+
+      case "Draft":
+        filterMatch=item.status==="Draft";
+        break;
+
+      case "Critical":
+        filterMatch=item.priority==="Critical";
+        break;
+
+      case "Guide Updates":
+        filterMatch=item.category==="Guide Update";
+        break;
+
+      case "Maintenance":
+        filterMatch=item.category==="Maintenance";
+        break;
+
+      case "Security":
+        filterMatch=item.category==="Security";
+        break;
+
+      default:
+        filterMatch=true;
+
+    }
+
+    return searchMatch && filterMatch;
+
+  });
+
+  renderFeed();
+
 }
 
-function closeModal(){
+/*==================================================
+FEED
+==================================================*/
 
-    editingId=null;
+function renderFeed(){
 
-    $("bulletinTitle").value="";
-    $("bulletinMessage").value="";
-    $("bulletinPriority").value="Normal";
-    $("bulletinStatus").value="Published";
+  if(!feed) return;
 
-    $("popupAfterLogin").checked=false;
-    $("allowDismiss").checked=true;
-    $("showOnce").checked=false;
+  feed.innerHTML="";
 
-    $("bulletinModal").classList.remove("show");
+  if(!STATE.filtered.length){
+
+    feed.innerHTML=`
+      <div class="empty-feed">
+        <i class="fa-regular fa-folder-open"></i>
+        <h3>No Bulletins Found</h3>
+        <p>Try another keyword or filter.</p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+  STATE.filtered.forEach(item=>{
+
+    const card=document.createElement("article");
+
+    card.className=`bulletin-card ${STATE.selected.id===item.id?"active":""}`;
+
+    card.innerHTML=`
+
+      <div class="card-accent ${badgeClass(item.priority)}"></div>
+
+      <div class="card-body">
+
+        <div class="card-top">
+
+          <span class="status ${item.status.toLowerCase()}">
+            ${item.status}
+          </span>
+
+          <span class="time">
+            <i class="fa-regular fa-clock"></i>
+            ${item.published}
+          </span>
+
+        </div>
+
+        <h3>${item.title}</h3>
+
+        <p>${item.message}</p>
+
+        <div class="card-meta">
+
+          <span>
+            <i class="fa-solid fa-building"></i>
+            ${item.department}
+          </span>
+
+          <span>
+            <i class="fa-regular fa-eye"></i>
+            ${numberFormat(item.views)}
+          </span>
+
+          <span>
+            <i class="fa-solid fa-paperclip"></i>
+            ${item.attachments}
+          </span>
+
+        </div>
+
+      </div>
+
+    `;
+
+    card.addEventListener("click",()=>{
+
+      STATE.selected=item;
+
+      renderFeed();
+
+      renderPreview(item);
+
+    });
+
+    feed.appendChild(card);
+
+  });
 
 }
 
-/*========== Helpers ==========*/
+/*==================================================
+PREVIEW
+==================================================*/
 
-function formatDate(ts){
-    if(!ts) return "-";
-    return ts.toDate().toLocaleString();
+function renderPreview(item){
+
+  const preview=$("#previewContent");
+  if(!preview) return;
+
+  preview.innerHTML=`
+
+    <div class="preview-banner">
+
+      <span class="priority ${badgeClass(item.priority).toLowerCase()}">
+        ${item.priority.toUpperCase()}
+      </span>
+
+      <div class="preview-actions">
+
+        <button title="Edit">
+          <i class="fa-regular fa-pen-to-square"></i>
+        </button>
+
+        <button title="Duplicate">
+          <i class="fa-regular fa-copy"></i>
+        </button>
+
+        <button title="Delete">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="preview-title">
+
+      <h2>${item.title}</h2>
+
+      <div class="preview-info">
+
+        <span>
+          <i class="fa-solid fa-building"></i>
+          ${item.department}
+        </span>
+
+        <span>
+          <i class="fa-regular fa-clock"></i>
+          ${item.published}
+        </span>
+
+        <span>
+          <i class="fa-regular fa-eye"></i>
+          ${numberFormat(item.views)} Views
+        </span>
+
+      </div>
+
+    </div>
+
+    <div class="preview-message">
+
+      <p>${item.message}</p>
+
+      <div class="info-box">
+
+        <div class="info-icon">
+          <i class="fa-solid fa-circle-info"></i>
+        </div>
+
+        <div>
+
+          <h4>Important Notice</h4>
+
+          <p>
+            Please ensure that all affected employees are informed before the
+            scheduled implementation.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    ${renderAttachments(item)}
+
+    ${renderAudience(item)}
+
+    ${renderStatistics(item)}
+
+  `;
+
 }
 
-function escapeHtml(text){
-    return text?text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"):"";
+/*==================================================
+ATTACHMENTS
+==================================================*/
+
+function renderAttachments(item){
+
+  let html=`
+    <div class="attachment-section">
+
+      <div class="section-title">
+        <h3>Attachments</h3>
+      </div>
+  `;
+
+  if(item.files.length===0){
+
+    html+=`
+      <div class="attachment-card">
+
+        <div class="file-icon">
+          <i class="fa-regular fa-file"></i>
+        </div>
+
+        <div class="file-info">
+
+          <h4>No Attachments</h4>
+
+          <span>This bulletin has no attached files.</span>
+
+        </div>
+
+      </div>
+    `;
+
+  }else{
+
+    item.files.forEach(file=>{
+
+      html+=`
+
+        <div class="attachment-card">
+
+          <div class="file-icon ${file.type}">
+            <i class="fa-solid fa-file-${file.type==="excel"?"excel":"pdf"}"></i>
+          </div>
+
+          <div class="file-info">
+
+            <h4>${file.name}</h4>
+
+            <span>${file.size}</span>
+
+          </div>
+
+          <button class="download-btn">
+            <i class="fa-solid fa-download"></i>
+          </button>
+
+        </div>
+
+      `;
+
+    });
+
+  }
+
+  html+=`</div>`;
+
+  return html;
+
 }
+
+/*==================================================
+AUDIENCE
+==================================================*/
+
+function renderAudience(item){
+
+  let html=`
+
+    <div class="audience-section">
+
+      <div class="section-title">
+        <h3>Audience</h3>
+      </div>
+
+      <div class="audience-tags">
+
+  `;
+
+  item.audience.forEach(person=>{
+
+    html+=`
+      <span>${person}</span>
+    `;
+
+  });
+
+  html+=`
+
+      </div>
+
+    </div>
+
+  `;
+
+  return html;
+
+}
+
+/*==================================================
+STATISTICS
+==================================================*/
+
+function renderStatistics(item){
+
+  return `
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+
+        <span>Total Views</span>
+
+        <h2>${numberFormat(item.views)}</h2>
+
+        <small>
+          <i class="fa-solid fa-chart-line"></i>
+          Engagement
+        </small>
+
+      </div>
+
+      <div class="stat-card">
+
+        <span>Read Rate</span>
+
+        <h2>${percentage(item.readRate)}</h2>
+
+        <small>
+          <i class="fa-solid fa-circle-check"></i>
+          Employees
+        </small>
+
+      </div>
+
+      <div class="stat-card">
+
+        <span>Unread</span>
+
+        <h2>${item.unread}</h2>
+
+        <small>
+          <i class="fa-regular fa-envelope"></i>
+          Pending
+        </small>
+
+      </div>
+
+      <div class="stat-card">
+
+        <span>Dismissed</span>
+
+        <h2>${item.dismissed}</h2>
+
+        <small>
+          <i class="fa-solid fa-xmark"></i>
+          Hidden
+        </small>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+/*==================================================
+KPI
+==================================================*/
+
+function renderKPIs(){
+
+  const cards=$$(".kpi-card");
+  if(cards.length<5) return;
+
+  const total=STATE.bulletins.length;
+  const published=STATE.bulletins.filter(x=>x.status==="Published").length;
+  const drafts=STATE.bulletins.filter(x=>x.status==="Draft").length;
+  const views=STATE.bulletins.reduce((t,x)=>t+x.views,0);
+  const unread=STATE.bulletins.reduce((t,x)=>t+x.unread,0);
+
+  cards[0].querySelector("h2").textContent=numberFormat(total);
+  cards[1].querySelector("h2").textContent=numberFormat(published);
+  cards[2].querySelector("h2").textContent=numberFormat(drafts);
+  cards[3].querySelector("h2").textContent=numberFormat(views);
+  cards[4].querySelector("h2").textContent=numberFormat(unread);
+
+}
+
+/*==================================================
+COMPOSE DRAWER
+==================================================*/
+
+function openCompose(){
+
+  STATE.composeOpen=true;
+
+  composeDrawer.classList.add("open");
+  backdrop.classList.add("show");
+
+}
+
+function closeCompose(){
+
+  STATE.composeOpen=false;
+
+  composeDrawer.classList.remove("open");
+  backdrop.classList.remove("show");
+
+}
+
+/*==================================================
+LOADING
+==================================================*/
+
+function showLoading(){
+
+  const loading=$("#loadingOverlay");
+
+  if(loading){
+    loading.style.display="flex";
+  }
+
+}
+
+function hideLoading(){
+
+  const loading=$("#loadingOverlay");
+
+  if(loading){
+    loading.style.display="none";
+  }
+
+}
+
+/*==================================================
+TOAST
+==================================================*/
+
+function showToast(title,message,icon="fa-circle-check"){
+
+  const container=$("#toastContainer");
+  if(!container) return;
+
+  const toast=document.createElement("div");
+
+  toast.className="toast";
+
+  toast.innerHTML=`
+    <i class="fa-solid ${icon}"></i>
+
+    <div>
+
+      <h4>${title}</h4>
+
+      <p>${message}</p>
+
+    </div>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(()=>{
+
+    toast.style.opacity="0";
+    toast.style.transform="translateX(60px)";
+
+    setTimeout(()=>toast.remove(),300);
+
+  },3500);
+
+}
+
+/*==================================================
+SIMULATED LOADING
+==================================================*/
+
+function simulateLoading(){
+
+  showLoading();
+
+  setTimeout(()=>{
+
+    hideLoading();
+
+    showToast(
+      "Bulletins Loaded",
+      "Latest enterprise announcements are now available."
+    );
+
+  },1200);
+
+}
+
+/*==================================================
+REFRESH BUTTON
+==================================================*/
+
+const refreshBtn=document.querySelector(".ghost-btn");
+
+if(refreshBtn){
+
+  refreshBtn.addEventListener("click",()=>{
+
+    simulateLoading();
+
+  });
+
+}
+
+/*==================================================
+PREVIEW ACTIONS
+==================================================*/
+
+document.addEventListener("click",e=>{
+
+  const btn=e.target.closest(".preview-actions button");
+  if(!btn) return;
+
+  const icon=btn.querySelector("i");
+
+  if(icon.classList.contains("fa-copy")){
+
+    showToast(
+      "Bulletin Duplicated",
+      `"${STATE.selected.title}" copied successfully.`,
+      "fa-copy"
+    );
+
+  }
+
+  if(icon.classList.contains("fa-trash")){
+
+    showToast(
+      "Delete Disabled",
+      "Delete functionality will be connected to Firestore.",
+      "fa-trash"
+    );
+
+  }
+
+  if(icon.classList.contains("fa-pen-to-square")){
+
+    openCompose();
+
+    showToast(
+      "Edit Mode",
+      "Editing bulletin information.",
+      "fa-pen"
+    );
+
+  }
+
+});
+
+/*==================================================
+COMPOSE FORM
+==================================================*/
+
+const composeForm=$("#composeForm");
+const publishBtn=$("#publishBulletin");
+const draftBtn=$("#saveDraft");
+const resetBtn=$("#resetCompose");
+const uploadArea=$("#uploadArea");
+const fileInput=$("#fileInput");
+
+let pendingFiles=[];
+
+/*==================================================
+INITIALIZE FORM
+==================================================*/
+
+if(composeForm){
+
+  composeForm.addEventListener("submit",e=>{
+    e.preventDefault();
+  });
+
+}
+
+if(resetBtn){
+
+  resetBtn.addEventListener("click",resetComposeForm);
+
+}
+
+if(draftBtn){
+
+  draftBtn.addEventListener("click",saveDraft);
+
+}
+
+if(publishBtn){
+
+  publishBtn.addEventListener("click",publishBulletin);
+
+}
+
+/*==================================================
+PUBLISH
+==================================================*/
+
+function publishBulletin(){
+
+  const bulletin=getComposeData();
+
+  if(!bulletin){
+
+    showToast(
+      "Missing Information",
+      "Please complete all required fields.",
+      "fa-circle-exclamation"
+    );
+
+    return;
+
+  }
+
+  bulletin.id=Date.now();
+  bulletin.status="Published";
+  bulletin.published="Just now";
+
+  STATE.bulletins.unshift(bulletin);
+
+  renderKPIs();
+  applyFilters();
+
+  closeCompose();
+  resetComposeForm();
+
+  showToast(
+    "Bulletin Published",
+    `"${bulletin.title}" has been published successfully.`
+  );
+
+}
+
+/*==================================================
+SAVE DRAFT
+==================================================*/
+
+function saveDraft(){
+
+  const bulletin=getComposeData();
+
+  if(!bulletin){
+
+    showToast(
+      "Missing Information",
+      "Please complete required fields.",
+      "fa-circle-exclamation"
+    );
+
+    return;
+
+  }
+
+  bulletin.id=Date.now();
+  bulletin.status="Draft";
+  bulletin.published="Today";
+
+  STATE.bulletins.unshift(bulletin);
+
+  renderKPIs();
+  applyFilters();
+
+  closeCompose();
+  resetComposeForm();
+
+  showToast(
+    "Draft Saved",
+    `"${bulletin.title}" was saved as draft.`,
+    "fa-floppy-disk"
+  );
+
+}
+
+/*==================================================
+FORM DATA
+==================================================*/
+
+function getComposeData(){
+
+  const title=$("#composeTitle")?.value.trim();
+  const message=$("#composeMessage")?.value.trim();
+  const department=$("#composeDepartment")?.value;
+  const category=$("#composeCategory")?.value;
+  const priority=$("#composePriority")?.value;
+
+  if(
+    !title ||
+    !message ||
+    !department ||
+    !category ||
+    !priority
+  ){
+    return null;
+  }
+
+  return{
+
+    title,
+    message,
+    department,
+    category,
+    priority,
+
+    views:0,
+    unread:0,
+    dismissed:0,
+    readRate:0,
+
+    attachments:pendingFiles.length,
+
+    audience:["All Employees"],
+
+    files:pendingFiles.map(file=>({
+
+      name:file.name,
+      size:formatFileSize(file.size),
+      type:getFileType(file.name)
+
+    }))
+
+  };
+
+}
+
+/*==================================================
+RESET
+==================================================*/
+
+function resetComposeForm(){
+
+  if(composeForm){
+
+    composeForm.reset();
+
+  }
+
+  pendingFiles=[];
+
+  const list=$("#uploadList");
+
+  if(list){
+
+    list.innerHTML="";
+
+  }
+
+}
+
+/*==================================================
+UPLOAD
+==================================================*/
+
+if(uploadArea && fileInput){
+
+  uploadArea.addEventListener("click",()=>{
+
+    fileInput.click();
+
+  });
+
+  fileInput.addEventListener("change",e=>{
+
+    [...e.target.files].forEach(file=>{
+
+      pendingFiles.push(file);
+
+    });
+
+    renderUploadFiles();
+
+  });
+
+}
+
+/*==================================================
+UPLOAD LIST
+==================================================*/
+
+function renderUploadFiles(){
+
+  const list=$("#uploadList");
+
+  if(!list) return;
+
+  list.innerHTML="";
+
+  pendingFiles.forEach((file,index)=>{
+
+    const row=document.createElement("div");
+
+    row.className="upload-item";
+
+    row.innerHTML=`
+
+      <div>
+
+        <strong>${file.name}</strong>
+
+        <small>${formatFileSize(file.size)}</small>
+
+      </div>
+
+      <button data-index="${index}">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+    `;
+
+    list.appendChild(row);
+
+  });
+
+}
+
+document.addEventListener("click",e=>{
+
+  const btn=e.target.closest(".upload-item button");
+
+  if(!btn) return;
+
+  pendingFiles.splice(btn.dataset.index,1);
+
+  renderUploadFiles();
+
+});
+
+/*==================================================
+KEYBOARD SHORTCUTS
+==================================================*/
+
+document.addEventListener("keydown",e=>{
+
+  if(e.ctrlKey && e.key==="n"){
+
+    e.preventDefault();
+
+    openCompose();
+
+  }
+
+  if(e.key==="Escape"){
+
+    closeCompose();
+
+  }
+
+});
+
+/*==================================================
+HELPERS
+==================================================*/
+
+function formatFileSize(bytes){
+
+  if(bytes<1024){
+
+    return bytes+" B";
+
+  }
+
+  if(bytes<1048576){
+
+    return (bytes/1024).toFixed(1)+" KB";
+
+  }
+
+  return (bytes/1048576).toFixed(1)+" MB";
+
+}
+
+function getFileType(name){
+
+  const ext=name.split(".").pop().toLowerCase();
+
+  if(["xls","xlsx","csv"].includes(ext)){
+
+    return "excel";
+
+  }
+
+  if(ext==="pdf"){
+
+    return "pdf";
+
+  }
+
+  if(["png","jpg","jpeg","gif","webp"].includes(ext)){
+
+    return "image";
+
+  }
+
+  if(["doc","docx"].includes(ext)){
+
+    return "word";
+
+  }
+
+  return "file";
+
+}
+
+/*==================================================
+LOCAL STORAGE
+==================================================*/
+
+const STORAGE_KEY="enterprise_bulletins";
+
+function saveToStorage(){
+
+  try{
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(STATE.bulletins)
+    );
+
+  }catch(error){
+
+    console.warn("Unable to save bulletins.",error);
+
+  }
+
+}
+
+function loadFromStorage(){
+
+  try{
+
+    const saved=localStorage.getItem(STORAGE_KEY);
+
+    if(!saved) return;
+
+    const data=JSON.parse(saved);
+
+    if(Array.isArray(data) && data.length){
+
+      STATE.bulletins=data;
+      STATE.filtered=[...data];
+      STATE.selected=data[0];
+
+    }
+
+  }catch(error){
+
+    console.warn("Unable to load bulletins.",error);
+
+  }
+
+}
+
+/*==================================================
+AUTO SAVE
+==================================================*/
+
+function refreshApplication(){
+
+  saveToStorage();
+
+  renderKPIs();
+
+  applyFilters();
+
+  if(STATE.selected){
+
+    const latest=STATE.bulletins.find(
+      b=>b.id===STATE.selected.id
+    );
+
+    if(latest){
+
+      STATE.selected=latest;
+
+      renderPreview(latest);
+
+    }
+
+  }
+
+}
+
+/*==================================================
+OVERRIDE PUBLISH
+==================================================*/
+
+const _publishBulletin=publishBulletin;
+
+publishBulletin=function(){
+
+  _publishBulletin();
+
+  refreshApplication();
+
+};
+
+/*==================================================
+OVERRIDE DRAFT
+==================================================*/
+
+const _saveDraft=saveDraft;
+
+saveDraft=function(){
+
+  _saveDraft();
+
+  refreshApplication();
+
+};
+
+/*==================================================
+AUTO REFRESH (Demo)
+==================================================*/
+
+let refreshTimer=null;
+
+function startAutoRefresh(){
+
+  stopAutoRefresh();
+
+  refreshTimer=setInterval(()=>{
+
+    renderKPIs();
+
+  },60000);
+
+}
+
+function stopAutoRefresh(){
+
+  if(refreshTimer){
+
+    clearInterval(refreshTimer);
+
+    refreshTimer=null;
+
+  }
+
+}
+
+/*==================================================
+THEME SUPPORT
+==================================================*/
+
+function applyTheme(theme){
+
+  document.documentElement.setAttribute(
+    "data-theme",
+    theme
+  );
+
+  localStorage.setItem(
+    "enterprise_theme",
+    theme
+  );
+
+}
+
+function initializeTheme(){
+
+  const savedTheme=
+    localStorage.getItem("enterprise_theme");
+
+  if(savedTheme){
+
+    applyTheme(savedTheme);
+
+  }
+
+}
+
+/*==================================================
+WINDOW EVENTS
+==================================================*/
+
+window.addEventListener("beforeunload",()=>{
+
+  saveToStorage();
+
+});
+
+window.addEventListener("storage",e=>{
+
+  if(e.key!==STORAGE_KEY) return;
+
+  loadFromStorage();
+
+  renderKPIs();
+
+  renderFeed();
+
+  if(STATE.selected){
+
+    renderPreview(STATE.selected);
+
+  }
+
+});
+
+/*==================================================
+BOOTSTRAP
+==================================================*/
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+  loadFromStorage();
+
+  initializeTheme();
+
+  renderKPIs();
+
+  renderFeed();
+
+  if(STATE.selected){
+
+    renderPreview(STATE.selected);
+
+  }
+
+  startAutoRefresh();
+
+});
+
+/*==================================================
+PUBLIC API
+==================================================*/
+
+window.BulletinCenter={
+
+  getState(){
+
+    return STATE;
+
+  },
+
+  refresh(){
+
+    refreshApplication();
+
+  },
+
+  save(){
+
+    saveToStorage();
+
+  },
+
+  openCompose(){
+
+    openCompose();
+
+  },
+
+  closeCompose(){
+
+    closeCompose();
+
+  }
+
+};
