@@ -1,6 +1,126 @@
-/*==================================================
-ENTERPRISE BULLETIN CENTER
-==================================================*/
+/*=========================================
+ENTERPRISE BULLETINS
+=========================================*/
+
+const BULLETINS = [
+
+{
+id:"ann1",
+category:"announcement",
+priority:"important",
+title:"Holiday Schedule Released",
+summary:"Holiday schedule for all employees.",
+date:"2 hours ago",
+author:"HR Department",
+views:124,
+message:"The official holiday schedule has been released for all employees."
+},
+
+{
+id:"ann2",
+category:"announcement",
+priority:"normal",
+title:"Company Town Hall",
+summary:"Monthly town hall meeting.",
+date:"Yesterday",
+author:"Management",
+views:83,
+message:"Join us this Friday for our monthly Town Hall meeting."
+},
+
+{
+id:"new1",
+category:"whatsnew",
+priority:"normal",
+title:"AI Assistant v2",
+summary:"The AI Assistant has been upgraded.",
+date:"Today",
+author:"IT Team",
+views:210,
+message:"The new AI Assistant now supports enterprise guides."
+},
+
+{
+id:"rem1",
+category:"reminder",
+priority:"important",
+title:"Submit Weekly Report",
+summary:"Reminder for weekly report submission.",
+date:"Today",
+author:"Operations",
+views:95,
+message:"Please submit your weekly reports before Friday."
+},
+
+{
+id:"bug1",
+category:"issue",
+priority:"critical",
+title:"Search Timeout",
+summary:"Known issue under investigation.",
+date:"Investigating",
+author:"IT Support",
+views:52,
+message:"Search may be slower than expected while engineers investigate."
+},
+
+{
+id:"guide1",
+category:"guide",
+priority:"normal",
+title:"Fuel Guide",
+summary:"New pricing guide available.",
+date:"NEW",
+author:"Guide Team",
+views:18,
+message:"The Fuel Guide has been added to the Decision Support System."
+
+}
+
+];
+
+function loadBulletin(id){
+
+const bulletin=BULLETINS.find(b=>b.id===id);
+
+if(!bulletin) return;
+
+document.querySelector(".preview-title h2").textContent=bulletin.title;
+
+document.querySelector(".preview-message p").textContent=bulletin.message;
+
+document.querySelector(".preview-info").innerHTML=`
+
+<span><i class="fa-solid fa-user"></i> ${bulletin.author}</span>
+
+<span><i class="fa-regular fa-calendar"></i> ${bulletin.date}</span>
+
+<span><i class="fa-regular fa-eye"></i> ${bulletin.views} Views</span>
+
+`;
+
+const badge=document.querySelector(".priority");
+
+badge.textContent=bulletin.priority.toUpperCase();
+
+badge.className=`priority ${bulletin.priority}`;
+
+}
+
+document.querySelectorAll(".mini-item").forEach(item=>{
+
+item.addEventListener("click",()=>{
+
+document.querySelectorAll(".mini-item")
+.forEach(i=>i.classList.remove("active"));
+
+item.classList.add("active");
+
+loadBulletin(item.dataset.id);
+
+});
+
+});
 
 const STATE={
   bulletins:[],
@@ -1530,5 +1650,11 @@ openCategory(category)
 console.log("Category:",category);
 
 });
+
+});
+
+window.addEventListener("load",()=>{
+
+loadBulletin("ann1");
 
 });
