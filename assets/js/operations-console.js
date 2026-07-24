@@ -1180,19 +1180,26 @@ console.error(e);
 PAGE VISIT
 ---------------------------------------------------------*/
 
-writeSystemLog("Operations Console Opened");
+const toggle=document.getElementById("themeToggle");
+const label=document.querySelector(".theme-label");
 
-const themeSelector=document.getElementById("themeSelector");
 const savedTheme=localStorage.getItem("operations-theme")||"theme-dark";
 
 document.body.classList.remove("theme-dark","theme-light");
 document.body.classList.add(savedTheme);
 
-if(themeSelector)themeSelector.value=savedTheme;
+toggle.checked=savedTheme==="theme-light";
+label.textContent=toggle.checked?"Light":"Dark";
 
-themeSelector?.addEventListener("change",e=>{
-const theme=e.target.value;
+toggle.addEventListener("change",()=>{
+
+const theme=toggle.checked?"theme-light":"theme-dark";
+
 document.body.classList.remove("theme-dark","theme-light");
 document.body.classList.add(theme);
+
+label.textContent=toggle.checked?"Light":"Dark";
+
 localStorage.setItem("operations-theme",theme);
+
 });
