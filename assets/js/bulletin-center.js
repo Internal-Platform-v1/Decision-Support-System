@@ -10,7 +10,40 @@ BulletinService.listenPublished((bulletins) => {
 
     console.log("Published Bulletins:", bulletins);
 
-    renderAnnouncements(bulletins);
+    renderCategory(
+    bulletins,
+    "announcement",
+    "announcementList",
+    "announcementCount"
+);
+
+renderCategory(
+    bulletins,
+    "whatsnew",
+    "whatsNewList",
+    "whatsNewCount"
+);
+
+renderCategory(
+    bulletins,
+    "reminder",
+    "reminderList",
+    "reminderCount"
+);
+
+renderCategory(
+    bulletins,
+    "issue",
+    "issueList",
+    "issueCount"
+);
+
+renderCategory(
+    bulletins,
+    "guide",
+    "guideList",
+    "guideCount"
+);
 
 });
 
@@ -141,22 +174,26 @@ document
 
 });
 
-function renderAnnouncements(bulletins) {
+function renderCategory(bulletins, category, listId, countId) {
 
-    const list = document.getElementById("announcementList");
-    const count = document.getElementById("announcementCount");
+    const list = document.getElementById(listId);
+    const count = document.getElementById(countId);
 
-    if (!list) return;
+    if (!list || !count) return;
 
-    const announcements = bulletins.filter(
-        b => b.category === "announcement"
+    const items = bulletins.filter(
+        b => b.category === category
     );
 
-    count.textContent = announcements.length;
+    count.textContent = items.length;
 
     list.innerHTML = "";
 
-    announcements.forEach(bulletin => {
+    items.forEach(bulletin => {
+
+        const date = bulletin.publishedAt?.seconds
+            ? new Date(bulletin.publishedAt.seconds * 1000).toLocaleDateString()
+            : "";
 
         const item = document.createElement("div");
 
@@ -165,9 +202,7 @@ function renderAnnouncements(bulletins) {
         item.innerHTML = `
             <div>
                 <h4>${bulletin.title}</h4>
-                <small>${new Date(
-                    bulletin.publishedAt?.seconds * 1000
-                ).toLocaleDateString()}</small>
+                <small>${date}</small>
             </div>
 
             <i class="fa-solid fa-angle-right"></i>
