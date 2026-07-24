@@ -1,104 +1,242 @@
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
     BulletinUI.init();
 
-    // =====================================
-// Listen for Published Bulletins
-// =====================================
+    // ==========================================================
+    // Attachment Manager
+    // ==========================================================
 
-BulletinService.listenPublished((bulletins) => {
+    document
+        .getElementById("addAttachmentBtn")
+        ?.addEventListener("click", addAttachmentRow);
 
-    console.log("Published Bulletins:", bulletins);
+    document
+        .querySelector(".attachment-row .remove-attachment")
+        ?.addEventListener("click", function () {
 
-    window.allBulletins = bulletins;
+            const rows = document.querySelectorAll(".attachment-row");
 
-    renderCategory(
-        bulletins,
-        "announcement",
-        "announcementList",
-        "announcementCount"
-    );
+            if (rows.length > 1) {
 
-    renderCategory(
-        bulletins,
-        "whatsnew",
-        "whatsNewList",
-        "whatsNewCount"
-    );
+                this.closest(".attachment-row").remove();
 
-    renderCategory(
-        bulletins,
-        "reminder",
-        "reminderList",
-        "reminderCount"
-    );
+            } else {
 
-    renderCategory(
-        bulletins,
-        "issue",
-        "issueList",
-        "issueCount"
-    );
+                this.closest(".attachment-row")
+                    .querySelectorAll("input")
+                    .forEach(input => input.value = "");
 
-    renderCategory(
-        bulletins,
-        "guide",
-        "guideList",
-        "guideCount"
-    );
+            }
 
-    // Automatically show the newest bulletin
-    if (bulletins.length) {
-        showPreview(bulletins[0]);
+        });
+
+    // ==========================================================
+    // Listen for Published Bulletins
+    // ==========================================================
+
+    BulletinService.listenPublished((bulletins) => {
+
+        console.log("Published Bulletins:", bulletins);
+
+        window.allBulletins = bulletins;
+
+        renderCategory(
+            bulletins,
+            "announcement",
+            "announcementList",
+            "announcementCount"
+        );
+
+        renderCategory(
+            bulletins,
+            "whatsnew",
+            "whatsNewList",
+            "whatsNewCount"
+        );
+
+        renderCategory(
+            bulletins,
+            "reminder",
+            "reminderList",
+            "reminderCount"
+        );
+
+        renderCategory(
+            bulletins,
+            "issue",
+            "issueList",
+            "issueCount"
+        );
+
+        renderCategory(
+            bulletins,
+            "guide",
+            "guideList",
+            "guideCount"
+        );
+
+        if (bulletins.length) {
+            showPreview(bulletins[0]);
+        }
+
+    });
+
+    // ==========================================================
+    // Helper Functions
+    // ==========================================================
+
+    function getAttachments() {
+
+        return [...document.querySelectorAll(".attachment-row")]
+
+            .map(row => ({
+
+                type: row.querySelector(".attachment-type").value,
+
+                name: row.querySelector(".attachment-name").value.trim(),
+
+                url: row.querySelector(".attachment-url").value.trim()
+
+            }))
+
+            .filter(item => item.name && item.url);
+
     }
 
-});
+    function clearAttachmentRows() {
+
+        const container =
+            document.getElementById("attachmentContainer");
+
+        container.innerHTML = `
+            <div class="attachment-row">
+
+                <select class="attachment-type">
+
+                    <option value="guide">📘 Decision Guide</option>
+                    <option value="sharepoint">📂 SharePoint</option>
+                    <option value="onedrive">☁ OneDrive</option>
+                    <option value="teams">💬 Microsoft Teams</option>
+                    <option value="forms">📝 Microsoft Forms</option>
+                    <option value="external">🌐 External Website</option>
+
+                </select>
+
+                <input
+                    type="text"
+                    class="attachment-name"
+                    placeholder="Attachment Name">
+
+                <input
+                    type="url"
+                    class="attachment-url"
+                    placeholder="Paste URL">
+
+                <button
+                    type="button"
+                    class="remove-attachment">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </div>
+        `;
+
+        container
+            .querySelector(".remove-attachment")
+            .addEventListener("click", function () {
+
+                this.closest(".attachment-row")
+                    .querySelectorAll("input")
+                    .forEach(input => input.value = "");
+
+            });
+
+    }
+
+    function clearForm() {
+
+        document.getElementById("bulletinTitle").value = "";
+
+        document.getElementById("bulletinSummary").value = "";
+
+        document.getElementById("bulletinMessage").value = "";
+
+        document.getElementById("bulletinAudience").value = "";
+
+        document.getElementById("bulletinCategory").selectedIndex = 0;
+
+        document.getElementById("bulletinPriority").selectedIndex = 0;
+
+        clearAttachmentRows();
+
+    }
 
     function getFormData() {
 
         return {
 
-            title: document.getElementById("bulletinTitle").value,
+            title: document
+                .getElementById("bulletinTitle")
+                .value
+                .trim(),
 
-            summary: document.getElementById("bulletinSummary").value,
+            summary: document
+                .getElementById("bulletinSummary")
+                .value
+                .trim(),
 
-            message: document.getElementById("bulletinMessage").value,
+            message: document
+                .getElementById("bulletinMessage")
+                .value
+                .trim(),
 
-            category: document.getElementById("bulletinCategory").value,
+            category: document
+                .getElementById("bulletinCategory")
+                .value,
 
-            priority: document.getElementById("bulletinPriority").value,
+            priority: document
+                .getElementById("bulletinPriority")
+                .value,
 
-            author: document.getElementById("bulletinAuthor").value,
+            author: document
+                .getElementById("bulletinAuthor")
+                .value
+                .trim(),
 
-audience: [
-    document.getElementById("bulletinAudience").value.trim()
-],
+            audience: document
+                .getElementById("bulletinAudience")
+                .value
+                .split(",")
+                .map(a => a.trim())
+                .filter(Boolean),
 
-            attachments: []
+            attachments: getAttachments()
 
         };
 
     }
 
-    // =====================================
+    // ==========================================================
     // Preview Button
-    // =====================================
+    // ==========================================================
 
     document
         .getElementById("previewBulletinBtn")
-        .addEventListener("click",()=>{
+        .addEventListener("click", () => {
 
             BulletinPreview.update({
 
-                title:document.getElementById("bulletinTitle").value,
+                title: document.getElementById("bulletinTitle").value,
 
-                author:document.getElementById("bulletinAuthor").value,
+                author: document.getElementById("bulletinAuthor").value,
 
-                priority:document.getElementById("bulletinPriority").value,
+                priority: document.getElementById("bulletinPriority").value,
 
-                message:document.getElementById("bulletinMessage").value,
+                message: document.getElementById("bulletinMessage").value,
 
-                views:0
+                views: 0
 
             });
 
@@ -106,9 +244,9 @@ audience: [
 
         });
 
-    // =====================================
-    // Save Draft Button
-    // =====================================
+        // ==========================================================
+    // Save Draft
+    // ==========================================================
 
     document
         .getElementById("saveDraftBtn")
@@ -118,11 +256,24 @@ audience: [
 
                 const data = getFormData();
 
-                const result = await BulletinService.saveDraft(data);
+                if (!data.title) {
 
-                BulletinToast.show("Draft saved successfully!");
+                    BulletinToast.show(
+                        "Please enter a bulletin title.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+                const result =
+                    await BulletinService.saveDraft(data);
 
                 console.log("Draft ID:", result.id);
+
+                BulletinToast.show(
+                    "Draft saved successfully!"
+                );
 
             } catch (error) {
 
@@ -137,51 +288,86 @@ audience: [
 
         });
 
-    // =====================================
-// Publish Button
-// =====================================
+    // ==========================================================
+    // Publish Bulletin
+    // ==========================================================
 
-document
-    .getElementById("publishBulletinBtn")
-    .addEventListener("click", async () => {
+    document
+        .getElementById("publishBulletinBtn")
+        .addEventListener("click", async () => {
 
-        try {
+            try {
 
-            const data = getFormData();
+                const data = getFormData();
 
-            // Required field validation
-            if (!data.title.trim()) {
-                BulletinToast.show("Please enter a bulletin title.", "error");
-                return;
+                if (!data.title) {
+
+                    BulletinToast.show(
+                        "Please enter a bulletin title.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                if (!data.message) {
+
+                    BulletinToast.show(
+                        "Please enter the bulletin message.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                if (!data.author) {
+
+                    BulletinToast.show(
+                        "Please enter an author.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                const result =
+                    await BulletinService.publish(data);
+
+                console.log(
+                    "Published ID:",
+                    result.id
+                );
+
+                BulletinToast.show(
+                    "Bulletin published successfully!"
+                );
+
+                clearForm();
+
+            } catch (error) {
+
+                console.error(error);
+
+                BulletinToast.show(
+                    "Unable to publish bulletin.",
+                    "error"
+                );
+
             }
 
-            if (!data.message.trim()) {
-                BulletinToast.show("Please enter the bulletin message.", "error");
-                return;
-            }
-
-            const result = await BulletinService.publish(data);
-
-            BulletinToast.show("Bulletin published successfully!");
-
-            console.log("Published ID:", result.id);
-
-        } catch (error) {
-
-            console.error(error);
-
-            BulletinToast.show(
-                "Unable to publish bulletin.",
-                "error"
-            );
-
-        }
-
-    });
+        });
 
 });
 
-function renderCategory(bulletins, category, listId, countId) {
+function renderCategory(
+    bulletins,
+    category,
+    listId,
+    countId
+) {
 
     const list = document.getElementById(listId);
     const count = document.getElementById(countId);
@@ -189,7 +375,9 @@ function renderCategory(bulletins, category, listId, countId) {
     if (!list || !count) return;
 
     const items = bulletins
+
         .filter(b => b.category === category)
+
         .sort((a, b) => {
 
             const aTime = a.publishedAt?.seconds || 0;
@@ -203,56 +391,141 @@ function renderCategory(bulletins, category, listId, countId) {
 
     list.innerHTML = "";
 
-    if (items.length === 0) {
+    if (!items.length) {
 
         list.innerHTML = `
+
             <div class="mini-item empty">
+
                 <div>
+
                     <h4>No bulletins yet</h4>
-                    <small>Publish one to get started.</small>
+
+                    <small>
+                        Publish one to get started.
+                    </small>
+
                 </div>
+
             </div>
+
         `;
 
         return;
+
     }
 
-    items.slice(0, 3).forEach(bulletin => {
+    items
+        .slice(0, 3)
+        .forEach(bulletin => {
 
-        const date = bulletin.publishedAt?.seconds
-            ? new Date(bulletin.publishedAt.seconds * 1000).toLocaleDateString()
-            : "Just now";
+            const date = bulletin.publishedAt?.seconds
 
-        const item = document.createElement("div");
+                ? new Date(
+                    bulletin.publishedAt.seconds * 1000
+                ).toLocaleDateString()
 
-        item.className = "mini-item";
+                : "Just now";
 
-        item.dataset.id = bulletin.id;
+            const item = document.createElement("div");
 
-        item.innerHTML = `
-            <div>
-                <h4>${bulletin.title}</h4>
-                <small>${date}</small>
-            </div>
+            item.className = "mini-item";
 
-            <i class="fa-solid fa-angle-right"></i>
-        `;
+            item.dataset.id = bulletin.id;
 
-        item.addEventListener("click", () => {
+            item.innerHTML = `
+
+                <div>
+
+                    <h4>${bulletin.title}</h4>
+
+                    <small>${date}</small>
+
+                </div>
+
+                <i class="fa-solid fa-angle-right"></i>
+
+            `;
+
+            item.addEventListener("click", () => {
+
+                document
+
+                    .querySelectorAll(".mini-item.active")
+
+                    .forEach(card =>
+                        card.classList.remove("active")
+                    );
+
+                item.classList.add("active");
+
+                showPreview(bulletin);
+
+            });
+
+            list.appendChild(item);
+
+        });
+
+}
+
+function addAttachmentRow() {
+
+    const container = document.getElementById("attachmentContainer");
+
+    const row = document.createElement("div");
+
+    row.className = "attachment-row";
+
+    row.innerHTML = `
+
+        <select class="attachment-type">
+
+            <option value="guide">📘 Decision Guide</option>
+
+            <option value="sharepoint">📂 SharePoint</option>
+
+            <option value="onedrive">☁ OneDrive</option>
+
+            <option value="teams">💬 Microsoft Teams</option>
+
+            <option value="forms">📝 Microsoft Forms</option>
+
+            <option value="external">🌐 External Website</option>
+
+        </select>
+
+        <input
+            type="text"
+            class="attachment-name"
+            placeholder="Attachment Name">
+
+        <input
+            type="url"
+            class="attachment-url"
+            placeholder="Paste URL">
+
+        <button
+            type="button"
+            class="remove-attachment">
+
+            <i class="fa-solid fa-trash"></i>
+
+        </button>
+
+    `;
+
+    row
+        .querySelector(".remove-attachment")
+        .addEventListener("click", () => {
+
+            row.remove();
+
+        });
 
     document
-        .querySelectorAll(".mini-item.active")
-        .forEach(el => el.classList.remove("active"));
-
-    item.classList.add("active");
-
-    showPreview(bulletin);
-
-});
-
-list.appendChild(item);
-
-    });
+        .getElementById("attachmentContainer")
+        .appendChild(row);
 
 }
 
@@ -265,7 +538,7 @@ function showPreview(bulletin) {
         bulletin.author || "Administrator";
 
     document.getElementById("previewMessage").innerHTML =
-        `<p>${(bulletin.message || "").replace(/\n/g,"<br>")}</p>`;
+        `<p>${(bulletin.message || "").replace(/\n/g, "<br>")}</p>`;
 
     document.getElementById("previewViews").textContent =
         `${bulletin.views || 0} Views`;
@@ -277,23 +550,151 @@ function showPreview(bulletin) {
             ).toLocaleString()
             : "";
 
-    const priority=document.getElementById("previewPriority");
+    // =====================================================
+    // Priority
+    // =====================================================
 
-    priority.textContent=(bulletin.priority || "normal").toUpperCase();
+    const priority =
+        document.getElementById("previewPriority");
 
-    priority.className="priority "+(bulletin.priority || "normal");
+    priority.textContent =
+        (bulletin.priority || "normal").toUpperCase();
 
-    const audience=document.getElementById("previewAudience");
+    priority.className =
+        "priority " + (bulletin.priority || "normal");
 
-    audience.innerHTML="";
+    // =====================================================
+    // Audience
+    // =====================================================
 
-    (bulletin.audience || []).forEach(person=>{
+    const audience =
+        document.getElementById("previewAudience");
 
-        const span=document.createElement("span");
+    audience.innerHTML = "";
 
-        span.textContent=person;
+    if (
+        bulletin.audience &&
+        bulletin.audience.length
+    ) {
 
-        audience.appendChild(span);
+        bulletin.audience.forEach(person => {
+
+            const tag =
+                document.createElement("span");
+
+            tag.textContent = person;
+
+            audience.appendChild(tag);
+
+        });
+
+    } else {
+
+        audience.innerHTML =
+            "<span>All Employees</span>";
+
+    }
+
+    // =====================================================
+    // Attachments
+    // =====================================================
+
+    const attachmentList =
+        document.getElementById("previewAttachments");
+
+    attachmentList.innerHTML = "";
+
+    const icons = {
+
+        guide: "fa-book",
+
+        sharepoint: "fa-folder",
+
+        onedrive: "fa-cloud",
+
+        teams: "fa-comments",
+
+        forms: "fa-file-lines",
+
+        external: "fa-link"
+
+    };
+
+    if (
+        !bulletin.attachments ||
+        bulletin.attachments.length === 0
+    ) {
+
+        attachmentList.innerHTML = `
+
+            <div class="attachment-card">
+
+                <div class="file-icon">
+
+                    <i class="fa-solid fa-paperclip"></i>
+
+                </div>
+
+                <div class="file-info">
+
+                    <h4>No Attachments</h4>
+
+                    <span>
+                        This bulletin has no attached resources.
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    bulletin.attachments.forEach(file => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "attachment-card";
+
+        card.innerHTML = `
+
+            <div class="file-icon">
+
+                <i class="fa-solid ${icons[file.type] || "fa-paperclip"}"></i>
+
+            </div>
+
+            <div class="file-info">
+
+                <h4>${file.name}</h4>
+
+                <span>${file.type.toUpperCase()}</span>
+
+            </div>
+
+            <button
+                class="download-btn">
+
+                <i class="fa-solid fa-up-right-from-square"></i>
+
+            </button>
+
+        `;
+
+        card
+            .querySelector(".download-btn")
+            .addEventListener("click", () => {
+
+                window.open(file.url, "_blank");
+
+            });
+
+        attachmentList.appendChild(card);
 
     });
 
