@@ -2,6 +2,16 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     BulletinUI.init();
 
+    // =====================================
+// Listen for Published Bulletins
+// =====================================
+
+BulletinService.listenPublished((bulletins) => {
+
+    console.log("Published Bulletins:", bulletins);
+
+});
+
     function getFormData() {
 
         return {
