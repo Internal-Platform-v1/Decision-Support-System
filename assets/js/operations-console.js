@@ -46,7 +46,8 @@ todayActions:$("#todayActions"),
 
 metricSearches:$("#metricSearches"),
 metricViews:$("#metricViews"),
-metricTemplates:$("#metricTemplates")
+metricTemplates:$("#metricTemplates"),
+  themeToggle:$("#themeToggle")
 };
 
 /*=========================================================
@@ -72,6 +73,7 @@ initializeAnimations();
 initializeKeyboard();
 
 initializeButtons();
+initializeTheme();  
 
 await loadDashboard();
 
@@ -1176,30 +1178,63 @@ console.error(e);
 
 }
 
-/*---------------------------------------------------------
-PAGE VISIT
----------------------------------------------------------*/
+/*=========================================================
+THEME SWITCH
+=========================================================*/
 
-const toggle=document.getElementById("themeToggle");
-const label=document.querySelector(".theme-label");
+function initializeTheme(){
 
-const savedTheme=localStorage.getItem("operations-theme")||"theme-dark";
+const toggle=EL.themeToggle;
 
-document.body.classList.remove("theme-dark","theme-light");
+if(!toggle)return;
+
+const savedTheme=
+localStorage.getItem("operations-theme") || "theme-light";
+
+document.body.classList.remove(
+"theme-dark",
+"theme-light"
+);
+
 document.body.classList.add(savedTheme);
 
-toggle.checked=savedTheme==="theme-light";
-label.textContent=toggle.checked?"Light":"Dark";
+toggle.checked=savedTheme==="theme-dark";
+
+const text=document.querySelector(".theme-text");
+
+if(text){
+
+text.textContent=
+toggle.checked ? "Dark" : "Light";
+
+}
 
 toggle.addEventListener("change",()=>{
 
-const theme=toggle.checked?"theme-light":"theme-dark";
+const dark=toggle.checked;
 
-document.body.classList.remove("theme-dark","theme-light");
-document.body.classList.add(theme);
+document.body.classList.toggle(
+"theme-dark",
+dark
+);
 
-label.textContent=toggle.checked?"Light":"Dark";
+document.body.classList.toggle(
+"theme-light",
+!dark
+);
 
-localStorage.setItem("operations-theme",theme);
+localStorage.setItem(
+"operations-theme",
+dark ? "theme-dark" : "theme-light"
+);
+
+if(text){
+
+text.textContent=
+dark ? "Dark" : "Light";
+
+}
 
 });
+
+}
