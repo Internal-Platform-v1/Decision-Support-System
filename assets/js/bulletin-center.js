@@ -10,6 +10,8 @@ BulletinService.listenPublished((bulletins) => {
 
     console.log("Published Bulletins:", bulletins);
 
+    renderAnnouncements(bulletins);
+
 });
 
     function getFormData() {
@@ -138,3 +140,41 @@ document
     });
 
 });
+
+function renderAnnouncements(bulletins) {
+
+    const list = document.getElementById("announcementList");
+    const count = document.getElementById("announcementCount");
+
+    if (!list) return;
+
+    const announcements = bulletins.filter(
+        b => b.category === "announcement"
+    );
+
+    count.textContent = announcements.length;
+
+    list.innerHTML = "";
+
+    announcements.forEach(bulletin => {
+
+        const item = document.createElement("div");
+
+        item.className = "mini-item";
+
+        item.innerHTML = `
+            <div>
+                <h4>${bulletin.title}</h4>
+                <small>${new Date(
+                    bulletin.publishedAt?.seconds * 1000
+                ).toLocaleDateString()}</small>
+            </div>
+
+            <i class="fa-solid fa-angle-right"></i>
+        `;
+
+        list.appendChild(item);
+
+    });
+
+}
