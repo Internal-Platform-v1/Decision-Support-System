@@ -10,40 +10,47 @@ BulletinService.listenPublished((bulletins) => {
 
     console.log("Published Bulletins:", bulletins);
 
+    window.allBulletins = bulletins;
+
     renderCategory(
-    bulletins,
-    "announcement",
-    "announcementList",
-    "announcementCount"
-);
+        bulletins,
+        "announcement",
+        "announcementList",
+        "announcementCount"
+    );
 
-renderCategory(
-    bulletins,
-    "whatsnew",
-    "whatsNewList",
-    "whatsNewCount"
-);
+    renderCategory(
+        bulletins,
+        "whatsnew",
+        "whatsNewList",
+        "whatsNewCount"
+    );
 
-renderCategory(
-    bulletins,
-    "reminder",
-    "reminderList",
-    "reminderCount"
-);
+    renderCategory(
+        bulletins,
+        "reminder",
+        "reminderList",
+        "reminderCount"
+    );
 
-renderCategory(
-    bulletins,
-    "issue",
-    "issueList",
-    "issueCount"
-);
+    renderCategory(
+        bulletins,
+        "issue",
+        "issueList",
+        "issueCount"
+    );
 
-renderCategory(
-    bulletins,
-    "guide",
-    "guideList",
-    "guideCount"
-);
+    renderCategory(
+        bulletins,
+        "guide",
+        "guideList",
+        "guideCount"
+    );
+
+    // Automatically show the newest bulletin
+    if (bulletins.length) {
+        showPreview(bulletins[0]);
+    }
 
 });
 
@@ -231,7 +238,62 @@ function renderCategory(bulletins, category, listId, countId) {
             <i class="fa-solid fa-angle-right"></i>
         `;
 
-        list.appendChild(item);
+        item.addEventListener("click", () => {
+
+    document
+        .querySelectorAll(".mini-item.active")
+        .forEach(el => el.classList.remove("active"));
+
+    item.classList.add("active");
+
+    showPreview(bulletin);
+
+});
+
+list.appendChild(item);
+
+    });
+
+}
+
+function showPreview(bulletin) {
+
+    document.getElementById("previewTitle").textContent =
+        bulletin.title || "";
+
+    document.getElementById("previewAuthor").textContent =
+        bulletin.author || "Administrator";
+
+    document.getElementById("previewMessage").innerHTML =
+        `<p>${(bulletin.message || "").replace(/\n/g,"<br>")}</p>`;
+
+    document.getElementById("previewViews").textContent =
+        `${bulletin.views || 0} Views`;
+
+    document.getElementById("previewDate").textContent =
+        bulletin.publishedAt?.seconds
+            ? new Date(
+                bulletin.publishedAt.seconds * 1000
+            ).toLocaleString()
+            : "";
+
+    const priority=document.getElementById("previewPriority");
+
+    priority.textContent=(bulletin.priority || "normal").toUpperCase();
+
+    priority.className="priority "+(bulletin.priority || "normal");
+
+    const audience=document.getElementById("previewAudience");
+
+    audience.innerHTML="";
+
+    (bulletin.audience || []).forEach(person=>{
+
+        const span=document.createElement("span");
+
+        span.textContent=person;
+
+        audience.appendChild(span);
 
     });
 
