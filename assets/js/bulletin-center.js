@@ -181,23 +181,46 @@ function renderCategory(bulletins, category, listId, countId) {
 
     if (!list || !count) return;
 
-    const items = bulletins.filter(
-        b => b.category === category
-    );
+    const items = bulletins
+        .filter(b => b.category === category)
+        .sort((a, b) => {
+
+            const aTime = a.publishedAt?.seconds || 0;
+            const bTime = b.publishedAt?.seconds || 0;
+
+            return bTime - aTime;
+
+        });
 
     count.textContent = items.length;
 
     list.innerHTML = "";
 
-    items.forEach(bulletin => {
+    if (items.length === 0) {
+
+        list.innerHTML = `
+            <div class="mini-item empty">
+                <div>
+                    <h4>No bulletins yet</h4>
+                    <small>Publish one to get started.</small>
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    items.slice(0, 3).forEach(bulletin => {
 
         const date = bulletin.publishedAt?.seconds
             ? new Date(bulletin.publishedAt.seconds * 1000).toLocaleDateString()
-            : "";
+            : "Just now";
 
         const item = document.createElement("div");
 
         item.className = "mini-item";
+
+        item.dataset.id = bulletin.id;
 
         item.innerHTML = `
             <div>
