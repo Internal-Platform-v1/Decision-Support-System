@@ -4246,7 +4246,11 @@
       document.getElementById("premiumDetailEmail").textContent = email;
       document.getElementById("premiumDetailAssignment").textContent = assignment;
 
-      setCaseDetailView(currentCaseDetailView);
+      if (document.fullscreenElement) {
+    setCaseDetailView("premium");
+} else {
+    setCaseDetailView(currentCaseDetailView);
+}
 
       modal.style.display = "flex";
       modal.classList.remove("is-closing");
@@ -4523,12 +4527,12 @@
     // ===== Full Screen Toggle =====
 const fullscreenBtn = document.getElementById("fullscreenBtn");
 const directoryCard = document.querySelector(".directory-main");
-const shineModal = document.getElementById("shineCaseDetailModal");
+const caseModal = document.getElementById("caseDetailModal");
 
 if (fullscreenBtn && directoryCard) {
 
     const icon = fullscreenBtn.querySelector("i");
-    const originalParent = shineModal.parentNode;
+    const originalParent = caseModal.parentNode;
 
     fullscreenBtn.addEventListener("click", async () => {
 
@@ -4537,7 +4541,7 @@ if (fullscreenBtn && directoryCard) {
             if (!document.fullscreenElement) {
 
                 // Move modal inside fullscreen element
-                directoryCard.appendChild(shineModal);
+                directoryCard.appendChild(caseModal);
 
                 await directoryCard.requestFullscreen();
 
@@ -4566,7 +4570,7 @@ if (fullscreenBtn && directoryCard) {
             icon.className = "fa-solid fa-expand";
 
             // Move modal back to its original location
-            originalParent.appendChild(shineModal);
+            originalParent.appendChild(caseModal);
 
         }
 
