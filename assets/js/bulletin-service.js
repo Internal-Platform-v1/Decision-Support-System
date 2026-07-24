@@ -16,12 +16,16 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
+alert("2 - Firebase initialized");
+
 const db = firebase.firestore();
+alert("3 - Firestore created");
 const auth = firebase.auth();
 
 const BULLETIN_COLLECTION = "enterprise_bulletins";
 
 const BulletinService = (() => {
+    alert("4 - BulletinService started");
 
     // =====================================
     // Private Helpers
@@ -102,3 +106,4 @@ saveDraft
     };
 
 })();
+alert("5 - BulletinService finished");
