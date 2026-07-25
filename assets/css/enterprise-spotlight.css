@@ -1,2292 +1,355 @@
-/* =========================================================
-   ENTERPRISE SPOTLIGHT v4
-   Premium Edition
-   Part 1/6
-========================================================= */
-
-#enterpriseSpotlight{
-
-    /* Layout */
-    --spot-radius:18px;
-    --spot-radius-sm:12px;
-    --spot-padding:20px;
-    --spot-gap:18px;
-
-    /* Animation */
-    --spot-speed:.35s;
-    --spot-speed-fast:.18s;
-
-    /* Shadows */
-    --spot-shadow:
-        0 10px 30px rgba(0,0,0,.12);
-
-    --spot-shadow-hover:
-        0 18px 42px rgba(0,0,0,.20);
-
-    /* Brand Colors */
-    --spot-purple:#4D148C;
-    --spot-orange:#FF6600;
-    --spot-green:#0F9D58;
-    --spot-red:#D93025;
-    --spot-blue:#1976D2;
-    --spot-yellow:#F9AB00;
-
-    /* Theme Defaults */
-    --spot-bg:#ffffff;
-    --spot-card:#ffffff;
-    --spot-border:#E5E7EB;
-
-    --spot-heading:#1F2937;
-    --spot-text:#374151;
-    --spot-muted:#6B7280;
-
-    --spot-progress:#4D148C;
-
-    --spot-gradient:
-        linear-gradient(
-            135deg,
-            #4D148C,
-            #6A1FB8
-        );
-
-    --spot-card-gradient:
-        linear-gradient(
-            180deg,
-            rgba(255,255,255,.98),
-            rgba(248,249,250,.98)
-        );
-
-    color:var(--spot-text);
-    font-family:inherit;
-}
-
-
-/* =========================================================
-   FEDEx Theme
-========================================================= */
-
-[data-theme="fedex"] #enterpriseSpotlight{
-
-    --spot-bg:#ffffff;
-    --spot-card:#ffffff;
-    --spot-border:#DDD7E8;
-
-    --spot-heading:#4D148C;
-    --spot-text:#313131;
-    --spot-muted:#666666;
-
-    --spot-progress:#FF6600;
-
-    --spot-card-gradient:
-        linear-gradient(
-            180deg,
-            #FFFFFF,
-            #FAF7FD
-        );
-}
-
-
-/* =========================================================
-   Atlas Theme
-========================================================= */
-
-[data-theme="atlas"] #enterpriseSpotlight{
-
-    --spot-bg:#0E1525;
-    --spot-card:#182338;
-    --spot-border:#2C3E5F;
-
-    --spot-heading:#F5F7FA;
-    --spot-text:#D8E2F0;
-    --spot-muted:#A7B6CA;
-
-    --spot-progress:#66B3FF;
-
-    --spot-card-gradient:
-        linear-gradient(
-            180deg,
-            #1A2438,
-            #111C30
-        );
-
-    --spot-shadow:
-        0 10px 35px rgba(0,0,0,.45);
-
-    --spot-shadow-hover:
-        0 22px 48px rgba(0,0,0,.55);
-}
-
-
-/* =========================================================
-   Basic Theme
-========================================================= */
-
-[data-theme="basic"] #enterpriseSpotlight{
-
-    --spot-bg:#F5F5F5;
-    --spot-card:#FFFFFF;
-    --spot-border:#DADADA;
-
-    --spot-heading:#222;
-    --spot-text:#444;
-    --spot-muted:#777;
-
-    --spot-progress:#555;
-}
-
-
-/* =========================================================
-   Simple Theme
-========================================================= */
-
-[data-theme="simple"] #enterpriseSpotlight{
-
-    --spot-bg:#ffffff;
-    --spot-card:#ffffff;
-    --spot-border:#E6E6E6;
-
-    --spot-heading:#202124;
-    --spot-text:#3C4043;
-    --spot-muted:#5F6368;
-
-    --spot-progress:#4285F4;
-
-    --spot-shadow:
-        0 6px 18px rgba(0,0,0,.08);
-
-    --spot-shadow-hover:
-        0 10px 26px rgba(0,0,0,.12);
-}
-
-
-/* =========================================================
-   Root Container
-========================================================= */
-
-#enterpriseSpotlight{
-
-    width:100%;
-    margin:24px auto;
-    position:relative;
-    z-index:1;
-}
-
-
-/* =========================================================
-   Spotlight Card
-========================================================= */
-
-#enterpriseSpotlight .spotlight-card{
-
-    position:relative;
-
-    overflow:hidden;
-
-    border-radius:var(--spot-radius);
-
-    border:1px solid var(--spot-border);
-
-    background:var(--spot-card-gradient);
-
-    box-shadow:var(--spot-shadow);
-
-    transition:
-        transform var(--spot-speed),
-        box-shadow var(--spot-speed),
-        border-color var(--spot-speed);
-
-    isolation:isolate;
-}
-
-
-#enterpriseSpotlight .spotlight-card:hover{
-
-    transform:translateY(-4px);
-
-    box-shadow:var(--spot-shadow-hover);
-}
-
-
-/* =========================================================
-   Animated Top Border
-========================================================= */
-
-#enterpriseSpotlight .spotlight-card::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:0;
-    left:0;
-    right:0;
-
-    height:5px;
-
-    background:var(--spot-gradient);
-
-    z-index:2;
-}
-
-
-/* =========================================================
-   Inner Wrapper
-========================================================= */
-
-#enterpriseSpotlight .spotlight-inner{
-
-    padding:24px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:22px;
-}
-
-
-/* =========================================================
-   Header
-========================================================= */
-
-#enterpriseSpotlight .spotlight-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:flex-start;
-
-    gap:18px;
-
-    flex-wrap:wrap;
-}
-
-
-/* Left */
-
-#enterpriseSpotlight .spotlight-header-left{
-
-    flex:1;
-
-    min-width:260px;
-}
-
-
-/* Right */
-
-#enterpriseSpotlight .spotlight-header-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    flex-wrap:wrap;
-}
-
-
-/* =========================================================
-   Greeting
-========================================================= */
-
-#enterpriseSpotlight .spotlight-greeting{
-
-    margin:0;
-
-    color:var(--spot-heading);
-
-    font-size:1.45rem;
-
-    font-weight:700;
-
-    line-height:1.25;
-}
-
-
-/* =========================================================
-   Subtitle
-========================================================= */
-
-#enterpriseSpotlight .spotlight-subtitle{
-
-    margin-top:6px;
-
-    color:var(--spot-muted);
-
-    font-size:.95rem;
-
-    line-height:1.55;
-}
-
-
-/* =========================================================
-   Progress
-========================================================= */
-
-#enterpriseSpotlight .spotlight-progress{
-
-    width:100%;
-
-    height:5px;
-
-    background:rgba(0,0,0,.08);
-
-    overflow:hidden;
-
-    border-radius:999px;
-}
-
-
-#enterpriseSpotlight .spotlight-progress-bar{
-
-    height:100%;
-
-    width:0;
-
-    background:var(--spot-progress);
-
-    transition:width .45s ease;
-}
-
-/* =========================================================
-   ENTERPRISE SPOTLIGHT v4
-   Part 2/6
-   Content Card + Badge + Typography
-========================================================= */
-
-
-/* =========================================================
-   Announcement Body
-========================================================= */
-
-#enterpriseSpotlight .spotlight-body{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:18px;
-}
-
-
-#enterpriseSpotlight .spotlight-content{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:14px;
-}
-
-
-/* =========================================================
-   Badge
-========================================================= */
-
-#enterpriseSpotlight .spotlight-badge{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    align-self:flex-start;
-
-    gap:8px;
-
-    padding:8px 16px;
-
-    border-radius:999px;
-
-    font-size:.75rem;
-
-    font-weight:700;
-
-    letter-spacing:.08em;
-
-    text-transform:uppercase;
-
-    color:#fff;
-
-    user-select:none;
-
-    box-shadow:
-        0 6px 16px rgba(0,0,0,.15);
-}
-
-
-/* Announcement */
-
-#enterpriseSpotlight .spotlight-badge.announcement{
-
-    background:
-        linear-gradient(
-            135deg,
-            #4D148C,
-            #7A2BC7
-        );
-}
-
-
-/* Update */
-
-#enterpriseSpotlight .spotlight-badge.update{
-
-    background:
-        linear-gradient(
-            135deg,
-            #1976D2,
-            #42A5F5
-        );
-}
-
-
-/* Alert */
-
-#enterpriseSpotlight .spotlight-badge.alert{
-
-    background:
-        linear-gradient(
-            135deg,
-            #D93025,
-            #F4511E
-        );
-}
-
-
-/* Maintenance */
-
-#enterpriseSpotlight .spotlight-badge.maintenance{
-
-    background:
-        linear-gradient(
-            135deg,
-            #F9AB00,
-            #FBBC04
-        );
-
-    color:#222;
-}
-
-
-/* News */
-
-#enterpriseSpotlight .spotlight-badge.news{
-
-    background:
-        linear-gradient(
-            135deg,
-            #0F9D58,
-            #34A853
-        );
-}
-
-
-/* =========================================================
-   NEW Indicator
-========================================================= */
-
-#enterpriseSpotlight .spot-new{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    margin-left:10px;
-
-    padding:3px 10px;
-
-    border-radius:999px;
-
-    font-size:.65rem;
-
-    font-weight:800;
-
-    letter-spacing:.06em;
-
-    color:#fff;
-
-    background:
-        linear-gradient(
-            135deg,
-            #E53935,
-            #FF7043
-        );
-
-    animation:
-        spotPulse
-        1.6s
-        infinite;
-}
-
-
-/* =========================================================
-   Title
-========================================================= */
-
-#enterpriseSpotlight .spotlight-content h2{
-
-    margin:0;
-
-    color:var(--spot-heading);
-
-    font-size:1.65rem;
-
-    font-weight:700;
-
-    line-height:1.25;
-
-    letter-spacing:-.02em;
-
-    transition:color .25s ease;
-}
-
-
-/* =========================================================
-   Summary
-========================================================= */
-
-#enterpriseSpotlight .spotlight-content p{
-
-    margin:0;
-
-    color:var(--spot-text);
-
-    font-size:1rem;
-
-    line-height:1.75;
-
-    white-space:pre-wrap;
-
-    word-break:break-word;
-}
-
-
-/* =========================================================
-   Metadata
-========================================================= */
-
-#enterpriseSpotlight .spotlight-meta{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    align-items:center;
-
-    gap:12px;
-
-    margin-top:6px;
-}
-
-
-#enterpriseSpotlight .spotlight-meta span{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:6px;
-
-    padding:6px 12px;
-
-    border-radius:999px;
-
-    background:rgba(0,0,0,.05);
-
-    color:var(--spot-muted);
-
-    font-size:.82rem;
-
-    font-weight:600;
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-meta span{
-
-    background:rgba(255,255,255,.08);
-}
-
-
-/* =========================================================
-   Published Date
-========================================================= */
-
-#enterpriseSpotlight .spotlight-published{
-
-    color:var(--spot-muted);
-
-    font-size:.82rem;
-
-    font-style:italic;
-}
-
-
-/* =========================================================
-   Counter
-========================================================= */
-
-#enterpriseSpotlight .spotlight-count{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    min-width:36px;
-
-    height:36px;
-
-    padding:0 12px;
-
-    border-radius:999px;
-
-    background:var(--spot-gradient);
-
-    color:#fff;
-
-    font-weight:700;
-
-    font-size:.85rem;
-
-    box-shadow:
-        0 6px 14px rgba(0,0,0,.18);
-}
-
-
-/* =========================================================
-   Divider
-========================================================= */
-
-#enterpriseSpotlight .spotlight-divider{
-
-    width:100%;
-
-    height:1px;
-
-    background:var(--spot-border);
-
-    margin:4px 0;
-}
-
-/* =========================================================
-   ENTERPRISE SPOTLIGHT v4
-   Part 3/6
-   Actions + Attachments + Footer
-========================================================= */
-
-
-/* =========================================================
-   Footer
-========================================================= */
-
-#enterpriseSpotlight .spotlight-footer{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    flex-wrap:wrap;
-
-    gap:18px;
-
-    padding-top:12px;
-
-    border-top:1px solid var(--spot-border);
-}
-
-
-/* =========================================================
-   Action Buttons
-========================================================= */
-
-#enterpriseSpotlight .spotlight-actions{
-
-    display:flex;
-
-    align-items:center;
-
-    flex-wrap:wrap;
-
-    gap:12px;
-}
-
-
-#enterpriseSpotlight .spotlight-btn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:8px;
-
-    padding:10px 18px;
-
-    border:none;
-
-    border-radius:12px;
-
-    cursor:pointer;
-
-    font-size:.9rem;
-
-    font-weight:600;
-
-    text-decoration:none;
-
-    transition:
-        background .25s ease,
-        color .25s ease,
-        transform .2s ease,
-        box-shadow .25s ease;
-}
-
-
-#enterpriseSpotlight .spotlight-btn:hover{
-
-    transform:translateY(-2px);
-}
-
-
-#enterpriseSpotlight .spotlight-btn:active{
-
-    transform:translateY(0);
-}
-
-
-/* Primary */
-
-#enterpriseSpotlight .spotlight-btn.primary{
-
-    background:var(--spot-gradient);
-
-    color:#fff;
-
-    box-shadow:
-        0 8px 20px rgba(77,20,140,.28);
-}
-
-
-#enterpriseSpotlight .spotlight-btn.primary:hover{
-
-    box-shadow:
-        0 14px 28px rgba(77,20,140,.35);
-}
-
-
-/* Secondary */
-
-#enterpriseSpotlight .spotlight-btn.secondary{
-
-    background:rgba(0,0,0,.06);
-
-    color:var(--spot-heading);
-}
-
-
-#enterpriseSpotlight .spotlight-btn.secondary:hover{
-
-    background:rgba(0,0,0,.10);
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-btn.secondary{
-
-    background:rgba(255,255,255,.08);
-
-    color:var(--spot-heading);
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-btn.secondary:hover{
-
-    background:rgba(255,255,255,.15);
-}
-
-
-/* =========================================================
-   Attachments
-========================================================= */
-
-#enterpriseSpotlight .spotlight-attachments{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:14px;
-}
-
-
-#enterpriseSpotlight .spotlight-attachments-title{
-
-    margin:0;
-
-    color:var(--spot-heading);
-
-    font-size:1rem;
-
-    font-weight:700;
-}
-
-
-/* =========================================================
-   Attachment Grid
-========================================================= */
-
-#enterpriseSpotlight .spotlight-files{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(auto-fit,minmax(260px,1fr));
-
-    gap:14px;
-}
-
-
-/* =========================================================
-   File Card
-========================================================= */
-
-#enterpriseSpotlight .spotlight-file{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    padding:14px;
-
-    border:1px solid var(--spot-border);
-
-    border-radius:14px;
-
-    background:rgba(255,255,255,.65);
-
-    transition:
-        transform .25s ease,
-        border-color .25s ease,
-        box-shadow .25s ease;
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-file{
-
-    background:rgba(255,255,255,.05);
-}
-
-
-#enterpriseSpotlight .spotlight-file:hover{
-
-    transform:translateY(-3px);
-
-    border-color:var(--spot-purple);
-
-    box-shadow:
-        0 12px 24px rgba(0,0,0,.12);
-}
-
-
-/* =========================================================
-   File Icon
-========================================================= */
-
-#enterpriseSpotlight .spotlight-file-icon{
-
-    width:52px;
-
-    height:52px;
-
-    border-radius:14px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    flex-shrink:0;
-
-    background:var(--spot-gradient);
-
-    color:#fff;
-
-    font-size:1.3rem;
-
-    font-weight:700;
-}
-
-
-/* =========================================================
-   File Details
-========================================================= */
-
-#enterpriseSpotlight .spotlight-file-info{
-
-    flex:1;
-
-    min-width:0;
-}
-
-
-#enterpriseSpotlight .spotlight-file-name{
-
-    margin:0;
-
-    color:var(--spot-heading);
-
-    font-size:.95rem;
-
-    font-weight:700;
-
-    word-break:break-word;
-}
-
-
-#enterpriseSpotlight .spotlight-file-size{
-
-    margin-top:4px;
-
-    color:var(--spot-muted);
-
-    font-size:.8rem;
-}
-
-
-/* =========================================================
-   File Buttons
-========================================================= */
-
-#enterpriseSpotlight .spotlight-file-actions{
-
-    display:flex;
-
-    gap:8px;
-
-    margin-top:10px;
-
-    flex-wrap:wrap;
-}
-
-
-#enterpriseSpotlight .spotlight-file-btn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:7px 12px;
-
-    border-radius:10px;
-
-    text-decoration:none;
-
-    font-size:.8rem;
-
-    font-weight:600;
-
-    transition:
-        transform .2s ease,
-        background .25s ease;
-}
-
-
-#enterpriseSpotlight .spotlight-file-btn:hover{
-
-    transform:translateY(-2px);
-}
-
-
-/* Open */
-
-#enterpriseSpotlight .spotlight-file-btn.open{
-
-    background:var(--spot-gradient);
-
-    color:#fff;
-}
-
-
-/* Download */
-
-#enterpriseSpotlight .spotlight-file-btn.download{
-
-    background:rgba(0,0,0,.06);
-
-    color:var(--spot-heading);
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-file-btn.download{
-
-    background:rgba(255,255,255,.08);
-
-    color:var(--spot-heading);
-}
-
-
-/* =========================================================
-   Navigation Controls
-========================================================= */
-
-#enterpriseSpotlight .spotlight-controls{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-}
-
-
-#enterpriseSpotlight .spotlight-arrow{
-
-    width:38px;
-
-    height:38px;
-
-    border:none;
-
-    border-radius:50%;
-
-    cursor:pointer;
-
-    background:var(--spot-gradient);
-
-    color:#fff;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    transition:
-        transform .2s ease,
-        opacity .25s ease;
-}
-
-
-#enterpriseSpotlight .spotlight-arrow:hover{
-
-    transform:scale(1.08);
-}
-
-
-#enterpriseSpotlight .spotlight-arrow:disabled{
-
-    opacity:.4;
-
-    cursor:not-allowed;
-
-    transform:none;
-}
-
-
-/* =========================================================
-   Navigation Dots
-========================================================= */
-
-#enterpriseSpotlight .spotlight-dots{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-}
-
-
-#enterpriseSpotlight .spotlight-dot{
-
-    width:10px;
-
-    height:10px;
-
-    border-radius:50%;
-
-    cursor:pointer;
-
-    background:rgba(0,0,0,.20);
-
-    transition:
-        transform .25s ease,
-        background .25s ease;
-}
-
-
-#enterpriseSpotlight .spotlight-dot:hover{
-
-    transform:scale(1.2);
-}
-
-
-#enterpriseSpotlight .spotlight-dot.active{
-
-    background:var(--spot-purple);
-
-    transform:scale(1.35);
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-dot{
-
-    background:rgba(255,255,255,.25);
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-dot.active{
-
-    background:#66B3FF;
-}
-
-/* =========================================================
-   ENTERPRISE SPOTLIGHT v4
-   Part 4/6
-   Empty State + Loading + Modal
-========================================================= */
-
-
-/* =========================================================
-   Empty State
-========================================================= */
-
-#enterpriseSpotlight .spotlight-empty{
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:16px;
-
-    padding:60px 30px;
-
-    text-align:center;
-
-    border:2px dashed var(--spot-border);
-
-    border-radius:18px;
-
-    background:rgba(0,0,0,.02);
-}
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-empty{
-
-    background:rgba(255,255,255,.03);
-}
-
-
-#enterpriseSpotlight .spotlight-empty-icon{
-
-    width:80px;
-
-    height:80px;
-
-    border-radius:50%;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:var(--spot-gradient);
-
-    color:#fff;
-
-    font-size:2rem;
-
-    box-shadow:0 12px 30px rgba(77,20,140,.30);
-}
-
-
-#enterpriseSpotlight .spotlight-empty h3{
-
-    margin:0;
-
-    color:var(--spot-heading);
-
-    font-size:1.35rem;
-
-    font-weight:700;
-}
-
-
-#enterpriseSpotlight .spotlight-empty p{
-
-    margin:0;
-
-    max-width:480px;
-
-    color:var(--spot-muted);
-
-    line-height:1.7;
-}
-
-
-/* =========================================================
-   Loading
-========================================================= */
-
-#enterpriseSpotlight .spotlight-loading{
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:18px;
-
-    padding:60px 30px;
-}
-
-
-#enterpriseSpotlight .spotlight-spinner{
-
-    width:52px;
-
-    height:52px;
-
-    border:5px solid rgba(0,0,0,.08);
-
-    border-top-color:var(--spot-purple);
-
-    border-radius:50%;
-
-    animation:spotSpin .8s linear infinite;
-}
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-spinner{
-
-    border-color:rgba(255,255,255,.08);
-
-    border-top-color:#66B3FF;
-}
-
-
-#enterpriseSpotlight .spotlight-loading span{
-
-    color:var(--spot-muted);
-
-    font-weight:600;
-}
-
-
-/* =========================================================
-   Modal Overlay
-========================================================= */
-
-#enterpriseSpotlight .spotlight-modal{
-
-    position:fixed;
-
-    inset:0;
-
-    display:none;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:30px;
-
-    background:rgba(0,0,0,.65);
-
-    backdrop-filter:blur(8px);
-
-    z-index:99999;
-
-    animation:spotFade .25s ease;
-}
-
-
-#enterpriseSpotlight .spotlight-modal.show{
-
-    display:flex;
-}
-
-
-/* =========================================================
-   Modal Card
-========================================================= */
-
-#enterpriseSpotlight .spotlight-modal-content{
-
-    width:min(900px,100%);
-
-    max-height:90vh;
-
-    overflow:auto;
-
-    border-radius:20px;
-
-    border:1px solid var(--spot-border);
-
-    background:var(--spot-card-gradient);
-
-    box-shadow:0 30px 60px rgba(0,0,0,.35);
-
-    animation:spotPop .28s ease;
-}
-
-
-/* =========================================================
-   Modal Header
-========================================================= */
-
-#enterpriseSpotlight .spotlight-modal-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:flex-start;
-
-    gap:16px;
-
-    padding:24px;
-
-    border-bottom:1px solid var(--spot-border);
-}
-
-
-#enterpriseSpotlight .spotlight-modal-header h2{
-
-    margin:0;
-
-    color:var(--spot-heading);
-
-    font-size:1.45rem;
-
-    line-height:1.3;
-}
-
-
-#enterpriseSpotlight .spotlight-modal-close{
-
-    width:42px;
-
-    height:42px;
-
-    border:none;
-
-    border-radius:50%;
-
-    cursor:pointer;
-
-    font-size:1.2rem;
-
-    background:rgba(0,0,0,.06);
-
-    color:var(--spot-heading);
-
-    transition:
-        transform .2s ease,
-        background .25s ease;
-}
-
-#enterpriseSpotlight .spotlight-modal-close:hover{
-
-    transform:rotate(90deg);
-
-    background:rgba(0,0,0,.12);
-}
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-modal-close{
-
-    background:rgba(255,255,255,.08);
-}
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-modal-close:hover{
-
-    background:rgba(255,255,255,.15);
-}
-
-
-/* =========================================================
-   Modal Body
-========================================================= */
-
-#enterpriseSpotlight .spotlight-modal-body{
-
-    padding:24px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:22px;
-}
-
-
-#enterpriseSpotlight .spotlight-modal-body h3{
-
-    margin:0;
-
-    color:var(--spot-heading);
-
-    font-size:1.05rem;
-}
-
-
-#enterpriseSpotlight .spotlight-modal-body p{
-
-    margin:0;
-
-    color:var(--spot-text);
-
-    line-height:1.8;
-
-    white-space:pre-wrap;
-}
-
-
-/* =========================================================
-   Modal Attachments
-========================================================= */
-
-#enterpriseSpotlight .spotlight-modal-files{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-
-    gap:16px;
-}
-
-
-/* =========================================================
-   Modal Footer
-========================================================= */
-
-#enterpriseSpotlight .spotlight-modal-footer{
-
-    display:flex;
-
-    justify-content:flex-end;
-
-    gap:12px;
-
-    padding:24px;
-
-    border-top:1px solid var(--spot-border);
-}
-
-
-/* =========================================================
-   Modal Scrollbar
-========================================================= */
-
-#enterpriseSpotlight .spotlight-modal-content::-webkit-scrollbar{
-
-    width:10px;
-}
-
-#enterpriseSpotlight .spotlight-modal-content::-webkit-scrollbar-track{
-
-    background:transparent;
-}
-
-#enterpriseSpotlight .spotlight-modal-content::-webkit-scrollbar-thumb{
-
-    background:rgba(0,0,0,.18);
-
-    border-radius:999px;
-}
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-modal-content::-webkit-scrollbar-thumb{
-
-    background:rgba(255,255,255,.18);
-}
-
-
-/* =========================================================
-   Animations
-========================================================= */
-
-@keyframes spotSpin{
-
-    from{
-
-        transform:rotate(0deg);
-    }
-
-    to{
-
-        transform:rotate(360deg);
-    }
-}
-
-
-@keyframes spotFade{
-
-    from{
-
-        opacity:0;
-    }
-
-    to{
-
-        opacity:1;
-    }
-}
-
-
-@keyframes spotPop{
-
-    from{
-
-        opacity:0;
-
-        transform:translateY(18px) scale(.97);
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:translateY(0) scale(1);
-    }
-}
-
-
-@keyframes spotPulse{
-
-    0%{
-
-        transform:scale(1);
-    }
-
-    50%{
-
-        transform:scale(1.08);
-    }
-
-    100%{
-
-        transform:scale(1);
-    }
-}
-
-/* =========================================================
-   ENTERPRISE SPOTLIGHT v4
-   Part 5/6
-   Responsive + Theme Refinements + Utilities
-========================================================= */
-
-
-/* =========================================================
-   Responsive (Tablet)
-========================================================= */
-
-@media (max-width:1024px){
-
-    #enterpriseSpotlight .spotlight-inner{
-
-        padding:20px;
-    }
-
-    #enterpriseSpotlight .spotlight-header{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-    }
-
-    #enterpriseSpotlight .spotlight-header-right{
-
-        width:100%;
-
-        justify-content:flex-start;
-    }
-
-    #enterpriseSpotlight .spotlight-footer{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-    }
-
-    #enterpriseSpotlight .spotlight-actions{
-
-        width:100%;
-    }
-
-    #enterpriseSpotlight .spotlight-controls{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    #enterpriseSpotlight .spotlight-files{
-
-        grid-template-columns:1fr;
-    }
-
-    #enterpriseSpotlight .spotlight-modal-content{
-
-        width:100%;
-    }
-
-}
-
-
-/* =========================================================
-   Responsive (Mobile)
-========================================================= */
-
-@media (max-width:768px){
-
-    #enterpriseSpotlight{
-
-        margin:18px auto;
-    }
-
-    #enterpriseSpotlight .spotlight-inner{
-
-        padding:18px;
-    }
-
-    #enterpriseSpotlight .spotlight-content h2{
-
-        font-size:1.35rem;
-    }
-
-    #enterpriseSpotlight .spotlight-content p{
-
-        font-size:.95rem;
-    }
-
-    #enterpriseSpotlight .spotlight-greeting{
-
-        font-size:1.2rem;
-    }
-
-    #enterpriseSpotlight .spotlight-subtitle{
-
-        font-size:.88rem;
-    }
-
-    #enterpriseSpotlight .spotlight-meta{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-    }
-
-    #enterpriseSpotlight .spotlight-actions{
-
-        flex-direction:column;
-
-        align-items:stretch;
-    }
-
-    #enterpriseSpotlight .spotlight-btn{
-
-        width:100%;
-    }
-
-    #enterpriseSpotlight .spotlight-file{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-    }
-
-    #enterpriseSpotlight .spotlight-file-actions{
-
-        width:100%;
-    }
-
-    #enterpriseSpotlight .spotlight-file-btn{
-
-        flex:1;
-    }
-
-    #enterpriseSpotlight .spotlight-controls{
-
-        justify-content:center;
-    }
-
-}
-
-
-/* =========================================================
-   Responsive (Small Phones)
-========================================================= */
-
-@media (max-width:480px){
-
-    #enterpriseSpotlight .spotlight-inner{
-
-        padding:16px;
-    }
-
-    #enterpriseSpotlight .spotlight-content h2{
-
-        font-size:1.15rem;
-    }
-
-    #enterpriseSpotlight .spotlight-empty{
-
-        padding:40px 20px;
-    }
-
-    #enterpriseSpotlight .spotlight-modal{
-
-        padding:14px;
-    }
-
-    #enterpriseSpotlight .spotlight-modal-header{
-
-        padding:18px;
-    }
-
-    #enterpriseSpotlight .spotlight-modal-body{
-
-        padding:18px;
-    }
-
-    #enterpriseSpotlight .spotlight-modal-footer{
-
-        padding:18px;
-    }
-
-}
-
-
-/* =========================================================
-   Theme Refinements
-========================================================= */
-
-[data-theme="fedex"] #enterpriseSpotlight .spotlight-card{
-
-    border-color:#D7C9E7;
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-card{
-
-    border-color:#324867;
-}
-
-
-[data-theme="basic"] #enterpriseSpotlight .spotlight-card{
-
-    border-color:#D5D5D5;
-}
-
-
-[data-theme="simple"] #enterpriseSpotlight .spotlight-card{
-
-    border-color:#E6E6E6;
-}
-
-
-/* =========================================================
-   Focus Accessibility
-========================================================= */
-
-#enterpriseSpotlight button:focus-visible,
-#enterpriseSpotlight a:focus-visible{
-
-    outline:3px solid var(--spot-progress);
-
-    outline-offset:3px;
-}
-
-
-/* =========================================================
-   Selection
-========================================================= */
-
-#enterpriseSpotlight *::selection{
-
-    background:rgba(77,20,140,.18);
-
-    color:inherit;
-}
-
-
-/* =========================================================
-   Images
-========================================================= */
-
-#enterpriseSpotlight img{
-
-    max-width:100%;
-
-    height:auto;
-
-    border-radius:12px;
-}
-
-
-/* =========================================================
-   Links
-========================================================= */
-
-#enterpriseSpotlight a{
-
-    color:inherit;
-
-    text-decoration:none;
-}
-
-#enterpriseSpotlight a:hover{
-
-    text-decoration:none;
-}
-
-
-/* =========================================================
-   Utility
-========================================================= */
-
-#enterpriseSpotlight .hidden{
-
-    display:none !important;
-}
-
-
-#enterpriseSpotlight .fade-in{
-
-    animation:spotFade .35s ease;
-}
-
-
-#enterpriseSpotlight .text-center{
-
-    text-align:center;
-}
-
-
-#enterpriseSpotlight .w-100{
-
-    width:100%;
-}
-
-
-#enterpriseSpotlight .mt-10{
-
-    margin-top:10px;
-}
-
-
-#enterpriseSpotlight .mt-20{
-
-    margin-top:20px;
-}
-
-
-#enterpriseSpotlight .mb-20{
-
-    margin-bottom:20px;
-}
-
-
-/* =========================================================
-   Prevent Layout Breaks
-========================================================= */
-
-#enterpriseSpotlight *{
-
-    box-sizing:border-box;
-}
-
-
-#enterpriseSpotlight button{
-
-    font:inherit;
-}
-
-
-#enterpriseSpotlight input{
-
-    font:inherit;
-}
-
-
-#enterpriseSpotlight textarea{
-
-    font:inherit;
-}
-
-
-#enterpriseSpotlight select{
-
-    font:inherit;
-}
-
-/* =========================================================
-   ENTERPRISE SPOTLIGHT v4
-   Part 6/6
-   Conflict-Proof Overrides + Final Polish
-========================================================= */
-
-
-/* =========================================================
-   Typography Protection
-========================================================= */
-
-#enterpriseSpotlight h1,
-#enterpriseSpotlight h2,
-#enterpriseSpotlight h3,
-#enterpriseSpotlight h4,
-#enterpriseSpotlight h5,
-#enterpriseSpotlight h6{
-
-    color:var(--spot-heading) !important;
-
-    font-weight:700;
-}
-
-
-#enterpriseSpotlight p{
-
-    color:var(--spot-text) !important;
-
-    line-height:1.75;
-}
-
-
-#enterpriseSpotlight small{
-
-    color:var(--spot-muted) !important;
-}
-
-
-#enterpriseSpotlight span{
-
-    color:inherit;
-}
-
-
-/* =========================================================
-   Spotlight Title Protection
-========================================================= */
-
-#enterpriseSpotlight .spotlight-content h2,
-#enterpriseSpotlight .spotlight-modal h2,
-#enterpriseSpotlight .spotlight-modal h3{
-
-    color:var(--spot-heading) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-content p,
-#enterpriseSpotlight .spotlight-modal p{
-
-    color:var(--spot-text) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-greeting{
-
-    color:var(--spot-heading) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-subtitle{
-
-    color:var(--spot-muted) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-published{
-
-    color:var(--spot-muted) !important;
-}
-
-
-/* =========================================================
-   Badge Protection
-========================================================= */
-
-#enterpriseSpotlight .spotlight-badge{
-
-    color:#fff !important;
-
-    border:none !important;
-}
-
-
-#enterpriseSpotlight .spotlight-badge.announcement{
-
-    background:
-        linear-gradient(
-            135deg,
-            #4D148C,
-            #7A2BC7
-        ) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-badge.update{
-
-    background:
-        linear-gradient(
-            135deg,
-            #1976D2,
-            #42A5F5
-        ) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-badge.alert{
-
-    background:
-        linear-gradient(
-            135deg,
-            #D93025,
-            #F4511E
-        ) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-badge.maintenance{
-
-    background:
-        linear-gradient(
-            135deg,
-            #F9AB00,
-            #FBBC04
-        ) !important;
-
-    color:#222 !important;
-}
-
-
-#enterpriseSpotlight .spotlight-badge.news{
-
-    background:
-        linear-gradient(
-            135deg,
-            #0F9D58,
-            #34A853
-        ) !important;
-}
-
-
-/* =========================================================
-   NEW Badge Protection
-========================================================= */
-
-#enterpriseSpotlight .spot-new{
-
-    background:
-        linear-gradient(
-            135deg,
-            #E53935,
-            #FF7043
-        ) !important;
-
-    color:#fff !important;
-}
-
-
-/* =========================================================
-   Button Protection
-========================================================= */
-
-#enterpriseSpotlight button{
-
-    appearance:none;
-
-    border:none;
-}
-
-
-#enterpriseSpotlight .spotlight-btn{
-
-    color:inherit;
-}
-
-
-#enterpriseSpotlight .spotlight-btn.primary{
-
-    color:#fff !important;
-}
-
-
-#enterpriseSpotlight .spotlight-btn.secondary{
-
-    color:var(--spot-heading) !important;
-}
-
-
-#enterpriseSpotlight .spotlight-file-btn.open{
-
-    color:#fff !important;
-}
-
-
-#enterpriseSpotlight .spotlight-file-btn.download{
-
-    color:var(--spot-heading) !important;
-}
-
-
-/* =========================================================
-   Atlas Theme
-========================================================= */
-
-[data-theme="atlas"] #enterpriseSpotlight{
-
-    color:var(--spot-text);
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight h1,
-[data-theme="atlas"] #enterpriseSpotlight h2,
-[data-theme="atlas"] #enterpriseSpotlight h3,
-[data-theme="atlas"] #enterpriseSpotlight h4{
-
-    color:#F5F7FA !important;
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight p{
-
-    color:#D8E2F0 !important;
-}
-
-
-[data-theme="atlas"] #enterpriseSpotlight .spotlight-meta span{
-
-    color:#D8E2F0 !important;
-}
-
-
-/* =========================================================
-   FedEx Theme
-========================================================= */
-
-[data-theme="fedex"] #enterpriseSpotlight h1,
-[data-theme="fedex"] #enterpriseSpotlight h2,
-[data-theme="fedex"] #enterpriseSpotlight h3{
-
-    color:#4D148C !important;
-}
-
-
-[data-theme="fedex"] #enterpriseSpotlight p{
-
-    color:#313131 !important;
-}
-
-
-/* =========================================================
-   Basic Theme
-========================================================= */
-
-[data-theme="basic"] #enterpriseSpotlight h1,
-[data-theme="basic"] #enterpriseSpotlight h2{
-
-    color:#222 !important;
-}
-
-
-[data-theme="basic"] #enterpriseSpotlight p{
-
-    color:#444 !important;
-}
-
-
-/* =========================================================
-   Simple Theme
-========================================================= */
-
-[data-theme="simple"] #enterpriseSpotlight h1,
-[data-theme="simple"] #enterpriseSpotlight h2{
-
-    color:#202124 !important;
-}
-
-
-[data-theme="simple"] #enterpriseSpotlight p{
-
-    color:#3C4043 !important;
+/* ==========================================================
+   ENTERPRISE SPOTLIGHT — Premium Edition v3
+========================================================== */
+#enterpriseSpotlight { position: relative; padding: 0; cursor: pointer; }
+
+/* ==========================================================
+   THEME VARIABLES
+========================================================== */
+body.theme-fedex {
+  --spot-card-bg: radial-gradient(circle at top right, rgba(255,102,0,.18), transparent 35%), linear-gradient(145deg, rgba(77,20,140,.96), rgba(59,15,115,.96));
+  --spot-text: #fff;
+  --spot-heading: #fff;
+  --spot-muted: rgba(255,255,255,.74);
+  --spot-border: rgba(255,255,255,.10);
+  --spot-glow: rgba(255,102,0,.22);
+  --spot-progress: #ff6600;
+}
+body.theme-atlas {
+  --spot-card-bg: radial-gradient(circle at top right, rgba(225,223,106,.22), transparent 36%), linear-gradient(145deg, rgba(14,83,97,.96), rgba(58,64,24,.96));
+  --spot-text: #fff;
+  --spot-heading: #fff;
+  --spot-muted: rgba(255,255,255,.74);
+  --spot-border: rgba(255,255,255,.12);
+  --spot-glow: rgba(225,223,106,.25);
+  --spot-progress: #e1df6a;
+}
+body.theme-basic {
+  --spot-card-bg: linear-gradient(145deg, rgba(255,255,255,.95), rgba(247,248,250,.96));
+  --spot-text: #111827;
+  --spot-heading: #111827;
+  --spot-muted: #6b7280;
+  --spot-border: #e5e7eb;
+  --spot-glow: rgba(0,0,0,.08);
+  --spot-progress: #111827;
+}
+body.theme-simple {
+  --spot-card-bg: linear-gradient(145deg, rgba(255,255,255,.96), rgba(244,248,255,.98));
+  --spot-text: #1f2937;
+  --spot-heading: #1f2937;
+  --spot-muted: #64748b;
+  --spot-border: #dbeafe;
+  --spot-glow: rgba(37,99,235,.10);
+  --spot-progress: #2563eb;
+}
+
+/* ==========================================================
+   CARD
+========================================================== */
+.spotlight-card {
+  position: relative; overflow: hidden; display: flex; flex-direction: column;
+  min-height: 360px; padding: 28px; border-radius: 32px;
+  background: var(--spot-card-bg); color: var(--spot-text);
+  border: 1px solid var(--spot-border);
+  box-shadow: 0 18px 50px var(--spot-glow), var(--shadow-lg);
+  backdrop-filter: blur(18px); isolation: isolate;
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.spotlight-card::before {
+  content: ""; position: absolute; width: 260px; height: 260px; border-radius: 50%;
+  top: -110px; right: -90px;
+  background: radial-gradient(circle, rgba(255,255,255,.16), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.spotlight-card::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,.06) 45%, transparent 70%);
+  opacity: .65; pointer-events: none;
+}
+.spotlight-card>* { position: relative; z-index: 2; }
+.spotlight-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 70px var(--spot-glow), var(--shadow-xl);
+}
+
+/* ==========================================================
+   PROGRESS
+========================================================== */
+.spotlight-progress {
+  position: absolute; left: 0; top: 0; width: 100%; height: 6px;
+  background: rgba(255,255,255,.08); overflow: hidden;
+}
+.spotlight-progress-fill {
+  width: 0; height: 100%;
+  background: linear-gradient(90deg, var(--spot-progress), rgba(255,255,255,.95));
+  box-shadow: 0 0 12px var(--spot-progress);
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+.spotlight-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.spotlight-greeting {
+  font-size: 12px; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--spot-muted); font-weight: 700;
+}
+.spotlight-subtitle {
+  margin-top: 6px; font-size: 28px; font-weight: 800; color: var(--spot-heading);
+  letter-spacing: -.04em; line-height: 1.05;
+}
+.spotlight-count {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 54px; height: 54px; border-radius: 18px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.08);
+  color: var(--spot-heading); font-weight: 800; backdrop-filter: blur(10px);
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+.spotlight-content {
+  position: relative; flex: 1; display: flex; flex-direction: column;
+  justify-content: flex-start; margin-top: 34px;
+}
+
+/* ==========================================================
+   CATEGORY BADGE
+========================================================== */
+.spotlight-badge {
+  display: inline-flex; align-items: center; gap: 10px; width: max-content;
+  padding: 8px 16px; border-radius: 999px; font-size: 11px; font-weight: 800;
+  letter-spacing: .10em; text-transform: uppercase; margin-bottom: 22px;
+  backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.spotlight-card:hover .spotlight-badge { transform: translateY(-2px); }
+.spotlight-badge.critical { background: linear-gradient(135deg, #dc2626, #ef4444); color: #fff; }
+.spotlight-badge.guide { background: linear-gradient(135deg, #facc15, #f59e0b); color: #111827; }
+.spotlight-badge.reminder { background: linear-gradient(135deg, #fb923c, #f97316); color: #fff; }
+.spotlight-badge.announcement { background: linear-gradient(135deg, #14b8a6, #0f766e); color: #fff; }
+
+/* ==========================================================
+   TITLE & SUMMARY
+========================================================== */
+.spotlight-content h2 {
+  margin: 0; color: var(--spot-heading); font-size: 38px; font-weight: 800;
+  line-height: 1.08; letter-spacing: -.05em; max-width: 95%;
+  text-wrap: balance; transition: color .3s ease;
+}
+.spotlight-content p {
+  margin-top: 18px; margin-bottom: 0; max-width: 95%;
+  color: var(--spot-muted); font-size: 16px; line-height: 1.85; font-weight: 500;
+  transition: color .3s ease;
+}
+.spotlight-card h2 { transition: transform .25s ease, color .25s ease; }
+.spotlight-card:hover h2 { transform: translateY(-2px); }
+.spotlight-card:hover p { opacity: 1; }
+
+/* ==========================================================
+   META (Future Ready)
+========================================================== */
+.spotlight-meta {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px;
+}
+.spotlight-meta-item {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.10);
+  color: var(--spot-muted); font-size: 12px; font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+/* ==========================================================
+   PRIORITY RIBBON (Future Ready)
+========================================================== */
+.spotlight-priority {
+  position: absolute; top: 24px; right: 24px; padding: 8px 16px;
+  border-radius: 999px; font-size: 10px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase;
+  background: #ef4444; color: #fff; box-shadow: 0 8px 18px rgba(239,68,68,.35);
+}
+.spotlight-priority.high { background: #f59e0b; }
+.spotlight-priority.normal { background: #10b981; }
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+.spotlight-bottom {
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--spot-border);
+}
+.spotlight-published {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--spot-muted); font-size: 13px; font-weight: 600; letter-spacing: .02em;
+  transition: color .25s ease;
+}
+.spotlight-published svg { width: 16px; height: 16px; opacity: .8; }
+.spotlight-card:hover .spotlight-published { color: var(--spot-heading); }
+
+/* ==========================================================
+   DOT NAVIGATION
+========================================================== */
+.spotlight-dots { display: flex; align-items: center; gap: 8px; }
+.spotlight-dots span {
+  width: 10px; height: 10px; border-radius: 999px;
+  background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.08);
+  transition: width .35s ease, background .35s ease, transform .35s ease, opacity .35s ease;
+}
+body.theme-basic .spotlight-dots span,
+body.theme-simple .spotlight-dots span {
+  background: rgba(0,0,0,.12); border-color: rgba(0,0,0,.08);
+}
+.spotlight-dots span.active {
+  width: 34px; background: var(--spot-progress); border-color: transparent;
+  box-shadow: 0 0 14px var(--spot-progress);
+}
+.spotlight-card:hover .spotlight-dots span.active { transform: scale(1.05); }
+
+/* ==========================================================
+   EMPTY STATE
+========================================================== */
+.spotlight-empty {
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-height: 300px; text-align: center; color: var(--spot-muted); gap: 14px;
+}
+.spotlight-empty-icon {
+  width: 72px; height: 72px; display: grid; place-items: center;
+  border-radius: 24px; background: rgba(255,255,255,.08);
+  border: 1px solid var(--spot-border); font-size: 30px;
+}
+body.theme-basic .spotlight-empty-icon,
+body.theme-simple .spotlight-empty-icon { background: #f8fafc; }
+.spotlight-empty h3 { margin: 0; color: var(--spot-heading); font-size: 22px; font-weight: 700; }
+.spotlight-empty p { margin: 0; max-width: 340px; line-height: 1.7; }
+
+/* ==========================================================
+   ANIMATIONS
+========================================================== */
+.spotlight-card.slide-in {
+  animation: spotlightSlide .55s cubic-bezier(.22,1,.36,1);
+}
+@keyframes spotlightSlide {
+  0% { opacity: 0; transform: translateY(18px) scale(.985); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.spotlight-fade { animation: spotlightFade .45s ease; }
+@keyframes spotlightFade {
+  from { opacity: .2; }
+  to { opacity: 1; }
+}
+.spotlight-card:hover::after { animation: spotlightShimmer 1.1s ease; }
+@keyframes spotlightShimmer {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(120%); }
+}
+.spotlight-card {
+  animation: spotlightFloat 8s ease-in-out infinite;
+}
+@keyframes spotlightFloat {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+.spotlight-card:hover { animation: none; }
+
+/* ==========================================================
+   ACCESSIBILITY
+========================================================== */
+@media (prefers-reduced-motion:reduce) {
+  .spotlight-card, .spotlight-card *, .spotlight-card::before, .spotlight-card::after {
+    animation: none !important; transition: none !important;
+  }
+}
+
+/* ==========================================================
+   ACTION BUTTONS
+========================================================== */
+.spotlight-actions {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px;
+}
+.spotlight-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 42px; padding: 0 18px; border-radius: 14px;
+  border: 1px solid var(--spot-border); background: rgba(255,255,255,.08);
+  color: var(--spot-heading); text-decoration: none; font-size: 14px; font-weight: 700;
+  transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+  backdrop-filter: blur(10px);
+}
+.spotlight-btn:hover {
+  transform: translateY(-2px); background: rgba(255,255,255,.16);
+  box-shadow: 0 12px 26px rgba(0,0,0,.15);
+}
+body.theme-basic .spotlight-btn,
+body.theme-simple .spotlight-btn { background: #fff; }
+body.theme-basic .spotlight-btn:hover,
+body.theme-simple .spotlight-btn:hover { background: #f5f7fb; }
+.spotlight-btn.primary { background: var(--spot-progress); color: #fff; border: none; }
+.spotlight-btn.primary:hover { filter: brightness(1.05); }
+
+/* ==========================================================
+   ATTACHMENTS
+========================================================== */
+.spotlight-attachments {
+  display: flex; flex-direction: column; gap: 10px; margin-top: 20px;
+}
+.spotlight-attachment {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 14px 16px; border-radius: 14px;
+  border: 1px solid var(--spot-border); background: rgba(255,255,255,.06);
+  transition: .25s ease;
+}
+body.theme-basic .spotlight-attachment,
+body.theme-simple .spotlight-attachment { background: #fff; }
+.spotlight-attachment:hover {
+  transform: translateX(4px); box-shadow: 0 10px 24px rgba(0,0,0,.10);
+}
+.spotlight-attachment-name {
+  font-weight: 600; color: var(--spot-heading);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.spotlight-attachment-size { font-size: 12px; color: var(--spot-muted); }
+
+/* ==========================================================
+   MODAL SUPPORT
+========================================================== */
+.spotlight-modal .modal-content { border-radius: 24px; overflow: hidden; }
+.spotlight-modal-header { padding: 28px; border-bottom: 1px solid var(--spot-border); }
+.spotlight-modal-title { margin: 0; color: var(--spot-heading); font-size: 30px; font-weight: 800; }
+.spotlight-modal-body { padding: 28px; line-height: 1.85; color: var(--spot-text); }
+.spotlight-modal-footer {
+  padding: 20px 28px; border-top: 1px solid var(--spot-border);
+  display: flex; justify-content: flex-end; gap: 12px;
+}
+
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
+.spotlight-modal-body::-webkit-scrollbar { width: 10px; }
+.spotlight-modal-body::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(120,120,120,.35); }
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+@media (max-width: 900px) {
+  .spotlight-card { min-height: auto; padding: 22px; border-radius: 24px; }
+  .spotlight-subtitle { font-size: 22px; }
+  .spotlight-content { margin-top: 24px; }
+  .spotlight-content h2 { font-size: 30px; }
+  .spotlight-content p { font-size: 15px; line-height: 1.75; }
+  .spotlight-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .spotlight-count { min-width: 46px; height: 46px; border-radius: 14px; }
+}
+@media (max-width: 640px) {
+  .spotlight-card { padding: 18px; }
+  .spotlight-header { flex-direction: column; gap: 18px; }
+  .spotlight-count { align-self: flex-start; }
+  .spotlight-content h2 { font-size: 26px; }
+  .spotlight-actions { flex-direction: column; }
+  .spotlight-btn { width: 100%; }
+}
+@media (min-width: 1400px) {
+  .spotlight-card { min-height: 400px; }
+  .spotlight-content h2 { font-size: 44px; }
+  .spotlight-content p { font-size: 17px; }
 }
-
-
-/* =========================================================
-   Prevent External Overrides
-========================================================= */
-
-#enterpriseSpotlight *{
-
-    max-width:100%;
-
-    text-shadow:none;
-
-    filter:none;
-}
-
-
-#enterpriseSpotlight table{
-
-    width:100%;
-
-    border-collapse:collapse;
-}
-
-
-#enterpriseSpotlight ul,
-#enterpriseSpotlight ol{
-
-    padding-left:20px;
-}
-
-
-#enterpriseSpotlight iframe{
-
-    max-width:100%;
-}
-
-
-#enterpriseSpotlight svg{
-
-    flex-shrink:0;
-}
-
-
-/* =========================================================
-   Final Rendering
-========================================================= */
-
-#enterpriseSpotlight{
-
-    isolation:isolate;
-
-    contain:layout style;
-
-    position:relative;
-}
-
-
-/* =========================================================
-   End of Enterprise Spotlight v4
-========================================================= */
