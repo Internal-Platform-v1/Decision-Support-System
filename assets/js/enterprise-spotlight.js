@@ -45,130 +45,96 @@
 
     let current = 0;
 
-    function render() {
+function getGreeting(){
 
-        const b = bulletins[current];
+    const hour = new Date().getHours();
 
-        root.innerHTML = `
-        <div class="spotlight-card ${b.type}">
+    if(hour < 12){
+
+        return "☀ Good Morning";
+
+    }
+
+    if(hour < 18){
+
+        return "🌤 Good Afternoon";
+
+    }
+
+    return "🌙 Good Evening";
+
+}
+    
+function render() {
+
+    const b = bulletins[current];
+
+    root.innerHTML = `
+        <div class="spotlight-card ${b.type}" id="spotlightCard">
+
+            <div class="spotlight-progress">
+                <div class="spotlight-progress-fill"></div>
+            </div>
 
             <div class="spotlight-header">
 
-                <div class="spotlight-title">
+                <div>
 
-                    <i class="fa-solid fa-bullhorn"></i>
+                    <div class="spotlight-greeting">
+                        ${getGreeting()}
+                    </div>
 
-                    Enterprise Spotlight
+                    <div class="spotlight-subtitle">
+                        Latest Updates
+                    </div>
 
                 </div>
 
-                <div class="spotlight-live">
+                <div class="spotlight-count">
 
-                    LIVE
+                    ${current + 1} / ${bulletins.length}
 
                 </div>
 
             </div>
 
-            <div class="spotlight-body">
+            <div class="spotlight-content">
 
-                <div class="spotlight-badge">
-
+                <div class="spotlight-badge ${b.type}">
                     <i class="${b.icon}"></i>
-
                     ${b.badge}
-
                 </div>
 
                 <h2>${b.title}</h2>
 
                 <p>${b.summary}</p>
 
-                <div class="spotlight-date">
-
-                    <i class="fa-regular fa-calendar"></i>
-
-                    ${b.date}
-
-                </div>
-
             </div>
 
-            <div class="spotlight-footer">
+            <div class="spotlight-bottom">
 
-                <div class="progress">
+                <div class="spotlight-published">
 
-                    <div class="progress-fill"></div>
-
-                </div>
-
-                <div class="spotlight-controls">
-
-                    <button id="spotPrev">
-
-                        <i class="fa-solid fa-chevron-left"></i>
-
-                    </button>
-
-                    <div class="spotlight-dots">
-
-                        ${bulletins.map((x,i)=>
-                            `<span class="${i===current?'active':''}"></span>`
-                        ).join("")}
-
-                    </div>
-
-                    <button id="spotNext">
-
-                        <i class="fa-solid fa-chevron-right"></i>
-
-                    </button>
-
-                </div>
-
-                <button class="spotlight-button">
-
-                    ${b.button}
-
-                </button>
-
-                <div class="spotlight-time">
+                    <i class="fa-regular fa-clock"></i>
 
                     ${b.timeAgo}
+
+                </div>
+
+                <div class="spotlight-dots">
+
+                    ${bulletins.map((x,i)=>`
+                        <span class="${i===current?'active':''}"></span>
+                    `).join("")}
 
                 </div>
 
             </div>
 
         </div>
-        `;
+    `;
 
-        document.getElementById("spotPrev").onclick = prev;
-        document.getElementById("spotNext").onclick = next;
-
-    }
-
-    function next(){
-
-        current++;
-
-        if(current>=bulletins.length)
-            current=0;
-
-        render();
-
-    }
-
-    function prev(){
-
-        current--;
-
-        if(current<0)
-            current=bulletins.length-1;
-
-        render();
-
-    }
+}
 
     render();
 
