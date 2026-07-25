@@ -1179,4 +1179,5 @@ document.addEventListener("keydown", (e) => {
 });
 
 loadBulletins();
-});
+
+})();
