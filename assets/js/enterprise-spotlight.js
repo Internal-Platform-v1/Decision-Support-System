@@ -2,11 +2,11 @@
 
 const root = document.getElementById("enterpriseSpotlight");
 
+   console.log("Enterprise Spotlight: root =", root); /* =======ADDED FOR TESTING======== */
+
 if (!root) return;
 
-/* ==========================================================
-   CONFIG
-========================================================== */
+
 
 const AUTO_TIME = 5000;
 
@@ -59,6 +59,7 @@ function getGreeting(){
 ========================================================== */
 
 function loadBulletins() {
+   console.log("Enterprise Spotlight: loadBulletins()");
 
     db.collection(BULLETIN_COLLECTION)
         .where("status", "==", "published")
@@ -66,6 +67,7 @@ function loadBulletins() {
         .onSnapshot(
 
             (snapshot) => {
+               console.log("Snapshot received:", snapshot.size);
 
                 bulletins = [];
 
@@ -269,6 +271,8 @@ function isRecent(timestamp) {
 ========================================================== */
 
 function render() {
+
+   console.log("render()", bulletins.length);
 
     stopProgress();
 
