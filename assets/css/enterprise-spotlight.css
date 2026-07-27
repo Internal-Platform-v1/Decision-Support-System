@@ -58,10 +58,13 @@
   border-radius: 999px; font-size: 11px; font-weight: 700;
   text-transform: uppercase; letter-spacing: .08em; margin-bottom: 18px;
 }
-.spotlight-badge.critical { background: #ef4444; color: #fff; }
-.spotlight-badge.guide { background: var(--yellow); color: var(--primary-btn-color); }
-.spotlight-badge.reminder { background: #f59e0b; color: #fff; }
-.spotlight-badge.announcement { background: var(--teal); color: #fff; }
+.spotlight-badge.critical,
+.spotlight-badge.guide,
+.spotlight-badge.reminder,
+.spotlight-badge.announcement{
+    background:var(--spot-badge);
+    color:#ffffff;
+}
 
 .spotlight-content h2 {
   margin: 0; font-size: 34px; line-height: 1.05; letter-spacing: -.05em;
@@ -86,12 +89,26 @@
 .spotlight-dots span.active { width: 24px; border-radius: 999px; background: #fff; }
 
 /* ANIMATION */
-.spotlight-card.slide-in {
-  animation: spotSlide .45s var(--ease);
+.spotlight-card.slide-in{
+    animation:spotSlide .65s cubic-bezier(.22,1,.36,1);
+    will-change:transform,opacity;
 }
-@keyframes spotSlide {
-  from { opacity: 0; transform: translateX(25px); }
-  to { opacity: 1; transform: translateX(0); }
+
+@keyframes spotSlide{
+    from{
+        opacity:0;
+        transform:translate3d(70px,0,0);
+    }
+
+    60%{
+        opacity:1;
+        transform:translate3d(-6px,0,0);
+    }
+
+    to{
+        opacity:1;
+        transform:translate3d(0,0,0);
+    }
 }
 
 /* RESPONSIVE */
@@ -104,11 +121,52 @@
 /* ==========================================================
    THEME COLORS
 ========================================================== */
-body.theme-fedex,
-body.theme-atlas {
-  --spot-text: #ffffff;
-  --spot-heading: #ffffff;
-  --spot-muted: rgba(255,255,255,.78);
+/* ===========================
+   FEDEX
+=========================== */
+
+body.theme-fedex{
+    --spot-text:#ffffff;
+    --spot-heading:#ffffff;
+    --spot-muted:rgba(255,255,255,.78);
+
+    --spot-badge:#ff6600;
+}
+
+/* ===========================
+   ATLAS
+=========================== */
+
+body.theme-atlas{
+    --spot-text:#ffffff;
+    --spot-heading:#ffffff;
+    --spot-muted:rgba(255,255,255,.78);
+
+    --spot-badge:#c9c936;
+}
+
+/* ===========================
+   BASIC
+=========================== */
+
+body.theme-basic{
+    --spot-text:#ffffff;
+    --spot-heading:#ffffff;
+    --spot-muted:rgba(255,255,255,.75);
+
+    --spot-badge:#111827;
+}
+
+/* ===========================
+   SIMPLE
+=========================== */
+
+body.theme-simple{
+    --spot-text:#ffffff;
+    --spot-heading:#ffffff;
+    --spot-muted:rgba(255,255,255,.75);
+
+    --spot-badge:#2563eb;
 }
 /* ==========================================================
    THEME COLORS
