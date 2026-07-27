@@ -278,8 +278,9 @@ if (openArea) {
     const b = bulletins[current];
     const isNew = isRecent(b.publishedAt);
     const badgeClass = (b.category || "announcement").toLowerCase().replace(/\s+/g, "-");
+    const publishedDate = formatDate(b.publishedAt);
 root.innerHTML = `
-    <div class="spotlight-card">
+    <div class="spotlight-card slide-in">
         <div class="spotlight-progress"><div class="spotlight-progress-fill" id="spotProgress"></div></div>
         <div class="spotlight-header">
           <div><div class="spotlight-greeting">${getGreeting()}</div><div class="spotlight-subtitle">Latest Updates</div></div>
@@ -331,29 +332,6 @@ root.innerHTML = `
 </div>
       </div>
     `;
-
-    const card = root.querySelector(".spotlight-card");
-
-if (card) {
-
-    card.animate(
-        [
-            {
-                opacity: 0,
-                transform: "translateX(80px)"
-            },
-            {
-                opacity: 1,
-                transform: "translateX(0)"
-            }
-        ],
-        {
-            duration: 650,
-            easing: "cubic-bezier(.22,1,.36,1)"
-        }
-    );
-
-}
     
     bindEvents();
     bulletins.length > 1 ? startProgress() : stopProgress();
