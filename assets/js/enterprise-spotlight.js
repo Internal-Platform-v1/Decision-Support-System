@@ -195,21 +195,78 @@
     if (dialog) dialog.addEventListener("click", e => e.stopPropagation());
   };
 
-  const bindEvents = () => {
+const bindEvents = () => {
+
     const card = root.querySelector(".spotlight-card");
     if (!card) return;
-    card.onclick = () => { if (bulletins.length) openBulletin(); };
-    card.onmouseenter = () => { paused = true; };
-    card.onmouseleave = () => { paused = false; };
+
+    // Open bulletin
+const openArea = card.querySelector(".spotlight-open");
+
+if (openArea) {
+
+    openArea.onclick = () => {
+
+        if (bulletins.length) {
+
+            openBulletin();
+
+        }
+
+    };
+
+}
+
+    // Pause on hover
+    card.onmouseenter = () => {
+        paused = true;
+    };
+
+    card.onmouseleave = () => {
+        paused = false;
+    };
+
+    // Previous Arrow
+    const prevBtn = card.querySelector(".spot-arrow.prev");
+
+    if (prevBtn) {
+        prevBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            previousSlide();
+        };
+    }
+
+    // Next Arrow
+    const nextBtn = card.querySelector(".spot-arrow.next");
+
+    if (nextBtn) {
+        nextBtn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            nextSlide();
+        };
+    }
+
+    // Dot Navigation
     card.querySelectorAll(".spotlight-dots span").forEach(dot => {
-      dot.onclick = e => {
-        e.preventDefault();
-        e.stopPropagation();
-        const idx = Number(dot.dataset.index);
-        if (!isNaN(idx)) goToSlide(idx);
-      };
+
+        dot.onclick = (e) => {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const idx = Number(dot.dataset.index);
+
+            if (!isNaN(idx)) {
+                goToSlide(idx);
+            }
+
+        };
+
     });
-  };
+
+};
 
   const render = () => {
     stopProgress();
@@ -221,24 +278,83 @@
     const b = bulletins[current];
     const isNew = isRecent(b.publishedAt);
     const badgeClass = (b.category || "announcement").toLowerCase().replace(/\s+/g, "-");
-    root.innerHTML = `
-      <div class="spotlight-card slide-in">
+root.innerHTML = `
+    <div class="spotlight-card">
         <div class="spotlight-progress"><div class="spotlight-progress-fill" id="spotProgress"></div></div>
         <div class="spotlight-header">
           <div><div class="spotlight-greeting">${getGreeting()}</div><div class="spotlight-subtitle">Latest Updates</div></div>
           <div class="spotlight-count">${current + 1} / ${bulletins.length}</div>
         </div>
-        <div class="spotlight-content">
+        <div class="spotlight-content spotlight-open">
           <div class="spotlight-badge ${badgeClass}"><i class="${getCategoryIcon(b.category)}"></i> ${formatCategory(b.category)}</div>
           <h2>${b.title || ""} ${isNew ? '<span class="spot-new">NEW</span>' : ''}</h2>
           <p>${b.summary || b.message || ""}</p>
         </div>
-        <div class="spotlight-bottom">
-          <div class="spotlight-published"><i class="fa-regular fa-clock"></i> ${formatDate(b.publishedAt)}</div>
-          <div class="spotlight-dots">${renderDots()}</div>
+       <div class="spotlight-bottom">
+
+    <div class="spotlight-published">
+
+        <i class="fa-regular fa-clock"></i>
+
+        ${publishedDate}
+
+    </div>
+
+    <div class="spotlight-navigation">
+
+        <button
+            class="spot-arrow prev"
+            type="button"
+            aria-label="Previous Bulletin">
+
+            <i class="fa-solid fa-chevron-left"></i>
+
+        </button>
+
+        <div class="spotlight-dots">
+
+            ${renderDots()}
+
         </div>
+
+        <button
+            class="spot-arrow next"
+            type="button"
+            aria-label="Next Bulletin">
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+        </button>
+
+    </div>
+
+</div>
       </div>
     `;
+
+    const card = root.querySelector(".spotlight-card");
+
+if (card) {
+
+    card.animate(
+        [
+            {
+                opacity: 0,
+                transform: "translateX(80px)"
+            },
+            {
+                opacity: 1,
+                transform: "translateX(0)"
+            }
+        ],
+        {
+            duration: 650,
+            easing: "cubic-bezier(.22,1,.36,1)"
+        }
+    );
+
+}
+    
     bindEvents();
     bulletins.length > 1 ? startProgress() : stopProgress();
   };
