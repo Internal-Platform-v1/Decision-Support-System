@@ -127,6 +127,119 @@ async function publish(data) {
 
 }
 
+    // =====================================
+// Update Bulletin
+// =====================================
+
+async function update(id, data) {
+
+    const user = currentUser();
+
+    const payload = {
+
+        title: data.title?.trim() || "",
+
+        summary: data.summary?.trim() || "",
+
+        message: data.message?.trim() || "",
+
+        category: data.category || "",
+
+        priority: data.priority || "normal",
+
+        author: data.author?.trim() || "",
+
+        audience: data.audience || [],
+
+        attachments: data.attachments || [],
+
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+
+        updatedBy: user?.email || ""
+
+    };
+
+    await collection()
+        .doc(id)
+        .update(payload);
+
+    return {
+        success: true
+    };
+
+}
+
+    // =====================================
+// Delete Bulletin
+// =====================================
+
+async function remove(id) {
+
+    await collection()
+        .doc(id)
+        .delete();
+
+    return {
+        success: true
+    };
+
+}
+
+    // =====================================
+// Duplicate Bulletin
+// =====================================
+
+async function duplicate(id) {
+
+    const doc = await collection()
+        .doc(id)
+        .get();
+
+    if (!doc.exists) {
+
+        throw new Error("Bulletin not found.");
+
+    }
+
+    const data = doc.data();
+
+    delete data.createdAt;
+    delete data.updatedAt;
+    delete data.publishedAt;
+
+    data.title = data.title + " (Copy)";
+
+    data.status = "draft";
+
+    data.views = 0;
+
+    data.version = 1;
+
+    data.createdBy = currentUser()?.email || "";
+
+    data.createdAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    data.updatedAt =
+        firebase.firestore.FieldValue.serverTimestamp();
+
+    data.publishedBy = "";
+
+    const newDoc =
+        await collection().add(data);
+
+    return {
+
+        success: true,
+
+        id: newDoc.id
+
+    };
+
+}
+
+        
+
 // =====================================
 // Listen for Published Bulletins
 // =====================================
@@ -161,10 +274,20 @@ function listenPublished(callback) {
 
 }    
 
-   return {
+return {
+
     saveDraft,
+
     publish,
+
+    update,
+
+    remove,
+
+    duplicate,
+
     listenPublished
+
 };
 
 })();
