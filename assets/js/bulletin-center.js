@@ -81,6 +81,47 @@ document
     });
 
     // ==========================================================
+// Delete Bulletin
+// ==========================================================
+
+document
+    .getElementById("deleteBulletinBtn")
+    ?.addEventListener("click", async () => {
+
+        const bulletin = getSelectedBulletin();
+
+        if (!bulletin) return;
+
+        const confirmed = confirm(
+            `Delete "${bulletin.title}"?\n\nThis action cannot be undone.`
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            await BulletinService.remove(bulletin.id);
+
+            BulletinToast.show(
+                "Bulletin deleted successfully."
+            );
+
+            clearForm();
+
+        } catch (err) {
+
+            console.error(err);
+
+            BulletinToast.show(
+                "Unable to delete bulletin.",
+                "error"
+            );
+
+        }
+
+    });
+
+    // ==========================================================
     // Listen for Published Bulletins
     // ==========================================================
 
@@ -454,12 +495,16 @@ BulletinUI.closeDrawer();
 
 }
 
-                console.log(
-                    "Published ID:",
-                    result.id
-                );
+console.log(
+    "Published ID:",
+    result.id
+);
 
-                clearForm();
+resetFormMode();
+
+clearForm();
+
+BulletinUI.closeDrawer();
 
             } catch (error) {
 
@@ -647,6 +692,30 @@ function addAttachmentRow(attachment = {}) {
         });
 
     container.appendChild(row);
+
+}
+
+function clearPreview() {
+
+    window.currentBulletin = null;
+
+    const preview = document.getElementById("bulletinPreview");
+
+    if (!preview) return;
+
+    preview.innerHTML = `
+
+        <div class="empty-state">
+
+            <i class="fa-regular fa-newspaper"></i>
+
+            <h3>No Bulletin Selected</h3>
+
+            <p>Select a bulletin to view its details.</p>
+
+        </div>
+
+    `;
 
 }
 
