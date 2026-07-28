@@ -1,4 +1,5 @@
 window.editMode = false;
+window.copyMode = false;
 window.currentBulletin = null;
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -77,6 +78,24 @@ document
             <i class="fa-solid fa-floppy-disk"></i>
             Save Changes
         `;
+
+    });
+
+    // ==========================================================
+// Copy Bulletin
+// ==========================================================
+
+document
+    .getElementById("copyBulletinBtn")
+    ?.addEventListener("click", () => {
+
+        const bulletin = getSelectedBulletin();
+
+        if (!bulletin) return;
+
+        prepareCopy(bulletin);
+
+        BulletinUI.openDrawer();
 
     });
 
@@ -348,10 +367,35 @@ container.innerHTML = "";
 });
 
 }
+
+    function prepareCopy(bulletin) {
+
+    window.editMode = false;
+
+    window.copyMode = true;
+
+    loadBulletinIntoForm(bulletin);
+
+    document.getElementById("bulletinTitle").value =
+        bulletin.title + " (Copy)";
+
+    document.querySelector(".drawer-header h2").textContent =
+        "Copy Bulletin";
+
+    document.querySelector(".drawer-header p").textContent =
+        "Review and publish the copied bulletin.";
+
+    document.getElementById("publishBulletinBtn").innerHTML = `
+        <i class="fa-solid fa-paper-plane"></i>
+        Publish Copy
+    `;
+
+}
     
 function resetFormMode() {
 
     window.editMode = false;
+    window.copyMode = false;
 
     document.querySelector(".drawer-header h2").textContent =
         "Create Bulletin";
