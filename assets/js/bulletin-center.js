@@ -1,3 +1,4 @@
+window.currentBulletin = null;
 document.addEventListener("DOMContentLoaded", () => {
 
     BulletinUI.init();
@@ -76,8 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (bulletins.length) {
-            showPreview(bulletins[0]);
-        }
+
+    window.currentBulletin = bulletins[0];
+
+    showPreview(bulletins[0]);
+
+}
 
     });
 
@@ -520,7 +525,7 @@ function addAttachmentRow() {
 }
 
 function showPreview(bulletin) {
-
+    window.currentBulletin = bulletin;
     document.getElementById("previewTitle").textContent =
         bulletin.title || "";
 
@@ -687,5 +692,21 @@ function showPreview(bulletin) {
         attachmentList.appendChild(card);
 
     });
+
+}
+
+function getSelectedBulletin() {
+
+    if (!window.currentBulletin) {
+
+        BulletinToast.show(
+            "Please select a bulletin first.",
+            "warning"
+        );
+
+        return null;
+    }
+
+    return window.currentBulletin;
 
 }
