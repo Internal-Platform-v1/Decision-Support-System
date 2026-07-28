@@ -295,6 +295,17 @@ document
     document.getElementById("bulletinAudience").value =
         (bulletin.audience || []).join(", ");
 
+        const container =
+    document.getElementById("attachmentContainer");
+
+container.innerHTML = "";
+
+(bulletin.attachments || []).forEach(attachment => {
+
+    addAttachmentRow(attachment);
+
+});
+
 }
     
 function resetFormMode() {
@@ -572,7 +583,7 @@ function renderCategory(
 
 }
 
-function addAttachmentRow() {
+function addAttachmentRow(attachment = {}) {
 
     const container = document.getElementById("attachmentContainer");
 
@@ -618,6 +629,15 @@ function addAttachmentRow() {
 
     `;
 
+    row.querySelector(".attachment-type").value =
+        attachment.type || "guide";
+
+    row.querySelector(".attachment-name").value =
+        attachment.name || "";
+
+    row.querySelector(".attachment-url").value =
+        attachment.url || "";
+
     row
         .querySelector(".remove-attachment")
         .addEventListener("click", () => {
@@ -626,9 +646,7 @@ function addAttachmentRow() {
 
         });
 
-    document
-        .getElementById("attachmentContainer")
-        .appendChild(row);
+    container.appendChild(row);
 
 }
 
