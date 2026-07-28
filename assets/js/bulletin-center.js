@@ -18,6 +18,31 @@ document
     });
 
     // ==========================================================
+// View All Buttons
+// ==========================================================
+
+document
+.querySelectorAll(".view-all-btn")
+.forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        openViewAll(
+            button.dataset.category
+        );
+
+    });
+
+});
+
+document
+.getElementById("closeViewAllBtn")
+?.addEventListener(
+    "click",
+    closeViewAll
+);
+
+    // ==========================================================
 // Search
 // ==========================================================
 
@@ -997,6 +1022,27 @@ function showPreview(bulletin) {
         attachmentList.appendChild(card);
 
     });
+
+}
+
+// ==========================================================
+// View All Modal
+// ==========================================================
+
+function openViewAll(category){
+
+    const modal =
+        document.getElementById("viewAllModal");
+
+    modal.classList.add("show");
+
+}
+
+function closeViewAll(){
+
+    document
+        .getElementById("viewAllModal")
+        .classList.remove("show");
 
 }
 
