@@ -1,5 +1,7 @@
+window.editMode = false;
 window.currentBulletin = null;
 document.addEventListener("DOMContentLoaded", () => {
+
 
     BulletinUI.init();
 
@@ -30,6 +32,33 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         });
+
+    document
+    .getElementById("editBulletinBtn")
+    ?.addEventListener("click", () => {
+
+        const bulletin = getSelectedBulletin();
+
+        if (!bulletin) return;
+
+        window.editMode = true;
+
+        loadBulletinIntoForm(bulletin);
+
+        BulletinUI.openDrawer();
+
+        document.querySelector(".drawer-header h2").textContent =
+            "Edit Bulletin";
+
+        document.querySelector(".drawer-header p").textContent =
+            "Update the selected enterprise bulletin.";
+
+        document.getElementById("publishBulletinBtn").innerHTML = `
+            <i class="fa-solid fa-floppy-disk"></i>
+            Save Changes
+        `;
+
+    });
 
     // ==========================================================
     // Listen for Published Bulletins
@@ -223,6 +252,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+    function loadBulletinIntoForm(bulletin) {
+
+    document.getElementById("bulletinTitle").value =
+        bulletin.title || "";
+
+    document.getElementById("bulletinSummary").value =
+        bulletin.summary || "";
+
+    document.getElementById("bulletinMessage").value =
+        bulletin.message || "";
+
+    document.getElementById("bulletinCategory").value =
+        bulletin.category || "announcement";
+
+    document.getElementById("bulletinPriority").value =
+        bulletin.priority || "normal";
+
+    document.getElementById("bulletinAuthor").value =
+        bulletin.author || "";
+
+    document.getElementById("bulletinAudience").value =
+        (bulletin.audience || []).join(", ");
+
+}
+
     // ==========================================================
     // Preview Button
     // ==========================================================
@@ -328,16 +382,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                const result =
-                    await BulletinService.publish(data);
+                let result;
+
+if (window.editMode) {
+
+    result = await BulletinService.update(
+        window.currentBulletin.id,
+        data
+    );
+
+    BulletinToast.show("Bulletin updated successfully!");
+
+    window.editMode = false;
+
+} else {
+
+    result = await BulletinService.publish(data);
+
+    BulletinToast.show("Bulletin published successfully!");
+
+}
 
                 console.log(
                     "Published ID:",
                     result.id
-                );
-
-                BulletinToast.show(
-                    "Bulletin published successfully!"
                 );
 
                 clearForm();
