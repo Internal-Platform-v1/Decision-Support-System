@@ -34,6 +34,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     document
+    .getElementById("newBulletinBtn")
+    ?.addEventListener("click", () => {
+
+        resetFormMode();
+
+        clearForm();
+
+    });
+
+document
+    .getElementById("fabNewBulletin")
+    ?.addEventListener("click", () => {
+
+        resetFormMode();
+
+        clearForm();
+
+    });
+
+    document
     .getElementById("editBulletinBtn")
     ?.addEventListener("click", () => {
 
@@ -276,7 +296,23 @@ document.addEventListener("DOMContentLoaded", () => {
         (bulletin.audience || []).join(", ");
 
 }
+    
+function resetFormMode() {
 
+    window.editMode = false;
+
+    document.querySelector(".drawer-header h2").textContent =
+        "Create Bulletin";
+
+    document.querySelector(".drawer-header p").textContent =
+        "Create or publish a new enterprise announcement.";
+
+    document.getElementById("publishBulletinBtn").innerHTML = `
+        <i class="fa-solid fa-paper-plane"></i>
+        Publish
+    `;
+
+}
     // ==========================================================
     // Preview Button
     // ==========================================================
@@ -393,7 +429,11 @@ if (window.editMode) {
 
     BulletinToast.show("Bulletin updated successfully!");
 
-    window.editMode = false;
+    resetFormMode();
+
+clearForm();
+
+BulletinUI.closeDrawer();
 
 } else {
 
