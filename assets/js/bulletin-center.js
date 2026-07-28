@@ -5,6 +5,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     BulletinUI.init();
+    // ==========================================================
+// Search
+// ==========================================================
+
+document
+    .getElementById("bulletinSearch")
+    ?.addEventListener("input", () => {
+
+        applyFilters();
+
+    });
+
+    // ==========================================================
+// Search
+// ==========================================================
+
+document
+    .getElementById("bulletinSearch")
+    ?.addEventListener("input", applyFilters);
 
     // ==========================================================
     // Attachment Manager
@@ -144,56 +163,27 @@ document
     // Listen for Published Bulletins
     // ==========================================================
 
-    BulletinService.listenPublished((bulletins) => {
+BulletinService.listenPublished((bulletins) => {
 
-        console.log("Published Bulletins:", bulletins);
+    console.log("Published Bulletins:", bulletins);
 
-        window.allBulletins = bulletins;
+    window.allBulletins = bulletins;
 
-        renderCategory(
-            bulletins,
-            "announcement",
-            "announcementList",
-            "announcementCount"
-        );
+    applyFilters();
 
-        renderCategory(
-            bulletins,
-            "whatsnew",
-            "whatsNewList",
-            "whatsNewCount"
-        );
+    if (bulletins.length) {
 
-        renderCategory(
-            bulletins,
-            "reminder",
-            "reminderList",
-            "reminderCount"
-        );
+        window.currentBulletin = bulletins[0];
 
-        renderCategory(
-            bulletins,
-            "issue",
-            "issueList",
-            "issueCount"
-        );
+        showPreview(bulletins[0]);
 
-        renderCategory(
-            bulletins,
-            "guide",
-            "guideList",
-            "guideCount"
-        );
+    } else {
 
-        if (bulletins.length) {
+        clearPreview();
 
-    window.currentBulletin = bulletins[0];
+    }
 
-    showPreview(bulletins[0]);
-
-}
-
-    });
+});
 
     // ==========================================================
     // Helper Functions
@@ -669,6 +659,82 @@ function renderCategory(
             list.appendChild(item);
 
         });
+
+}
+
+function applyFilters() {
+
+    let filtered = [...(window.allBulletins || [])];
+
+    // =====================================
+    // Search
+    // =====================================
+
+    const keyword = (
+        document.getElementById("bulletinSearch")?.value || ""
+    )
+    .trim()
+    .toLowerCase();
+
+    if (keyword) {
+
+        filtered = filtered.filter(bulletin => {
+
+            return [
+
+                bulletin.title,
+
+                bulletin.summary,
+
+                bulletin.message,
+
+                bulletin.category,
+
+                ...(bulletin.audience || [])
+
+            ]
+            .join(" ")
+            .toLowerCase()
+            .includes(keyword);
+
+        });
+
+    }
+
+    renderCategory(
+        filtered,
+        "announcement",
+        "announcementList",
+        "announcementCount"
+    );
+
+    renderCategory(
+        filtered,
+        "whatsnew",
+        "whatsNewList",
+        "whatsNewCount"
+    );
+
+    renderCategory(
+        filtered,
+        "reminder",
+        "reminderList",
+        "reminderCount"
+    );
+
+    renderCategory(
+        filtered,
+        "issue",
+        "issueList",
+        "issueCount"
+    );
+
+    renderCategory(
+        filtered,
+        "guide",
+        "guideList",
+        "guideCount"
+    );
 
 }
 
