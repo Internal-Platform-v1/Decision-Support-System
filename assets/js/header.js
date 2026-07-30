@@ -525,10 +525,16 @@ async function loadHeaderUserProfile(user) {
 
   if (!avatar || !avatarLarge || !nameEl || !roleEl || !userMenu) return;
 
-  if (!user) {
+if (!user) {
+    window.currentUser = null;
+    window.currentUserProfile = null;
+
     userMenu.style.display = "none";
     return;
-  }
+}
+
+// Make Firebase Auth user available globally
+window.currentUser = user;
 
   userMenu.style.display = "flex";
 
@@ -571,12 +577,20 @@ if (operationsConsoleContainer) {
     console.error("Unable to load user profile from Firestore:", error);
   }
 
-  const initials = getInitials(displayName, user.email);
+const initials = getInitials(displayName, user.email);
 
-  avatar.textContent = initials;
-  avatarLarge.textContent = initials;
-  nameEl.textContent = displayName;
-  roleEl.textContent = role;
+// Make user profile available globally
+window.currentUserProfile = {
+    uid: user.uid,
+    email: user.email,
+    displayName: displayName,
+    role: role
+};
+
+avatar.textContent = initials;
+avatarLarge.textContent = initials;
+nameEl.textContent = displayName;
+roleEl.textContent = role;
 }
 
 function setupUserMenuDropdown() {
