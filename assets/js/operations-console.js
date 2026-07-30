@@ -374,15 +374,27 @@ EL.activityFeed.appendChild(row);
 
 }
 
-function loadRealtimeHealth() {
-  db.collection(COLLECTIONS.SYSTEM).doc("status").onSnapshot(doc => {
-    if (!doc.exists) return;
-    const data = doc.data();
-    updateHealth("#firebaseHealth", data.firebase);
-    updateHealth("#aiHealth", data.ai);
-    updateHealth("#guideHealth", data.guides);
-    updateHealth("#cloudHealth", data.cloud);
-  });
+function loadRealtimeHealth(){
+
+db.collection(COLLECTIONS.SYSTEM)
+.doc("status")
+.onSnapshot(doc=>{
+
+if(!doc.exists)return;
+
+const d=doc.data();
+
+if(EL.firebaseStatus)
+EL.firebaseStatus.textContent=d.firebase||"Connected";
+
+if(EL.knowledgeStatus)
+EL.knowledgeStatus.textContent=d.guides||"Healthy";
+
+if(EL.groqStatus)
+EL.groqStatus.textContent=d.aiProvider||"Groq";
+
+});
+
 }
 
 function updateHealth(id, status) {
@@ -401,12 +413,34 @@ function loadRealtimeClock() {
   }, 1000);
 }
 
-function timeAgo(date) {
-  const s = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (s < 60) return s + " sec ago";
-  if (s < 3600) return Math.floor(s / 60) + " min ago";
-  if (s < 86400) return Math.floor(s / 3600) + " hr ago";
-  return Math.floor(s / 86400) + " day ago";
+function timeAgo(date){
+
+const seconds=Math.floor((Date.now()-date.getTime())/1000);
+
+if(seconds<10)return"Just now";
+
+if(seconds<60)return`${seconds} sec ago`;
+
+const minutes=Math.floor(seconds/60);
+
+if(minutes<60)return`${minutes} min ago`;
+
+const hours=Math.floor(minutes/60);
+
+if(hours<24)return`${hours} hr ago`;
+
+const days=Math.floor(hours/24);
+
+if(days<30)return`${days} day${days>1?"s":""} ago`;
+
+const months=Math.floor(days/30);
+
+if(months<12)return`${months} month${months>1?"s":""} ago`;
+
+const years=Math.floor(months/12);
+
+return`${years} year${years>1?"s":""} ago`;
+
 }
 
 const ENGINE = {
@@ -581,13 +615,21 @@ loadRealtimeHealth();
 
 }
 
-function initializeAIEngine() {
-  db.collection(COLLECTIONS.AI).orderBy("timestamp", "desc").limit(1).onSnapshot(snapshot => {
-    snapshot.forEach(doc => {
-      const ai = doc.data();
-      updateAIStatus(ai);
-    });
-  });
+function initializeAIEngine(){
+
+db.collection(COLLECTIONS.AI)
+.orderBy("timestamp","desc")
+.limit(1)
+.onSnapshot(snapshot=>{
+
+snapshot.forEach(doc=>{
+
+updateAIStatus(doc.data());
+
+});
+
+});
+
 }
 
 function updateAIStatus(ai){
@@ -609,29 +651,27 @@ EL.responseTime.textContent=
 
 }
 
-function initializeUsageLogger() {
-  document.addEventListener("click", async e => {
-    const target = e.target.closest("[data-track]");
-    if (!target) return;
-    try {
-      await db.collection(COLLECTIONS.USAGE).add({
-        type: target.dataset.track,
-        label: target.dataset.label || target.innerText,
-        user: OPS.user?.email || "unknown",
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    } catch (err) { console.error(err); }
-  });
+function initializeUsageLogger()
+
+async function writeSystemLog(title,description=""){
+
+try{
+
+await db.collection(COLLECTIONS.SYSTEM).add({
+
+title,
+description,
+user:OPS.user?.email||"System",
+timestamp:firebase.firestore.FieldValue.serverTimestamp()
+
+});
+
+}catch(err){
+
+console.error(err);
+
 }
 
-async function writeSystemLog(title) {
-  try {
-    await db.collection(COLLECTIONS.SYSTEM).add({
-      title,
-      user: OPS.user?.email,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  } catch (e) { console.error(e); }
 }
 
 function initializeTheme(){
@@ -663,10 +703,28 @@ showToast(!dark?"Dark theme enabled":"Light theme enabled");
 
 }
 
-function initializeAnimations() {
-  observeCards();
-  animateProgress();
-  parallaxBackground();
+function initializeAnimations(){
+
+observeCards();
+
+animateProgress();
+
+parallaxBackground();
+
+document.querySelectorAll(".glow-card").forEach(card=>{
+
+card.addEventListener("mousemove",e=>{
+
+const rect=card.getBoundingClientRect();
+
+card.style.setProperty("--mouse-x",(e.clientX-rect.left)+"px");
+
+card.style.setProperty("--mouse-y",(e.clientY-rect.top)+"px");
+
+});
+
+});
+
 }
 
 function observeCards() {
