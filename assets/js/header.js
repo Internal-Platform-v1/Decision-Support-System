@@ -517,80 +517,128 @@ function formatDisplayName(user) {
 }
 
 async function loadHeaderUserProfile(user) {
-  const avatar = document.getElementById("userAvatar");
-  const avatarLarge = document.getElementById("userAvatarLarge");
-  const nameEl = document.getElementById("userDisplayName");
-  const roleEl = document.getElementById("userDisplayRole");
-  const userMenu = document.getElementById("userMenu");
 
-  if (!avatar || !avatarLarge || !nameEl || !roleEl || !userMenu) return;
+    // ===========================================
+    // Always make auth information available
+    // ===========================================
 
-if (!user) {
-    window.currentUser = null;
-    window.currentUserProfile = null;
+    if (!user) {
+        window.currentUser = null;
+        window.currentUserProfile = null;
 
-    userMenu.style.display = "none";
-    return;
-}
+        const userMenu = document.getElementById("userMenu");
+        if (userMenu) {
+            userMenu.style.display = "none";
+        }
 
-// Make Firebase Auth user available globally
-window.currentUser = user;
-
-  userMenu.style.display = "flex";
-
-  let displayName = formatDisplayName(user);
-  let role = "Authenticated User";
-
-  try {
-    if (window.firebase && firebase.firestore) {
-      const db = firebase.firestore();
-      const email = (user.email || "").toLowerCase();
-
-      const snap = await db.collection("approved_users")
-        .where("email", "==", email)
-        .limit(1)
-        .get();
-
-      if (!snap.empty) {
-        const doc = snap.docs[0];
-        const data = doc.data();
-        if (data.name) {
-  displayName = data.name
-    .replace(/\s+vndr$/i, "")   // removes "VNDR" or "Vndr" at the end
-    .trim();
-}
-        if (data.role) role = data.role;
-        updateOperationsConsole(role);
-        // ===========================================
-// Operations Console Permission
-// ===========================================
-
-const operationsConsoleContainer = document.getElementById("operationsConsoleContainer");
-
-if (operationsConsoleContainer) {
-    operationsConsoleContainer.style.display =
-        data.operationsConsole === true ? "block" : "none";
-}
-      }
+        return;
     }
-  } catch (error) {
-    console.error("Unable to load user profile from Firestore:", error);
-  }
 
-const initials = getInitials(displayName, user.email);
+    window.currentUser = user;
 
-// Make user profile available globally
-window.currentUserProfile = {
-    uid: user.uid,
-    email: user.email,
-    displayName: displayName,
-    role: role
-};
+    let displayName = formatDisplayName(user);
+    let role = "Authenticated User";
 
-avatar.textContent = initials;
-avatarLarge.textContent = initials;
-nameEl.textContent = displayName;
-roleEl.textContent = role;
+    // ===========================================
+    // Load Firestore Profile
+    // ===========================================
+
+    try {
+
+        if (window.firebase && firebase.firestore) {
+
+            const db = firebase.firestore();
+            const email = (user.email || "").toLowerCase();
+
+            const snap = await db
+                .collection("approved_users")
+                .where("email", "==", email)
+                .limit(1)
+                .get();
+
+            if (!snap.empty) {
+
+                const data = snap.docs[0].data();
+
+                if (data.name) {
+                    displayName = data.name
+                        .replace(/\s+vndr$/i, "")
+                        .trim();
+                }
+
+                if (data.role) {
+                    role = data.role;
+                }
+
+                updateOperationsConsole(role);
+
+                const operationsConsoleContainer =
+                    document.getElementById("operationsConsoleContainer");
+
+                if (operationsConsoleContainer) {
+                    operationsConsoleContainer.style.display =
+                        data.operationsConsole === true ? "block" : "none";
+                }
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Unable to load user profile from Firestore:",
+            error
+        );
+
+    }
+
+    // ===========================================
+    // ALWAYS expose profile globally
+    // ===========================================
+
+    window.currentUserProfile = {
+
+        uid: user.uid,
+        email: user.email,
+        displayName: displayName,
+        role: role
+
+    };
+
+    // ===========================================
+    // Stop here if page doesn't use shared header
+    // ===========================================
+
+    const avatar = document.getElementById("userAvatar");
+    const avatarLarge = document.getElementById("userAvatarLarge");
+    const nameEl = document.getElementById("userDisplayName");
+    const roleEl = document.getElementById("userDisplayRole");
+    const userMenu = document.getElementById("userMenu");
+
+    if (
+        !avatar ||
+        !avatarLarge ||
+        !nameEl ||
+        !roleEl ||
+        !userMenu
+    ) {
+        return;
+    }
+
+    // ===========================================
+    // Shared Header UI
+    // ===========================================
+
+    userMenu.style.display = "flex";
+
+    const initials = getInitials(displayName, user.email);
+
+    avatar.textContent = initials;
+    avatarLarge.textContent = initials;
+    nameEl.textContent = displayName;
+    roleEl.textContent = role;
+
 }
 
 function setupUserMenuDropdown() {
@@ -659,18 +707,46 @@ function logoutUser() {
     });
 }
 
-document.addEventListener("headerLoaded", () => {
-  setupUserMenuDropdown();
+// ======================================
+// Firebase Authentication
+// ======================================
 
-  const userMenu = document.getElementById("userMenu");
-  if (userMenu) userMenu.style.display = "none";
+function initializeAuthentication() {
 
-  if (window.firebase && firebase.auth) {
+    if (!window.firebase || !firebase.auth) {
+        console.warn("Firebase Auth is not available.");
+        return;
+    }
+
     firebase.auth().onAuthStateChanged(async (user) => {
-      await loadHeaderUserProfile(user);
+
+        window.currentUser = user || null;
+
+        if (user) {
+            await loadHeaderUserProfile(user);
+        } else {
+            window.currentUserProfile = null;
+        }
+
     });
-  }
+
+}
+
+// Existing header pages
+document.addEventListener("headerLoaded", () => {
+
+    setupUserMenuDropdown();
+
+    const userMenu = document.getElementById("userMenu");
+
+    if (userMenu) {
+        userMenu.style.display = "none";
+    }
+
 });
+
+// Run authentication on ALL pages
+document.addEventListener("DOMContentLoaded", initializeAuthentication);
 
 // ======================================
 // Operations Console
