@@ -1032,6 +1032,7 @@ function showPreview(bulletin) {
 function openViewAll(category){
 
     window.currentViewAllCategory = category;
+    window.currentViewAllBulletin = null;
 
     renderViewAll(category);
 
@@ -1083,11 +1084,9 @@ function renderViewAll(category){
     const bulletins = (window.allBulletins || [])
         .filter(b => b.category === category);
 
-    title.textContent =
-        category.charAt(0).toUpperCase() + category.slice(1);
+    title.textContent = capitalize(category);
 
-    subtitle.textContent =
-        `${bulletins.length} bulletin(s)`;
+    subtitle.textContent = `${bulletins.length} bulletin(s)`;
 
     if (!bulletins.length) {
 
@@ -1107,10 +1106,9 @@ function renderViewAll(category){
 
     }
 
-    // Default selection
     if (
         !window.currentViewAllBulletin ||
-        !bulletins.some(b => b.id === window.currentViewAllBulletin.id)
+        !bulletins.find(b => b.id === window.currentViewAllBulletin.id)
     ) {
 
         window.currentViewAllBulletin = bulletins[0];
@@ -1120,26 +1118,57 @@ function renderViewAll(category){
     list.innerHTML = bulletins.map(b => `
 
         <div class="viewall-card ${
-            window.currentViewAllBulletin &&
             window.currentViewAllBulletin.id === b.id
                 ? "selected"
                 : ""
         }"
         data-id="${b.id}">
 
+            <div class="viewall-card-top">
+
+                <span class="category-pill">
+
+                    ${getCategoryIcon(b.category)}
+
+                    ${capitalize(b.category)}
+
+                </span>
+
+                <span class="priority-pill priority-${(b.priority || "Normal").toLowerCase()}">
+
+                    ${b.priority || "Normal"}
+
+                </span>
+
+            </div>
+
             <div class="viewall-card-title">
+
                 ${b.title}
+
             </div>
 
             <div class="viewall-card-summary">
-                ${b.summary || ""}
+
+                ${b.summary || "No summary available."}
+
             </div>
 
             <div class="viewall-card-footer">
 
-                <span>${b.priority || ""}</span>
+                <span>
 
-                <span>${formatDate(b.publishedAt)}</span>
+                    <i class="fa-regular fa-calendar"></i>
+
+                    ${formatDate(b.publishedAt)}
+
+                </span>
+
+                <span>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </span>
 
             </div>
 
@@ -1181,31 +1210,43 @@ function renderViewAllPreview(bulletin){
         <div class="viewall-preview-header">
 
             <div class="viewall-category">
-                ${bulletin.category || ""}
+
+                ${getCategoryIcon(bulletin.category)}
+                ${capitalize(bulletin.category)}
+
             </div>
 
             <h2 class="viewall-preview-title">
-                ${bulletin.title || ""}
+
+                ${bulletin.title}
+
             </h2>
 
             <div class="viewall-meta">
 
                 <span>
+
                     <strong>Priority:</strong>
+
                     ${bulletin.priority || "Normal"}
+
                 </span>
 
                 <span>
+
                     <strong>Published:</strong>
+
                     ${formatDate(bulletin.publishedAt)}
+
                 </span>
 
             </div>
 
         </div>
 
-        ${bulletin.summary ? `
-
+        ${
+            bulletin.summary
+            ? `
             <div class="viewall-summary">
 
                 <h4>Summary</h4>
@@ -1213,15 +1254,18 @@ function renderViewAllPreview(bulletin){
                 <p>${bulletin.summary}</p>
 
             </div>
-
-        ` : ""}
+            `
+            : ""
+        }
 
         <div class="viewall-message">
 
             <h4>Message</h4>
 
             <div>
+
                 ${bulletin.message || ""}
+
             </div>
 
         </div>
@@ -1238,9 +1282,7 @@ function renderViewAllPreview(bulletin){
 
                             <i class="fa-solid fa-paperclip"></i>
 
-                            <a
-                                href="${a.url}"
-                                target="_blank">
+                            <a href="${a.url}" target="_blank">
 
                                 ${a.name}
 
@@ -1255,6 +1297,40 @@ function renderViewAllPreview(bulletin){
         }
 
     `;
+
+}
+
+function capitalize(text){
+
+    if(!text) return "";
+
+    return text.charAt(0).toUpperCase() + text.slice(1);
+
+}
+
+function getCategoryIcon(category){
+
+    switch(category){
+
+        case "announcement":
+            return "📢";
+
+        case "whatsnew":
+            return "🆕";
+
+        case "guide":
+            return "📘";
+
+        case "issue":
+            return "⚠";
+
+        case "reminder":
+            return "⏰";
+
+        default:
+            return "📄";
+
+    }
 
 }
 
