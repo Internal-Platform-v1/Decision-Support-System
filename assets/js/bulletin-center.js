@@ -1031,6 +1031,8 @@ function showPreview(bulletin) {
 
 function openViewAll(category){
 
+    window.currentViewAllCategory = category;
+
     renderViewAll(category);
 
     document
@@ -1089,7 +1091,7 @@ function renderViewAll(category){
     subtitle.textContent =
         `${bulletins.length} bulletin(s)`;
 
-    if(!bulletins.length){
+    if (!bulletins.length) {
 
         list.innerHTML = `
             <div class="empty-state">
@@ -1103,8 +1105,7 @@ function renderViewAll(category){
 
     list.innerHTML = bulletins.map(b => `
 
-        <div class="viewall-card"
-             data-id="${b.id}">
+        <div class="viewall-card" data-id="${b.id}">
 
             <div class="viewall-card-title">
                 ${b.title}
@@ -1116,7 +1117,7 @@ function renderViewAll(category){
 
             <div class="viewall-card-footer">
 
-                <span>${b.priority}</span>
+                <span>${b.priority || ""}</span>
 
                 <span>${formatDate(b.publishedAt)}</span>
 
@@ -1125,6 +1126,33 @@ function renderViewAll(category){
         </div>
 
     `).join("");
+
+    // ======================================================
+    // Card Click
+    // ======================================================
+
+    list.querySelectorAll(".viewall-card").forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            const bulletin = (window.allBulletins || []).find(
+                b => b.id === card.dataset.id
+            );
+
+            if (!bulletin) return;
+
+            // Update selected bulletin
+            window.currentBulletin = bulletin;
+
+            // Refresh preview panel
+            showPreview(bulletin);
+
+            // Close the modal
+            closeViewAll();
+
+        });
+
+    });
 
 }
 
