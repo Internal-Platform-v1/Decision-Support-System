@@ -1077,9 +1077,7 @@ function formatDate(timestamp) {
 function renderViewAll(category){
 
     const list = document.getElementById("viewAllList");
-
     const title = document.getElementById("viewAllTitle");
-
     const subtitle = document.getElementById("viewAllSubtitle");
 
     const bulletins = (window.allBulletins || [])
@@ -1109,9 +1107,25 @@ function renderViewAll(category){
 
     }
 
+    // Default selection
+    if (
+        !window.currentViewAllBulletin ||
+        !bulletins.some(b => b.id === window.currentViewAllBulletin.id)
+    ) {
+
+        window.currentViewAllBulletin = bulletins[0];
+
+    }
+
     list.innerHTML = bulletins.map(b => `
 
-        <div class="viewall-card" data-id="${b.id}">
+        <div class="viewall-card ${
+            window.currentViewAllBulletin &&
+            window.currentViewAllBulletin.id === b.id
+                ? "selected"
+                : ""
+        }"
+        data-id="${b.id}">
 
             <div class="viewall-card-title">
                 ${b.title}
@@ -1133,10 +1147,8 @@ function renderViewAll(category){
 
     `).join("");
 
-    // Show the first bulletin automatically
-    renderViewAllPreview(bulletins[0]);
+    renderViewAllPreview(window.currentViewAllBulletin);
 
-    // Card Click
     list.querySelectorAll(".viewall-card").forEach(card => {
 
         card.addEventListener("click", () => {
@@ -1147,9 +1159,9 @@ function renderViewAll(category){
 
             if (!bulletin) return;
 
-            window.currentBulletin = bulletin;
+            window.currentViewAllBulletin = bulletin;
 
-            renderViewAllPreview(bulletin);
+            renderViewAll(category);
 
         });
 
