@@ -4,23 +4,32 @@ const OPS = { user: null, stats: {}, collections: {}, activity: [], guides: [], 
 const $ = e => document.querySelector(e);
 const $$ = e => document.querySelectorAll(e);
 
-const EL = {
-  loader: $("#opsLoader"),
-  overlay: $("#commandOverlay"),
-  search: $("#commandSearch"),
-  close: $("#closeCommand"),
-  commandBtn: $(".primary-btn"),
-  activeUsers: $("#activeUsers"),
-  guideCount: $("#guideCount"),
-  templateCount: $("#templateCount"),
-  aiRequests: $("#aiRequests"),
-  feedbackCount: $("#feedbackCount"),
-  todayUsers: $("#todayUsers"),
-  todayActions: $("#todayActions"),
-  metricSearches: $("#metricSearches"),
-  metricViews: $("#metricViews"),
-  metricTemplates: $("#metricTemplates"),
-  themeToggle: $("#themeToggle")
+const EL={
+loader:$("#opsLoader"),
+overlay:$("#commandOverlay"),
+search:$("#commandSearch"),
+close:$("#closeCommand"),
+commandBtn:$(".primary-btn"),
+themeButton:$("#themeToggleButton"),
+notificationDrawer:$("#notificationDrawer"),
+notificationButton:$("#openNotifications"),
+notificationClose:$("#closeNotifications"),
+activeUsers:$("#activeUsers"),
+guideCount:$("#guideCount"),
+templateCount:$("#templateCount"),
+aiRequests:$("#aiRequests"),
+feedbackCount:$("#feedbackCount"),
+pendingApprovals:$("#pendingApprovals"),
+todaySearches:$("#todaySearches"),
+todayUsers:$("#todayUsers"),
+todayActions:$("#todayActions"),
+activityFeed:$("#activityFeed"),
+onlineUsers:$("#onlineUsers"),
+onlineBadge:$("#onlineCountBadge"),
+groqStatus:$("#groqStatus"),
+firebaseStatus:$("#firebaseStatus"),
+knowledgeStatus:$("#knowledgeStatus"),
+responseTime:$("#responseTime")
 };
 
 document.addEventListener("DOMContentLoaded", initializeOperations);
@@ -43,12 +52,24 @@ async function loadUser() {
   try { OPS.user = JSON.parse(localStorage.getItem("currentUser") || "{}"); } catch { OPS.user = {}; }
 }
 
-function initializeLoader() {
-  if (!EL.loader) return;
-  setTimeout(() => {
-    EL.loader.classList.add("hide");
-    setTimeout(() => { EL.loader.remove(); }, 500);
-  }, 900);
+function initializeLoader(){
+
+if(!EL.loader)return;
+
+requestAnimationFrame(()=>{
+
+setTimeout(()=>{
+
+EL.loader.classList.add("hide");
+
+setTimeout(()=>{
+EL.loader.remove();
+},500);
+
+},900);
+
+});
+
 }
 
 function initializeCommandPalette() {
@@ -67,20 +88,47 @@ function closeCommandPalette() {
   filterCommandResults();
 }
 
-function filterCommandResults() {
-  const keyword = (EL.search?.value || "").trim().toLowerCase();
-  const container = $(".command-results");
-  if (!container) return;
-  container.innerHTML = "";
-  const results = ENGINE.guideIndex
-    .filter(g => g.title.toLowerCase().includes(keyword) || g.category.toLowerCase().includes(keyword) || g.keywords.join(" ").toLowerCase().includes(keyword))
-    .slice(0, 12);
-  results.forEach(g => {
-    const btn = document.createElement("button");
-    btn.innerHTML = `<i class="fa-solid fa-compass"></i><div><strong>${g.title}</strong><small>${g.category}</small></div>`;
-    btn.onclick = () => location.href = g.url;
-    container.appendChild(btn);
-  });
+function filterCommandResults(){
+
+const keyword=(EL.search?.value||"").trim().toLowerCase();
+
+const container=document.querySelector(".command-results");
+
+if(!container)return;
+
+container.innerHTML="";
+
+const list=ENGINE.guideIndex
+.filter(g=>{
+
+if(!keyword)return true;
+
+return(
+g.title.toLowerCase().includes(keyword)||
+g.category.toLowerCase().includes(keyword)||
+(g.keywords||[]).join(" ").toLowerCase().includes(keyword)
+);
+
+})
+.slice(0,15);
+
+list.forEach(g=>{
+
+const btn=document.createElement("button");
+
+btn.innerHTML=`
+<i class="fa-solid fa-compass"></i>
+<div>
+<strong>${g.title}</strong>
+<small>${g.category}</small>
+</div>`;
+
+btn.onclick=()=>location.href=g.url;
+
+container.appendChild(btn);
+
+});
+
 }
 
 function initializeKeyboard() {
@@ -90,17 +138,42 @@ function initializeKeyboard() {
   });
 }
 
-function initializeButtons() {
-  $$(".module-card").forEach(card => {
-    card.addEventListener("mouseenter", () => { card.style.zIndex = 5; });
-    card.addEventListener("mouseleave", () => { card.style.zIndex = ""; });
-  });
+function initializeButtons(){
+
+$$(".module-card").forEach(card=>{
+
+card.addEventListener("mouseenter",()=>{
+card.style.zIndex="5";
+});
+
+card.addEventListener("mouseleave",()=>{
+card.style.zIndex="";
+});
+
+});
+
+$$(".panel-btn").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+btn.classList.add("spin");
+
+setTimeout(()=>{
+btn.classList.remove("spin");
+},500);
+
+});
+
+});
+
 }
 
-function initializeQuickActions() {
-  $$(".quick-btn").forEach(btn => {
-    btn.addEventListener("click", () => { showToast(btn.innerText.trim()); });
-  });
+function initializeQuickActions(){
+$$(".action-btn").forEach(btn=>{
+btn.addEventListener("click",()=>{
+showToast(btn.innerText.trim());
+});
+});
 }
 
 function animateCounter(el, target) {
@@ -114,16 +187,36 @@ function animateCounter(el, target) {
   }, 20);
 }
 
-function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className = "ops-toast";
-  toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${message}</span>`;
-  document.body.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add("show"));
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 2500);
+function showToast(message){
+
+const container=document.getElementById("toastContainer");
+
+if(!container)return;
+
+const toast=document.createElement("div");
+
+toast.className="ops-toast";
+
+toast.innerHTML=`
+<i class="fa-solid fa-circle-check"></i>
+<span>${message}</span>`;
+
+container.appendChild(toast);
+
+requestAnimationFrame(()=>{
+
+toast.classList.add("show");
+
+});
+
+setTimeout(()=>{
+
+toast.classList.remove("show");
+
+setTimeout(()=>toast.remove(),300);
+
+},2500);
+
 }
 
 function formatNumber(v) { return Number(v || 0).toLocaleString(); }
@@ -156,46 +249,129 @@ async function loadDashboard() {
   initializeUsageLogger();
 }
 
-async function loadRealtimeStats() {
-  try {
-    const [users, guides, templates, feedback] = await Promise.all([
-      db.collection(COLLECTIONS.USERS).get(),
-      db.collection(COLLECTIONS.GUIDES).get(),
-      db.collection(COLLECTIONS.TEMPLATES).get(),
-      db.collection(COLLECTIONS.FEEDBACK).get()
-    ]);
-    animateCounter(EL.activeUsers, users.size);
-    animateCounter(EL.guideCount, guides.size);
-    animateCounter(EL.templateCount, templates.size);
-    animateCounter(EL.feedbackCount, feedback.size);
-  } catch (e) { console.error(e); }
-}
+async function loadRealtimeStats(){
 
-db.collection(COLLECTIONS.USAGE).orderBy("timestamp", "desc").limit(1).onSnapshot(snap => {
-  let today = 0;
-  snap.forEach(() => today++);
-  animateCounter(EL.todayActions, today);
+try{
+
+const[
+users,
+guides,
+templates,
+feedback
+]=await Promise.all([
+db.collection(COLLECTIONS.USERS).get(),
+db.collection(COLLECTIONS.GUIDES).get(),
+db.collection(COLLECTIONS.TEMPLATES).get(),
+db.collection(COLLECTIONS.FEEDBACK).get()
+]);
+
+animateCounter(EL.activeUsers,users.size);
+animateCounter(EL.guideCount,guides.size);
+animateCounter(EL.templateCount,templates.size);
+animateCounter(EL.feedbackCount,feedback.size);
+
+db.collection(COLLECTIONS.USAGE).onSnapshot(snapshot=>{
+
+let searches=0;
+let actions=0;
+
+snapshot.forEach(doc=>{
+
+const d=doc.data();
+
+actions++;
+
+if(d.type==="search")searches++;
+
 });
 
-db.collection(COLLECTIONS.USAGE).onSnapshot(snapshot => { animateCounter(EL.metricViews, snapshot.size); });
-db.collection(COLLECTIONS.FEEDBACK).where("status", "==", "new").onSnapshot(snapshot => { animateCounter(EL.feedbackCount, snapshot.size); });
-db.collection(COLLECTIONS.AI).onSnapshot(snapshot => { animateCounter(EL.aiRequests, snapshot.size); });
-db.collection(COLLECTIONS.USAGE).where("type", "==", "search").onSnapshot(snapshot => { animateCounter(EL.metricSearches, snapshot.size); });
-db.collection(COLLECTIONS.USAGE).where("type", "==", "template").onSnapshot(snapshot => { animateCounter(EL.metricTemplates, snapshot.size); });
+animateCounter(EL.todayActions,actions);
+animateCounter(EL.todaySearches,searches);
 
-function loadRealtimeActivity() {
-  const feed = $(".activity-feed");
-  if (!feed) return;
-  db.collection(COLLECTIONS.SYSTEM).orderBy("timestamp", "desc").limit(15).onSnapshot(snapshot => {
-    feed.innerHTML = "";
-    snapshot.forEach(doc => {
-      const d = doc.data();
-      const row = document.createElement("div");
-      row.className = "feed-item";
-      row.innerHTML = `<div class="feed-icon blue"><i class="fa-solid fa-circle"></i></div><div><h4>${d.title || "Activity"}</h4><p>${timeAgo(d.timestamp?.toDate?.() || new Date())}</p></div>`;
-      feed.appendChild(row);
-    });
-  });
+});
+
+db.collection(COLLECTIONS.AI).onSnapshot(snapshot=>{
+animateCounter(EL.aiRequests,snapshot.size);
+});
+
+db.collection(COLLECTIONS.USERS)
+.where("online","==",true)
+.onSnapshot(snapshot=>{
+
+animateCounter(EL.todayUsers,snapshot.size);
+
+});
+
+db.collection(COLLECTIONS.USERS)
+.where("approved","==",false)
+.onSnapshot(snapshot=>{
+
+if(EL.pendingApprovals)
+animateCounter(EL.pendingApprovals,snapshot.size);
+
+});
+
+}catch(err){
+
+console.error(err);
+
+}
+
+}
+
+function loadRealtimeActivity(){
+
+if(!EL.activityFeed)return;
+
+db.collection(COLLECTIONS.SYSTEM)
+.orderBy("timestamp","desc")
+.limit(15)
+.onSnapshot(snapshot=>{
+
+EL.activityFeed.innerHTML="";
+
+if(snapshot.empty){
+
+EL.activityFeed.innerHTML=`
+<div class="activity-item">
+<div class="activity-icon blue">
+<i class="fa-solid fa-circle-info"></i>
+</div>
+<div class="activity-body">
+<strong>No recent activity</strong>
+<p>The system is waiting for new events.</p>
+<small>Just now</small>
+</div>
+</div>`;
+
+return;
+
+}
+
+snapshot.forEach(doc=>{
+
+const d=doc.data();
+
+const row=document.createElement("div");
+
+row.className="activity-item";
+
+row.innerHTML=`
+<div class="activity-icon blue">
+<i class="fa-solid fa-circle"></i>
+</div>
+<div class="activity-body">
+<strong>${d.title||"System Activity"}</strong>
+<p>${d.description||"Operations update received."}</p>
+<small>${timeAgo(d.timestamp?.toDate?.()||new Date())}</small>
+</div>`;
+
+EL.activityFeed.appendChild(row);
+
+});
+
+});
+
 }
 
 function loadRealtimeHealth() {
@@ -240,22 +416,81 @@ const ENGINE = {
   refreshTimer: null
 };
 
-function initializeGlobalSearch() {
-  db.collection(COLLECTIONS.GUIDES).get().then(snap => {
-    ENGINE.guideIndex = [];
-    snap.forEach(doc => {
-      const d = doc.data();
-      ENGINE.guideIndex.push({ id: doc.id, title: d.title || "", keywords: d.keywords || [], category: d.category || "", url: d.url || "#" });
-    });
-  }).catch(console.error);
+function initializeGlobalSearch(){
+
+db.collection(COLLECTIONS.GUIDES)
+.get()
+.then(snapshot=>{
+
+ENGINE.guideIndex=[];
+
+snapshot.forEach(doc=>{
+
+const d=doc.data();
+
+ENGINE.guideIndex.push({
+
+id:doc.id,
+title:d.title||"",
+category:d.category||"",
+keywords:d.keywords||[],
+url:d.url||"#"
+
+});
+
+});
+
+filterCommandResults();
+
+})
+.catch(console.error);
+
 }
 
-function initializeNotificationCenter() {
-  db.collection(COLLECTIONS.SYSTEM).orderBy("timestamp", "desc").limit(20).onSnapshot(snapshot => {
-    ENGINE.notifications = [];
-    snapshot.forEach(doc => { ENGINE.notifications.push(doc.data()); });
-    updateNotificationBadge();
-  });
+function initializeNotificationCenter(){
+
+if(EL.notificationButton){
+
+EL.notificationButton.addEventListener("click",()=>{
+
+EL.notificationDrawer?.classList.toggle("show");
+
+});
+
+}
+
+if(EL.notificationClose){
+
+EL.notificationClose.addEventListener("click",()=>{
+
+EL.notificationDrawer?.classList.remove("show");
+
+});
+
+}
+
+db.collection(COLLECTIONS.SYSTEM)
+.orderBy("timestamp","desc")
+.limit(20)
+.onSnapshot(snapshot=>{
+
+ENGINE.notifications=[];
+
+snapshot.forEach(doc=>ENGINE.notifications.push(doc.data()));
+
+const badge=EL.notificationButton?.querySelector(".badge");
+
+if(badge){
+
+badge.textContent=ENGINE.notifications.length;
+
+badge.style.display=
+ENGINE.notifications.length?"flex":"none";
+
+}
+
+});
+
 }
 
 function updateNotificationBadge() {
@@ -265,15 +500,50 @@ function updateNotificationBadge() {
   badge.style.display = ENGINE.notifications.length ? "flex" : "none";
 }
 
-function initializeSessionMonitor() {
-  db.collection(COLLECTIONS.USERS).onSnapshot(snapshot => {
-    ENGINE.sessions.clear();
-    snapshot.forEach(doc => {
-      const d = doc.data();
-      if (d.online) ENGINE.sessions.set(doc.id, d);
-    });
-    animateCounter(EL.activeUsers, ENGINE.sessions.size);
-  });
+function initializeSessionMonitor(){
+
+db.collection(COLLECTIONS.USERS).onSnapshot(snapshot=>{
+
+ENGINE.sessions.clear();
+
+snapshot.forEach(doc=>{
+
+const d=doc.data();
+
+if(d.online)ENGINE.sessions.set(doc.id,d);
+
+});
+
+animateCounter(EL.activeUsers,ENGINE.sessions.size);
+
+if(EL.onlineBadge)
+EL.onlineBadge.textContent=`${ENGINE.sessions.size} Online`;
+
+if(!EL.onlineUsers)return;
+
+EL.onlineUsers.innerHTML="";
+
+ENGINE.sessions.forEach(user=>{
+
+const row=document.createElement("div");
+
+row.className="online-user";
+
+row.innerHTML=`
+<div class="user-avatar">${(user.name||"U").substring(0,2).toUpperCase()}</div>
+<div class="user-info">
+<strong>${user.name||user.email||"Unknown User"}</strong>
+<small>${user.role||"Employee"}</small>
+</div>
+<div class="user-status online"></div>
+`;
+
+EL.onlineUsers.appendChild(row);
+
+});
+
+});
+
 }
 
 function initializeGuideHeatmap() {
@@ -297,8 +567,18 @@ function renderHeatmap(data) {
   });
 }
 
-function initializeAutoRefresh() {
-  ENGINE.refreshTimer = setInterval(() => { loadRealtimeStats(); }, 60000);
+function initializeAutoRefresh(){
+
+clearInterval(ENGINE.refreshTimer);
+
+ENGINE.refreshTimer=setInterval(()=>{
+
+loadRealtimeStats();
+
+loadRealtimeHealth();
+
+},60000);
+
 }
 
 function initializeAIEngine() {
@@ -310,13 +590,23 @@ function initializeAIEngine() {
   });
 }
 
-function updateAIStatus(ai) {
-  const status = $("#aiStatus");
-  if (!status) return;
-  status.textContent = ai.status || "ONLINE";
-  status.className = "status-chip success";
-  const confidence = $("#aiConfidence");
-  if (confidence) confidence.textContent = (ai.confidence || 99) + "%";
+function updateAIStatus(ai){
+
+if(EL.groqStatus)
+EL.groqStatus.textContent=ai.provider||"Groq";
+
+if(EL.firebaseStatus)
+EL.firebaseStatus.textContent=
+ai.firebase||"Connected";
+
+if(EL.knowledgeStatus)
+EL.knowledgeStatus.textContent=
+ai.status||"Healthy";
+
+if(EL.responseTime)
+EL.responseTime.textContent=
+(ai.latency||218)+" ms";
+
 }
 
 function initializeUsageLogger() {
@@ -344,22 +634,33 @@ async function writeSystemLog(title) {
   } catch (e) { console.error(e); }
 }
 
-function initializeTheme() {
-  const toggle = EL.themeToggle;
-  if (!toggle) return;
-  const savedTheme = localStorage.getItem("operations-theme") || "theme-light";
-  document.body.classList.remove("theme-dark", "theme-light");
-  document.body.classList.add(savedTheme);
-  toggle.checked = savedTheme === "theme-dark";
-  const text = document.querySelector(".theme-text");
-  if (text) text.textContent = toggle.checked ? "Dark" : "Light";
-  toggle.addEventListener("change", () => {
-    const dark = toggle.checked;
-    document.body.classList.toggle("theme-dark", dark);
-    document.body.classList.toggle("theme-light", !dark);
-    localStorage.setItem("operations-theme", dark ? "theme-dark" : "theme-light");
-    if (text) text.textContent = dark ? "Dark" : "Light";
-  });
+function initializeTheme(){
+
+const btn=EL.themeButton;
+
+if(!btn)return;
+
+const saved=localStorage.getItem("operations-theme")||"theme-light";
+
+document.body.classList.remove("theme-light","theme-dark");
+document.body.classList.add(saved);
+
+btn.addEventListener("click",()=>{
+
+const dark=document.body.classList.contains("theme-dark");
+
+document.body.classList.toggle("theme-dark",!dark);
+document.body.classList.toggle("theme-light",dark);
+
+localStorage.setItem(
+"operations-theme",
+!dark?"theme-dark":"theme-light"
+);
+
+showToast(!dark?"Dark theme enabled":"Light theme enabled");
+
+});
+
 }
 
 function initializeAnimations() {
