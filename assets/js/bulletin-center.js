@@ -1099,6 +1099,12 @@ function renderViewAll(category){
             </div>
         `;
 
+        document.getElementById("viewAllPreview").innerHTML = `
+            <div class="empty-preview">
+                No bulletin selected.
+            </div>
+        `;
+
         return;
 
     }
@@ -1127,32 +1133,61 @@ function renderViewAll(category){
 
     `).join("");
 
-    // ======================================================
-    // Card Click
-    // ======================================================
+    // Show the first bulletin automatically
+    renderViewAllPreview(bulletins[0]);
 
+    // Card Click
     list.querySelectorAll(".viewall-card").forEach(card => {
 
         card.addEventListener("click", () => {
 
-            const bulletin = (window.allBulletins || []).find(
+            const bulletin = bulletins.find(
                 b => b.id === card.dataset.id
             );
 
             if (!bulletin) return;
 
-            // Update selected bulletin
             window.currentBulletin = bulletin;
 
-            // Refresh preview panel
-            showPreview(bulletin);
-
-            // Close the modal
-            closeViewAll();
+            renderViewAllPreview(bulletin);
 
         });
 
     });
+
+}
+
+function renderViewAllPreview(bulletin){
+
+    const preview =
+        document.getElementById("viewAllPreview");
+
+    preview.innerHTML = `
+
+        <h2>${bulletin.title}</h2>
+
+        <div style="margin:8px 0 18px;color:#666;">
+
+            ${bulletin.category} •
+            ${bulletin.priority}
+
+        </div>
+
+        <p>
+
+            ${bulletin.summary || ""}
+
+        </p>
+
+        <hr style="margin:20px 0;">
+
+        <div>
+
+            ${bulletin.message || ""}
+
+        </div>
+
+    `;
 
 }
 
