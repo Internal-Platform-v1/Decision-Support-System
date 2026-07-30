@@ -142,6 +142,7 @@ document
         BulletinUI.openDrawer();
 
     });
+    
 
     // ==========================================================
 // Delete Bulletin
@@ -183,6 +184,22 @@ document
         }
 
     });
+
+    // ==========================================================
+// View All Search
+// ==========================================================
+
+document
+.getElementById("viewAllSearch")
+?.addEventListener("input", () => {
+
+    if(window.currentViewAllCategory){
+
+        renderViewAll(window.currentViewAllCategory);
+
+    }
+
+});
 
     // ==========================================================
     // Listen for Published Bulletins
@@ -1081,8 +1098,30 @@ function renderViewAll(category){
     const title = document.getElementById("viewAllTitle");
     const subtitle = document.getElementById("viewAllSubtitle");
 
-    const bulletins = (window.allBulletins || [])
+    const search =
+        document
+            .getElementById("viewAllSearch")
+            ?.value
+            .trim()
+            .toLowerCase() || "";
+
+    let bulletins = (window.allBulletins || [])
         .filter(b => b.category === category);
+
+    // Search Filter
+    if(search){
+
+        bulletins = bulletins.filter(b => {
+
+            return (
+                (b.title || "").toLowerCase().includes(search) ||
+                (b.summary || "").toLowerCase().includes(search) ||
+                (b.message || "").toLowerCase().includes(search)
+            );
+
+        });
+
+    }
 
     title.textContent = capitalize(category);
 
