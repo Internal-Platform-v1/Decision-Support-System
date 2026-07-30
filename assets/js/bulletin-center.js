@@ -1047,6 +1047,27 @@ function closeViewAll(){
 
 }
 
+function formatDate(timestamp) {
+
+    if (!timestamp) return "";
+
+    let date;
+
+    // Firestore Timestamp
+    if (typeof timestamp.toDate === "function") {
+        date = timestamp.toDate();
+    } else {
+        date = new Date(timestamp);
+    }
+
+    return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+    });
+
+}
+
 // ==========================================================
 // Render View All List
 // ==========================================================
