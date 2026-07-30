@@ -11,7 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const sidebarProfileWatcher = setInterval(() => {
 
-    if (window.currentUserProfile) {
+    if (
+        window.currentUserProfile &&
+        window.currentUserProfile.displayName
+    ) {
 
         clearInterval(sidebarProfileWatcher);
 
