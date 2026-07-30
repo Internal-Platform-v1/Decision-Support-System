@@ -651,7 +651,49 @@ EL.responseTime.textContent=
 
 }
 
-function initializeUsageLogger()
+function initializeUsageLogger(){
+
+document.addEventListener("click",async e=>{
+
+const target=e.target.closest("[data-track],.module-card,.action-btn,.primary-btn,.panel-btn");
+
+if(!target)return;
+
+let type="interaction";
+let label=target.dataset.label||"";
+
+if(target.dataset.track){
+type=target.dataset.track;
+}else if(target.classList.contains("module-card")){
+type="module";
+label=target.querySelector("h3")?.textContent||"Module";
+}else if(target.classList.contains("action-btn")){
+type="action";
+label=target.querySelector("span")?.textContent||"Action";
+}else if(target.classList.contains("primary-btn")){
+type="command";
+label="Command Palette";
+}else if(target.classList.contains("panel-btn")){
+type="panel";
+label="Panel Action";
+}
+
+try{
+
+await db.collection(COLLECTIONS.USAGE).add({
+type,
+label,
+user:OPS.user?.email||"unknown",
+timestamp:firebase.firestore.FieldValue.serverTimestamp()
+});
+
+}catch(err){
+console.error(err);
+}
+
+});
+
+}
 
 async function writeSystemLog(title,description=""){
 
