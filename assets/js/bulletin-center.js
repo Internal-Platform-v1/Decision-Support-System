@@ -1031,10 +1031,11 @@ function showPreview(bulletin) {
 
 function openViewAll(category){
 
-    const modal =
-        document.getElementById("viewAllModal");
+    renderViewAll(category);
 
-    modal.classList.add("show");
+    document
+        .getElementById("viewAllModal")
+        .classList.add("show");
 
 }
 
@@ -1043,6 +1044,66 @@ function closeViewAll(){
     document
         .getElementById("viewAllModal")
         .classList.remove("show");
+
+}
+
+// ==========================================================
+// Render View All List
+// ==========================================================
+
+function renderViewAll(category){
+
+    const list = document.getElementById("viewAllList");
+
+    const title = document.getElementById("viewAllTitle");
+
+    const subtitle = document.getElementById("viewAllSubtitle");
+
+    const bulletins = (window.allBulletins || [])
+        .filter(b => b.category === category);
+
+    title.textContent =
+        category.charAt(0).toUpperCase() + category.slice(1);
+
+    subtitle.textContent =
+        `${bulletins.length} bulletin(s)`;
+
+    if(!bulletins.length){
+
+        list.innerHTML = `
+            <div class="empty-state">
+                No bulletins found.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    list.innerHTML = bulletins.map(b => `
+
+        <div class="viewall-card"
+             data-id="${b.id}">
+
+            <div class="viewall-card-title">
+                ${b.title}
+            </div>
+
+            <div class="viewall-card-summary">
+                ${b.summary || ""}
+            </div>
+
+            <div class="viewall-card-footer">
+
+                <span>${b.priority}</span>
+
+                <span>${formatDate(b.publishedAt)}</span>
+
+            </div>
+
+        </div>
+
+    `).join("");
 
 }
 
