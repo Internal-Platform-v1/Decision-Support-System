@@ -1159,33 +1159,88 @@ function renderViewAll(category){
 
 function renderViewAllPreview(bulletin){
 
-    const preview =
-        document.getElementById("viewAllPreview");
+    const preview = document.getElementById("viewAllPreview");
+
+    const attachments = (bulletin.attachments || [])
+        .filter(a => a.name || a.url);
 
     preview.innerHTML = `
 
-        <h2>${bulletin.title}</h2>
+        <div class="viewall-preview-header">
 
-        <div style="margin:8px 0 18px;color:#666;">
+            <div class="viewall-category">
+                ${bulletin.category || ""}
+            </div>
 
-            ${bulletin.category} •
-            ${bulletin.priority}
+            <h2 class="viewall-preview-title">
+                ${bulletin.title || ""}
+            </h2>
+
+            <div class="viewall-meta">
+
+                <span>
+                    <strong>Priority:</strong>
+                    ${bulletin.priority || "Normal"}
+                </span>
+
+                <span>
+                    <strong>Published:</strong>
+                    ${formatDate(bulletin.publishedAt)}
+                </span>
+
+            </div>
 
         </div>
 
-        <p>
+        ${bulletin.summary ? `
 
-            ${bulletin.summary || ""}
+            <div class="viewall-summary">
 
-        </p>
+                <h4>Summary</h4>
 
-        <hr style="margin:20px 0;">
+                <p>${bulletin.summary}</p>
 
-        <div>
+            </div>
 
-            ${bulletin.message || ""}
+        ` : ""}
+
+        <div class="viewall-message">
+
+            <h4>Message</h4>
+
+            <div>
+                ${bulletin.message || ""}
+            </div>
 
         </div>
+
+        ${
+            attachments.length
+            ? `
+                <div class="viewall-attachments">
+
+                    <h4>Attachments</h4>
+
+                    ${attachments.map(a => `
+                        <div class="attachment-item">
+
+                            <i class="fa-solid fa-paperclip"></i>
+
+                            <a
+                                href="${a.url}"
+                                target="_blank">
+
+                                ${a.name}
+
+                            </a>
+
+                        </div>
+                    `).join("")}
+
+                </div>
+            `
+            : ""
+        }
 
     `;
 
