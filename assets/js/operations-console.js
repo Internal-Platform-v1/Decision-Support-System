@@ -1,4 +1,6 @@
 "use strict";
+const db = window.db;
+const auth = window.auth;
 
 const OPS = { user: null, stats: {}, collections: {}, activity: [], guides: [], initialized: !1 };
 const $ = e => document.querySelector(e);
