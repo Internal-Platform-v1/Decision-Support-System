@@ -6,24 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     BulletinUI.init();
     // ==========================================================
-// Load Sidebar User Profile
-// ==========================================================
-
-const sidebarProfileWatcher = setInterval(() => {
-
-    if (
-        window.currentUserProfile &&
-        window.currentUserProfile.displayName
-    ) {
-
-        clearInterval(sidebarProfileWatcher);
-
-        loadSidebarUserProfile();
-
-    }
-
-}, 100);
-    // ==========================================================
 // Search
 // ==========================================================
 
