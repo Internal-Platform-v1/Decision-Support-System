@@ -55,22 +55,14 @@ function waitForUserProfile() {
 
 function highlightCurrentPage() {
 
-    const currentPage = window.location.pathname
-        .split("/")
-        .pop()
-        .toLowerCase();
+    const currentPage = document.body.dataset.page;
 
     document.querySelectorAll(".sidebar-nav .nav-item").forEach(link => {
 
-        link.classList.remove("active");
-
-        const href = (link.getAttribute("href") || "").toLowerCase();
-
-        if (href === currentPage) {
-
-            link.classList.add("active");
-
-        }
+        link.classList.toggle(
+            "active",
+            link.dataset.page === currentPage
+        );
 
     });
 
