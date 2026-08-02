@@ -1,14 +1,26 @@
 "use strict";
 
+// ============================================================
+// FALLBACK: hide loader if ops-console.js fails
+// ============================================================
+setTimeout(() => {
+  const loader = document.getElementById('opsLoader');
+  if (loader && !loader.classList.contains('hide')) {
+    loader.classList.add('hide');
+    setTimeout(() => loader.remove(), 500);
+    console.log('✅ Loader hidden by bulletin-center fallback');
+  }
+}, 1000);
+
 // ------------------------------------------------------------
-// GLOBALS (from OPS environment)
+// GLOBALS
 // ------------------------------------------------------------
 const db = window.db;
 const auth = window.auth;
 const OPS = window.OPS || {};
 
 // ------------------------------------------------------------
-// DOM REFS (updated to match new layout)
+// DOM REFS (matches updated layout)
 // ------------------------------------------------------------
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
@@ -20,7 +32,6 @@ const EL = {
   categories: $('#bulletinCategories'),
   previewContent: $('#previewContent'),
 
-  // Drawer
   drawer: $('#composeDrawer'),
   backdrop: $('#drawerBackdrop'),
   closeDrawer: $('#closeDrawerBtn'),
@@ -39,12 +50,10 @@ const EL = {
   previewBtn: $('#previewBulletinBtn'),
   publishBtn: $('#publishBulletinBtn'),
 
-  // Preview actions
   editBtn: $('#editBulletinBtn'),
   copyBtn: $('#copyBulletinBtn'),
   deleteBtn: $('#deleteBulletinBtn'),
 
-  // View All
   viewAllModal: $('#viewAllModal'),
   closeViewAll: $('#closeViewAllBtn'),
   viewAllSearch: $('#viewAllSearch'),
@@ -53,7 +62,6 @@ const EL = {
   viewAllTitle: $('#viewAllTitle'),
   viewAllSubtitle: $('#viewAllSubtitle'),
 
-  // Toast container (already exists)
   toastContainer: $('#toastContainer'),
 };
 
@@ -71,7 +79,7 @@ window.currentViewAllBulletin = null;
 // INIT
 // ------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-  // Load user profile from OPS (already loaded by ops-console.js)
+  // Load user profile from OPS
   if (window.currentUserProfile) {
     EL.author.value = window.currentUserProfile.displayName || 'Administrator';
   }
@@ -120,10 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   } else {
-    console.warn('BulletinService not loaded');
+    console.warn('BulletinService not loaded – check bulletin-service.js');
   }
 
-  // Load initial data
+  // Load initial data (if any already loaded)
   applyFilters();
 });
 
@@ -176,7 +184,6 @@ function addAttachmentRow(attachment = {}) {
       <i class="fa-solid fa-trash"></i>
     </button>
   `;
-  // Set values if provided
   row.querySelector('.attachment-type').value = attachment.type || 'guide';
   row.querySelector('.attachment-name').value = attachment.name || '';
   row.querySelector('.attachment-url').value = attachment.url || '';
@@ -218,7 +225,6 @@ function loadBulletinIntoForm(bulletin) {
   EL.priority.value = bulletin.priority || 'normal';
   EL.author.value = bulletin.author || '';
   EL.audience.value = (bulletin.audience || []).join(', ');
-  // Attachments
   EL.attachContainer.innerHTML = '';
   (bulletin.attachments || []).forEach(a => addAttachmentRow(a));
   if (!EL.attachContainer.children.length) addAttachmentRow();
@@ -265,7 +271,6 @@ async function publishBulletin() {
 
 function previewBulletin() {
   const data = getFormData();
-  // Update preview using BulletinPreview service (if available)
   if (window.BulletinPreview) {
     window.BulletinPreview.update({
       title: data.title,
@@ -584,9 +589,7 @@ function showToast(msg, type = 'success') {
   }
 }
 
-// ------------------------------------------------------------
-// (Optional) Close drawer on Escape
-// ------------------------------------------------------------
+// Close drawer/modal on Escape
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (EL.drawer.classList.contains('open')) closeDrawer();
