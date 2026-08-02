@@ -12,11 +12,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             throw new Error("Unable to load sidebar.html");
         }
 
-        container.innerHTML = await response.text();
+container.innerHTML = await response.text();
 
-        highlightCurrentPage();
+highlightCurrentPage();
 
-        initializeSidebar();
+// If the profile already exists, populate the sidebar immediately.
+if (
+    window.currentUserProfile &&
+    typeof loadSidebarUserProfile === "function"
+) {
+    loadSidebarUserProfile();
+}
+
+// Keep watching in case the profile loads later.
+initializeSidebar();
 
     } catch (error) {
 
@@ -38,14 +47,12 @@ function waitForUserProfile() {
 
         if (
             window.currentUserProfile &&
-            window.currentUserProfile.displayName
+            typeof loadSidebarUserProfile === "function"
         ) {
 
-            clearInterval(watcher);
+            loadSidebarUserProfile();
 
-            if (typeof loadSidebarUserProfile === "function") {
-                loadSidebarUserProfile();
-            }
+            clearInterval(watcher);
 
         }
 
