@@ -31,3 +31,47 @@ function initializeSidebar() {
     waitForUserProfile();
 
 }
+
+function waitForUserProfile() {
+
+    const watcher = setInterval(() => {
+
+        if (
+            window.currentUserProfile &&
+            window.currentUserProfile.displayName
+        ) {
+
+            clearInterval(watcher);
+
+            if (typeof loadSidebarUserProfile === "function") {
+                loadSidebarUserProfile();
+            }
+
+        }
+
+    }, 100);
+
+}
+
+function highlightCurrentPage() {
+
+    const currentPage = window.location.pathname
+        .split("/")
+        .pop()
+        .toLowerCase();
+
+    document.querySelectorAll(".sidebar-nav .nav-item").forEach(link => {
+
+        link.classList.remove("active");
+
+        const href = (link.getAttribute("href") || "").toLowerCase();
+
+        if (href === currentPage) {
+
+            link.classList.add("active");
+
+        }
+
+    });
+
+}
