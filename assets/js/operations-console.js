@@ -1,8 +1,6 @@
 "use strict";
-
-// Use the globally available instances from firebase-config.js
-// const db = window.db;    // <-- REMOVED
-// const auth = window.auth; // <-- REMOVED
+const db = window.db;
+const auth = window.auth;
 
 const OPS = { user: null, stats: {}, collections: {}, activity: [], guides: [], initialized: !1 };
 const $ = e => document.querySelector(e);
@@ -43,10 +41,18 @@ async function initializeOperations() {
 }
 
 const sidebarProfileWatcher = setInterval(() => {
-    if (window.currentUserProfile && window.currentUserProfile.displayName) {
+
+    if (
+        window.currentUserProfile &&
+        window.currentUserProfile.displayName
+    ) {
+
         clearInterval(sidebarProfileWatcher);
+
         loadSidebarUserProfile();
+
     }
+
 }, 100);
 
 async function loadUser() {
@@ -62,24 +68,47 @@ function initializeLoader() {
 }
 
 function loadSidebarUserProfile() {
+
     const nameEl = document.getElementById("sidebarName");
     const roleEl = document.getElementById("sidebarRole");
     const emailEl = document.getElementById("sidebarEmail");
     const avatarEl = document.getElementById("sidebarAvatar");
+
     if (!nameEl || !roleEl || !emailEl || !avatarEl) return;
+
     if (!window.currentUserProfile) {
+
         nameEl.textContent = "Guest User";
         roleEl.textContent = "Not signed in";
         emailEl.textContent = "";
         avatarEl.textContent = "GU";
+
         return;
     }
+
     const profile = window.currentUserProfile;
-    const fullName = profile.displayName || profile.name || "Unknown User";
+
+    const fullName =
+        profile.displayName ||
+        profile.name ||
+        "Unknown User";
+
     nameEl.textContent = fullName;
-    roleEl.textContent = profile.role || "Authenticated User";
-    emailEl.textContent = profile.email || "";
-    avatarEl.textContent = fullName.split(" ").map(word => word.charAt(0)).join("").substring(0, 2).toUpperCase();
+
+    roleEl.textContent =
+        profile.role ||
+        "Authenticated User";
+
+    emailEl.textContent =
+        profile.email || "";
+
+    avatarEl.textContent = fullName
+        .split(" ")
+        .map(word => word.charAt(0))
+        .join("")
+        .substring(0, 2)
+        .toUpperCase();
+
 }
 
 function filterCommandResults() {
@@ -174,10 +203,10 @@ async function loadDashboard() {
 async function loadRealtimeStats() {
   try {
     const [users, guides, templates, feedback] = await Promise.all([
-      window.db.collection(COLLECTIONS.USERS).get(),
-      window.db.collection(COLLECTIONS.GUIDES).get(),
-      window.db.collection(COLLECTIONS.TEMPLATES).get(),
-      window.db.collection(COLLECTIONS.FEEDBACK).get()
+      db.collection(COLLECTIONS.USERS).get(),
+      db.collection(COLLECTIONS.GUIDES).get(),
+      db.collection(COLLECTIONS.TEMPLATES).get(),
+      db.collection(COLLECTIONS.FEEDBACK).get()
     ]);
     animateCounter(EL.activeUsers, users.size);
     animateCounter(EL.guideCount, guides.size);
@@ -186,22 +215,22 @@ async function loadRealtimeStats() {
   } catch (e) { console.error(e); }
 }
 
-window.db.collection(COLLECTIONS.USAGE).orderBy("timestamp", "desc").limit(1).onSnapshot(snap => {
+db.collection(COLLECTIONS.USAGE).orderBy("timestamp", "desc").limit(1).onSnapshot(snap => {
   let today = 0;
   snap.forEach(() => today++);
   animateCounter(EL.todayActions, today);
 });
 
-window.db.collection(COLLECTIONS.USAGE).onSnapshot(snapshot => { animateCounter(EL.metricViews, snapshot.size); });
-window.db.collection(COLLECTIONS.FEEDBACK).where("status", "==", "new").onSnapshot(snapshot => { animateCounter(EL.feedbackCount, snapshot.size); });
-window.db.collection(COLLECTIONS.AI).onSnapshot(snapshot => { animateCounter(EL.aiRequests, snapshot.size); });
-window.db.collection(COLLECTIONS.USAGE).where("type", "==", "search").onSnapshot(snapshot => { animateCounter(EL.metricSearches, snapshot.size); });
-window.db.collection(COLLECTIONS.USAGE).where("type", "==", "template").onSnapshot(snapshot => { animateCounter(EL.metricTemplates, snapshot.size); });
+db.collection(COLLECTIONS.USAGE).onSnapshot(snapshot => { animateCounter(EL.metricViews, snapshot.size); });
+db.collection(COLLECTIONS.FEEDBACK).where("status", "==", "new").onSnapshot(snapshot => { animateCounter(EL.feedbackCount, snapshot.size); });
+db.collection(COLLECTIONS.AI).onSnapshot(snapshot => { animateCounter(EL.aiRequests, snapshot.size); });
+db.collection(COLLECTIONS.USAGE).where("type", "==", "search").onSnapshot(snapshot => { animateCounter(EL.metricSearches, snapshot.size); });
+db.collection(COLLECTIONS.USAGE).where("type", "==", "template").onSnapshot(snapshot => { animateCounter(EL.metricTemplates, snapshot.size); });
 
 function loadRealtimeActivity() {
   const feed = $(".activity-feed");
   if (!feed) return;
-  window.db.collection(COLLECTIONS.SYSTEM).orderBy("timestamp", "desc").limit(15).onSnapshot(snapshot => {
+  db.collection(COLLECTIONS.SYSTEM).orderBy("timestamp", "desc").limit(15).onSnapshot(snapshot => {
     feed.innerHTML = "";
     snapshot.forEach(doc => {
       const d = doc.data();
@@ -214,7 +243,7 @@ function loadRealtimeActivity() {
 }
 
 function loadRealtimeHealth() {
-  window.db.collection(COLLECTIONS.SYSTEM).doc("status").onSnapshot(doc => {
+  db.collection(COLLECTIONS.SYSTEM).doc("status").onSnapshot(doc => {
     if (!doc.exists) return;
     const data = doc.data();
     updateHealth("#firebaseHealth", data.firebase);
@@ -256,7 +285,7 @@ const ENGINE = {
 };
 
 function initializeGlobalSearch() {
-  window.db.collection(COLLECTIONS.GUIDES).get().then(snap => {
+  db.collection(COLLECTIONS.GUIDES).get().then(snap => {
     ENGINE.guideIndex = [];
     snap.forEach(doc => {
       const d = doc.data();
@@ -266,7 +295,7 @@ function initializeGlobalSearch() {
 }
 
 function initializeNotificationCenter() {
-  window.db.collection(COLLECTIONS.SYSTEM).orderBy("timestamp", "desc").limit(20).onSnapshot(snapshot => {
+  db.collection(COLLECTIONS.SYSTEM).orderBy("timestamp", "desc").limit(20).onSnapshot(snapshot => {
     ENGINE.notifications = [];
     snapshot.forEach(doc => { ENGINE.notifications.push(doc.data()); });
     updateNotificationBadge();
@@ -281,7 +310,7 @@ function updateNotificationBadge() {
 }
 
 function initializeSessionMonitor() {
-  window.db.collection(COLLECTIONS.USERS).onSnapshot(snapshot => {
+  db.collection(COLLECTIONS.USERS).onSnapshot(snapshot => {
     ENGINE.sessions.clear();
     snapshot.forEach(doc => {
       const d = doc.data();
@@ -292,7 +321,7 @@ function initializeSessionMonitor() {
 }
 
 function initializeGuideHeatmap() {
-  window.db.collection(COLLECTIONS.USAGE).where("type", "==", "guide").onSnapshot(snapshot => {
+  db.collection(COLLECTIONS.USAGE).where("type", "==", "guide").onSnapshot(snapshot => {
     const counts = {};
     snapshot.forEach(doc => {
       const g = doc.data().guide;
@@ -317,7 +346,7 @@ function initializeAutoRefresh() {
 }
 
 function initializeAIEngine() {
-  window.db.collection(COLLECTIONS.AI).orderBy("timestamp", "desc").limit(1).onSnapshot(snapshot => {
+  db.collection(COLLECTIONS.AI).orderBy("timestamp", "desc").limit(1).onSnapshot(snapshot => {
     snapshot.forEach(doc => {
       const ai = doc.data();
       updateAIStatus(ai);
@@ -339,7 +368,7 @@ function initializeUsageLogger() {
     const target = e.target.closest("[data-track]");
     if (!target) return;
     try {
-      await window.db.collection(COLLECTIONS.USAGE).add({
+      await db.collection(COLLECTIONS.USAGE).add({
         type: target.dataset.track,
         label: target.dataset.label || target.innerText,
         user: OPS.user?.email || "unknown",
@@ -351,7 +380,7 @@ function initializeUsageLogger() {
 
 async function writeSystemLog(title) {
   try {
-    await window.db.collection(COLLECTIONS.SYSTEM).add({
+    await db.collection(COLLECTIONS.SYSTEM).add({
       title,
       user: OPS.user?.email,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
