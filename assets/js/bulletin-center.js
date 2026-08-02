@@ -1389,29 +1389,3 @@ function getSelectedBulletin() {
 
 }
 
-// ======================================
-// Sidebar User Profile
-// ======================================
-
-function loadSidebarUserProfile() {
-
-    const nameEl = document.getElementById("sidebarUserName");
-    const roleEl = document.getElementById("sidebarUserRole");
-
-    if (!nameEl || !roleEl) return;
-
-    if (!window.currentUserProfile) {
-
-        nameEl.textContent = "Guest User";
-        roleEl.textContent = "Not signed in";
-
-        return;
-    }
-
-    nameEl.textContent =
-        window.currentUserProfile.displayName || "Unknown User";
-
-    roleEl.textContent =
-        window.currentUserProfile.role || "Authenticated User";
-
-}
