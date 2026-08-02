@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", initializeOperations);
 async function initializeOperations() {
   await loadUser();
   initializeLoader();
-  initializeCommandPalette();
   initializeQuickActions();
   initializeAnimations();
   initializeKeyboard();
@@ -110,22 +109,6 @@ function loadSidebarUserProfile() {
         .substring(0, 2)
         .toUpperCase();
 
-}
-
-function initializeCommandPalette() {
-  if (!EL.overlay) return;
-  EL.commandBtn?.addEventListener("click", openCommandPalette);
-  EL.close?.addEventListener("click", closeCommandPalette);
-  EL.overlay.addEventListener("click", e => { if (e.target === EL.overlay) closeCommandPalette(); });
-  EL.search?.addEventListener("input", filterCommandResults);
-}
-
-function openCommandPalette() { EL.overlay.classList.add("show"); EL.search?.focus(); }
-
-function closeCommandPalette() {
-  EL.overlay.classList.remove("show");
-  if (EL.search) EL.search.value = "";
-  filterCommandResults();
 }
 
 function filterCommandResults() {
