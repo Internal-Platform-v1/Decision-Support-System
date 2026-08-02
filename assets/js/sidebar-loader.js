@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         container.innerHTML = await response.text();
 
+        highlightCurrentPage();
+
         initializeSidebar();
 
     } catch (error) {
@@ -48,5 +50,25 @@ function waitForUserProfile() {
         }
 
     }, 100);
+
+}
+
+function highlightCurrentPage() {
+
+    const container = document.getElementById("sidebar-container");
+
+    if (!container) return;
+
+    const activePage = container.dataset.active;
+
+    document.querySelectorAll(".sidebar-nav .nav-item").forEach(link => {
+
+        link.classList.remove("active");
+
+        if (link.getAttribute("href") === activePage) {
+            link.classList.add("active");
+        }
+
+    });
 
 }
