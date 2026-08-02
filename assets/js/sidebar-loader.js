@@ -18,15 +18,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Sidebar failed to load:", error);
 
     }
 
 });
 
 function initializeSidebar() {
-
-    highlightCurrentPage();
 
     waitForUserProfile();
 
@@ -50,25 +48,5 @@ function waitForUserProfile() {
         }
 
     }, 100);
-
-}
-
-function highlightCurrentPage() {
-
-    const current = window.location.pathname
-        .split("/")
-        .pop() || "operations-console.html";
-
-    document.querySelectorAll(".sidebar-nav .nav-item").forEach(link => {
-
-        const href = link.getAttribute("href");
-
-        link.classList.remove("active");
-
-        if (href === current) {
-            link.classList.add("active");
-        }
-
-    });
 
 }
