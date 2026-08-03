@@ -1,3 +1,199 @@
+/*==================================================
+ENTERPRISE BULLETIN CENTER
+INITIALIZATION
+==================================================*/
+
+const UI = {
+
+themeToggle:document.getElementById("themeToggle"),
+
+heroPublished:document.getElementById("todayPublished"),
+heroViews:document.getElementById("todayViews"),
+heroDrafts:document.getElementById("draftCountHero"),
+heroScheduled:document.getElementById("scheduledCountHero"),
+
+kpiTotal:document.getElementById("totalBulletins"),
+kpiPublished:document.getElementById("publishedCount"),
+kpiDrafts:document.getElementById("draftCount"),
+kpiViews:document.getElementById("totalViews"),
+kpiCritical:document.getElementById("criticalCount"),
+kpiScheduled:document.getElementById("scheduledCount"),
+
+search:document.getElementById("bulletinSearch"),
+
+drawer:document.getElementById("composeDrawer"),
+
+newButton:document.getElementById("newBulletinBtn"),
+fabButton:document.getElementById("fabNewBulletin"),
+
+closeDrawer:document.getElementById("closeDrawerBtn"),
+
+publishButton:document.getElementById("publishBulletinBtn"),
+draftButton:document.getElementById("saveDraftBtn")
+
+};
+
+let bulletinCache=[];
+let selectedBulletin=null;
+
+/*==================================================
+COUNTER
+==================================================*/
+
+function animateCounter(element,target){
+
+if(!element)return;
+
+const start=0;
+
+const duration=800;
+
+const increment=Math.max(1,Math.ceil(target/40));
+
+let value=start;
+
+const timer=setInterval(()=>{
+
+value+=increment;
+
+if(value>=target){
+
+value=target;
+
+clearInterval(timer);
+
+}
+
+element.textContent=value.toLocaleString();
+
+},duration/40);
+
+}
+
+/*==================================================
+REFRESH DASHBOARD
+==================================================*/
+
+function refreshDashboard(){
+
+const total=bulletinCache.length;
+
+const published=bulletinCache.filter(x=>x.status==="published").length;
+
+const drafts=bulletinCache.filter(x=>x.status==="draft").length;
+
+const scheduled=bulletinCache.filter(x=>x.status==="scheduled").length;
+
+const critical=bulletinCache.filter(x=>x.priority==="critical").length;
+
+const totalViews=bulletinCache.reduce((sum,x)=>sum+(x.views||0),0);
+
+animateCounter(UI.heroPublished,published);
+
+animateCounter(UI.heroViews,totalViews);
+
+animateCounter(UI.heroDrafts,drafts);
+
+animateCounter(UI.heroScheduled,scheduled);
+
+animateCounter(UI.kpiTotal,total);
+
+animateCounter(UI.kpiPublished,published);
+
+animateCounter(UI.kpiDrafts,drafts);
+
+animateCounter(UI.kpiViews,totalViews);
+
+animateCounter(UI.kpiCritical,critical);
+
+animateCounter(UI.kpiScheduled,scheduled);
+
+}
+
+/*==================================================
+THEME
+==================================================*/
+
+function initializeTheme(){
+
+if(!UI.themeToggle)return;
+
+const saved=localStorage.getItem("ops-theme")||"light";
+
+document.body.classList.toggle("theme-dark",saved==="dark");
+
+UI.themeToggle.checked=saved==="dark";
+
+const label=document.querySelector(".theme-text");
+
+if(label){
+
+label.textContent=saved==="dark"?"Dark":"Light";
+
+}
+
+UI.themeToggle.onchange=()=>{
+
+const dark=UI.themeToggle.checked;
+
+document.body.classList.toggle("theme-dark",dark);
+
+localStorage.setItem("ops-theme",dark?"dark":"light");
+
+const text=document.querySelector(".theme-text");
+
+if(text){
+
+text.textContent=dark?"Dark":"Light";
+
+}
+
+};
+
+}
+
+/*==================================================
+DRAWER
+==================================================*/
+
+function openDrawer(){
+
+UI.drawer.classList.add("open");
+
+document.querySelector(".drawer-backdrop")?.classList.add("show");
+
+}
+
+function closeDrawer(){
+
+UI.drawer.classList.remove("open");
+
+document.querySelector(".drawer-backdrop")?.classList.remove("show");
+
+}
+
+UI.newButton?.addEventListener("click",openDrawer);
+
+UI.fabButton?.addEventListener("click",openDrawer);
+
+UI.closeDrawer?.addEventListener("click",closeDrawer);
+
+document.querySelector(".drawer-backdrop")?.addEventListener("click",closeDrawer);
+
+/*==================================================
+START
+==================================================*/
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+initializeTheme();
+
+refreshDashboard();
+
+});
+
+
+
 window.editMode = false;
 window.copyMode = false;
 window.currentBulletin = null;
