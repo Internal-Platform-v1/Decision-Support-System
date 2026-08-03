@@ -224,7 +224,11 @@ BulletinService.listenPublished((bulletins) => {
         clearPreview();
 
     }
+const loadingOverlay=document.getElementById("loadingOverlay");
 
+if(loadingOverlay){
+loadingOverlay.classList.add("hidden");
+}
 });
 
     // ==========================================================
