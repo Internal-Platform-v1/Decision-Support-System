@@ -201,6 +201,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     BulletinUI.init();
+
+document.getElementById("heroNewBulletin")
+?.addEventListener("click",()=>{
+
+document.getElementById("newBulletinBtn").click();
+
+});
+
+document.getElementById("heroRefresh")
+?.addEventListener("click",()=>{
+
+location.reload();
+
+});
+    
     // ==========================================================
 // Search
 // ==========================================================
