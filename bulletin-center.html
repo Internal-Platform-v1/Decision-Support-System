@@ -21,298 +21,294 @@
   <!-- Sidebar -->
   <div id="sidebar-container" data-active="bulletin-center.html"></div>
 
-  <!-- Main Content -->
-  <div class="console-main">
+  <!-- Main content – original class structure preserved -->
+  <main class="console-main content">
 
-    <!-- Header (shared, includes theme toggle) -->
+    <!-- Shared header (includes theme toggle) -->
     <div id="header-container"></div>
 
-    <!-- Page Content -->
-    <main class="content">
+    <!-- Page-specific topbar -->
+    <header class="topbar">
+      <div class="title-area">
+        <h1>Enterprise Bulletin Center</h1>
+        <p>Internal communications, announcements and guide updates</p>
+      </div>
 
-      <!-- Page-specific topbar -->
-      <header class="topbar">
-        <div class="title-area">
-          <h1>Enterprise Bulletin Center</h1>
-          <p>Internal communications, announcements and guide updates</p>
+      <div class="top-actions">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="bulletinSearch" type="text" placeholder="Search bulletins...">
         </div>
 
-        <div class="top-actions">
-          <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input id="bulletinSearch" type="text" placeholder="Search bulletins...">
+        <button class="icon-btn">
+          <i class="fa-regular fa-bell"></i>
+          <span class="notify">5</span>
+        </button>
+
+        <button id="newBulletinBtn" class="primary-btn">
+          <i class="fa-solid fa-plus"></i>
+          <span>New Bulletin</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- KPI Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon purple"><i class="fa-solid fa-newspaper"></i></div>
+        <div class="kpi-info">
+          <span>Total Bulletins</span>
+          <h2>142</h2>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon green"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="kpi-info">
+          <span>Published</span>
+          <h2>118</h2>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon orange"><i class="fa-solid fa-pen"></i></div>
+        <div class="kpi-info">
+          <span>Drafts</span>
+          <h2>16</h2>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon blue"><i class="fa-solid fa-eye"></i></div>
+        <div class="kpi-info">
+          <span>Total Views</span>
+          <h2>48.7K</h2>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon red"><i class="fa-solid fa-envelope-open"></i></div>
+        <div class="kpi-info">
+          <span>Unread</span>
+          <h2>247</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter Bar -->
+    <section class="filter-bar">
+      <button class="filter active">All</button>
+      <button class="filter">Published</button>
+      <button class="filter">Draft</button>
+      <button class="filter">Critical</button>
+      <button class="filter">Guide Updates</button>
+      <button class="filter">Maintenance</button>
+      <button class="filter">Security</button>
+    </section>
+
+    <!-- Workspace -->
+    <section class="workspace">
+
+      <!-- Feed Panel -->
+      <div class="feed-panel">
+        <div class="feed-header">
+          <div>
+            <h2>Enterprise Bulletins</h2>
+            <p>Latest enterprise communications organized by category</p>
           </div>
-
-          <button class="icon-btn">
-            <i class="fa-regular fa-bell"></i>
-            <span class="notify">5</span>
-          </button>
-
-          <button id="newBulletinBtn" class="primary-btn">
-            <i class="fa-solid fa-plus"></i>
-            <span>New Bulletin</span>
-          </button>
+          <button class="ghost-btn" id="refreshBulletins"><i class="fa-solid fa-arrow-rotate-right"></i>Refresh</button>
         </div>
-      </header>
 
-      <!-- KPI Grid -->
-      <section class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-icon purple"><i class="fa-solid fa-newspaper"></i></div>
-          <div class="kpi-info">
-            <span>Total Bulletins</span>
-            <h2>142</h2>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon green"><i class="fa-solid fa-circle-check"></i></div>
-          <div class="kpi-info">
-            <span>Published</span>
-            <h2>118</h2>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon orange"><i class="fa-solid fa-pen"></i></div>
-          <div class="kpi-info">
-            <span>Drafts</span>
-            <h2>16</h2>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon blue"><i class="fa-solid fa-eye"></i></div>
-          <div class="kpi-info">
-            <span>Total Views</span>
-            <h2>48.7K</h2>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-icon red"><i class="fa-solid fa-envelope-open"></i></div>
-          <div class="kpi-info">
-            <span>Unread</span>
-            <h2>247</h2>
-          </div>
-        </div>
-      </section>
+        <div class="bulletin-category-list" id="bulletinCategories">
 
-      <!-- Filter Bar -->
-      <section class="filter-bar">
-        <button class="filter active">All</button>
-        <button class="filter">Published</button>
-        <button class="filter">Draft</button>
-        <button class="filter">Critical</button>
-        <button class="filter">Guide Updates</button>
-        <button class="filter">Maintenance</button>
-        <button class="filter">Security</button>
-      </section>
-
-      <!-- Workspace -->
-      <section class="workspace">
-
-        <!-- Feed Panel -->
-        <div class="feed-panel">
-          <div class="feed-header">
-            <div>
-              <h2>Enterprise Bulletins</h2>
-              <p>Latest enterprise communications organized by category</p>
+          <!-- Announcements -->
+          <section class="bulletin-section">
+            <div class="section-head">
+              <h3>📢 Announcements</h3>
+              <span id="announcementCount" class="badge-count">0</span>
             </div>
-            <button class="ghost-btn" id="refreshBulletins"><i class="fa-solid fa-arrow-rotate-right"></i>Refresh</button>
-          </div>
+            <div id="announcementList" class="mini-list"></div>
+            <button class="view-all-btn" data-category="announcement">
+              View All <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </section>
 
-          <div class="bulletin-category-list" id="bulletinCategories">
+          <!-- What's New -->
+          <section class="bulletin-section">
+            <div class="section-head">
+              <h3>✨ What's New?</h3>
+              <span id="whatsNewCount" class="badge-count">0</span>
+            </div>
+            <div id="whatsNewList" class="mini-list"></div>
+            <button class="view-all-btn" data-category="whatsnew">
+              View All <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </section>
 
-            <!-- Announcements -->
-            <section class="bulletin-section">
-              <div class="section-head">
-                <h3>📢 Announcements</h3>
-                <span id="announcementCount" class="badge-count">0</span>
-              </div>
-              <div id="announcementList" class="mini-list"></div>
-              <button class="view-all-btn" data-category="announcement">
-                View All <i class="fa-solid fa-arrow-right"></i>
-              </button>
-            </section>
+          <!-- Reminders -->
+          <section class="bulletin-section">
+            <div class="section-head">
+              <h3>⚠ Important Reminders</h3>
+              <span id="reminderCount" class="badge-count">0</span>
+            </div>
+            <div id="reminderList" class="mini-list"></div>
+            <button class="view-all-btn" data-category="reminder">
+              View All <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </section>
 
-            <!-- What's New -->
-            <section class="bulletin-section">
-              <div class="section-head">
-                <h3>✨ What's New?</h3>
-                <span id="whatsNewCount" class="badge-count">0</span>
-              </div>
-              <div id="whatsNewList" class="mini-list"></div>
-              <button class="view-all-btn" data-category="whatsnew">
-                View All <i class="fa-solid fa-arrow-right"></i>
-              </button>
-            </section>
+          <!-- Known Issues -->
+          <section class="bulletin-section">
+            <div class="section-head">
+              <h3>🐞 Known Issues</h3>
+              <span id="issueCount" class="badge-count">0</span>
+            </div>
+            <div id="issueList" class="mini-list"></div>
+            <button class="view-all-btn" data-category="issue">
+              View All <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </section>
 
-            <!-- Reminders -->
-            <section class="bulletin-section">
-              <div class="section-head">
-                <h3>⚠ Important Reminders</h3>
-                <span id="reminderCount" class="badge-count">0</span>
-              </div>
-              <div id="reminderList" class="mini-list"></div>
-              <button class="view-all-btn" data-category="reminder">
-                View All <i class="fa-solid fa-arrow-right"></i>
-              </button>
-            </section>
+          <!-- Guides -->
+          <section class="bulletin-section">
+            <div class="section-head">
+              <h3>📚 New Guides Added</h3>
+              <span id="guideCount" class="badge-count">0</span>
+            </div>
+            <div id="guideList" class="mini-list"></div>
+            <button class="view-all-btn" data-category="guide">
+              View All <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </section>
 
-            <!-- Known Issues -->
-            <section class="bulletin-section">
-              <div class="section-head">
-                <h3>🐞 Known Issues</h3>
-                <span id="issueCount" class="badge-count">0</span>
-              </div>
-              <div id="issueList" class="mini-list"></div>
-              <button class="view-all-btn" data-category="issue">
-                View All <i class="fa-solid fa-arrow-right"></i>
-              </button>
-            </section>
+        </div>
+      </div>
 
-            <!-- Guides -->
-            <section class="bulletin-section">
-              <div class="section-head">
-                <h3>📚 New Guides Added</h3>
-                <span id="guideCount" class="badge-count">0</span>
-              </div>
-              <div id="guideList" class="mini-list"></div>
-              <button class="view-all-btn" data-category="guide">
-                View All <i class="fa-solid fa-arrow-right"></i>
-              </button>
-            </section>
-
+      <!-- Preview Panel -->
+      <aside class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-tabs">
+            <button class="tab active">Preview</button>
+            <button class="tab">Compose</button>
+            <button class="tab">Analytics</button>
+            <button class="tab">History</button>
           </div>
         </div>
 
-        <!-- Preview Panel -->
-        <aside class="preview-panel">
-          <div class="preview-header">
-            <div class="preview-tabs">
-              <button class="tab active">Preview</button>
-              <button class="tab">Compose</button>
-              <button class="tab">Analytics</button>
-              <button class="tab">History</button>
+        <div id="previewContent" class="preview-content">
+          <div class="preview-banner">
+            <span id="previewPriority" class="priority critical">CRITICAL</span>
+            <div class="preview-actions">
+              <button id="editBulletinBtn"><i class="fa-regular fa-pen-to-square"></i></button>
+              <button id="copyBulletinBtn"><i class="fa-regular fa-copy"></i></button>
+              <button id="deleteBulletinBtn"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
 
-          <div id="previewContent" class="preview-content">
-            <div class="preview-banner">
-              <span id="previewPriority" class="priority critical">CRITICAL</span>
-              <div class="preview-actions">
-                <button id="editBulletinBtn"><i class="fa-regular fa-pen-to-square"></i></button>
-                <button id="copyBulletinBtn"><i class="fa-regular fa-copy"></i></button>
-                <button id="deleteBulletinBtn"><i class="fa-solid fa-trash"></i></button>
-              </div>
+          <div class="preview-title">
+            <h2 id="previewTitle">Scheduled System Maintenance</h2>
+            <div class="preview-info">
+              <span><i class="fa-solid fa-building"></i> <span id="previewAuthor">IT Operations</span></span>
+              <span><i class="fa-regular fa-calendar"></i> <span id="previewDate">July 10, 2026</span></span>
+              <span><i class="fa-regular fa-eye"></i> <span id="previewViews">482 Views</span></span>
             </div>
+          </div>
 
-            <div class="preview-title">
-              <h2 id="previewTitle">Scheduled System Maintenance</h2>
-              <div class="preview-info">
-                <span><i class="fa-solid fa-building"></i> <span id="previewAuthor">IT Operations</span></span>
-                <span><i class="fa-regular fa-calendar"></i> <span id="previewDate">July 10, 2026</span></span>
-                <span><i class="fa-regular fa-eye"></i> <span id="previewViews">482 Views</span></span>
-              </div>
-            </div>
-
-            <div class="preview-message">
-              <div id="previewMessage">
-                <p>
-                  The Enterprise Bulletin Center will undergo scheduled maintenance tonight from
-                  <strong>11:00 PM until 1:00 AM.</strong> During this maintenance window,
-                  employees may experience temporary interruptions when accessing internal
-                  applications and services.
-                </p>
-                <p>
-                  This activity is necessary to improve system performance, deploy security
-                  updates, and increase infrastructure reliability across the enterprise.
-                  Please save all ongoing work before the maintenance window begins.
-                </p>
-                <div class="info-box">
-                  <div class="info-icon">
-                    <i class="fa-solid fa-circle-info"></i>
-                  </div>
-                  <div>
-                    <h4>Employee Reminder</h4>
-                    <p>
-                      Log out of all enterprise applications before 11:00 PM and reconnect
-                      after maintenance has been completed.
-                    </p>
-                  </div>
+          <div class="preview-message">
+            <div id="previewMessage">
+              <p>
+                The Enterprise Bulletin Center will undergo scheduled maintenance tonight from
+                <strong>11:00 PM until 1:00 AM.</strong> During this maintenance window,
+                employees may experience temporary interruptions when accessing internal
+                applications and services.
+              </p>
+              <p>
+                This activity is necessary to improve system performance, deploy security
+                updates, and increase infrastructure reliability across the enterprise.
+                Please save all ongoing work before the maintenance window begins.
+              </p>
+              <div class="info-box">
+                <div class="info-icon">
+                  <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <div>
+                  <h4>Employee Reminder</h4>
+                  <p>
+                    Log out of all enterprise applications before 11:00 PM and reconnect
+                    after maintenance has been completed.
+                  </p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Attachments -->
-            <div class="attachment-section">
-              <div class="section-title">
-                <h3>Attachments</h3>
-                <button class="text-btn">View All</button>
-              </div>
-              <div id="previewAttachments" class="attachment-list">
-                <div class="attachment-card">
-                  <div class="file-icon pdf"><i class="fa-solid fa-file-pdf"></i></div>
-                  <div class="file-info">
-                    <h4>Maintenance Schedule.pdf</h4>
-                    <span>2.3 MB</span>
-                  </div>
-                  <button class="download-btn"><i class="fa-solid fa-download"></i></button>
-                </div>
-                <div class="attachment-card">
-                  <div class="file-icon excel"><i class="fa-solid fa-file-excel"></i></div>
-                  <div class="file-info">
-                    <h4>Server Checklist.xlsx</h4>
-                    <span>842 KB</span>
-                  </div>
-                  <button class="download-btn"><i class="fa-solid fa-download"></i></button>
-                </div>
-              </div>
+          <!-- Attachments -->
+          <div class="attachment-section">
+            <div class="section-title">
+              <h3>Attachments</h3>
+              <button class="text-btn">View All</button>
             </div>
-
-            <!-- Audience -->
-            <div class="audience-section">
-              <div class="section-title">
-                <h3>Audience</h3>
+            <div id="previewAttachments" class="attachment-list">
+              <div class="attachment-card">
+                <div class="file-icon pdf"><i class="fa-solid fa-file-pdf"></i></div>
+                <div class="file-info">
+                  <h4>Maintenance Schedule.pdf</h4>
+                  <span>2.3 MB</span>
+                </div>
+                <button class="download-btn"><i class="fa-solid fa-download"></i></button>
               </div>
-              <div id="previewAudience" class="audience-tags">
-                <span>All Employees</span>
-                <span>IT Operations</span>
-                <span>Customer Support</span>
-                <span>Management</span>
-              </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span>Total Views</span>
-                <h2>482</h2>
-                <small><i class="fa-solid fa-arrow-trend-up"></i> +12% Today</small>
-              </div>
-              <div class="stat-card">
-                <span>Read Rate</span>
-                <h2>94%</h2>
-                <small><i class="fa-solid fa-circle-check"></i> Excellent</small>
-              </div>
-              <div class="stat-card">
-                <span>Unread</span>
-                <h2>31</h2>
-                <small><i class="fa-solid fa-envelope"></i> Pending</small>
-              </div>
-              <div class="stat-card">
-                <span>Dismissed</span>
-                <h2>18</h2>
-                <small><i class="fa-solid fa-xmark"></i> Hidden</small>
+              <div class="attachment-card">
+                <div class="file-icon excel"><i class="fa-solid fa-file-excel"></i></div>
+                <div class="file-info">
+                  <h4>Server Checklist.xlsx</h4>
+                  <span>842 KB</span>
+                </div>
+                <button class="download-btn"><i class="fa-solid fa-download"></i></button>
               </div>
             </div>
           </div>
-        </aside>
 
-      </section>
+          <!-- Audience -->
+          <div class="audience-section">
+            <div class="section-title">
+              <h3>Audience</h3>
+            </div>
+            <div id="previewAudience" class="audience-tags">
+              <span>All Employees</span>
+              <span>IT Operations</span>
+              <span>Customer Support</span>
+              <span>Management</span>
+            </div>
+          </div>
 
-      <!-- Footer -->
-      <div id="footer-container"></div>
+          <!-- Stats -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span>Total Views</span>
+              <h2>482</h2>
+              <small><i class="fa-solid fa-arrow-trend-up"></i> +12% Today</small>
+            </div>
+            <div class="stat-card">
+              <span>Read Rate</span>
+              <h2>94%</h2>
+              <small><i class="fa-solid fa-circle-check"></i> Excellent</small>
+            </div>
+            <div class="stat-card">
+              <span>Unread</span>
+              <h2>31</h2>
+              <small><i class="fa-solid fa-envelope"></i> Pending</small>
+            </div>
+            <div class="stat-card">
+              <span>Dismissed</span>
+              <h2>18</h2>
+              <small><i class="fa-solid fa-xmark"></i> Hidden</small>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-    </main>
-  </div>
+    </section>
+
+    <!-- Shared footer -->
+    <div id="footer-container"></div>
+
+  </main>
 </div>
 
 <!-- Floating Action Button -->
