@@ -9,42 +9,37 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
-  <!-- Operations Theme (light/dark variables) -->
-  <link rel="stylesheet" href="assets/css/operations-theme.css">
-  <!-- Operations UI (global styles) -->
+  <link rel="stylesheet" href="assets/css/sidebar.css"> 
   <link rel="stylesheet" href="assets/css/operations-ui.css">
-  <!-- Bulletin-specific styles (now uses ops variables) -->
   <link rel="stylesheet" href="assets/css/bulletin-center.css">
-  <!-- Sidebar styles -->
-  <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
-<body class="theme-light">
+
+<body>
 
 <div class="console-layout">
 
-  <!-- Sidebar -->
-  <div id="sidebar-container" data-active="bulletin-center.html"></div>
+<div id="sidebar-container" data-active="bulletin-center.html"></div>
+  <!-- ================= Main ================= -->
 
-  <!-- Main content – original class 'console-main content' preserved -->
   <main class="console-main content">
 
-    <!-- Shared header (injects theme toggle) -->
-    <div id="header-container"></div>
+    <!-- ================= Header ================= -->
 
-    <!-- ============================================ -->
-    <!-- PAGE-SPECIFIC TOPBAR (unchanged)              -->
-    <!-- ============================================ -->
     <header class="topbar">
+
       <div class="title-area">
         <h1>Enterprise Bulletin Center</h1>
         <p>Internal communications, announcements and guide updates</p>
       </div>
 
       <div class="top-actions">
+
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="bulletinSearch" type="text" placeholder="Search bulletins...">
+          <input
+id="bulletinSearch"
+type="text"
+placeholder="Search bulletins...">
         </div>
 
         <button class="icon-btn">
@@ -52,15 +47,21 @@
           <span class="notify">5</span>
         </button>
 
-        <button id="newBulletinBtn" class="primary-btn">
+        <button
+    id="newBulletinBtn"
+    class="primary-btn">
           <i class="fa-solid fa-plus"></i>
           <span>New Bulletin</span>
         </button>
+
       </div>
+
     </header>
 
-    <!-- KPI Grid -->
+    <!-- ================= KPI ================= -->
+
     <section class="kpi-grid">
+
       <div class="kpi-card">
         <div class="kpi-icon purple"><i class="fa-solid fa-newspaper"></i></div>
         <div class="kpi-info">
@@ -68,6 +69,7 @@
           <h2>142</h2>
         </div>
       </div>
+
       <div class="kpi-card">
         <div class="kpi-icon green"><i class="fa-solid fa-circle-check"></i></div>
         <div class="kpi-info">
@@ -75,6 +77,7 @@
           <h2>118</h2>
         </div>
       </div>
+
       <div class="kpi-card">
         <div class="kpi-icon orange"><i class="fa-solid fa-pen"></i></div>
         <div class="kpi-info">
@@ -82,6 +85,7 @@
           <h2>16</h2>
         </div>
       </div>
+
       <div class="kpi-card">
         <div class="kpi-icon blue"><i class="fa-solid fa-eye"></i></div>
         <div class="kpi-info">
@@ -89,6 +93,7 @@
           <h2>48.7K</h2>
         </div>
       </div>
+
       <div class="kpi-card">
         <div class="kpi-icon red"><i class="fa-solid fa-envelope-open"></i></div>
         <div class="kpi-info">
@@ -96,10 +101,13 @@
           <h2>247</h2>
         </div>
       </div>
+
     </section>
 
-    <!-- Filter Bar -->
+    <!-- ================= Filter Bar ================= -->
+
     <section class="filter-bar">
+
       <button class="filter active">All</button>
       <button class="filter">Published</button>
       <button class="filter">Draft</button>
@@ -107,390 +115,673 @@
       <button class="filter">Guide Updates</button>
       <button class="filter">Maintenance</button>
       <button class="filter">Security</button>
+
     </section>
 
-    <!-- Workspace -->
+    <!-- ================= Workspace ================= -->
+
     <section class="workspace">
 
-      <!-- Feed Panel -->
-      <div class="feed-panel">
-        <div class="feed-header">
-          <div>
-            <h2>Enterprise Bulletins</h2>
-            <p>Latest enterprise communications organized by category</p>
-          </div>
-          <button class="ghost-btn" id="refreshBulletins"><i class="fa-solid fa-arrow-rotate-right"></i>Refresh</button>
-        </div>
+<!--================= FEED PANEL =================-->
+<div class="feed-panel">
 
-        <div class="bulletin-category-list" id="bulletinCategories">
-
-          <!-- Announcements -->
-          <section class="bulletin-section">
-            <div class="section-head">
-              <h3>📢 Announcements</h3>
-              <span id="announcementCount" class="badge-count">0</span>
-            </div>
-            <div id="announcementList" class="mini-list"></div>
-            <button class="view-all-btn" data-category="announcement">
-              View All <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </section>
-
-          <!-- What's New -->
-          <section class="bulletin-section">
-            <div class="section-head">
-              <h3>✨ What's New?</h3>
-              <span id="whatsNewCount" class="badge-count">0</span>
-            </div>
-            <div id="whatsNewList" class="mini-list"></div>
-            <button class="view-all-btn" data-category="whatsnew">
-              View All <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </section>
-
-          <!-- Reminders -->
-          <section class="bulletin-section">
-            <div class="section-head">
-              <h3>⚠ Important Reminders</h3>
-              <span id="reminderCount" class="badge-count">0</span>
-            </div>
-            <div id="reminderList" class="mini-list"></div>
-            <button class="view-all-btn" data-category="reminder">
-              View All <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </section>
-
-          <!-- Known Issues -->
-          <section class="bulletin-section">
-            <div class="section-head">
-              <h3>🐞 Known Issues</h3>
-              <span id="issueCount" class="badge-count">0</span>
-            </div>
-            <div id="issueList" class="mini-list"></div>
-            <button class="view-all-btn" data-category="issue">
-              View All <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </section>
-
-          <!-- Guides -->
-          <section class="bulletin-section">
-            <div class="section-head">
-              <h3>📚 New Guides Added</h3>
-              <span id="guideCount" class="badge-count">0</span>
-            </div>
-            <div id="guideList" class="mini-list"></div>
-            <button class="view-all-btn" data-category="guide">
-              View All <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </section>
-
-        </div>
-      </div>
-
-      <!-- Preview Panel -->
-      <aside class="preview-panel">
-        <div class="preview-header">
-          <div class="preview-tabs">
-            <button class="tab active">Preview</button>
-            <button class="tab">Compose</button>
-            <button class="tab">Analytics</button>
-            <button class="tab">History</button>
-          </div>
-        </div>
-
-        <div id="previewContent" class="preview-content">
-          <div class="preview-banner">
-            <span id="previewPriority" class="priority critical">CRITICAL</span>
-            <div class="preview-actions">
-              <button id="editBulletinBtn"><i class="fa-regular fa-pen-to-square"></i></button>
-              <button id="copyBulletinBtn"><i class="fa-regular fa-copy"></i></button>
-              <button id="deleteBulletinBtn"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-
-          <div class="preview-title">
-            <h2 id="previewTitle">Scheduled System Maintenance</h2>
-            <div class="preview-info">
-              <span><i class="fa-solid fa-building"></i> <span id="previewAuthor">IT Operations</span></span>
-              <span><i class="fa-regular fa-calendar"></i> <span id="previewDate">July 10, 2026</span></span>
-              <span><i class="fa-regular fa-eye"></i> <span id="previewViews">482 Views</span></span>
-            </div>
-          </div>
-
-          <div class="preview-message">
-            <div id="previewMessage">
-              <p>
-                The Enterprise Bulletin Center will undergo scheduled maintenance tonight from
-                <strong>11:00 PM until 1:00 AM.</strong> During this maintenance window,
-                employees may experience temporary interruptions when accessing internal
-                applications and services.
-              </p>
-              <p>
-                This activity is necessary to improve system performance, deploy security
-                updates, and increase infrastructure reliability across the enterprise.
-                Please save all ongoing work before the maintenance window begins.
-              </p>
-              <div class="info-box">
-                <div class="info-icon">
-                  <i class="fa-solid fa-circle-info"></i>
-                </div>
-                <div>
-                  <h4>Employee Reminder</h4>
-                  <p>
-                    Log out of all enterprise applications before 11:00 PM and reconnect
-                    after maintenance has been completed.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Attachments -->
-          <div class="attachment-section">
-            <div class="section-title">
-              <h3>Attachments</h3>
-              <button class="text-btn">View All</button>
-            </div>
-            <div id="previewAttachments" class="attachment-list">
-              <div class="attachment-card">
-                <div class="file-icon pdf"><i class="fa-solid fa-file-pdf"></i></div>
-                <div class="file-info">
-                  <h4>Maintenance Schedule.pdf</h4>
-                  <span>2.3 MB</span>
-                </div>
-                <button class="download-btn"><i class="fa-solid fa-download"></i></button>
-              </div>
-              <div class="attachment-card">
-                <div class="file-icon excel"><i class="fa-solid fa-file-excel"></i></div>
-                <div class="file-info">
-                  <h4>Server Checklist.xlsx</h4>
-                  <span>842 KB</span>
-                </div>
-                <button class="download-btn"><i class="fa-solid fa-download"></i></button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Audience -->
-          <div class="audience-section">
-            <div class="section-title">
-              <h3>Audience</h3>
-            </div>
-            <div id="previewAudience" class="audience-tags">
-              <span>All Employees</span>
-              <span>IT Operations</span>
-              <span>Customer Support</span>
-              <span>Management</span>
-            </div>
-          </div>
-
-          <!-- Stats -->
-          <div class="stats-grid">
-            <div class="stat-card">
-              <span>Total Views</span>
-              <h2>482</h2>
-              <small><i class="fa-solid fa-arrow-trend-up"></i> +12% Today</small>
-            </div>
-            <div class="stat-card">
-              <span>Read Rate</span>
-              <h2>94%</h2>
-              <small><i class="fa-solid fa-circle-check"></i> Excellent</small>
-            </div>
-            <div class="stat-card">
-              <span>Unread</span>
-              <h2>31</h2>
-              <small><i class="fa-solid fa-envelope"></i> Pending</small>
-            </div>
-            <div class="stat-card">
-              <span>Dismissed</span>
-              <h2>18</h2>
-              <small><i class="fa-solid fa-xmark"></i> Hidden</small>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-    </section>
-
-    <!-- Shared footer -->
-    <div id="footer-container"></div>
-
-  </main>
+<div class="feed-header">
+<div>
+<h2>Enterprise Bulletins</h2>
+<p>Latest enterprise communications organized by category</p>
+</div>
+<button class="ghost-btn" id="refreshBulletins"><i class="fa-solid fa-arrow-rotate-right"></i>Refresh</button>
 </div>
 
-<!-- Floating Action Button -->
-<button class="fab" id="fabNewBulletin" title="Create Bulletin">
-  <i class="fa-solid fa-plus"></i>
+<div class="bulletin-category-list" id="bulletinCategories">
+
+<!-- ANNOUNCEMENTS -->
+<section class="bulletin-section">
+<div class="section-head">
+<h3>📢 Announcements</h3>
+<span
+    id="announcementCount"
+    class="badge-count">
+0
+</span>
+</div>
+
+<div
+    id="announcementList"
+    class="mini-list">
+</div>
+
+<button class="view-all-btn" data-category="announcement">
+View All
+<i class="fa-solid fa-arrow-right"></i>
+</button>
+</section>
+
+<!-- WHAT'S NEW -->
+<section class="bulletin-section">
+    <div class="section-head">
+        <h3>✨ What's New?</h3>
+        <span id="whatsNewCount" class="badge-count">0</span>
+    </div>
+
+    <div id="whatsNewList" class="mini-list"></div>
+
+    <button class="view-all-btn" data-category="whatsnew">
+        View All
+        <i class="fa-solid fa-arrow-right"></i>
+    </button>
+</section>
+
+<!-- REMINDERS -->
+<section class="bulletin-section">
+    <div class="section-head">
+        <h3>⚠ Important Reminders</h3>
+        <span id="reminderCount" class="badge-count">0</span>
+    </div>
+
+    <div id="reminderList" class="mini-list"></div>
+
+    <button class="view-all-btn" data-category="reminder">
+        View All
+        <i class="fa-solid fa-arrow-right"></i>
+    </button>
+</section>
+
+<!-- KNOWN ISSUES -->
+<section class="bulletin-section">
+    <div class="section-head">
+        <h3>🐞 Known Issues</h3>
+        <span id="issueCount" class="badge-count">0</span>
+    </div>
+
+    <div id="issueList" class="mini-list"></div>
+
+    <button class="view-all-btn" data-category="issue">
+        View All
+        <i class="fa-solid fa-arrow-right"></i>
+    </button>
+</section>
+
+<!-- GUIDES -->
+<section class="bulletin-section">
+    <div class="section-head">
+        <h3>📚 New Guides Added</h3>
+        <span id="guideCount" class="badge-count">0</span>
+    </div>
+
+    <div id="guideList" class="mini-list"></div>
+
+    <button class="view-all-btn" data-category="guide">
+        View All
+        <i class="fa-solid fa-arrow-right"></i>
+    </button>
+</section>
+
+</div>
+
+</div>
+
+    <!-- ================= RIGHT PANEL ================= -->
+
+    <aside class="preview-panel">
+
+      <div class="preview-header">
+
+        <div class="preview-tabs">
+
+          <button class="tab active">Preview</button>
+          <button class="tab">Compose</button>
+          <button class="tab">Analytics</button>
+          <button class="tab">History</button>
+
+        </div>
+
+      </div>
+
+      <div
+id="previewContent"
+class="preview-content">
+
+        <div class="preview-banner">
+
+          <span id="previewPriority" class="priority critical">CRITICAL</span>
+
+          <div class="preview-actions">
+
+<button id="editBulletinBtn">
+    <i class="fa-regular fa-pen-to-square"></i>
 </button>
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-card">
-    <div class="loader-ring"></div>
-    <h3>Loading Bulletin Center...</h3>
-    <p>Please wait while we retrieve the latest announcements.</p>
-  </div>
+<button id="copyBulletinBtn">
+    <i class="fa-regular fa-copy"></i>
+</button>
+
+<button id="deleteBulletinBtn">
+    <i class="fa-solid fa-trash"></i>
+</button>
+
+          </div>
+
+        </div>
+
+        <div class="preview-title">
+
+         <h2 id="previewTitle">Scheduled System Maintenance</h2>
+
+          <div class="preview-info">
+
+            <span>
+    <i class="fa-solid fa-building"></i>
+    <span id="previewAuthor">IT Operations</span>
+</span>
+            <span>
+    <i class="fa-regular fa-calendar"></i>
+    <span id="previewDate">July 10, 2026</span>
+</span>
+            <span>
+    <i class="fa-regular fa-eye"></i>
+    <span id="previewViews">482 Views</span>
+</span>
+
+          </div>
+
+        </div>
+
+        <div class="preview-message">
+          <div id="previewMessage">
+                      <p>
+            The Enterprise Bulletin Center will undergo scheduled maintenance tonight from
+            <strong>11:00 PM until 1:00 AM.</strong> During this maintenance window,
+            employees may experience temporary interruptions when accessing internal
+            applications and services.
+          </p>
+
+          <p>
+            This activity is necessary to improve system performance, deploy security
+            updates, and increase infrastructure reliability across the enterprise.
+            Please save all ongoing work before the maintenance window begins.
+          </p>
+
+          <div class="info-box">
+</div>
+            
+            <div class="info-icon">
+              <i class="fa-solid fa-circle-info"></i>
+            </div>
+
+            <div>
+
+              <h4>Employee Reminder</h4>
+
+              <p>
+                Log out of all enterprise applications before 11:00 PM and reconnect
+                after maintenance has been completed.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ================= Attachments ================= -->
+
+        <div class="attachment-section">
+
+          <div class="section-title">
+
+            <h3>Attachments</h3>
+
+            <button class="text-btn">
+              View All
+            </button>
+
+          </div>
+
+          <div id="previewAttachments" class="attachment-list">
+
+            <div class="attachment-card">
+
+              <div class="file-icon pdf">
+                <i class="fa-solid fa-file-pdf"></i>
+              </div>
+
+              <div class="file-info">
+
+                <h4>Maintenance Schedule.pdf</h4>
+
+                <span>2.3 MB</span>
+
+              </div>
+
+              <button class="download-btn">
+                <i class="fa-solid fa-download"></i>
+              </button>
+
+            </div>
+
+            <div class="attachment-card">
+
+              <div class="file-icon excel">
+                <i class="fa-solid fa-file-excel"></i>
+              </div>
+
+              <div class="file-info">
+
+                <h4>Server Checklist.xlsx</h4>
+
+                <span>842 KB</span>
+
+              </div>
+
+              <button class="download-btn">
+                <i class="fa-solid fa-download"></i>
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ================= Audience ================= -->
+
+        <div class="audience-section">
+
+          <div class="section-title">
+            <h3>Audience</h3>
+          </div>
+
+<div id="previewAudience" class="audience-tags">
+
+    <span>All Employees</span>
+    <span>IT Operations</span>
+    <span>Customer Support</span>
+    <span>Management</span>
+
 </div>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- Compose Drawer -->
-<aside class="compose-drawer" id="composeDrawer">
-  <div class="drawer-header">
-    <div>
-      <h2>Create Bulletin</h2>
-      <p>Create or publish a new enterprise announcement.</p>
-    </div>
-    <button id="closeDrawerBtn" class="drawer-close">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-  </div>
-
-  <div class="drawer-body">
-    <div class="form-group">
-      <label>Title</label>
-      <input id="bulletinTitle" type="text" placeholder="Enter bulletin title...">
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>Category</label>
-        <select id="bulletinCategory">
-          <option value="announcement">📢 Announcement</option>
-          <option value="whatsnew">✨ What's New?</option>
-          <option value="reminder">⚠ Important Reminder</option>
-          <option value="issue">🐞 Known Issue</option>
-          <option value="guide">📚 New Guide Added</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Priority</label>
-        <select id="bulletinPriority">
-          <option value="normal">Normal</option>
-          <option value="important">Important</option>
-          <option value="critical">Critical</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="bulletinAudience">Audience</label>
-      <input id="bulletinAudience" type="text" placeholder="All Employees">
-    </div>
-
-    <div class="form-group">
-      <label for="bulletinAuthor">Author</label>
-      <input id="bulletinAuthor" type="text" placeholder="Administrator" readonly>
-    </div>
-
-    <div class="form-group">
-      <label for="bulletinMessage">Message</label>
-      <textarea id="bulletinMessage" rows="10" placeholder="Write your bulletin here..."></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="bulletinSummary">Quick Summary</label>
-      <textarea id="bulletinSummary" rows="3" placeholder="Short description shown on bulletin list..."></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Attachments</label>
-      <div id="attachmentContainer">
-        <div class="attachment-row">
-          <select class="attachment-type">
-            <option value="guide">📘 Decision Guide</option>
-            <option value="sharepoint">📂 SharePoint</option>
-            <option value="onedrive">☁ OneDrive</option>
-            <option value="teams">💬 Microsoft Teams</option>
-            <option value="forms">📝 Microsoft Forms</option>
-            <option value="external">🌐 External Website</option>
-          </select>
-          <input type="text" class="attachment-name" placeholder="Attachment Name">
-          <input type="url" class="attachment-url" placeholder="Paste SharePoint, OneDrive, Teams, Guide URL">
-          <button type="button" class="remove-attachment"><i class="fa-solid fa-trash"></i></button>
         </div>
+
+        <!-- ================= Statistics ================= -->
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <span>Total Views</span>
+
+            <h2>482</h2>
+
+            <small>
+              <i class="fa-solid fa-arrow-trend-up"></i>
+              +12% Today
+            </small>
+
+          </div>
+
+          <div class="stat-card">
+
+            <span>Read Rate</span>
+
+            <h2>94%</h2>
+
+            <small>
+              <i class="fa-solid fa-circle-check"></i>
+              Excellent
+            </small>
+
+          </div>
+
+          <div class="stat-card">
+
+            <span>Unread</span>
+
+            <h2>31</h2>
+
+            <small>
+              <i class="fa-solid fa-envelope"></i>
+              Pending
+            </small>
+
+          </div>
+
+          <div class="stat-card">
+
+            <span>Dismissed</span>
+
+            <h2>18</h2>
+
+            <small>
+              <i class="fa-solid fa-xmark"></i>
+              Hidden
+            </small>
+
+          </div>
+
+        </div>
+
       </div>
-      <button id="addAttachmentBtn" type="button" class="secondary-btn" style="margin-top:12px;">
-        <i class="fa-solid fa-plus"></i> Add Attachment
-      </button>
+
+    </aside>
+
+  </section>
+
+</main>
+  <!-- ================= Floating Action Button ================= -->
+
+  <button class="fab" id="fabNewBulletin" title="Create Bulletin">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+  <!-- ================= Loading Overlay ================= -->
+
+  <div class="loading-overlay" id="loadingOverlay">
+
+    <div class="loading-card">
+
+      <div class="loader-ring"></div>
+
+      <h3>Loading Bulletin Center...</h3>
+
+      <p>Please wait while we retrieve the latest announcements.</p>
+
     </div>
 
-    <div class="drawer-footer">
-      <button id="saveDraftBtn" type="button" class="secondary-btn">
-        <i class="fa-regular fa-floppy-disk"></i> Save Draft
-      </button>
-      <button id="previewBulletinBtn" type="button" class="secondary-btn">
-        <i class="fa-regular fa-eye"></i> Preview
-      </button>
-      <button id="publishBulletinBtn" type="button" class="primary-btn">
-        <i class="fa-solid fa-paper-plane"></i> Publish
-      </button>
-    </div>
   </div>
-</aside>
 
-<!-- Backdrop -->
-<div class="drawer-backdrop"></div>
+  <!-- ================= Toast Container ================= -->
 
-<!-- View All Modal -->
-<div id="viewAllModal" class="viewall-modal">
-  <div class="viewall-window">
-    <div class="viewall-header">
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ================= Compose Drawer ================= -->
+
+  <aside class="compose-drawer" id="composeDrawer">
+
+    <div class="drawer-header">
+
       <div>
-        <h2 id="viewAllTitle">Enterprise Bulletins</h2>
-        <p id="viewAllSubtitle">Browse all bulletins</p>
+        <h2>Create Bulletin</h2>
+        <p>Create or publish a new enterprise announcement.</p>
       </div>
-      <button id="closeViewAllBtn" class="icon-btn">
+
+     <button
+    id="closeDrawerBtn"
+    class="drawer-close">
         <i class="fa-solid fa-xmark"></i>
       </button>
+
     </div>
-    <div class="viewall-toolbar">
-      <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input id="viewAllSearch" type="text" placeholder="Search bulletins...">
+
+    <div class="drawer-body">
+
+      <div class="form-group">
+        <label>Title</label>
+        <input
+    id="bulletinTitle"
+    type="text"
+    placeholder="Enter bulletin title...">
       </div>
-    </div>
-    <div class="viewall-body">
-      <div id="viewAllList" class="viewall-list"></div>
-      <div id="viewAllPreview" class="viewall-preview">
-        <div class="empty-preview">Select a bulletin to preview.</div>
-      </div>
-    </div>
-  </div>
+
+<div class="form-row">
+
+<div class="form-group">
+<label>Category</label>
+
+<select id="bulletinCategory">
+
+<option value="announcement">📢 Announcement</option>
+
+<option value="whatsnew">✨ What's New?</option>
+
+<option value="reminder">⚠ Important Reminder</option>
+
+<option value="issue">🐞 Known Issue</option>
+
+<option value="guide">📚 New Guide Added</option>
+
+</select>
+
 </div>
 
-<!-- ============================================ -->
-<!-- SCRIPTS (order matters)                     -->
-<!-- ============================================ -->
+<div class="form-group">
+
+<label>Priority</label>
+
+<select id="bulletinPriority">
+
+<option value="normal">Normal</option>
+
+<option value="important">Important</option>
+
+<option value="critical">Critical</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="form-group">
+    <label for="bulletinAudience">Audience</label>
+    <input
+        id="bulletinAudience"
+        type="text"
+        placeholder="All Employees">
+</div>
+
+<div class="form-group">
+    <label for="bulletinAuthor">Author</label>
+    <input
+        id="bulletinAuthor"
+        type="text"
+        placeholder="Administrator"
+        readonly>
+</div>
+
+<div class="form-group">
+    <label for="bulletinMessage">Message</label>
+    <textarea
+        id="bulletinMessage"
+        rows="10"
+        placeholder="Write your bulletin here..."></textarea>
+</div>
+
+<div class="form-group">
+    <label for="bulletinSummary">Quick Summary</label>
+    <textarea
+        id="bulletinSummary"
+        rows="3"
+        placeholder="Short description shown on bulletin list..."></textarea>
+</div>
+
+<div class="form-group">
+
+    <label>Attachments</label>
+
+    <div id="attachmentContainer">
+
+        <div class="attachment-row">
+
+            <select class="attachment-type">
+
+    <option value="guide">📘 Decision Guide</option>
+
+    <option value="sharepoint">📂 SharePoint</option>
+
+    <option value="onedrive">☁ OneDrive</option>
+
+    <option value="teams">💬 Microsoft Teams</option>
+
+    <option value="forms">📝 Microsoft Forms</option>
+
+    <option value="external">🌐 External Website</option>
+
+</select>
+
+            <input
+                type="text"
+                class="attachment-name"
+                placeholder="Attachment Name">
+
+            <input
+                type="url"
+                class="attachment-url"
+                placeholder="Paste SharePoint, OneDrive, Teams, Guide URL">
+
+            <button
+                type="button"
+                class="remove-attachment">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <button
+        id="addAttachmentBtn"
+        type="button"
+        class="secondary-btn"
+        style="margin-top:12px;">
+
+        <i class="fa-solid fa-plus"></i>
+        Add Attachment
+
+    </button>
+
+</div>
+
+<div class="drawer-footer">
+
+<button
+    id="saveDraftBtn"
+    type="button"
+    class="secondary-btn">
+    <i class="fa-regular fa-floppy-disk"></i>
+    Save Draft
+</button>
+
+<button
+    id="previewBulletinBtn"
+    type="button"
+    class="secondary-btn">
+    <i class="fa-regular fa-eye"></i>
+    Preview
+</button>
+
+<button
+    id="publishBulletinBtn"
+    type="button"
+    class="primary-btn">
+    <i class="fa-solid fa-paper-plane"></i>
+    Publish
+</button>
+
+</div>
+
+  </aside>
+
+  <!-- ================= Backdrop ================= -->
+
+  <div class="drawer-backdrop"></div>
+
+</div>
+  
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<script src="assets/js/firebase-config.js"></script>
-
-<!-- Bulletin modules -->
 <script src="assets/js/bulletin-service.js"></script>
 <script src="assets/js/bulletin-preview.js"></script>
 <script src="assets/js/bulletin-toast.js"></script>
 <script src="assets/js/bulletin-ui.js"></script>
-
-<!-- Shared components -->
 <script src="assets/js/sidebar-loader.js"></script>
-<script src="assets/js/sidebar-user.js"></script>
+<script src="assets/js/sidebar-user.js"></script> 
+<script src="assets/js/bulletin-center.js"></script>
+
+<script src="assets/js/enterprise-spotlight.js"></script>
 <script src="assets/js/header-loader.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/footer-loader.js"></script>
 <script src="assets/js/theme-loader.js"></script>
 
-<!-- Main bulletin logic -->
-<script src="assets/js/bulletin-center.js"></script>
+<div id="ai-assistant-container"></div> 
+<script src="ai-assistant/ai-assistant-loader.js"></script>  
 
-<!-- Additional features -->
-<script src="assets/js/enterprise-spotlight.js"></script>
+  <!-- ==========================================================
+     View All Modal
+========================================================== -->
 
-<div id="ai-assistant-container"></div>
-<script src="ai-assistant/ai-assistant-loader.js"></script>
+<div id="viewAllModal" class="viewall-modal">
+
+    <div class="viewall-window">
+
+        <div class="viewall-header">
+
+            <div>
+
+                <h2 id="viewAllTitle">
+                    Enterprise Bulletins
+                </h2>
+
+                <p id="viewAllSubtitle">
+                    Browse all bulletins
+                </p>
+
+            </div>
+
+            <button
+                id="closeViewAllBtn"
+                class="icon-btn">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+        <div class="viewall-toolbar">
+
+            <div class="search-box">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    id="viewAllSearch"
+                    type="text"
+                    placeholder="Search bulletins...">
+
+            </div>
+
+        </div>
+
+<div class="viewall-body">
+
+    <div
+        id="viewAllList"
+        class="viewall-list">
+    </div>
+
+    <div
+        id="viewAllPreview"
+        class="viewall-preview">
+
+        <div class="empty-preview">
+
+            Select a bulletin to preview.
+
+        </div>
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
 
 </body>
 </html>
