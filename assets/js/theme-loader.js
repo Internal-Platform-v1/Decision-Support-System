@@ -1,6 +1,6 @@
 (function () {
   const THEME_STORAGE_KEY = "dssGuideTheme";
-  const DEFAULT_THEME = "theme-fedex";
+  const DEFAULT_THEME = "theme-simple";
   const ALLOWED_THEMES = [
   "theme-fedex",
   "theme-atlas",
