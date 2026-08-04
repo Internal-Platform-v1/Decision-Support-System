@@ -1,13 +1,13 @@
 /* ==========================================================================
-   ENTERPRISE BULLETIN CENTER - DASHBOARD NATIVE ENGINE
-   Utilizing Operations Console Theme Variables & Micro-Interactions
+   ENTERPRISE BULLETIN CENTER - COMPLETE CSS REPAIR
+   Fixes: Drawer layout squeeze, overlapping icons, crushed attachment lists, 
+   and missing component spacing without HTML modifications.
    ========================================================================== */
 
-/* Core Variables imported directly from Operations Theme */
 :root {
   --transition: .28s cubic-bezier(.4, 0, .2, 1);
-  --ops-radius: 24px;
-  --ops-radius2: 18px;
+  --ops-radius: 20px;
+  --ops-radius2: 14px;
   --ops-blur: 20px;
   
   /* Operations Brand Palette */
@@ -17,41 +17,37 @@
   --ops-cyan: #22D3EE;
   --ops-green: #16C784;
   --ops-red: #EF4444;
-  --ops-yellow: #FACC15;
   --ops-white: #FFF;
 }
 
-/* Light Mode Tokens (Default) */
+/* Light / Dark Mode Tokens */
 body, body.theme-light {
   --ops-bg: #EEF3F8;
-  --ops-surface: rgba(255, 255, 255, .78);
-  --ops-surface2: rgba(255, 255, 255, .92);
+  --ops-surface: rgba(255, 255, 255, .82);
+  --ops-surface2: #FFFFFF;
   --ops-card: #FFF;
   --ops-border: rgba(15, 23, 42, .08);
-  --ops-shadow: 0 20px 60px rgba(15, 23, 42, .12);
+  --ops-shadow: 0 15px 35px rgba(15, 23, 42, .08);
   --ops-heading: #0F172A;
   --ops-text: #334155;
   --ops-muted: #64748B;
-  --ops-overlay: rgba(226, 232, 240, .72);
-  --ops-scrollbar: #D8E2EC;
+  --ops-overlay: rgba(15, 23, 42, .4);
 }
 
-/* Dark Mode Tokens (Built-in Support) */
 body.theme-dark {
   --ops-bg: #070B14;
-  --ops-surface: rgba(18, 25, 43, .72);
-  --ops-surface2: rgba(255, 255, 255, .05);
+  --ops-surface: rgba(18, 25, 43, .75);
+  --ops-surface2: #111827;
   --ops-card: #111827;
   --ops-border: rgba(255, 255, 255, .08);
-  --ops-shadow: 0 30px 80px rgba(0, 0, 0, .45);
+  --ops-shadow: 0 20px 50px rgba(0, 0, 0, .4);
   --ops-heading: #FFF;
   --ops-text: #D9E4FF;
   --ops-muted: #93A4C4;
-  --ops-overlay: rgba(2, 6, 23, .72);
-  --ops-scrollbar: #08111D;
+  --ops-overlay: rgba(2, 6, 23, .75);
 }
 
-/* Base Body Styles */
+/* Base Body Resets */
 * {
   margin: 0;
   padding: 0;
@@ -59,704 +55,281 @@ body.theme-dark {
 }
 
 body {
-  font-family: Inter, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--ops-bg);
   color: var(--ops-text);
   line-height: 1.5;
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  transition: background .35s ease, color .35s ease;
-}
-
-/* Global Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--ops-scrollbar);
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(var(--ops-fedex), var(--ops-blue));
-  border-radius: 999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(color-mix(in srgb, var(--ops-fedex) 85%, white), color-mix(in srgb, var(--ops-blue) 85%, white));
 }
 
 /* ==========================================================================
-   Full-Screen Application Shell
+   1. LAYOUT CRASH FIX: Force Right Drawer Out of Normal Document Flow
    ========================================================================== */
+/* Prevents the loading/drawer element on the far right from squeezing main content */
 .console-layout {
   display: flex;
-  height: 100vh;
   width: 100vw;
+  height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
-.console-main.content {
-  flex: 1;
+.console-main, .console-main.content {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
   display: flex;
   flex-direction: column;
-  padding: 32px 40px 0 40px;
-  gap: 24px;
-  width: 100%;
-  max-width: 100%;
-  background: var(--ops-bg);
-  overflow: hidden;
+  padding: 24px 32px;
+  gap: 20px;
+  overflow-y: auto;
 }
 
-/* Topbar Styling */
+/* Catches any side drawer/panel and forces it to overlay float */
+.console-layout > div:nth-child(3),
+.console-layout > div:last-child:not(.console-main),
+.compose-drawer,
+.drawer-container {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 420px !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background: var(--ops-card) !important;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, .15) !important;
+  border-left: 1px solid var(--ops-border) !important;
+  transform: translateX(100%);
+  transition: transform .3s ease-in-out;
+}
+
+/* When drawer is active or visible */
+.compose-drawer.active,
+.compose-drawer.open,
+.drawer-container.open {
+  transform: translateX(0) !important;
+}
+
+/* ==========================================================================
+   2. TOP BAR & KPI HEADER SECTION
+   ========================================================================== */
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
-  flex-shrink: 0;
+  gap: 20px;
 }
 
-.title-area h1 {
-  font-size: 2.25rem;
-  font-weight: 900;
-  letter-spacing: -.5px;
-  color: var(--ops-heading);
-}
-
-.title-area p {
-  font-size: 0.92rem;
-  color: var(--ops-muted);
-}
-
-.kicker-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--ops-orange);
-  margin-bottom: 4px;
-}
-
-.top-actions {
-  display: flex;
-  align-items: center;
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
 }
 
-/* Search Box */
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 320px;
-}
-
-.search-box i {
-  position: absolute;
-  left: 16px;
-  color: var(--ops-muted);
-  font-size: 0.95rem;
-  pointer-events: none;
-}
-
-.search-box input {
-  width: 100%;
-  padding: 12px 18px 12px 44px;
-  background: var(--ops-surface2);
-  border: 1px solid var(--ops-border);
-  border-radius: 999px;
-  font-size: 0.875rem;
-  color: var(--ops-heading);
-  transition: var(--transition);
-}
-
-.search-box input:focus {
-  outline: 2px solid var(--ops-cyan);
-  outline-offset: 2px;
-}
-
-/* Action Buttons (Primary & Secondary) */
-.primary-btn, .secondary-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 22px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 0.875rem;
-  overflow: hidden;
-  cursor: pointer;
-  border: 0;
-  transition: var(--transition);
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, var(--ops-fedex), #6d28d9);
-  color: var(--ops-white);
-  box-shadow: 0 20px 50px color-mix(in srgb, var(--ops-fedex) 45%, transparent);
-}
-
-.primary-btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 25px 60px color-mix(in srgb, var(--ops-fedex) 60%, transparent);
-}
-
-.secondary-btn {
-  background: var(--ops-surface2);
-  border: 1px solid var(--ops-border);
-  color: var(--ops-heading);
-}
-
-.secondary-btn:hover {
-  background: color-mix(in srgb, var(--ops-surface2) 88%, var(--ops-white));
-  transform: translateY(-4px);
-}
-
-.icon-btn {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--ops-border);
-  background: var(--ops-surface2);
-  color: var(--ops-heading);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.icon-btn:hover {
-  background: color-mix(in srgb, var(--ops-surface2) 88%, var(--ops-white));
-  transform: translateY(-2px);
-}
-
-.icon-btn .notify {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  background: var(--ops-red);
-  color: var(--ops-white);
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 999px;
-}
-
-/* ==========================================================================
-   KPI Summary Grid (Using Dashboard Gradient Icon Styles)
-   ========================================================================== */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
-  flex-shrink: 0;
-}
-
 .kpi-card {
-  position: relative;
-  overflow: hidden;
-  background: var(--ops-surface);
+  background: var(--ops-surface2);
   border: 1px solid var(--ops-border);
-  border-radius: var(--ops-radius);
-  backdrop-filter: blur(var(--ops-blur));
-  -webkit-backdrop-filter: blur(var(--ops-blur));
-  box-shadow: var(--ops-shadow);
-  padding: 22px;
+  border-radius: var(--ops-radius2);
+  padding: 18px 20px;
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+  box-shadow: var(--ops-shadow);
   transition: var(--transition);
 }
 
 .kpi-card:hover {
-  transform: translateY(-8px);
-  border-color: color-mix(in srgb, var(--ops-heading) 18%, transparent);
-  box-shadow: 0 40px 90px color-mix(in srgb, var(--ops-bg) 75%, black), 0 0 40px color-mix(in srgb, var(--ops-fedex) 18%, transparent);
+  transform: translateY(-4px);
 }
 
-/* Vibrant Gradient Icons with Hover Rotation */
 .kpi-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: white;
   flex-shrink: 0;
-  font-size: 1.45rem;
-  color: var(--ops-white);
-  transition: .35s ease;
-}
-
-.kpi-card:hover .kpi-icon {
-  transform: rotate(-6deg) scale(1.12);
 }
 
 .kpi-icon.purple { background: linear-gradient(135deg, var(--ops-fedex), #7c3aed); }
-.kpi-icon.blue   { background: linear-gradient(135deg, var(--ops-blue), #38bdf8); }
-.kpi-icon.orange { background: linear-gradient(135deg, var(--ops-orange), #fb923c); }
-.kpi-icon.green  { background: linear-gradient(135deg, var(--ops-green), #34d399); }
-.kpi-icon.red    { background: linear-gradient(135deg, var(--ops-red), #fb7185); }
-.kpi-icon.cyan   { background: linear-gradient(135deg, var(--ops-cyan), #67e8f9); }
-
-.kpi-info label {
-  display: block;
-  font-size: .78rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--ops-muted);
-}
-
-.kpi-info h2 {
-  margin: 4px 0;
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--ops-heading);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Filter Bar */
-.filter-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-  overflow-x: auto;
-}
-
-.filter {
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: 1px solid var(--ops-border);
-  background: var(--ops-surface2);
-  color: var(--ops-text);
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: var(--transition);
-}
-
-.filter:hover {
-  background: color-mix(in srgb, var(--ops-surface2) 88%, var(--ops-white));
-  color: var(--ops-heading);
-}
-
-.filter.active {
-  background: var(--ops-heading);
-  color: var(--ops-bg);
-  border-color: var(--ops-heading);
-}
+.kpi-icon.green  { background: linear-gradient(135deg, var(--ops-green), #10b981); }
+.kpi-icon.orange { background: linear-gradient(135deg, var(--ops-orange), #f97316); }
+.kpi-icon.blue   { background: linear-gradient(135deg, var(--ops-blue), #06b6d4); }
+.kpi-icon.red    { background: linear-gradient(135deg, var(--ops-red), #f43f5e); }
 
 /* ==========================================================================
-   Workspace Layout (Glass Panels & Feed Cards)
+   3. WORKSPACE LAYOUT (Middle Feed vs Preview Panel)
    ========================================================================== */
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 480px;
-  gap: 28px;
+  grid-template-columns: 1fr 440px;
+  gap: 20px;
+  align-items: start;
   flex: 1;
-  min-height: 0;
-  padding-bottom: 28px;
 }
 
 .feed-panel, .preview-panel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
   background: var(--ops-surface);
   border: 1px solid var(--ops-border);
   border-radius: var(--ops-radius);
-  backdrop-filter: blur(var(--ops-blur));
-  -webkit-backdrop-filter: blur(var(--ops-blur));
   box-shadow: var(--ops-shadow);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-.feed-header {
-  display: flex;
-  justify-content: space-between;
+/* ==========================================================================
+   4. ICON OVERLAY FIXES & BUTTON RESET
+   ========================================================================== */
+/* Fixes "Refresh" and feed headers from rendering text over icons */
+button i, .mini-item i, .feed-header i, .section-head i, a i {
+  position: static !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin-right: 6px !important;
+  float: none !important;
+}
+
+/* Ensure action icons inside headers sit neatly to the right */
+.feed-header button, .feed-header a, .section-head button {
+  display: inline-flex !alignment;
   align-items: center;
-  padding: 24px 28px;
-  border-bottom: 1px solid var(--ops-border);
-  background: var(--ops-surface2);
-}
-
-.feed-header h2 {
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--ops-heading);
-  letter-spacing: -.5px;
-}
-
-.bulletin-category-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ops-border);
-}
-
-.section-head h3 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--ops-heading);
-}
-
-.badge-count {
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--ops-border);
-  font-size: .72rem;
-  font-weight: 700;
-  color: var(--ops-heading);
-}
-
-.mini-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-/* Feed List Row Styling (Directly matching dashboard Activity Rows) */
-.mini-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-radius: 16px;
-  background: var(--ops-surface2);
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
   border: 1px solid var(--ops-border);
-  cursor: pointer;
-  transition: .35s ease;
-}
-
-.mini-item:hover {
-  background: color-mix(in srgb, var(--ops-surface2) 84%, var(--ops-white));
-  transform: translateX(6px);
-  border-color: color-mix(in srgb, var(--ops-heading) 15%, transparent);
-}
-
-.mini-item.active {
-  border-color: var(--ops-fedex);
-  background: color-mix(in srgb, var(--ops-fedex) 8%, var(--ops-surface2));
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--ops-fedex) 15%, transparent);
-}
-
-.mini-item h4 {
-  font-size: .95rem;
-  font-weight: 700;
+  background: var(--ops-surface2);
   color: var(--ops-heading);
-  margin-bottom: 2px;
-}
-
-.mini-item small {
-  font-size: .8rem;
-  color: var(--ops-muted);
-}
-
-.mini-item i {
-  color: var(--ops-muted);
-  transition: transform var(--transition);
-}
-
-.mini-item:hover i {
-  color: var(--ops-orange);
-  transform: translateX(4px);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /* ==========================================================================
-   Preview Panel Styling
+   5. PREVIEW PANEL TEXT SQUEEZE & ATTACHMENT LIST REPAIR
    ========================================================================== */
+.preview-panel {
+  padding: 24px !important;
+}
+
+/* Space out top action row (badge vs edit/trash icons) */
+.preview-panel > div:first-child,
 .preview-header {
-  padding: 18px 28px 0 28px;
-  border-bottom: 1px solid var(--ops-border);
-  background: var(--ops-surface2);
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-bottom: 16px !important;
 }
 
-.preview-tabs {
-  display: flex;
-  gap: 20px;
+/* Fix Title spacing */
+.preview-panel h2, .preview-title {
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: var(--ops-heading) !important;
+  margin: 12px 0 8px 0 !important;
+  line-height: 1.3 !important;
+  word-break: break-word;
 }
 
-.preview-tabs .tab {
-  padding: 12px 0;
-  background: transparent;
-  border: 0;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--ops-muted);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: var(--transition);
+/* Meta Data Line (Date & View Count) */
+.preview-panel small, 
+.preview-panel .meta-info,
+.preview-panel span:has(i) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-right: 14px !important;
+  margin-bottom: 16px !important;
+  color: var(--ops-muted) !important;
+  font-size: 0.8rem !important;
 }
 
-.preview-tabs .tab.active {
-  color: var(--ops-fedex);
-  border-bottom-color: var(--ops-fedex);
+/* Fix Attachment List & Quick Links being crushed */
+.preview-panel div:has(> a), 
+.preview-panel .attachments,
+.preview-panel div:has(> i) {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin-top: 12px !important;
+  padding-top: 12px !important;
 }
 
-.preview-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+.preview-panel a, 
+.preview-panel .attachment-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 14px !important;
+  background: var(--ops-surface2) !important;
+  border: 1px solid var(--ops-border) !important;
+  border-radius: 10px !important;
+  color: var(--ops-heading) !important;
+  text-decoration: none !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
 }
 
-.priority {
-  font-size: .72rem;
-  font-weight: 800;
-  padding: 6px 12px;
-  border-radius: 999px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.preview-panel a:hover {
+  border-color: var(--ops-fedex) !important;
+  color: var(--ops-fedex) !important;
 }
 
-.priority.critical, .priority-critical { 
-  background: color-mix(in srgb, var(--ops-red) 15%, transparent); 
-  color: var(--ops-red); 
-}
-.priority.important, .priority-important { 
-  background: color-mix(in srgb, var(--ops-orange) 15%, transparent); 
-  color: var(--ops-orange); 
-}
-.priority.normal, .priority-normal { 
-  background: color-mix(in srgb, var(--ops-blue) 15%, transparent); 
-  color: var(--ops-blue); 
-}
-
-.preview-title h2 {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: var(--ops-heading);
-  line-height: 1.25;
-  margin-top: 12px;
-}
-
-.preview-message {
-  font-size: 0.95rem;
-  color: var(--ops-text);
-  line-height: 1.7;
-}
-
-/* Dashboard Inset Stat Cards */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  border-top: 1px solid var(--ops-border);
-  padding-top: 20px;
+/* Stats grid inside Preview panel */
+.preview-panel .stats-grid,
+.preview-panel div:has(> .stat-card) {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  margin-top: 24px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid var(--ops-border) !important;
 }
 
 .stat-card {
-  padding: 18px;
-  border-radius: 16px;
   background: var(--ops-surface2);
   border: 1px solid var(--ops-border);
+  border-radius: 12px;
+  padding: 14px;
   text-align: center;
 }
 
 .stat-card label {
-  font-size: .78rem;
+  font-size: 0.72rem;
   color: var(--ops-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-weight: 700;
 }
 
 .stat-card h2 {
-  font-size: 1.7rem;
-  font-weight: 900;
-  color: var(--ops-heading);
-  margin: 4px 0;
-  font-variant-numeric: tabular-nums;
+  font-size: 1.5rem !important;
+  margin: 2px 0 0 0 !important;
 }
 
-/* ==========================================================================
-   Compose Drawer
-   ========================================================================== */
-.compose-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 580px;
-  height: 100vh;
-  background: var(--ops-card);
-  border-left: 1px solid var(--ops-border);
-  box-shadow: var(--ops-shadow);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(100%);
-  transition: transform .35s cubic-bezier(.4, 0, .2, 1);
-}
-
-.compose-drawer.open, .compose-drawer.active {
-  transform: translateX(0);
-}
-
-.drawer-header {
-  padding: 24px 32px;
-  border-bottom: 1px solid var(--ops-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.drawer-header h2 {
-  font-size: 1.35rem;
+/* Priority Badges */
+.priority, .badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
   font-weight: 800;
-  color: var(--ops-heading);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-.drawer-close {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 0;
-  background: var(--ops-surface2);
-  color: var(--ops-muted);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: var(--transition);
+.priority-important, .priority.important {
+  background: rgba(255, 102, 0, 0.15);
+  color: var(--ops-orange);
 }
 
-.drawer-close:hover {
-  color: var(--ops-heading);
-  transform: rotate(90deg);
-}
-
-.drawer-body {
-  padding: 32px;
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--ops-heading);
-}
-
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--ops-border);
-  border-radius: 14px;
-  font-size: 0.92rem;
-  color: var(--ops-heading);
-  background: var(--ops-surface2);
-  transition: var(--transition);
-}
-
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-  outline: 2px solid var(--ops-cyan);
-  outline-offset: 2px;
-}
-
-.drawer-footer {
-  padding: 20px 32px;
-  border-top: 1px solid var(--ops-border);
-  display: flex;
-  justify-content: flex-end;
-  gap: 14px;
-}
-
-.drawer-backdrop {
-  position: fixed;
-  inset: 0;
-  background: var(--ops-overlay);
-  backdrop-filter: blur(8px);
-  z-index: 999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .35s ease;
-}
-
-.drawer-backdrop.active, .drawer-backdrop.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Modal View All Container */
-.viewall-modal {
-  position: fixed;
-  inset: 0;
-  background: var(--ops-overlay);
-  backdrop-filter: blur(8px);
-  z-index: 1100;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-}
-
-.viewall-modal.show {
-  display: flex;
-}
-
-.viewall-window {
-  width: 100%;
-  max-width: 1280px;
-  height: 88vh;
-  background: var(--ops-card);
-  border-radius: 24px;
-  border: 1px solid var(--ops-border);
-  box-shadow: var(--ops-shadow);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.viewall-header {
-  padding: 20px 32px;
-  border-bottom: 1px solid var(--ops-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.viewall-body {
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  flex: 1;
-  min-height: 0;
-}
-
-.viewall-list {
-  border-right: 1px solid var(--ops-border);
-  overflow-y: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: var(--ops-surface);
-}
-
-.viewall-preview {
-  padding: 36px;
-  overflow-y: auto;
+.priority-critical, .priority.critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--ops-red);
 }
