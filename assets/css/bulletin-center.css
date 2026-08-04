@@ -1,5 +1,6 @@
 /* ==========================================================================
    ENTERPRISE BULLETIN CENTER - DASHBOARD ALIGNED THEME
+   (Updated with Operations Console Icons & Buttons)
    ========================================================================== */
 
 :root {
@@ -12,20 +13,26 @@
   --text-secondary: #475569;
   --text-muted: #94a3b8;
   
-  /* Electric Dashboard Accents */
-  --primary: #7c3aed;         
-  --primary-hover: #6d28d9;
-  --primary-bg: #f5f3ff;
+  /* Operations Console Brand Palette & Accents */
+  --ops-fedex: #4D148C;
+  --ops-orange: #FF6600;
+  --ops-blue: #3B82F6;
+  --ops-green: #16C784;
+  --ops-red: #EF4444;
+
+  --primary: #4D148C;         
+  --primary-hover: #3b0f6e;
+  --primary-bg: #f3e8ff;
   
-  --purple: #8b5cf6;
-  --purple-bg: #f5f3ff;
-  --green: #10b981;
+  --purple: #4D148C;
+  --purple-bg: #f3e8ff;
+  --green: #16C784;
   --green-bg: #ecfdf5;
-  --orange: #f97316;
-  --orange-bg: #fffbeb;
-  --blue: #0ea5e9;
+  --orange: #FF6600;
+  --orange-bg: #fff7ed;
+  --blue: #3B82F6;
   --blue-bg: #eff6ff;
-  --red: #ef4444;
+  --red: #EF4444;
   --red-bg: #fef2f2;
   
   /* Massive Dashboard Radii */
@@ -37,7 +44,7 @@
   /* Soft UI Dashboard Shadows (No Borders) */
   --shadow-sm: 0 4px 6px rgba(15, 23, 42, 0.02);
   --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.06); 
-  --shadow-float: 0 20px 40px -8px rgba(124, 58, 237, 0.2);
+  --shadow-float: 0 20px 40px -8px rgba(77, 20, 140, 0.25);
   
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -98,7 +105,7 @@ body {
 }
 
 /* ==========================================================================
-   Topbar & Search
+   Topbar & Search (Operations Console Styled Buttons)
    ========================================================================== */
 .topbar {
   display: flex;
@@ -167,9 +174,10 @@ body {
 
 .search-box input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 0 0 3px rgba(77, 20, 140, 0.15);
 }
 
+/* Operations Console Icon Button */
 .icon-btn {
   position: relative;
   width: 44px;
@@ -189,7 +197,8 @@ body {
 .icon-btn:hover {
   background-color: var(--bg-subtle);
   color: var(--text-main);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
 }
 
 .icon-btn .notify {
@@ -204,26 +213,27 @@ body {
   border-radius: var(--radius-full);
 }
 
+/* Operations Console Primary Button */
 .primary-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  background: linear-gradient(135deg, var(--ops-fedex), #7c3aed);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.875rem;
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
   letter-spacing: 0.02em;
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 8px 20px rgba(77, 20, 140, 0.3);
   transition: all var(--transition-smooth);
 }
 
 .primary-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 12px 28px rgba(77, 20, 140, 0.45);
 }
 
 .secondary-btn {
@@ -248,7 +258,7 @@ body {
 }
 
 /* ==========================================================================
-   KPI Summary Grid
+   KPI Summary Grid (Operations Console Vibrant Gradient Icons + Rotation)
    ========================================================================== */
 .kpi-grid {
   display: grid;
@@ -276,22 +286,31 @@ body {
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
 }
 
+/* Operations Console Icon Box Styling */
 .kpi-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.35rem;
+  color: #ffffff;
   margin-bottom: 4px;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-.kpi-icon.purple { background-color: var(--purple-bg); color: var(--purple); }
-.kpi-icon.green  { background-color: var(--green-bg); color: var(--green); }
-.kpi-icon.orange { background-color: var(--orange-bg); color: var(--orange); }
-.kpi-icon.blue   { background-color: var(--blue-bg); color: var(--blue); }
-.kpi-icon.red    { background-color: var(--red-bg); color: var(--red); }
+/* Hover rotation from Operations Console */
+.kpi-card:hover .kpi-icon {
+  transform: rotate(-6deg) scale(1.1);
+}
+
+/* Operations Multi-Tone Gradients */
+.kpi-icon.purple { background: linear-gradient(135deg, var(--ops-fedex), #7c3aed); box-shadow: 0 8px 18px rgba(77, 20, 140, 0.25); }
+.kpi-icon.green  { background: linear-gradient(135deg, var(--ops-green), #34d399); box-shadow: 0 8px 18px rgba(22, 199, 132, 0.25); }
+.kpi-icon.orange { background: linear-gradient(135deg, var(--ops-orange), #fb923c); box-shadow: 0 8px 18px rgba(255, 102, 0, 0.25); }
+.kpi-icon.blue   { background: linear-gradient(135deg, var(--ops-blue), #38bdf8); box-shadow: 0 8px 18px rgba(59, 130, 246, 0.25); }
+.kpi-icon.red    { background: linear-gradient(135deg, var(--ops-red), #fb7185); box-shadow: 0 8px 18px rgba(239, 68, 68, 0.25); }
 
 .kpi-info span {
   font-size: 0.7rem;
@@ -481,7 +500,7 @@ body {
 .mini-item.active {
   border: 1px solid var(--primary);
   background-color: var(--primary-bg);
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+  box-shadow: 0 8px 24px rgba(77, 20, 140, 0.12);
 }
 
 .mini-item h4 {
@@ -611,6 +630,7 @@ body {
   gap: 8px;
 }
 
+/* Action Icon Buttons styled with Operations theme hover */
 .preview-actions button {
   width: 36px;
   height: 36px;
@@ -963,7 +983,7 @@ body {
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 0 0 3px rgba(77, 20, 140, 0.15);
 }
 
 .form-row {
@@ -1235,7 +1255,7 @@ body {
 }
 
 /* ==========================================================================
-   Floating Action Button (FAB) & Utilities
+   Floating Action Button (FAB) & Utilities (Operations Styled Gradient)
    ========================================================================== */
 .fab {
   position: fixed;
@@ -1244,7 +1264,7 @@ body {
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  background: linear-gradient(135deg, var(--ops-fedex), #7c3aed);
   color: #fff;
   border: none;
   font-size: 1.5rem;
@@ -1259,7 +1279,7 @@ body {
 
 .fab:hover {
   transform: scale(1.08) translateY(-4px);
-  box-shadow: 0 24px 48px -12px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 24px 48px -12px rgba(77, 20, 140, 0.45);
 }
 
 /* Loading Overlay */
