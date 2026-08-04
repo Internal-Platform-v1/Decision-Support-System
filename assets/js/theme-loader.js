@@ -5,8 +5,7 @@
   "theme-fedex",
   "theme-atlas",
   "theme-basic",
-  "theme-simple",
-  "theme-modern"
+  "theme-simple"
 ];
 
   function getSavedTheme() {
