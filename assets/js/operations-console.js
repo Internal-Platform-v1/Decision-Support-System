@@ -8,10 +8,6 @@ const $$ = e => document.querySelectorAll(e);
 
 const EL = {
   loader: $("#opsLoader"),
-  overlay: $("#commandOverlay"),
-  search: $("#commandSearch"),
-  close: $("#closeCommand"),
-  commandBtn: $(".primary-btn"),
   activeUsers: $("#activeUsers"),
   guideCount: $("#guideCount"),
   templateCount: $("#templateCount"),
@@ -50,29 +46,6 @@ function initializeLoader() {
     EL.loader.classList.add("hide");
     setTimeout(() => { EL.loader.remove(); }, 500);
   }, 900);
-}
-
-function filterCommandResults() {
-  const keyword = (EL.search?.value || "").trim().toLowerCase();
-  const container = $(".command-results");
-  if (!container) return;
-  container.innerHTML = "";
-  const results = ENGINE.guideIndex
-    .filter(g => g.title.toLowerCase().includes(keyword) || g.category.toLowerCase().includes(keyword) || g.keywords.join(" ").toLowerCase().includes(keyword))
-    .slice(0, 12);
-  results.forEach(g => {
-    const btn = document.createElement("button");
-    btn.innerHTML = `<i class="fa-solid fa-compass"></i><div><strong>${g.title}</strong><small>${g.category}</small></div>`;
-    btn.onclick = () => location.href = g.url;
-    container.appendChild(btn);
-  });
-}
-
-function initializeKeyboard() {
-  document.addEventListener("keydown", e => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openCommandPalette(); }
-    if (e.key === "Escape") closeCommandPalette();
-  });
 }
 
 function initializeButtons() {
