@@ -288,7 +288,7 @@ root.innerHTML = `
         </div>
         <div class="spotlight-content spotlight-open">
           <div class="spotlight-badge ${badgeClass}"><i class="${getCategoryIcon(b.category)}"></i> ${formatCategory(b.category)}</div>
-          <h2>${b.title || ""} ${isNew ? '<span class="spot-new"></span>' : ''}</h2>
+          <h2>${b.title || ""} ${isNew ? '<span class="spot-new">NEW</span>' : ''}</h2>
           <p>${b.summary || b.message || ""}</p>
         </div>
        <div class="spotlight-bottom">
